@@ -60,5 +60,5 @@
 
 
 - tasks:
-	- frontend for profiling and one for login
+	- frontend for profiling and login
 	- backend 
