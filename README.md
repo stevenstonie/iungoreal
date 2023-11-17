@@ -1,2 +1,8 @@
 # social-media-project
-this is a project in which elements from well-known social medias such as facebook / reddit are implemented next to features that make connecting with others much easier and more fun such as an integrated map and live chats for growing communities.
+
+### A social media app based on microservice architecture, developed using spring boot and angular. This platform is a hybrid approach, combining elements of facebook and reddit with google maps + many more (geolocation, live chat, calendar, etc.)
+### The purpose of this project is promoting dissimilar social media that encourages its users to go out and be more active both physically and socially.
+
+---
+
+for more info check the notes.md file
