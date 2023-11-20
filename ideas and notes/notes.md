@@ -2,6 +2,15 @@
 #
 #
 
+
+
+- tasks:
+	- frontend for profiling and login
+	- backend -> database, login, register
+	- connect the front to the back to see how data would look unsecured and secured
+
+
+
 - UI:
 	- user:
 		- menus
@@ -48,6 +57,7 @@
 	- live chat
 
 
+
 - roadmap (+notes):
 	- start with the app. some models, the database, etc.
 	- add a simple front end to test the features
@@ -56,9 +66,3 @@
 	- add the chat microservice
 	- continue with the app (models, db, etc.)
 	- notifications
-
-
-
-- tasks:
-	- frontend for profiling and login
-	- backend 
