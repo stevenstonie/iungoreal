@@ -2,7 +2,7 @@ HELP.md
 target/
 *.bkp
 *.dtmp
-*application-dev.properties
+application-dev.yml
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

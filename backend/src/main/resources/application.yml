@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    include: dev
+
+
+# fill these in the application-dev.yml
+# spring:
+#   datasource:
+#     url:
+#     username:
+#     password:
+#     driver-class-name:
+#   jpa:
+#     hibernate:
+#       ddl-auto:
+#     show-sql:
+#     properties:
+#       hibernate:
+#         dialect:
+#     database:
+

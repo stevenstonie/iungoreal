@@ -1,12 +1,16 @@
 package com.stevenst.app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,9 +24,6 @@ public class User {
 
 	@Column(nullable = false)
 	private String password;
-
-	public User() {
-	}
 
 	public User(int id, String username, String password, String email) {
 		this.id = id;
