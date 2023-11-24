@@ -15,10 +15,10 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.testService.getMessage().subscribe(data => {
-      this.title = data;
+      this.title = data.toString();
     });
     this.testService.getSecuredMessage().subscribe(data => {
-      this.securedTitle = data;
+      this.securedTitle = data.toString();
     });
   }
 }
