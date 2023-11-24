@@ -1,7 +1,10 @@
 spring:
   profiles:
     include: dev
-
+  security:
+    user:
+      name: user
+      password: password
 
 # fill these in the application-dev.yml
 # spring:

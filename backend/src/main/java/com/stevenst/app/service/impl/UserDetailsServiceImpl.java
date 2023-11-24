@@ -1,6 +1,7 @@
 package com.stevenst.app.service.impl;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,10 +21,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
    @Override
    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-       User user = userRepository.findByUsername(username);
-       if (user == null) {
+       Optional<User> user = userRepository.findByUsername(username);
+       if (user.isEmpty()) {
            throw new UsernameNotFoundException("User not found");
        }
-       return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
+       return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), new ArrayList<>());
    }
 }

@@ -1,2 +1,5 @@
-package com.stevenst.app.model;public class Role {
+package com.stevenst.app.model;
+
+public enum Role {
+    USER, ADMIN
 }
