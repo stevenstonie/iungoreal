@@ -6,7 +6,7 @@ spring:
       name: user
       password: password
 
-# fill these in the application-dev.yml
+# # fill these in the application-dev.yml
 # spring:
 #   datasource:
 #     url:
@@ -22,3 +22,4 @@ spring:
 #         dialect:
 #     database:
 
+# jwtSecret:
