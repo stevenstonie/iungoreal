@@ -1,4 +1,4 @@
-package com.stevenst.app.security.auth;
+package com.stevenst.app.auth;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

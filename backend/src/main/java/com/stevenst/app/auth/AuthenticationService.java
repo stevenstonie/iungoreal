@@ -1,4 +1,4 @@
-package com.stevenst.app.security.auth;
+package com.stevenst.app.auth;
 
 import com.stevenst.app.config.JwtService;
 import com.stevenst.app.model.Role;
