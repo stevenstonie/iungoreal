@@ -1,4 +1,4 @@
-package com.stevenst.app.config;
+package com.stevenst.app.service.impl;
 
 import java.security.Key;
 import java.util.Date;
@@ -16,7 +16,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-public class JwtService {
+public class JwtServiceImpl {
 	private static final String SECRET_KEY = "1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd"; // TODO: solve the @Value problem
 
 	public String extractUsername(String token) {

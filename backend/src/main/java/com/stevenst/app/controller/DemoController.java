@@ -1,4 +1,4 @@
-package com.stevenst.app.auth;
+package com.stevenst.app.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

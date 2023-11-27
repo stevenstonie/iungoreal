@@ -1,6 +1,8 @@
-package com.stevenst.app.auth;
+package com.stevenst.app.service.impl;
 
-import com.stevenst.app.config.JwtService;
+import com.stevenst.app.auth.AuthenticationRequest;
+import com.stevenst.app.auth.AuthenticationResponse;
+import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.model.Role;
 import com.stevenst.app.model.User;
 import com.stevenst.app.repository.UserRepository;
@@ -13,10 +15,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationServiceImpl {
 	private final UserRepository userRepo;
 	private final PasswordEncoder passwordEncoder;
-	private final JwtService jwtService;
+	private final JwtServiceImpl jwtService;
 	private final AuthenticationManager authenticationManager;
 
 	public AuthenticationResponse register(RegisterRequest request) {
