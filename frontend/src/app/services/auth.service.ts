@@ -7,14 +7,22 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
   private baseUrl = 'http://localhost:8080';
+  private token: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.token = '';
+  }
 
   login(credentials: { email: string, password: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/auth/authenticate`, credentials);
+    return this.http.post(`${this.baseUrl}/api/auth/login`, credentials);
   }
 
   register(user: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/auth/register`, user);
   }
+
+  getToken(): string {  // <-- exists only not to get an error in the interceptor
+    return this.token;
+  }
+
 }
