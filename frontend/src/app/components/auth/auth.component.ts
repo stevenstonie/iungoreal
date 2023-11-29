@@ -4,7 +4,8 @@ import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-auth',
-  templateUrl: './auth.component.html'
+  templateUrl: './auth.component.html',
+  styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent {
   loginForm: FormGroup;
@@ -38,5 +39,3 @@ export class AuthComponent {
     });
   }
 }
-
-// TODO: change the authentication word instances to login both in frontend and in backend

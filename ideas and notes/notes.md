@@ -5,10 +5,15 @@
 
 
 - tasks:
-	- frontend for profiling and login
-	- backend -> database, login, register
-	- connect the front to the back to see how data would look unsecured and secured
-
+	- [ ] (recurring) show window dialogs on errors for users, catch exceptions, etc.
+	- [ ] (recurring) do tests for everything
+	- [x] backend login / register by token
+	- [x] connect the backend to the database
+	- [x] frontend login / register
+	- [ ] (fr) redirect to main page on successful authentication
+	- [ ] (fr) add a button for a window where the map should be
+	- [ ] (bk) add a map microservice and connect it to the app
+	
 
 
 - UI:
