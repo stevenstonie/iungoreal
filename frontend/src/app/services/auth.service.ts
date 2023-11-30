@@ -9,6 +9,10 @@ export class AuthService {
   private baseUrl = 'http://localhost:8080';
   private token: string;
 
+  isAuthenticated(): boolean { 
+    return false;
+  }
+
   constructor(private http: HttpClient) {
     this.token = '';
   }
