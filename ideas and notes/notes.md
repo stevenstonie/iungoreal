@@ -11,9 +11,8 @@
 	- [x] connect the backend to the database
 	- [x] frontend login / register
 	- [x] (fr) redirect to main page on successful authentication
-	- [ ] (fr) save the token locally and check for its availability each hour
-	- [ ] (fr) add a button for a window where the map should be
-	- [ ] (bk) add a map microservice and connect it to the app
+	- [ ] (fr) save the token locally and check for its availability each hour (also maybe check if when accessing)
+	- [ ] (fr + bk) add a button for a window where the map should be, create the map microservice and connect it to the app
 	- [ ] (fr) add verification for email
 	
 
