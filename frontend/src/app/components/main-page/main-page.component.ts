@@ -7,4 +7,7 @@ import { Component } from '@angular/core';
 })
 export class MainPageComponent {
 
+  constructor() { 
+    console.log(localStorage.getItem('email'));
+  }
 }

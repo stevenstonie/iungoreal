@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -8,23 +9,33 @@ import { Observable, tap } from 'rxjs';
 export class AuthService {
   private baseUrl = 'http://localhost:8080';
   private token: string;
-  
+
   constructor(private http: HttpClient) {
     this.token = localStorage.getItem('token') ?? '';
   }
-  
+
   login(credentials: { email: string, password: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/auth/login`, credentials)
+    return this.http.post<{ token: string }>(`${this.baseUrl}/api/auth/login`, credentials)
       .pipe(
         tap(response => {
-          this.token = response as string;
+          this.token = response.token;
           localStorage.setItem('token', this.token);
+          localStorage.setItem('email', credentials.email);
+          console.log(credentials.email);
         })
       );
   }
-  
-  register(user: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/auth/register`, user);
+
+  register(credentials: { email: string, password: string, firstName: string, lastName: string }): Observable<any> {
+    return this.http.post<{ token: string }>(`${this.baseUrl}/api/auth/register`, credentials)
+      .pipe(
+        tap(response => {
+          this.token = response.token;
+          localStorage.setItem('token', this.token);
+          localStorage.setItem('email', credentials.email);
+          console.log(credentials.email);
+        })
+      )
   }
 
   getToken(): string {
@@ -36,7 +47,18 @@ export class AuthService {
   }
 
   private isTokenExpired(): boolean {
-    // use something like 'jwt-decode' to decode the token and check its expiration, https://www.npmjs.com/package/jwt-decode6
-    return true;
+    try {
+      const decodedToken: any = jwtDecode(this.token);
+
+      if (decodedToken.exp === undefined) {
+        return false;
+      }
+
+      const now = Date.now() / 1000;
+      return decodedToken.exp < now;
+    } catch (error) {
+      console.error(`Error decoding token: ${error}`);
+      return false;
+    }
   }
 }

@@ -10,9 +10,11 @@
 	- [x] backend login / register by token
 	- [x] connect the backend to the database
 	- [x] frontend login / register
-	- [ ] (fr) redirect to main page on successful authentication
+	- [x] (fr) redirect to main page on successful authentication
+	- [ ] (fr) save the token locally and check for its availability each hour
 	- [ ] (fr) add a button for a window where the map should be
 	- [ ] (bk) add a map microservice and connect it to the app
+	- [ ] (fr) add verification for email
 	
 
 
