@@ -23,7 +23,6 @@ export class AuthService {
           this.token = response.token;
           localStorage.setItem('token', this.token);
           localStorage.setItem('email', credentials.email);
-          console.log(credentials.email);
         })
       );
   }
@@ -35,7 +34,6 @@ export class AuthService {
           this.token = response.token;
           localStorage.setItem('token', this.token);
           localStorage.setItem('email', credentials.email);
-          console.log(credentials.email);
         })
       )
   }
@@ -67,8 +65,6 @@ export class AuthService {
       }
 
       const now = Date.now() / 1000;
-      console.log(decodedToken.exp);
-      console.log(now);
       return decodedToken.exp < now;
     } catch (error) {
       console.error(`Error decoding token: ${error}`);

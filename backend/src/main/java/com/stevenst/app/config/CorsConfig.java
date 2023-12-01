@@ -10,15 +10,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
-	private static final String mapping = "/api/**";
+    private static final String MAPPING = "/api/**";
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping(mapping)
-            .allowedOrigins("http://localhost:4200")
-            .allowedMethods("GET", "POST", "PUT", "DELETE")
-            .allowCredentials(true)
-            .allowedHeaders("Authorization", "Content-Type");
+        registry.addMapping(MAPPING)
+                .allowedOrigins("http://localhost:4200")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowCredentials(true)
+                .allowedHeaders("Authorization", "Content-Type");
     }
 
     @Bean
@@ -33,7 +33,7 @@ public class CorsConfig implements WebMvcConfigurer {
         configuration.addAllowedHeader("Content-Type");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration(mapping, configuration);
+        source.registerCorsConfiguration(MAPPING, configuration);
 
         return source;
     }

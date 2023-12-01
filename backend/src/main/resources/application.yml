@@ -1,3 +1,7 @@
+server:
+  port: 8080
+  error:
+    include-message: always
 spring:
   profiles:
     include: dev
@@ -5,21 +9,26 @@ spring:
     user:
       name: user
       password: password
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
 
 # # fill these in the application-dev.yml
 # spring:
+#   application:
+#     name: ___
 #   datasource:
-#     url:
-#     username:
-#     password:
-#     driver-class-name:
+#     url: ___
+#     username: ___
+#     password: ___
+#     driver-class-name: ___
 #   jpa:
 #     hibernate:
-#       ddl-auto:
-#     show-sql:
+#       ddl-auto: ___
+#     show-sql: ___
 #     properties:
 #       hibernate:
-#         dialect:
-#     database:
-
-# jwtSecret:
+#         dialect: ___
+#     database: ___
+# jwt:
+#   secret-key: ___
