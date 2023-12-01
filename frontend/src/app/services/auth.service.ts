@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, map, of, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -9,9 +9,11 @@ import { jwtDecode } from 'jwt-decode';
 export class AuthService {
   private baseUrl = 'http://localhost:8080';
   private token: string;
+  private email: string;
 
   constructor(private http: HttpClient) {
-    this.token = localStorage.getItem('token') ?? '';
+    this.token = this.getToken() ?? '';
+    this.email = this.getEmail() ?? '';
   }
 
   login(credentials: { email: string, password: string }): Observable<any> {
@@ -39,7 +41,17 @@ export class AuthService {
   }
 
   getToken(): string {
-    return this.token;
+    return localStorage.getItem('token') ?? '';
+  }
+
+  getEmail(): string {
+    return localStorage.getItem('email') ?? '';
+  }
+
+  logout(): void {
+    this.token = '';
+    localStorage.removeItem('token');
+    localStorage.removeItem('email');
   }
 
   isAuthenticated(): boolean {
@@ -55,6 +67,8 @@ export class AuthService {
       }
 
       const now = Date.now() / 1000;
+      console.log(decodedToken.exp);
+      console.log(now);
       return decodedToken.exp < now;
     } catch (error) {
       console.error(`Error decoding token: ${error}`);

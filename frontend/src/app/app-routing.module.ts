@@ -8,7 +8,7 @@ const routes: Routes = [
   { path: 'main-page', component: MainPageComponent, canActivate: [authGuard] },
   { path: 'auth', component: AuthComponent },
   { path: '', redirectTo: '/main-page', pathMatch: 'full' },
-  { path: '**', redirectTo: '/main-page', pathMatch: 'full' } // change this for a 404 page
+  { path: '**', redirectTo: '/main-page', pathMatch: 'full' } // TODO: change this for a 404 page maybe
 ];
 
 @NgModule({
