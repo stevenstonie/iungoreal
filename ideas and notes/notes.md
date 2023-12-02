@@ -14,7 +14,8 @@
 	- [ ] (fr) save the token locally and check for its availability each hour (also maybe check if when accessing)
 	- [ ] (fr + bk) add a button for a window where the map should be, create the map microservice and connect it to the app
 	- [ ] (fr) add verification for email
-	
+	- [ ] (fr) add logout functionality
+
 
 
 - UI:
@@ -68,7 +69,6 @@
 	- start with the app. some models, the database, etc.
 	- add a simple front end to test the features
 	- add and work on the security: authentication, authorization, password encryption, etc.
-	- see how to implement the map microservice and how to integrate it with the app (add the map, shortest path algorithm, integrate feature for users to interact with the map)
 	- add the chat microservice
 	- continue with the app (models, db, etc.)
 	- notifications

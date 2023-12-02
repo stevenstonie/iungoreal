@@ -6,8 +6,13 @@ import { Component } from '@angular/core';
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent {
+  email: string;
+
+  toggleMap() {
+    console.log('toggle map');
+  }
 
   constructor() { 
-    console.log(localStorage.getItem('email'));
+    this.email = localStorage.getItem('email') ?? '';
   }
 }
