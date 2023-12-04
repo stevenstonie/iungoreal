@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import io.jsonwebtoken.SignatureAlgorithm;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +19,13 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtServiceImpl {
-	private static final String SECRET_KEY = "1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd"; // TODO: solve the @Value problem
+	@Value("${jwt.secret-key}")
+	private String secretKey;
 	private static final long EXPIRATION_TIME = (long) 1000 * 60 * 60 * 24; // 24 hours
+
+	public String getSecretKey() {
+		return secretKey;
+	}
 
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
@@ -68,7 +75,7 @@ public class JwtServiceImpl {
 	}
 
 	private Key getSignInKey() {
-		byte[] keyBites = Decoders.BASE64.decode(SECRET_KEY);
+		byte[] keyBites = Decoders.BASE64.decode(secretKey);
 		return Keys.hmacShaKeyFor(keyBites);
 	}
 }

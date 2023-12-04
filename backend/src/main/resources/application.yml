@@ -5,6 +5,21 @@ server:
 spring:
   profiles:
     include: dev
+  application:
+    name: iungoreal
+  datasource:
+    url: jdbc:mysql://localhost:3306/iungorealdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: username_here
+    password: password_here
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    database: mysql
   security:
     user:
       name: user
@@ -12,23 +27,5 @@ spring:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-
-# # fill these in the application-dev.yml
-# spring:
-#   application:
-#     name: ___
-#   datasource:
-#     url: ___
-#     username: ___
-#     password: ___
-#     driver-class-name: ___
-#   jpa:
-#     hibernate:
-#       ddl-auto: ___
-#     show-sql: ___
-#     properties:
-#       hibernate:
-#         dialect: ___
-#     database: ___
-# jwt:
-#   secret-key: ___
+jwt:
+  secret-key: 1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd
