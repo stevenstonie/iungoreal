@@ -53,10 +53,17 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.token && !this.isTokenExpired();
+    if(!!this.token && this.isTokenNotExpired()) {
+      return true;
+    }
+    else {
+      this.logout();
+      console.log('user forcefully logged out due to expired token');
+      return false;
+    }
   }
 
-  private isTokenExpired(): boolean {
+  private isTokenNotExpired(): boolean {
     try {
       const decodedToken: any = jwtDecode(this.token);
 
@@ -64,8 +71,12 @@ export class AuthService {
         return false;
       }
 
-      const now = Date.now() / 1000;
-      return decodedToken.exp < now;
+      const now = Math.floor(Date.now() / 1000);
+
+      console.log('exp: ' + decodedToken.exp);
+      console.log('now: ' + now);
+
+      return now < decodedToken.exp;
     } catch (error) {
       console.error(`Error decoding token: ${error}`);
       return false;
