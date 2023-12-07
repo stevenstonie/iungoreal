@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import * as L from 'leaflet';
 
 @Component({
   selector: 'app-main-page',
@@ -8,15 +7,14 @@ import * as L from 'leaflet';
 })
 export class MainPageComponent {
   email: string;
-  declare map: L.Map;
   showMap: boolean = false;
 
   toggleMap() {
     this.showMap = !this.showMap;
-  }
+   }   
 
   constructor() {
     this.email = localStorage.getItem('email') ?? '';
+    
   }
-
 }
