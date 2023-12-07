@@ -1,5 +1,15 @@
+* {
+	--map-width: 80vw;
+	--map-height: 80vh;
+}
+
 #map {
-	width: 80vw;
-	height: 80vh;
-	margin: 0 auto;
+	width: var(--map-width);
+	height: var(--map-height);
+	position: absolute;
+	top: calc((100vh - (var(--map-height))) / 2);
+	left: calc((100vw - (var(--map-width))) / 2);
+	right: 0;
+	bottom: 0;
+	z-index: 999;
 }
