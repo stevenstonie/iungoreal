@@ -24,8 +24,8 @@ spring:
     user:
       name: _
       password: _
-# springdoc:
-#   swagger-ui:
-#     path: /swagger-ui.html
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
 jwt:
   secret-key: 1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd
