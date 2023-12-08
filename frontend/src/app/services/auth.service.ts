@@ -58,7 +58,7 @@ export class AuthService {
     }
     else {
       this.logout();
-      console.log('user forcefully logged out due to expired token');
+      console.log('logged out due to expired token');
       return false;
     }
   }
@@ -72,9 +72,6 @@ export class AuthService {
       }
 
       const now = Math.floor(Date.now() / 1000);
-
-      console.log('exp: ' + decodedToken.exp);
-      console.log('now: ' + now);
 
       return now < decodedToken.exp;
     } catch (error) {

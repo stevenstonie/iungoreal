@@ -7,11 +7,12 @@
 - tasks:
 	- [ ] (recurring) show window dialogs on errors for users, catch exceptions, etc.
 	- [ ] (recurring) do tests for everything
+	- [ ] (recurring) (bk) careful with sql injection when implementing db requests for specific requests
 	- [x] backend login / register by token
 	- [x] connect the backend to the database
 	- [x] frontend login / register
 	- [x] (fr) redirect to main page on successful authentication
-	- [ ] (fr) save the token locally and check for its availability each hour (also maybe check if when accessing)
+	- [x] (fr) save the token locally and check for its availability when accessing the site
 	- [ ] (fr + bk) add a button for a window where the map should be, create the map microservice and connect it to the app
 	- [ ] (fr) add verification for email
 	- [ ] (fr) add logout functionality

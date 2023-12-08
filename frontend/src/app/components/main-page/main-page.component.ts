@@ -15,6 +15,5 @@ export class MainPageComponent {
 
   constructor() {
     this.email = localStorage.getItem('email') ?? '';
-    
   }
 }

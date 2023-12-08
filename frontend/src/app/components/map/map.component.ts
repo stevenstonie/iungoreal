@@ -11,12 +11,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   declare map: L.Map;
   @ViewChild('map') mapElement!: ElementRef;
 
-  constructor() { }
-
   ngAfterViewInit() {
     console.log('MapComponent ngAfterViewInit() called'); 
-
+    
     this.initializeMap();
+    L.marker([45.663, 25.653]).addTo(this.map);
+    L.marker([45.65, 25.613]).addTo(this.map);
   }
 
   ngOnDestroy() {
