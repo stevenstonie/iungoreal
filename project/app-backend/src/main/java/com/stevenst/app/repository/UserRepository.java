@@ -6,6 +6,6 @@ import com.stevenst.app.model.User;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Integer> {  // TODO: swap 'Integer' with 'Long'
    Optional<User> findByEmail(String email);
 }
