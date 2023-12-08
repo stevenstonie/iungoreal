@@ -6,24 +6,24 @@ spring:
   profiles:
     include: dev
   application:
-    name: iungoreal
+    name: _
   datasource:
-    url: jdbc:mysql://localhost:3306/iungorealdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: username_here
-    password: password_here
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: _
+    username: _
+    password: _
+    driver-class-name: _
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: _
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: _
     database: mysql
   security:
     user:
-      name: user
-      password: password
+      name: _
+      password: _
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
