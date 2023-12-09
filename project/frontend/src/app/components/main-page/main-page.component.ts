@@ -11,20 +11,14 @@ import { AuthService } from '../../services/auth.service';
 export class MainPageComponent implements OnInit {
   currentUser: User;
   showMap: boolean = false;
+  mapParams: any;
 
   toggleMap() {
     this.showMap = !this.showMap;
   }
 
   constructor(private userService: UserService, private AuthService: AuthService) {
-    this.currentUser = {
-      id: 0,
-      email: '',
-      password: '',
-      firstname: '',
-      lastname: '',
-      role: Role.USER
-    };
+    this.currentUser = { id: 0, email: '', password: '', firstname: '', lastname: '', role: Role.USER };
   }
 
   ngOnInit() {

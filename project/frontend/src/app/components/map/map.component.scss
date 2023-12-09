@@ -1,15 +1,22 @@
 * {
-	--map-width: 80vw;
-	--map-height: 80vh;
+	--map-width: 80%;
+	--map-height: 80%;
 }
 
 #map {
 	width: var(--map-width);
 	height: var(--map-height);
-	position: absolute;
-	top: calc((100vh - (var(--map-height))) / 2);
-	left: calc((100vw - (var(--map-width))) / 2);
+	position: fixed;
+	top: calc((100% - (var(--map-height))) / 2);
+	left: calc((100% - (var(--map-width))) / 2);
 	right: 0;
 	bottom: 0;
+	z-index: 999;
+}
+
+#add-markers {
+	position: fixed;
+	top: calc((100% - var(--map-height)) / 2 + 10px);
+	right: calc((100% - var(--map-width)) / 2 + 10px);
 	z-index: 999;
 }

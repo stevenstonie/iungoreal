@@ -1,5 +1,6 @@
-import { Component, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, ViewChild, ElementRef, Input } from '@angular/core';
 import * as L from 'leaflet';
+import { Role, User } from 'src/app/models/user';
 
 
 @Component({
@@ -10,6 +11,11 @@ import * as L from 'leaflet';
 export class MapComponent implements AfterViewInit, OnDestroy {
   declare map: L.Map;
   @ViewChild('map') mapElement!: ElementRef;
+  @Input() currentUser: User;
+
+  constructor() {
+    this.currentUser = { id: 0, email: '', password: '', firstname: '', lastname: '', role: Role.USER };
+  }
 
   ngAfterViewInit() {
     console.log('MapComponent ngAfterViewInit() called'); 
@@ -32,5 +38,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
+  }
+
+  get isAdmin(): boolean {
+    return this.currentUser?.role === Role.ADMIN;
   }
 }

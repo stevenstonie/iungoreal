@@ -15,6 +15,7 @@
 	- [ ] (fr, bk) notifications
 	- [ ] (fr, bk) calendar
 	- [ ] (fr, bk) live chat
+	- [ ] (fr) do not store the token in the local storage. store it in an httpOnly cookie instead. (--> https://blog.logrocket.com/jwt-authentication-best-practices/)
 
 	_________________________________
 	---------------------------------
