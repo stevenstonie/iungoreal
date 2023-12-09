@@ -1,4 +1,8 @@
-<h1>welcome {{ email }}</h1>
+<h1>welcome {{ currentUser.email }} ( {{ currentUser.role }} )</h1>
+<button (click)="logout()">Logout</button>
+<br>
+<br>
+
 <button (click)="toggleMap()">Toggle Map</button>
 <app-map *ngIf="showMap"></app-map>
 

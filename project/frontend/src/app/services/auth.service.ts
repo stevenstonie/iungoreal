@@ -46,26 +46,32 @@ export class AuthService {
     return localStorage.getItem('email') ?? '';
   }
 
-  logout(): void {
+  removeCredentialsFromStorage(): void {
     this.token = '';
     localStorage.removeItem('token');
     localStorage.removeItem('email');
   }
 
   isAuthenticated(): boolean {
-    if(!!this.token && this.isTokenNotExpired()) {
-      return true;
-    }
-    else {
-      this.logout();
-      console.log('logged out due to expired token');
+    if (!this.token || this.token === '') {
+      console.log('logged out (no token)');
       return false;
     }
+    else if (!this.isTokenNotExpired()) {
+      console.log('logged out due to expired token');
+      this.removeCredentialsFromStorage();
+      return false;
+    }
+
+    return true;
   }
 
   private isTokenNotExpired(): boolean {
     try {
       const decodedToken: any = jwtDecode(this.token);
+
+      console.log('exp: ' + new Date(decodedToken.exp * 1000).toLocaleString());
+      console.log('now: ' + new Date(Date.now()).toLocaleString());
 
       if (decodedToken.exp === undefined) {
         return false;
