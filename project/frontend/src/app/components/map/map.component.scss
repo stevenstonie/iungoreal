@@ -3,6 +3,11 @@
 	--map-height: 80%;
 }
 
+.map-ui {
+	position: fixed;
+	z-index: 999;
+}
+
 #map {
 	width: var(--map-width);
 	height: var(--map-height);
@@ -14,9 +19,38 @@
 	z-index: 999;
 }
 
-#add-markers {
-	position: fixed;
+#add-marker-button {
 	top: calc((100% - var(--map-height)) / 2 + 10px);
 	right: calc((100% - var(--map-width)) / 2 + 10px);
-	z-index: 999;
+}
+
+#marker {
+	&-title {
+		top: calc((100% - var(--map-height)) / 2 + 40px);
+		right: calc((100% - var(--map-width)) / 2 + 10px);
+	}
+
+	&-description {
+		top: calc((100% - var(--map-height)) / 2 + 70px);
+		right: calc((100% - var(--map-width)) / 2 + 10px);
+	}
+
+	&-latitude {
+		top: calc((100% - var(--map-height)) / 2 + 100px);
+		right: calc((100% - var(--map-width)) / 2 + 10px);
+	}
+
+	&-longitude {
+		top: calc((100% - var(--map-height)) / 2 + 130px);
+		right: calc((100% - var(--map-width)) / 2 + 10px);
+	}
+
+	&-submit {
+		top: calc((100% - var(--map-height)) / 2 + 160px);
+		right: calc((100% - var(--map-width)) / 2 + 10px);
+	}
+}
+
+.click-cursor {
+	cursor: crosshair;
 }
