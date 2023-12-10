@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+	integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+	integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<div id="map" [ngClass]="getMarkerSelectionCursor()" #map></div>
+
+<div *ngIf="isCurrentUserAdmin">
+	<button class="map-ui" id="add-marker-button" (click)="toggleAddMarker()">Add Marker</button>
+
+	<div *ngIf="showMarkerInputs">
+		<input class="map-ui" id="marker-title" type="text" placeholder="marker title">
+		<input class="map-ui" id="marker-description" type="text" placeholder="marker description">
+		<input class="map-ui" id="marker-latitude" type="text" placeholder="latitude" [(ngModel)]="latitude">
+		<input class="map-ui" id="marker-longitude" type="text" placeholder="longitude" [(ngModel)]="longitude">
+		<p class="map-ui" id="marker-start-date-label">start date:</p>
+		<input class="map-ui" id="marker-start-date" type="datetime-local" placeholder="start date">
+		<p class="map-ui" id="marker-end-date-label">end date:</p>
+		<input class="map-ui" id="marker-end-date" type="datetime-local" placeholder="end date">
+		<button class="map-ui" id="marker-submit" (click)="submitMarker()">submit</button>
+	</div>
+</div>
