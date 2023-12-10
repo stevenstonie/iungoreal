@@ -1,6 +1,8 @@
 import { Component, OnDestroy, AfterViewInit, ViewChild, ElementRef, Input } from '@angular/core';
 import * as L from 'leaflet';
+import { Marker } from 'src/app/models/marker';
 import { Role, User } from 'src/app/models/user';
+import { MapService } from 'src/app/services/map.service';
 
 
 @Component({
@@ -26,7 +28,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  constructor() {
+  constructor(private mapService: MapService) {
     this.currentUser = { id: 0, email: '', password: '', firstname: '', lastname: '', role: Role.USER };
   }
 
@@ -63,6 +65,28 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   get isCurrentUserAdmin(): boolean {
     return this.currentUser?.role === Role.ADMIN;
+  }
+
+  submitMarker() {
+    const marker: Marker = {
+      id: 0,
+      title: (document.getElementById('marker-title') as HTMLInputElement).value,
+      description: (document.getElementById('marker-description') as HTMLInputElement).value,
+      latitude: this.latitude,
+      longitude: this.longitude,
+      startDate: new Date((document.getElementById('marker-start-date') as HTMLInputElement).value),
+      endDate: new Date((document.getElementById('marker-end-date') as HTMLInputElement).value)
+    };
+
+    this.mapService.addMarker(marker).subscribe({
+      next: (response) => {
+        console.log('Marker added successfully', response);
+        // Additional logic on successful submission (e.g., close input form, refresh map markers)
+      },
+      error: (error) => {
+        console.error('Error adding marker', error);
+      }
+    });
   }
 
   getMarkerSelectionCursor() {
