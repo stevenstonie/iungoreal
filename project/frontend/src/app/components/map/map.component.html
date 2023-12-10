@@ -8,10 +8,14 @@
 	<button class="map-ui" id="add-marker-button" (click)="toggleAddMarker()">Add Marker</button>
 
 	<div *ngIf="showMarkerInputs">
-		<input class="map-ui" id="marker-title" type="text" placeholder="Marker Title">
-		<input class="map-ui" id="marker-description" type="text" placeholder="Marker Description">
+		<input class="map-ui" id="marker-title" type="text" placeholder="marker title">
+		<input class="map-ui" id="marker-description" type="text" placeholder="marker description">
 		<input class="map-ui" id="marker-latitude" type="text" placeholder="latitude" [(ngModel)]="latitude">
 		<input class="map-ui" id="marker-longitude" type="text" placeholder="longitude" [(ngModel)]="longitude">
-		<button class="map-ui" id="marker-submit">submit</button>
+		<p class="map-ui" id="marker-start-date-label">start date:</p>
+		<input class="map-ui" id="marker-start-date" type="datetime-local" placeholder="start date">
+		<p class="map-ui" id="marker-end-date-label">end date:</p>
+		<input class="map-ui" id="marker-end-date" type="datetime-local" placeholder="end date">
+		<button class="map-ui" id="marker-submit" (click)="submitMarker()">submit</button>
 	</div>
 </div>

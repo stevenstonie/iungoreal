@@ -45,8 +45,32 @@
 		right: calc((100% - var(--map-width)) / 2 + 10px);
 	}
 
+	&-start-date {
+		&-label {
+			top: calc((100% - var(--map-height)) / 2 + 140px);
+			right: calc((100% - var(--map-width)) / 2 + 10px);
+			background-color: #fff;
+			padding: 1px;
+		}
+
+		top: calc((100% - var(--map-height)) / 2 + 180px);
+		right: calc((100% - var(--map-width)) / 2 + 10px);
+	}
+
+	&-end-date {
+		&-label {
+			top: calc((100% - var(--map-height)) / 2 + 190px);
+			right: calc((100% - var(--map-width)) / 2 + 10px);
+			background-color: #fff;
+			padding: 1px;
+		}
+
+		top: calc((100% - var(--map-height)) / 2 + 230px);
+		right: calc((100% - var(--map-width)) / 2 + 10px);
+	}
+
 	&-submit {
-		top: calc((100% - var(--map-height)) / 2 + 160px);
+		top: calc((100% - var(--map-height)) / 2 + 260px);
 		right: calc((100% - var(--map-width)) / 2 + 10px);
 	}
 }
