@@ -7,26 +7,14 @@
 - tasks:
 	- [ ] (recurring) show window dialogs on errors for users, catch exceptions, etc.
 	- [ ] (recurring) do tests for everything
-	- [ ] (recurring) (bk) careful with sql injection when implementing db requests for specific requests
-	------------------
-	- [ ] (fr, bk) add a button for a window where the map should be, create the map microservice and connect it to the app (make db queries for saved data like markers and send some geoJSON through GET requests)
-	- [ ] (fr) add verification through email
-	- [ ] (fr) add logout button (dont save the task)
-	- [ ] (fr, bk) notifications
-	- [ ] (fr, bk) calendar
-	- [ ] (fr, bk) live chat
-	- [ ] (fr) do not store the token in the local storage. store it in an httpOnly cookie instead. (--> https://blog.logrocket.com/jwt-authentication-best-practices/)
-
-	_________________________________
-	---------------------------------
-	- [x] add a frontend and connect it to the backend
 	- [x] backend login / register by token
+	- [x] connect the backend to the database
 	- [x] frontend login / register
 	- [x] (fr) redirect to main page on successful authentication
-	- [x] (fr) save the token locally and check for its availability when accessing the site
-
-
-
+	- [ ] (fr) save the token locally and check for its availability each hour (also maybe check if when accessing)
+	- [ ] (fr + bk) add a button for a window where the map should be, create the map microservice and connect it to the app
+	- [ ] (fr) add verification for email
+	
 
 
 - UI:
@@ -66,6 +54,7 @@
 
 - ideas:
 	- app time restriction
+	- pedometer
 	- calendar for events
 	- users can pin their recollections on the map (probably a private map for each user)
 	- news section
@@ -73,3 +62,13 @@
 	- marketplace
 	- live chat
 
+
+
+- roadmap (+notes):
+	- start with the app. some models, the database, etc.
+	- add a simple front end to test the features
+	- add and work on the security: authentication, authorization, password encryption, etc.
+	- see how to implement the map microservice and how to integrate it with the app (add the map, shortest path algorithm, integrate feature for users to interact with the map)
+	- add the chat microservice
+	- continue with the app (models, db, etc.)
+	- notifications
