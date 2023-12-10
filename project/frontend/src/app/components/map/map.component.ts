@@ -12,14 +12,27 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   declare map: L.Map;
   @ViewChild('map') mapElement!: ElementRef;
   @Input() currentUser: User;
+  showMarkerInputs: boolean = false;
+  latitude!: number;
+  longitude!: number;
+
+  toggleAddMarker() {
+    this.showMarkerInputs = !this.showMarkerInputs;
+
+    if (this.showMarkerInputs) {
+      this.map.on('click', this.handleMapClick);
+    } else {
+      this.map.off('click', this.handleMapClick);
+    }
+  }
 
   constructor() {
     this.currentUser = { id: 0, email: '', password: '', firstname: '', lastname: '', role: Role.USER };
   }
 
   ngAfterViewInit() {
-    console.log('MapComponent ngAfterViewInit() called'); 
-    
+    console.log('MapComponent ngAfterViewInit() called');
+
     this.initializeMap();
     L.marker([45.663, 25.653]).addTo(this.map);
     L.marker([45.65, 25.613]).addTo(this.map);
@@ -40,7 +53,21 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }).addTo(this.map);
   }
 
-  get isAdmin(): boolean {
+  handleMapClick = (event: L.LeafletMouseEvent) => {
+    if (this.showMarkerInputs) {
+      this.latitude = event.latlng.lat;
+      this.longitude = event.latlng.lng;
+      console.log('Clicked LatLng:', this.latitude, ", " + this.longitude);
+    }
+  };
+
+  get isCurrentUserAdmin(): boolean {
     return this.currentUser?.role === Role.ADMIN;
+  }
+
+  getMarkerSelectionCursor() {
+    return {
+      'click-cursor': this.showMarkerInputs
+    }
   }
 }
