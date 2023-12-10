@@ -13,14 +13,14 @@ export class MapService {
   }
 
   addMarker(marker: Marker) {
-    return this.httpClient.post('http://localhost:8081/api/addMarker', marker);
+    return this.httpClient.post('http://localhost:8081/api/markers/addMarker', marker);
   }
 
   updateMarker(marker: Marker) {
-    return this.httpClient.put('http://localhost:8081/api/updateMarker', marker);
+    return this.httpClient.put('http://localhost:8081/api/markers/updateMarker', marker);
   }
 
   deleteMarker(id: number) {
-    return this.httpClient.delete(`http://localhost:8081/api/deleteMarker/${id}`);
+    return this.httpClient.delete(`http://localhost:8081/api/markers/deleteMarker/${id}`);
   }
 }

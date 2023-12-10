@@ -18,18 +18,20 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.util.Collection;
 import java.util.List;
 
 @Entity
+@Table(name = "user")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Column(nullable = false, unique = true)
