@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Marker } from '../models/marker';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +9,8 @@ import { Marker } from '../models/marker';
 export class MapService {
   constructor(private httpClient: HttpClient) { }
 
-  getMarkers() {
-    return this.httpClient.get('http://localhost:8081/api/markers');
+  getMarkers(): Observable<Marker[]> {
+    return this.httpClient.get<Marker[]>('http://localhost:8081/api/markers/');
   }
 
   addMarker(marker: Marker) {

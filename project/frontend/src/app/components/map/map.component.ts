@@ -17,6 +17,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   showMarkerInputs: boolean = false;
   latitude!: number;
   longitude!: number;
+  markers: Marker[] = [];
 
   toggleAddMarker() {
     this.showMarkerInputs = !this.showMarkerInputs;
@@ -36,8 +37,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     console.log('MapComponent ngAfterViewInit() called');
 
     this.initializeMap();
-    L.marker([45.663, 25.653]).addTo(this.map);
-    L.marker([45.65, 25.613]).addTo(this.map);
+
+    this.mapService.getMarkers().subscribe({
+      next: (response) => {
+        this.markers = response;
+        this.placeMarkersOnMap();
+      },
+      error: (error) => {
+        console.error('Error getting markers', error);
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -45,6 +54,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       console.log('MapComponent ngOnDestroy() called');
 
       this.map.remove();
+
+      this.markers = [];
     }
   }
 
@@ -72,8 +83,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       id: 0,
       title: (document.getElementById('marker-title') as HTMLInputElement).value,
       description: (document.getElementById('marker-description') as HTMLInputElement).value,
-      latitude: this.latitude,
-      longitude: this.longitude,
+      latitude: parseFloat((document.getElementById('marker-latitude') as HTMLInputElement).value),
+      longitude: parseFloat((document.getElementById('marker-longitude') as HTMLInputElement).value),
       startDate: new Date((document.getElementById('marker-start-date') as HTMLInputElement).value),
       endDate: new Date((document.getElementById('marker-end-date') as HTMLInputElement).value)
     };
@@ -87,6 +98,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         console.error('Error adding marker', error);
       }
     });
+  }
+
+  placeMarkersOnMap() {
+    for (const marker of this.markers) {
+      L.marker([marker.latitude, marker.longitude]).addTo(this.map);
+    }
   }
 
   getMarkerSelectionCursor() {
