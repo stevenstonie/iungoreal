@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.stevenst.app.service.JwtService;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -22,7 +24,7 @@ import io.jsonwebtoken.security.Keys;
  * 
  */
 @Service
-public class JwtServiceImpl {
+public class JwtServiceImpl implements JwtService {
 	@Value("${jwt.secret-key}")
 	private String secretKey;
 	private static final long EXPIRATION_TIME = 24L * 60L * 60L * 1000L; // 24 hours
