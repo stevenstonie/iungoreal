@@ -26,9 +26,5 @@ public interface JwtService {
 
 	Date extractExpiration(String token);
 
-	Claims extractAllClaims(String token);
-
-	Key getSignInKey();
-
 	String extractToken(String authHeader);
 }
