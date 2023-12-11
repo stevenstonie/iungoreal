@@ -24,6 +24,11 @@
 	right: calc((100% - var(--map-width)) / 2 + 10px);
 }
 
+#remove-marker-button {
+	top: calc((100% - var(--map-height)) / 2 + 40px);
+	right: calc((100% - var(--map-width)) / 2 + 10px);
+}
+
 #marker {
 	&-title {
 		top: calc((100% - var(--map-height)) / 2 + 40px);
@@ -75,6 +80,12 @@
 	}
 }
 
+#close-add-marker-menu {
+	top: calc((100% - var(--map-height)) / 2 + 290px);
+	right: calc((100% - var(--map-width)) / 2 + 10px);
+}
+
 .click-cursor {
 	cursor: crosshair;
 }
+

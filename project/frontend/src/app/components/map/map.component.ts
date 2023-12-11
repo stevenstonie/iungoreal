@@ -18,16 +18,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   latitude!: number;
   longitude!: number;
   markers: Marker[] = [];
-
-  toggleAddMarker() {
-    this.showMarkerInputs = !this.showMarkerInputs;
-
-    if (this.showMarkerInputs) {
-      this.map.on('click', this.handleMapClick);
-    } else {
-      this.map.off('click', this.handleMapClick);
-    }
-  }
+  menuSelected: boolean = false;
 
   constructor(private mapService: MapService) {
     this.currentUser = { id: 0, email: '', password: '', firstname: '', lastname: '', role: Role.USER };
@@ -78,6 +69,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     return this.currentUser?.role === Role.ADMIN;
   }
 
+  toggleAddMarker() {
+    this.showMarkerInputs = !this.showMarkerInputs;
+    this.menuSelected = !this.menuSelected;
+
+    if (this.showMarkerInputs) {
+      this.map.on('click', this.handleMapClick);
+    } else {
+      this.map.off('click', this.handleMapClick);
+    }
+  }
+
   submitMarker() {
     const marker: Marker = {
       id: 0,
@@ -92,7 +94,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.mapService.addMarker(marker).subscribe({
       next: (response) => {
         console.log('Marker added successfully', response);
-        // Additional logic on successful submission (e.g., close input form, refresh map markers)
       },
       error: (error) => {
         console.error('Error adding marker', error);
@@ -110,5 +111,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     return {
       'click-cursor': this.showMarkerInputs
     }
+  }
+
+  removeMarker() {
+
+  }
+
+  closeAddMarkerMenu() {
+    this.showMarkerInputs = !this.showMarkerInputs;
+    this.menuSelected = !this.menuSelected;
   }
 }

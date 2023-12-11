@@ -5,8 +5,11 @@
 <div id="map" [ngClass]="getMarkerSelectionCursor()" #map></div>
 
 <div *ngIf="isCurrentUserAdmin">
-	<button class="map-ui" id="add-marker-button" (click)="toggleAddMarker()">Add Marker</button>
-
+	<div *ngIf="!menuSelected">
+		<button class="map-ui" id="add-marker-button" (click)="toggleAddMarker()">add marker</button>
+		<button class="map-ui" id="remove-marker-button" (click)="removeMarker()">remove marker</button>
+	</div>
+	
 	<div *ngIf="showMarkerInputs">
 		<input class="map-ui" id="marker-title" type="text" placeholder="marker title">
 		<input class="map-ui" id="marker-description" type="text" placeholder="marker description">
@@ -17,5 +20,7 @@
 		<p class="map-ui" id="marker-end-date-label">end date:</p>
 		<input class="map-ui" id="marker-end-date" type="datetime-local" placeholder="end date">
 		<button class="map-ui" id="marker-submit" (click)="submitMarker()">submit</button>
+		<button class="map-ui" id="close-add-marker-menu" (click)="closeAddMarkerMenu()">close</button>
 	</div>
+
 </div>
