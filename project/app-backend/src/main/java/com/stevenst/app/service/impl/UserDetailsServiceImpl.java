@@ -13,24 +13,26 @@ import com.stevenst.app.repository.UserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-   private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-   public UserDetailsServiceImpl(UserRepository userRepository) {
-       this.userRepository = userRepository;
-   }
+    public UserDetailsServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-   @Override
-   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-       Optional<User> user = userRepository.findByEmail(username);
-       if (user.isEmpty()) {
-           throw new UsernameNotFoundException("User not found");
-       }
-       return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(),
-               new ArrayList<>());
-   }
-   
-   public UserDetails convertUserToUserDetails(User user) {
-       return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
-               new ArrayList<>());
-   }
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByEmail(username);
+
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return new org.springframework.security.core.userdetails.User(user.get().getUsername(),
+                user.get().getPassword(),
+                new ArrayList<>());
+    }
+
+    public UserDetails convertUserToUserDetails(User user) {
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
+                new ArrayList<>());
+    }
 }
