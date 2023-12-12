@@ -36,20 +36,29 @@ class JwtAuthenticationFilterTest {
     private HttpServletRequest request;
     private HttpServletResponse response;
     private FilterChain filterChain;
+    private final String token = "random_jwt_token";
+    private final String userEmail = "random_name@email.com";
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         filterChain = mock(FilterChain.class);
     }
 
     @Test
-    void doFilterInternal_WithValidToken_ShouldAuthenticateUser() throws ServletException, IOException {
-        String token = "working_jwt_token";
-        String userEmail = "test@example.com";
+    void doFilterInternal_InvokesFilterChainDoFilter() throws ServletException, IOException {
+        mockTokenRequest(token, userEmail, true);
 
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain, times(1)).doFilter(request, response);
+    }
+
+    @Test
+    void doFilterInternal_WithValidToken_ShouldAuthenticateUser() throws ServletException, IOException {
         mockTokenRequest(token, userEmail, true);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
@@ -61,14 +70,23 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void doFilterInternal_WithInvalidToken_ShouldNotAuthenticateUser() throws ServletException, IOException {
-        String token = "random_jwt_token";
-        String userEmail = "name@email.com";
-
         mockTokenRequest(token, userEmail, false);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
         verify(jwtService, times(1)).extractUsername(anyString());
+        verify(userDetailsService, times(0)).loadUserByUsername(anyString());
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(UserDetails.class));
+    }
+
+    @Test
+    void doFilterInternal_WithMissingAuthorizationHeader_ShouldNotAuthenticateUser()
+            throws ServletException, IOException {
+        when(request.getHeader("Authorization")).thenReturn(null);
+
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        verify(jwtService, times(0)).extractUsername(anyString());
         verify(userDetailsService, times(0)).loadUserByUsername(anyString());
         verify(jwtService, times(0)).isTokenValid(anyString(), any(UserDetails.class));
     }
