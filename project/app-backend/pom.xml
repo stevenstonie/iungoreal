@@ -21,6 +21,7 @@
 		<io.jsonwebtoken.version>0.11.5</io.jsonwebtoken.version>
 		<springdoc-openapi.version>2.2.0</springdoc-openapi.version>
 		<junit.jupiter.version>5.10.1</junit.jupiter.version>
+		<spring.security.test.version>6.2.0</spring.security.test.version>
 	</properties>
 
 	<dependencies>
@@ -115,6 +116,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 			<version>${spring.boot.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>${spring.security.test.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
