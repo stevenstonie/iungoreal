@@ -49,6 +49,18 @@ class AuthenticationControllerIntegrationTest {
 
     @Test
     @Transactional
+    void testRegistrationEndpoint() throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest("testuser123456", "testpassword123456", "test", "user");
+
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").isNotEmpty());
+    }
+
+    @Test
+    @Transactional
     void testAuthenticationEndpoint() throws Exception {
         AuthenticationRequest authenticationRequest = new AuthenticationRequest(EMAIL, PASSWORD);
 
@@ -57,6 +69,19 @@ class AuthenticationControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(authenticationRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").isNotEmpty());
+    }
+
+    @Test
+    @Transactional
+    void testAuthenticationEndpointWithInvalidCredentials() throws Exception {
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest("testuser123",
+                "wrongPassword");
+
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authenticationRequest)))
+                .andExpect(status().isUnauthorized());
+                // TODO: add another assertion for a thrown exception
     }
 
     // ------------------------------------------------------------------------
