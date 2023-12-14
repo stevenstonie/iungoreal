@@ -11,10 +11,10 @@
 	------------------
 	- [ ] (fr, bk) add a button for a window where the map should be, create the map microservice and connect it to the app (make db queries for saved data like markers and send some geoJSON through GET requests)
 	- [ ] (fr) add verification through email
-	- [ ] (fr) add logout button (dont save the task)
 	- [ ] (fr, bk) notifications
 	- [ ] (fr, bk) calendar
 	- [ ] (fr, bk) live chat
+	- [ ] (fr, bk) news section
 	- [ ] (fr) do not store the token in the local storage. store it in an httpOnly cookie instead. (--> https://blog.logrocket.com/jwt-authentication-best-practices/)
 
 	_________________________________

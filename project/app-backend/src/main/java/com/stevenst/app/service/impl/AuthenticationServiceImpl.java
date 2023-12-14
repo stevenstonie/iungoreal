@@ -25,6 +25,10 @@ public class AuthenticationServiceImpl {
 	private final AuthenticationManager authenticationManager;
 
 	public AuthenticationResponse register(RegisterRequest request) {
+		if (request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
+			throw new IllegalStateException("Credentials cannot be empty");
+		}
+
 		var user = User.builder()
 				.firstname(request.getFirstName())
 				.lastname(request.getLastName())
