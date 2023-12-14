@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.stevenst.app.auth.AuthenticationRequest;
 import com.stevenst.app.auth.AuthenticationResponse;
 import com.stevenst.app.auth.RegisterRequest;
-import com.stevenst.app.service.impl.AuthenticationServiceImpl;
+import com.stevenst.app.service.impl.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthenticationController {
-	private final AuthenticationServiceImpl authService;
+public class AuthenticationController implements AuthenticationApi {
+	private final AuthenticationService authService;
 
 	@PostMapping("/register")
 	public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
