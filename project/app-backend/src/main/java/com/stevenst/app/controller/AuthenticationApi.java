@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 public interface AuthenticationApi {
-	@Operation(summary = "Register", description = "Create a new user account", tags = "Authentication")
+	@Operation(summary = "Register", description = "Create a new user account and return JWT token", tags = "Authentication")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Registration Successful", content = {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = String.class)) }),
