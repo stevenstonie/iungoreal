@@ -9,5 +9,3 @@ public class App {
 		SpringApplication.run(App.class, args);
 	}
 }
-
-// TODO: returns 401 when user is already registered instead of the usual 403

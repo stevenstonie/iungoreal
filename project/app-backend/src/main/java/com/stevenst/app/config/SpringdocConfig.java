@@ -15,7 +15,7 @@ import io.swagger.v3.oas.models.info.Info;
 @SecurityScheme(name = "bearerAuth", type = SecuritySchemeType.HTTP, scheme = "bearer")
 public class SpringdocConfig {
     @Bean
-    public OpenAPI baseOpenAPI() {
+    OpenAPI baseOpenAPI() {
         return new OpenAPI().info(new Info().title("iungoreal endpoints").version("1.0.0")
                 .description("below are the endpoints for the iungoreal app. use a valid bearer token to access the endpoints"));
     }
