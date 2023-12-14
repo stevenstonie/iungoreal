@@ -34,5 +34,5 @@ public interface AuthenticationApi {
 			@ApiResponse(responseCode = "401", description = "Unauthorized - token expired", content = @Content) })
 
 	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request);
+	public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request);
 }

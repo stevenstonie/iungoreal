@@ -6,6 +6,7 @@ import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.model.Role;
 import com.stevenst.app.model.User;
 import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.service.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 	private final UserRepository userRepo;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtServiceImpl jwtService;
@@ -45,7 +46,7 @@ public class AuthenticationService {
 				.build();
 	}
 
-	public AuthenticationResponse authenticate(AuthenticationRequest request) {
+	public AuthenticationResponse login(AuthenticationRequest request) {
 		try {
 			authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
