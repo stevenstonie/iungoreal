@@ -1,7 +1,7 @@
 package com.stevenst.app.service.impl;
 
-import com.stevenst.app.auth.AuthenticationRequest;
-import com.stevenst.app.auth.AuthenticationResponse;
+import com.stevenst.app.auth.AuthRequest;
+import com.stevenst.app.auth.AuthResponse;
 import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.model.Role;
 import com.stevenst.app.model.User;
@@ -25,7 +25,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private final JwtServiceImpl jwtService;
 	private final AuthenticationManager authenticationManager;
 
-	public AuthenticationResponse register(RegisterRequest request) {
+	public AuthResponse register(RegisterRequest request) {
 		if (request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
 			throw new IllegalStateException("Credentials cannot be empty");
 		}
@@ -41,12 +41,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		userRepo.save(user);
 		var jwtToken = jwtService.generateToken(user);
 
-		return AuthenticationResponse.builder()
+		return AuthResponse.builder()
 				.token(jwtToken)
 				.build();
 	}
 
-	public AuthenticationResponse login(AuthenticationRequest request) {
+	public AuthResponse login(AuthRequest request) {
 		try {
 			authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -58,7 +58,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 		var jwtToken = jwtService.generateToken(user);
 
-		return AuthenticationResponse.builder()
+		return AuthResponse.builder()
 				.token(jwtToken)
 				.build();
 	}

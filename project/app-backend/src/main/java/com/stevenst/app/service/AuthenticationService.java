@@ -1,11 +1,11 @@
 package com.stevenst.app.service;
 
-import com.stevenst.app.auth.AuthenticationRequest;
-import com.stevenst.app.auth.AuthenticationResponse;
+import com.stevenst.app.auth.AuthRequest;
+import com.stevenst.app.auth.AuthResponse;
 import com.stevenst.app.auth.RegisterRequest;
 
 public interface AuthenticationService {
-	AuthenticationResponse register(RegisterRequest request);
+	AuthResponse register(RegisterRequest request);
 
-	AuthenticationResponse login(AuthenticationRequest request);
+	AuthResponse login(AuthRequest request);
 }

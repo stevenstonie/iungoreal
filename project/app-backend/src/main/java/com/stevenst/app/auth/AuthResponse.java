@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class AuthResponse {
 	private String token;
 	private String error;
 
@@ -27,8 +27,8 @@ public class AuthenticationResponse {
             return this;
         }
 
-        public AuthenticationResponse build() {
-            return new AuthenticationResponse(this.token, this.error);
+        public AuthResponse build() {
+            return new AuthResponse(this.token, this.error);
         }
     }
 }

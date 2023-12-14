@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.stevenst.app.auth.AuthenticationRequest;
-import com.stevenst.app.auth.AuthenticationResponse;
+import com.stevenst.app.auth.AuthRequest;
+import com.stevenst.app.auth.AuthResponse;
 import com.stevenst.app.auth.RegisterRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,7 +24,8 @@ public interface AuthenticationApi {
 			@ApiResponse(responseCode = "401", description = "Unauthorized - token expired", content = @Content) })
 
 	@PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request);
+	
+	public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request);
 
 	@Operation(summary = "Login", description = "Authenticate user and return JWT token", tags = "Authentication")
 	@ApiResponses(value = {
@@ -34,5 +35,6 @@ public interface AuthenticationApi {
 			@ApiResponse(responseCode = "401", description = "Unauthorized - token expired", content = @Content) })
 
 	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request);
+
+	public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request);
 }

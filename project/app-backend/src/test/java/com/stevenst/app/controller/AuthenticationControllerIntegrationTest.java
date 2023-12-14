@@ -1,7 +1,7 @@
 package com.stevenst.app.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stevenst.app.auth.AuthenticationRequest;
+import com.stevenst.app.auth.AuthRequest;
 import com.stevenst.app.auth.RegisterRequest;
 
 import io.jsonwebtoken.Jwts;
@@ -74,7 +74,7 @@ class AuthenticationControllerIntegrationTest {
     @Test
     @Transactional
     void testAuthenticationEndpoint() throws Exception {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest(EMAIL, PASSWORD);
+        AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
 
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -88,7 +88,7 @@ class AuthenticationControllerIntegrationTest {
     @Test
     @Transactional
     void testAuthenticationEndpointWithInvalidCredentials() throws Exception {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest("testuser123", "wrong_password");
+        AuthRequest authenticationRequest = new AuthRequest("testuser123", "wrong_password");
 
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +122,7 @@ class AuthenticationControllerIntegrationTest {
     @Test
     @Transactional
     void testAuthenticationEndpointWithMissingCredentials() throws Exception {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest("", "");
+        AuthRequest authenticationRequest = new AuthRequest("", "");
 
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +134,7 @@ class AuthenticationControllerIntegrationTest {
     @Transactional
     void testAuthenticationWithABadSignature() throws Exception {
         String expiredToken = generateTokenWithBadSignature();
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest(EMAIL, PASSWORD);
+        AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
 
         assertThrows(SignatureException.class, () -> {
             mockMvc.perform(post("/api/auth/login")
