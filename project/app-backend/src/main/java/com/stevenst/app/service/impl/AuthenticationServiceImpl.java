@@ -9,10 +9,8 @@ import com.stevenst.app.model.User;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.AuthenticationService;
 
-import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import io.jsonwebtoken.SignatureAlgorithm;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 
 /**
  * !!! email and username here are interchangeable !!!
@@ -50,11 +50,11 @@ public class JwtServiceImpl implements JwtService {
 	public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
 		return Jwts
 				.builder()
-				.setClaims(extraClaims)
-				.setSubject(userDetails.getUsername())
-				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-				.signWith(getSignInKey(), SignatureAlgorithm.HS256)
+				.claims(extraClaims)
+				.subject(userDetails.getUsername())
+				.issuedAt(new Date(System.currentTimeMillis()))
+				.expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.signWith(getSignInKey())	// TODO: check if the key is enough without the signature algorithm
 				.compact();
 	}
 
@@ -89,12 +89,14 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	private Claims extractAllClaims(String token) {
-		return Jwts
-				.parserBuilder()
-				.setSigningKey(getSignInKey())
+		Key key = getSignInKey();
+		SecretKey secretKey2 = new SecretKeySpec(key.getEncoded(), key.getAlgorithm());
+
+		return Jwts.parser()
+				.verifyWith(secretKey2)
 				.build()
-				.parseClaimsJws(token)
-				.getBody();
+				.parseSignedClaims(token)
+				.getPayload();
 	}
 
 	private Key getSignInKey() {
