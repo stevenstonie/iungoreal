@@ -8,6 +8,7 @@ import com.stevenst.app.model.User;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.AuthenticationService;
 
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -52,11 +53,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	public AuthResponse login(AuthRequest request) {
+		if (request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
+			throw new IllegalStateException("Credentials cannot be empty");
+		}
+
 		try {
 			authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-		} catch (AuthenticationException ex) {
-			throw new BadCredentialsException("Authentication Failed");
+		} catch (AuthenticationException e) {
+			throw new BadCredentialsException("Authentication failed");
+			// TODO: create an AuthenticationServiceException class
 		}
 
 		var user = userRepo.findByEmail(request.getEmail())

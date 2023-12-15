@@ -18,6 +18,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
 /**
  * !!! email and username here are interchangeable !!!
@@ -79,6 +80,14 @@ public class JwtServiceImpl implements JwtService {
 		return extractClaim(token, Claims::getExpiration);
 	}
 
+	@Override
+	public String extractToken(String authHeader) {
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+			throw new IllegalArgumentException("Invalid Authorization header");
+		}
+		return authHeader.substring(7);
+	}
+
 	private Claims extractAllClaims(String token) {
 		return Jwts
 				.parserBuilder()
@@ -92,13 +101,5 @@ public class JwtServiceImpl implements JwtService {
 	private Key getSignInKey() {
 		byte[] keyBites = Decoders.BASE64.decode(secretKey);
 		return Keys.hmacShaKeyFor(keyBites);
-	}
-
-	@Override
-	public String extractToken(String authHeader) {
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			throw new IllegalArgumentException("Invalid Authorization header");
-		}
-		return authHeader.substring(7);
 	}
 }
