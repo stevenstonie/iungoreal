@@ -3,6 +3,7 @@ package com.stevenst.app.service.impl;
 import com.stevenst.app.auth.AuthRequest;
 import com.stevenst.app.auth.AuthResponse;
 import com.stevenst.app.auth.RegisterRequest;
+import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.model.Role;
 import com.stevenst.app.model.User;
 import com.stevenst.app.repository.UserRepository;
@@ -28,12 +29,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	public AuthResponse register(RegisterRequest request) {
 		if (request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
-			throw new IllegalStateException("Credentials cannot be empty");
+			throw new IgorAuthenticationException("Credentials cannot be empty");
 		}
 
 		var existingUser = userRepo.findByEmail(request.getEmail());
 		if (existingUser.isPresent()) {
-			throw new IllegalStateException("Email already taken");
+			throw new IgorAuthenticationException("Email already taken");
 		}
 
 		var user = User.builder()
@@ -54,15 +55,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	public AuthResponse login(AuthRequest request) {
 		if (request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
-			throw new IllegalStateException("Credentials cannot be empty");
+			throw new IgorAuthenticationException("Credentials cannot be empty");
 		}
 
 		try {
 			authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		} catch (AuthenticationException e) {
-			throw new BadCredentialsException("Authentication failed");
-			// TODO: create an AuthenticationServiceException class
+			throw new IgorAuthenticationException("Authentication failed");
 		}
 
 		var user = userRepo.findByEmail(request.getEmail())

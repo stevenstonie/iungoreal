@@ -3,6 +3,7 @@ package com.stevenst.app.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stevenst.app.auth.AuthRequest;
 import com.stevenst.app.auth.RegisterRequest;
+import com.stevenst.app.exception.IgorAuthenticationException;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -94,9 +95,9 @@ class AuthenticationControllerIntegrationTest {
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authenticationRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadCredentialsException))
-                .andExpect(result -> assertEquals("Invalid credentials",
+                .andExpect(status().isUnauthorized())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorAuthenticationException))
+                .andExpect(result -> assertEquals("Authentication failed",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
@@ -108,8 +109,8 @@ class AuthenticationControllerIntegrationTest {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadCredentialsException))
+                .andExpect(status().isUnauthorized())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorAuthenticationException))
                 .andExpect(result -> assertEquals("Email already taken",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
@@ -122,10 +123,10 @@ class AuthenticationControllerIntegrationTest {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadCredentialsException))
+                .andExpect(status().isUnauthorized())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorAuthenticationException))
                 .andExpect(result -> assertEquals("Credentials cannot be empty",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     @Test
@@ -136,8 +137,8 @@ class AuthenticationControllerIntegrationTest {
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authenticationRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadCredentialsException))
+                .andExpect(status().isUnauthorized())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorAuthenticationException))
                 .andExpect(result -> assertEquals("Credentials cannot be empty",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
@@ -148,12 +149,14 @@ class AuthenticationControllerIntegrationTest {
         String expiredToken = generateTokenWithBadSignature();
         AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
 
-        assertThrows(BadCredentialsException.class, () -> {
-            mockMvc.perform(post("/api/auth/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(authenticationRequest))
-                    .header("Authorization", "Bearer " + expiredToken));
-        });
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authenticationRequest))
+                .header("Authorization", "Bearer " + expiredToken))
+                .andExpect(status().isUnauthorized())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorAuthenticationException))
+                .andExpect(result -> assertEquals("Invalid credentials",
+                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     // ------------------------------------------------------------------------

@@ -95,7 +95,6 @@ public class JwtServiceImpl implements JwtService {
 				.build()
 				.parseClaimsJws(token)
 				.getBody();
-
 	}
 
 	private Key getSignInKey() {

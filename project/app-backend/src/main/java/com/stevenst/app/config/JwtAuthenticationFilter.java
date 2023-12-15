@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.service.impl.JwtServiceImpl;
 
 import io.jsonwebtoken.security.SignatureException;
@@ -61,8 +62,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (SignatureException ex) {
-            throw new BadCredentialsException(ex.getMessage());
+            throw new ServletException(new IgorAuthenticationException(ex.getMessage()));
 
+            // TODO: check the utility of these lines
             // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             // response.getWriter().write("Invalid JWT Token");
         }
