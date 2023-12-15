@@ -61,7 +61,7 @@ class AuthenticationControllerIntegrationTest {
 
     @Test
     @Transactional
-    void testRegistrationEndpoint() throws Exception {
+    void aegistrationEndpoint() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest("testuser123456", "testpassword123456", "test", "user");
 
         mockMvc.perform(post("/api/auth/register")
@@ -73,7 +73,7 @@ class AuthenticationControllerIntegrationTest {
 
     @Test
     @Transactional
-    void testAuthenticationEndpoint() throws Exception {
+    void authenticationEndpoint() throws Exception {
         AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
 
         mockMvc.perform(post("/api/auth/login")
@@ -87,7 +87,7 @@ class AuthenticationControllerIntegrationTest {
 
     @Test
     @Transactional
-    void testAuthenticationEndpointWithInvalidCredentials() throws Exception {
+    void authenticationEndpointWithInvalidCredentials() throws Exception {
         AuthRequest authenticationRequest = new AuthRequest("testuser123", "wrong_password");
 
         mockMvc.perform(post("/api/auth/login")
@@ -99,7 +99,7 @@ class AuthenticationControllerIntegrationTest {
 
     @Test
     @Transactional
-    void testRegistrationEndpointWithExistingEmail() throws Exception {
+    void registrationEndpointWithExistingEmail() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, "test", "user");
 
         mockMvc.perform(post("/api/auth/register")
@@ -110,18 +110,18 @@ class AuthenticationControllerIntegrationTest {
 
     @Test
     @Transactional
-    void testRegistrationEndpointWithMissingCredentials() throws Exception {
+    void registrationEndpointWithMissingCredentials() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest("", "", "", "");
 
-        assertThrows(ServletException.class,
-                () -> mockMvc.perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerRequest))));
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     @Transactional
-    void testAuthenticationEndpointWithMissingCredentials() throws Exception {
+    void authenticationEndpointWithMissingCredentials() throws Exception {
         AuthRequest authenticationRequest = new AuthRequest("", "");
 
         mockMvc.perform(post("/api/auth/login")
@@ -132,7 +132,7 @@ class AuthenticationControllerIntegrationTest {
 
     @Test
     @Transactional
-    void testAuthenticationWithABadSignature() throws Exception {
+    void authenticationWithABadSignature() throws Exception {
         String expiredToken = generateTokenWithBadSignature();
         AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
 

@@ -18,6 +18,13 @@ public class GlobalExceptionHandler {
         return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalStateException.class)
+    public ApiExceptionFormat handleIllegalStateException(IllegalStateException ex) {
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     // -------------------------------------------------------------------
 
     private ApiExceptionFormat buildResponseEntity(HttpStatus status, String message) {

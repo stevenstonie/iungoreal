@@ -30,6 +30,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new IllegalStateException("Credentials cannot be empty");
 		}
 
+		var existingUser = userRepo.findByEmail(request.getEmail());
+		if (existingUser.isPresent()) {
+			throw new IllegalStateException("Email already taken");
+		}
+
 		var user = User.builder()
 				.firstname(request.getFirstName())
 				.lastname(request.getLastName())

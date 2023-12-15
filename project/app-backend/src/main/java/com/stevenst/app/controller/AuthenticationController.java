@@ -24,29 +24,11 @@ public class AuthenticationController implements AuthenticationApi {
 
 	@PostMapping("/register")
 	public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-		// log("user tries to register");
-
-		AuthResponse authResponse = authService.register(request);
-
-		// if (authResponse.getError() != null) {
-		// 	return ResponseEntity.status(401).body(authResponse);
-		// }
-		// either this^ or another log. depends on if the error is thrown
-
-		return ResponseEntity.ok(authResponse);
+		return ResponseEntity.ok(authService.register(request));
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-		// log("user tries to login");
-
-		AuthResponse authResponse = authService.login(request);
-
-		// if (authResponse.getError() != null) {
-		// 	return ResponseEntity.status(401).body(authResponse);
-		// }
-		// either this^ or another log. depends on if the error is thrown
-
-		return ResponseEntity.ok(authResponse);
+		return ResponseEntity.ok(authService.login(request));
 	}
 }
