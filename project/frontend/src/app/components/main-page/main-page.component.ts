@@ -25,6 +25,17 @@ export class MainPageComponent implements OnInit {
     this.userService.getCurrentUser().subscribe(user => {
       this.currentUser = user;
     });
+    this.userService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.currentUser = user;
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          window.location.href = '/auth';
+        }
+      }
+      // TODO: try to get the currentUser before anything is loaded
+    });
   }
 
   logout() {

@@ -62,10 +62,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (SignatureException ex) {
             throw new IgorAuthenticationException(ex.getMessage());
-
-            // TODO: check the utility of these lines
-            // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            // response.getWriter().write("Invalid JWT Token");
         }
     }
 }

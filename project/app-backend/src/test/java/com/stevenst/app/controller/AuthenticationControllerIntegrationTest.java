@@ -158,12 +158,7 @@ class AuthenticationControllerIntegrationTest {
 					.header("Authorization", "Bearer " + badSignatureToken))
 					.andExpect(status().isUnauthorized());
 		});
-
-		// TODO: try to fix this. instead of throwing it should be resolved
-
-		// TODO: test this by logging into an account with one key and change
-		// it when reenetering the site. check on front if on entering the site if the user gets a 401 it should be logged out
-		// (not for expired token because that works, but with a different signature)
+		// !!!
 	}
 
 	// ------------------------------------------------------------------------
