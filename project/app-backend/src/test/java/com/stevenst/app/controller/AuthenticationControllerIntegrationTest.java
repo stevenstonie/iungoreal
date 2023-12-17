@@ -148,13 +148,26 @@ class AuthenticationControllerIntegrationTest {
 	@Test
 	@Transactional
 	void authenticationWithABadSignature() throws Exception {
-		String badSignatureToken = generateTokenWithBadSignature();
 		AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
 
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(authenticationRequest))
-				.header("Authorization", "Bearer " + badSignatureToken))
+				.header("Authorization", "Bearer " + generateTokenWithBadSignature()))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertEquals("Invalid Token",
+						result.getResponse().getContentAsString()));
+	}
+
+	@Test
+	@Transactional
+	void authenticationWithAnExpiredToken() throws Exception {
+		AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
+
+		mockMvc.perform(post("/api/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(authenticationRequest))
+				.header("Authorization", "Bearer " + generateExpiredToken()))
 				.andExpect(status().isUnauthorized())
 				.andExpect(result -> assertEquals("Invalid Token",
 						result.getResponse().getContentAsString()));
@@ -175,8 +188,20 @@ class AuthenticationControllerIntegrationTest {
 				.builder()
 				.claims(new HashMap<>())
 				.subject(EMAIL)
-				.issuedAt(new Date(System.currentTimeMillis() - 1000))
-				.expiration(new Date(System.currentTimeMillis() - 10))
+				.issuedAt(new Date(System.currentTimeMillis()))
+				.expiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
+				.signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(
+						"1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd")))
+				.compact();
+	}
+
+	public String generateExpiredToken() {
+		return Jwts
+				.builder()
+				.claims(new HashMap<>())
+				.subject(EMAIL)
+				.issuedAt(new Date(System.currentTimeMillis()))
+				.expiration(new Date(System.currentTimeMillis() - 60 * 60 * 1000))
 				.signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(
 						"1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd")))
 				.compact();
