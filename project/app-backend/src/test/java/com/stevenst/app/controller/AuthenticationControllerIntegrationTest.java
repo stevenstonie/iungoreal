@@ -151,14 +151,13 @@ class AuthenticationControllerIntegrationTest {
 		String badSignatureToken = generateTokenWithBadSignature();
 		AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
 
-		assertThrows(IgorAuthenticationException.class, () -> {
-			mockMvc.perform(post("/api/auth/login")
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(authenticationRequest))
-					.header("Authorization", "Bearer " + badSignatureToken))
-					.andExpect(status().isUnauthorized());
-		});
-		// !!!
+		mockMvc.perform(post("/api/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(authenticationRequest))
+				.header("Authorization", "Bearer " + badSignatureToken))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertEquals("Invalid Token",
+						result.getResponse().getContentAsString()));
 	}
 
 	// ------------------------------------------------------------------------
