@@ -61,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (SignatureException ex) {
-            throw new ServletException(new IgorAuthenticationException(ex.getMessage()));
+            throw new IgorAuthenticationException(ex.getMessage());
 
             // TODO: check the utility of these lines
             // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

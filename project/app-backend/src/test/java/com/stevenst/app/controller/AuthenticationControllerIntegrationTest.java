@@ -8,7 +8,6 @@ import com.stevenst.app.exception.IgorAuthenticationException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.ServletException;
 import jakarta.transaction.Transactional;
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
@@ -149,18 +148,22 @@ class AuthenticationControllerIntegrationTest {
 	@Test
 	@Transactional
 	void authenticationWithABadSignature() throws Exception {
-		String expiredToken = generateTokenWithBadSignature();
+		String badSignatureToken = generateTokenWithBadSignature();
 		AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
 
-		assertThrows(ServletException.class, () -> {
+		assertThrows(IgorAuthenticationException.class, () -> {
 			mockMvc.perform(post("/api/auth/login")
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(authenticationRequest))
-					.header("Authorization", "Bearer " + expiredToken))
+					.header("Authorization", "Bearer " + badSignatureToken))
 					.andExpect(status().isUnauthorized());
 		});
 
 		// TODO: try to fix this. instead of throwing it should be resolved
+
+		// TODO: test this by logging into an account with one key and change
+		// it when reenetering the site. check on front if on entering the site if the user gets a 401 it should be logged out
+		// (not for expired token because that works, but with a different signature)
 	}
 
 	// ------------------------------------------------------------------------

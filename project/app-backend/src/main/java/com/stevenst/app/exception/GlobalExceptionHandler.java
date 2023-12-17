@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import io.jsonwebtoken.security.SignatureException;
-import jakarta.servlet.ServletException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,13 +18,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IgorAuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ApiExceptionFormat handleIgorAuthenticationException(IgorAuthenticationException ex) {
-        return buildResponseEntity(HttpStatus.UNAUTHORIZED, ex.getMessage());
-    }
-
-    @ResponseBody
-    @ExceptionHandler(ServletException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ApiExceptionFormat handleIgorAuthenticationException(Exception ex) {
         return buildResponseEntity(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
