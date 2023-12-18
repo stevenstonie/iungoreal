@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stevenst.app.auth.AuthRequest;
 import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.exception.IgorAuthenticationException;
+import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.util.TestUtil;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -27,7 +29,6 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -40,6 +41,7 @@ class AuthenticationControllerIntegrationTest {
 	private static Server server;
 	private static final String EMAIL = "testuser123";
 	private static final String PASSWORD = "testpassword123";
+	
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -47,12 +49,16 @@ class AuthenticationControllerIntegrationTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@Autowired
+	private UserRepository userRepository;
+
 	@BeforeAll
 	void init() throws Exception {
 		server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
 		server.start();
 
-		insertUserIntoDB();
+		TestUtil testUtil = new TestUtil(userRepository);
+		testUtil.insertUserIntoDB();
 	}
 
 	@AfterAll
@@ -174,14 +180,6 @@ class AuthenticationControllerIntegrationTest {
 	}
 
 	// ------------------------------------------------------------------------
-
-	void insertUserIntoDB() throws Exception {
-		RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, "test", "user");
-
-		mockMvc.perform(post("/api/auth/register")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(registerRequest)));
-	}
 
 	public String generateTokenWithBadSignature() {
 		return Jwts

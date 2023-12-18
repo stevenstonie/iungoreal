@@ -1,4 +1,4 @@
-package com.stevenst.app.controller;
+package com.stevenst.app.controller.api;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

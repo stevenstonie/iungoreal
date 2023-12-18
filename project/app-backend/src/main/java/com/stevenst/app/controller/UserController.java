@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stevenst.app.controller.api.UserApi;
 import com.stevenst.app.model.User;
 import com.stevenst.app.service.UserService;
 import com.stevenst.app.service.impl.JwtServiceImpl;
