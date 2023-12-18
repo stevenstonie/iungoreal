@@ -58,6 +58,8 @@ class AuthenticationControllerIntegrationTest {
 
 	@AfterAll
 	void tearDown() throws SQLException {
+		userRepository.deleteAll();
+
 		server.stop();
 	}
 
