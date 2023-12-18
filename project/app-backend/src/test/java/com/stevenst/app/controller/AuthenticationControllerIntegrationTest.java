@@ -165,3 +165,4 @@ class AuthenticationControllerIntegrationTest {
 
 	// TODO: test an expired token
 }
+// TODO: add a unit test class for this class as well

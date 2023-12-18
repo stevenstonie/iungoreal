@@ -10,6 +10,9 @@ import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -20,7 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-	private final UserRepository userRepo;
+	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtServiceImpl jwtService;
 	private final AuthenticationManager authenticationManager;
@@ -30,7 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new IgorAuthenticationException("Credentials cannot be empty");
 		}
 
-		var existingUser = userRepo.findByEmail(request.getEmail());
+		Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
 		if (existingUser.isPresent()) {
 			throw new IgorAuthenticationException("Email already taken");
 		}
@@ -43,7 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				.role(Role.USER)
 				.build();
 
-		userRepo.save(user);
+		userRepository.save(user);
 		var jwtToken = jwtService.generateToken(user);
 
 		return AuthResponse.builder()
@@ -63,7 +66,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new IgorAuthenticationException("Authentication failed");
 		}
 
-		var user = userRepo.findByEmail(request.getEmail())
+		var user = userRepository.findByEmail(request.getEmail())
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 		var jwtToken = jwtService.generateToken(user);
 

@@ -1,6 +1,5 @@
 package com.stevenst.app.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +32,7 @@ class UserControllerIntegrationTest {
 	private static Server server;
 	private static final String EMAIL = "testuser123";
 	private static final String PASSWORD = "testpassword123";
+	private String token;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -50,6 +50,8 @@ class UserControllerIntegrationTest {
 
 		TestUtil testUtil = new TestUtil(userRepository);
 		testUtil.insertUserIntoDB(EMAIL, PASSWORD, "test", "user", Role.USER);
+
+		token = jwtService.generateToken(EMAIL);
 	}
 
 	@AfterAll
@@ -62,8 +64,6 @@ class UserControllerIntegrationTest {
 	@Test
 	@Transactional
 	void getCurrentUserEndpoint() throws Exception {
-		String token = jwtService.generateToken(EMAIL);
-
 		mockMvc.perform(get("/api/user/currentUser")
 				.header("Authorization", "Bearer " + token))
 				.andExpect(status().isOk())
@@ -73,11 +73,20 @@ class UserControllerIntegrationTest {
 	@Test
 	@Transactional
 	void getCurrentUser_inexistent() throws Exception {
-		String token = jwtService.generateToken("testuser1234");
-
 		mockMvc.perform(get("/api/user/currentUser")
 				.header("Authorization", "Bearer " + token))
 				.andExpect(status().isUnauthorized());
 	}
 
+	@Test
+	@Transactional
+	void getCurrentUser_withAlteredToken() throws Exception {
+		String alteredToken = token.substring(0, token.length() - 1) + 'x';
+
+		mockMvc.perform(get("/api/user/currentUser")
+				.header("Authorization", "Bearer " + alteredToken))
+				.andExpect(status().isUnauthorized());
+	}
+
 }
+// TODO: add a unit test class for this class as well
