@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.stevenst.app.service.impl.JwtServiceImpl;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,6 +63,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (SignatureException ex) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid Token");
+        } catch (ExpiredJwtException ex) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Expired Token");
         }
     }
 }

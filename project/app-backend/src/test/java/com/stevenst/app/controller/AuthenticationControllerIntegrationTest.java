@@ -174,7 +174,7 @@ class AuthenticationControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(authenticationRequest))
 				.header("Authorization", "Bearer " + testUtil.generateExpiredToken(EMAIL)))
 				.andExpect(status().isUnauthorized())
-				.andExpect(result -> assertEquals("Invalid Token",
+				.andExpect(result -> assertEquals("Expired Token",
 						result.getResponse().getContentAsString()));
 	}
 }

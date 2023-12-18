@@ -1,6 +1,9 @@
 package com.stevenst.app.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.sql.SQLException;
 
@@ -12,12 +15,12 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+
 import com.stevenst.app.model.Role;
 import com.stevenst.app.repository.UserRepository;
-import com.stevenst.app.service.UserService;
-import com.stevenst.app.service.impl.JwtServiceImpl;
+import com.stevenst.app.service.JwtService;
 import com.stevenst.app.util.TestUtil;
 
 import jakarta.transaction.Transactional;
@@ -32,13 +35,13 @@ class UserControllerIntegrationTest {
 	private static final String PASSWORD = "testpassword123";
 
 	@Autowired
+	private MockMvc mockMvc;
+
+	@Autowired
 	private UserRepository userRepository;
 
-	@MockBean
-	private JwtServiceImpl jwtService;
-
-	@MockBean
-	private UserService userService;
+	@Autowired
+	private JwtService jwtService;
 
 	@BeforeAll
 	void init() throws Exception {
@@ -59,7 +62,12 @@ class UserControllerIntegrationTest {
 	@Test
 	@Transactional
 	void getCurrentUserEndpoint() throws Exception {
-		assertEquals(3, 1 + 2);
+		String token = jwtService.generateToken(EMAIL);
+
+		mockMvc.perform(get("/api/user/currentUser")
+				.header("Authorization", "Bearer " + token))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.email").value(EMAIL));
 	}
 
 }
