@@ -81,6 +81,13 @@ class AuthenticationServiceImplTest {
 	}
 
 	@Test
+	void register_emptyRequest() {
+		RegisterRequest request = new RegisterRequest();
+
+		assertThrows(IgorAuthenticationException.class, () -> authenticationService.register(request));
+	}
+
+	@Test
 	void login_validCredentials() {
 		AuthRequest request = new AuthRequest(user.getEmail(), user.getPassword());
 
@@ -106,6 +113,13 @@ class AuthenticationServiceImplTest {
 		when(authenticationManager.authenticate(any())).thenThrow(new UsernameNotFoundException("User not found"));
 
 		assertThrows(IgorAuthenticationException.class, () -> authenticationService.login(request));
+	}
+
+	@Test
+	void login_emptyRequest() {
+		AuthRequest authRequest = new AuthRequest();
+
+		assertThrows(IgorAuthenticationException.class, () -> authenticationService.login(authRequest));
 	}
 
 }
