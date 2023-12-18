@@ -2,6 +2,7 @@ package com.stevenst.app.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -13,8 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.stevenst.app.auth.AuthRequest;
 import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.model.Role;
@@ -75,6 +78,34 @@ class AuthenticationServiceImplTest {
 		when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
 
 		assertThrows(IgorAuthenticationException.class, () -> authenticationService.register(request));
+	}
+
+	@Test
+	void login_validCredentials() {
+		AuthRequest request = new AuthRequest(user.getEmail(), user.getPassword());
+
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+		when(jwtService.generateToken(user)).thenReturn("token");
+
+		assertDoesNotThrow(() -> authenticationService.login(request));
+	}
+
+	@Test
+	void login_emptyCredentials() {
+		AuthRequest requestWithEmptyEmail = new AuthRequest("", user.getPassword());
+		AuthRequest requestWithEmptyPassword = new AuthRequest(user.getEmail(), "");
+
+		assertThrows(IgorAuthenticationException.class, () -> authenticationService.login(requestWithEmptyEmail));
+		assertThrows(IgorAuthenticationException.class, () -> authenticationService.login(requestWithEmptyPassword));
+	}
+
+	@Test
+	void login_userDoesntExist() {
+		AuthRequest request = new AuthRequest(user.getEmail(), user.getPassword());
+
+		when(authenticationManager.authenticate(any())).thenThrow(new UsernameNotFoundException("User not found"));
+
+		assertThrows(IgorAuthenticationException.class, () -> authenticationService.login(request));
 	}
 
 }
