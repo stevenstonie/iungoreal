@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stevenst.app.auth.AuthRequest;
 import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.exception.IgorAuthenticationException;
+import com.stevenst.app.model.Role;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.util.TestUtil;
 
@@ -41,7 +42,6 @@ class AuthenticationControllerIntegrationTest {
 	private static Server server;
 	private static final String EMAIL = "testuser123";
 	private static final String PASSWORD = "testpassword123";
-	
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -58,7 +58,7 @@ class AuthenticationControllerIntegrationTest {
 		server.start();
 
 		TestUtil testUtil = new TestUtil(userRepository);
-		testUtil.insertUserIntoDB();
+		testUtil.insertUserIntoDB(EMAIL, PASSWORD, "test", "user", Role.USER);
 	}
 
 	@AfterAll
@@ -155,11 +155,12 @@ class AuthenticationControllerIntegrationTest {
 	@Transactional
 	void authenticationWithABadSignature() throws Exception {
 		AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
+		TestUtil testUtil = new TestUtil(userRepository);
 
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(authenticationRequest))
-				.header("Authorization", "Bearer " + generateTokenWithBadSignature()))
+				.header("Authorization", "Bearer " + testUtil.generateTokenWithBadSignature(EMAIL)))
 				.andExpect(status().isUnauthorized())
 				.andExpect(result -> assertEquals("Invalid Token",
 						result.getResponse().getContentAsString()));
@@ -169,39 +170,14 @@ class AuthenticationControllerIntegrationTest {
 	@Transactional
 	void authenticationWithAnExpiredToken() throws Exception {
 		AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
+		TestUtil testUtil = new TestUtil(userRepository);
 
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(authenticationRequest))
-				.header("Authorization", "Bearer " + generateExpiredToken()))
+				.header("Authorization", "Bearer " + testUtil.generateExpiredToken(EMAIL)))
 				.andExpect(status().isUnauthorized())
 				.andExpect(result -> assertEquals("Invalid Token",
 						result.getResponse().getContentAsString()));
-	}
-
-	// ------------------------------------------------------------------------
-
-	public String generateTokenWithBadSignature() {
-		return Jwts
-				.builder()
-				.claims(new HashMap<>())
-				.subject(EMAIL)
-				.issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
-				.signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(
-						"1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd")))
-				.compact();
-	}
-
-	public String generateExpiredToken() {
-		return Jwts
-				.builder()
-				.claims(new HashMap<>())
-				.subject(EMAIL)
-				.issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() - 60 * 60 * 1000))
-				.signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(
-						"1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd")))
-				.compact();
 	}
 }
