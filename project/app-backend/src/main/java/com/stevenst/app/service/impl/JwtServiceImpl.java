@@ -42,20 +42,13 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
-	public String generateToken(UserDetails userDetails) {
-		return generateToken(new HashMap<>(), userDetails);
+	public String generateToken(String email) {
+		return generateToken(new HashMap<>(), email);
 	}
 
 	@Override
-	public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-		return Jwts
-				.builder()
-				.claims(extraClaims)
-				.subject(userDetails.getUsername())
-				.issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-				.signWith(getSignInKey())	// TODO: check if the key is enough without the signature algorithm
-				.compact();
+	public String generateToken(UserDetails userDetails) {
+		return generateToken(new HashMap<>(), userDetails);
 	}
 
 	@Override
@@ -86,6 +79,29 @@ public class JwtServiceImpl implements JwtService {
 			throw new IllegalArgumentException("Invalid Authorization header");
 		}
 		return authHeader.substring(7);
+	}
+
+	private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+		return Jwts
+				.builder()
+				.claims(extraClaims)
+				.subject(userDetails.getUsername())
+				.issuedAt(new Date(System.currentTimeMillis()))
+				.expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.signWith(getSignInKey())
+				.compact();
+	}
+	// TODO: check if the key is enough without the signature algorithm
+
+	private String generateToken(Map<String, Object> extraClaims, String email) {
+		return Jwts
+				.builder()
+				.claims(extraClaims)
+				.subject(email)
+				.issuedAt(new Date(System.currentTimeMillis()))
+				.expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.signWith(getSignInKey())
+				.compact();
 	}
 
 	private Claims extractAllClaims(String token) {

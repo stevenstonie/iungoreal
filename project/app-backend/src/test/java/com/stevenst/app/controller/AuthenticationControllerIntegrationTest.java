@@ -8,9 +8,6 @@ import com.stevenst.app.model.Role;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.util.TestUtil;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import jakarta.transaction.Transactional;
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
@@ -25,8 +22,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
