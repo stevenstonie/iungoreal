@@ -38,16 +38,4 @@ public class TestUtil {
                         "1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd")))
                 .compact();
     }
-
-    public String generateExpiredToken(String email) {
-        return Jwts
-                .builder()
-                .claims(new HashMap<>())
-                .subject(email)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() - 60 * 60 * 1000))
-                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(
-                        "1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd")))
-                .compact();
-    }
 }

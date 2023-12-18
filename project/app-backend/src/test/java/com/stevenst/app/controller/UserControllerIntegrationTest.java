@@ -70,4 +70,14 @@ class UserControllerIntegrationTest {
 				.andExpect(jsonPath("$.email").value(EMAIL));
 	}
 
+	@Test
+	@Transactional
+	void getCurrentUser_inexistent() throws Exception {
+		String token = jwtService.generateToken("testuser1234");
+
+		mockMvc.perform(get("/api/user/currentUser")
+				.header("Authorization", "Bearer " + token))
+				.andExpect(status().isUnauthorized());
+	}
+
 }

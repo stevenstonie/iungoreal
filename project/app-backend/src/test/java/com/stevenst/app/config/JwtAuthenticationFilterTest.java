@@ -85,7 +85,7 @@ class JwtAuthenticationFilterTest {
         when(userDetailsService.loadUserByUsername(anyString())).thenThrow(UsernameNotFoundException.class);
         when(jwtService.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(false);
 
-        assertThrows(UsernameNotFoundException.class,
+        assertThrows(NullPointerException.class,
                 () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
 
         verify(jwtService, times(1)).extractUsername(anyString());
