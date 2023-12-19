@@ -28,11 +28,13 @@ class MarkerControllerIntegrationTest {
 
 	@AfterAll
 	void tearDown() throws SQLException {
+		
+
 		server.stop();
 	}
 
 	@Test
 	void testTest() {
-		assertEquals(3, 1 + 2);
+		
 	}
 }

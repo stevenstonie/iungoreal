@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
-
 @RestController
 @RequestMapping("/api/markers")
 @RequiredArgsConstructor
@@ -26,12 +25,9 @@ public class MarkerController {
 	public List<Marker> getAllMarkers() {
 		return markerService.getAllMarkers();
 	}
-	
 
 	@PostMapping("/addMarker")
 	public Marker addMarker(@RequestBody Marker marker) {
 		return markerService.addMarker(marker);
 	}
-
-	
 }

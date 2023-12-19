@@ -21,10 +21,10 @@ public class TestUtil {
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public void insertUserIntoDB(String email, String password, String firstName, String lastName, Role role)
-                    throws Exception {
-            User user = new User(0L, email, passwordEncoder.encode(password), firstName, lastName, role);
+            throws Exception {
+        User user = new User(0L, email, passwordEncoder.encode(password), firstName, lastName, role);
 
-            userRepository.save(user);
+        userRepository.save(user);
     }
 
     public String generateTokenWithBadSignature(String email) {
