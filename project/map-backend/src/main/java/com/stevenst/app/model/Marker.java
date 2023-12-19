@@ -1,6 +1,6 @@
 package com.stevenst.app.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,9 +35,9 @@ public class Marker {
 	@Column(nullable = false)
 	private double longitude;
 
-	private Date startDate;
+	private LocalDate startDate;
 
 	@Column(nullable = false)
-	private Date endDate;
+	private LocalDate endDate;
 	// TODO: these markers should be automatically removed from the db when the end date is reached
 }
