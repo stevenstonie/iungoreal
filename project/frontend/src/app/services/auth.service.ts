@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, map, of, tap } from 'rxjs';
+import { HttpClient} from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -44,6 +44,11 @@ export class AuthService {
 
   getEmail(): string {
     return localStorage.getItem('email') ?? '';
+  }
+
+  logout() {
+    this.removeCredentialsFromStorage();
+    window.location.reload();
   }
 
   removeCredentialsFromStorage(): void {

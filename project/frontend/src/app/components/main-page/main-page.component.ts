@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Role, User } from 'src/app/models/user';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { catchError, delayWhen, firstValueFrom, retry, throwError, timeout, timer } from 'rxjs';
 
 @Component({
   selector: 'app-main-page',
@@ -21,25 +22,38 @@ export class MainPageComponent implements OnInit {
     this.currentUser = { id: 0, email: '', password: '', firstname: '', lastname: '', role: Role.USER };
   }
 
-  ngOnInit() {
-    this.userService.getCurrentUser().subscribe(user => {
-      this.currentUser = user;
-    });
-    this.userService.getCurrentUser().subscribe({
-      next: (user) => {
-        this.currentUser = user;
-      },
-      error: (err) => {
-        if (err.status === 401) {
-          window.location.href = '/auth';
-        }
+  async ngOnInit() {
+    try {
+      this.currentUser = await firstValueFrom(
+        this.userService.getCurrentUser().pipe(
+          retry(11),
+          delayWhen((_, attempt) => timer(attempt * 1000)),
+          timeout(10000),
+          catchError(error => {
+            if (error.name === 'TimeoutError') {
+              throw new Error('Timeout');
+            } else {
+              return throwError(() => error);
+            }
+          })
+        )
+      );
+      
+      if (!this.currentUser) {
+        this.logout();
       }
-      // TODO: try to get the currentUser before anything is loaded
-    });
+    } catch (err: any) {
+      if (err.message === 'Timeout') {
+        this.logout();
+      }
+
+      if (err.status === 401) {
+        window.location.href = '/auth';
+      }
+    }
   }
 
   logout() {
-    this.AuthService.removeCredentialsFromStorage();
-    window.location.reload();
+    this.AuthService.logout();
   }
 }

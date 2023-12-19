@@ -73,8 +73,10 @@ class UserControllerIntegrationTest {
 	@Test
 	@Transactional
 	void getCurrentUser_inexistent() throws Exception {
+		String inexistentUserToken = jwtService.generateToken("inexistent");
+
 		mockMvc.perform(get("/api/user/currentUser")
-				.header("Authorization", "Bearer " + token))
+				.header("Authorization", "Bearer " + inexistentUserToken))
 				.andExpect(status().isUnauthorized());
 	}
 
