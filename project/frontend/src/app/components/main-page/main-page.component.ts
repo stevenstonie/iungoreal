@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Role, User } from 'src/app/models/user';
+import { User } from 'src/app/models/user';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { catchError, delayWhen, firstValueFrom, retry, throwError, timeout, timer } from 'rxjs';
@@ -10,7 +10,7 @@ import { catchError, delayWhen, firstValueFrom, retry, throwError, timeout, time
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
-  currentUser: User;
+  currentUser: User | null = null;
   showMap: boolean = false;
   mapParams: any;
 
@@ -19,7 +19,6 @@ export class MainPageComponent implements OnInit {
   }
 
   constructor(private userService: UserService, private AuthService: AuthService) {
-    this.currentUser = { id: 0, email: '', password: '', firstname: '', lastname: '', role: Role.USER };
   }
 
   async ngOnInit() {
@@ -38,7 +37,7 @@ export class MainPageComponent implements OnInit {
           })
         )
       );
-      
+
       if (!this.currentUser) {
         this.logout();
       }
