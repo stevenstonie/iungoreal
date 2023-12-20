@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/markers")
@@ -29,5 +31,10 @@ public class MarkerController {
 	@PostMapping("/addMarker")
 	public Marker addMarker(@RequestBody Marker marker) {
 		return markerService.addMarker(marker);
+	}
+
+	@GetMapping("/getMarker")
+	public Marker getMarker(@RequestParam int id) {
+		return markerService.getMarker(id);
 	}
 }

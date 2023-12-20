@@ -1,7 +1,7 @@
 package com.stevenst.app.controller;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
@@ -18,7 +18,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stevenst.app.model.Marker;
 import com.stevenst.app.repository.MarkerRepository;
@@ -31,11 +30,14 @@ import com.stevenst.app.util.TestUtil;
 class MarkerControllerIntegrationTest {
 	private static Server server;
 	private static final Marker marker = new Marker(0, "title", "description", 12.345, 67.890,
-			LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
+			LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3));
 	private TestUtil testUtil;
 
 	@Autowired
 	private MarkerRepository markerRepository;
+
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -63,13 +65,19 @@ class MarkerControllerIntegrationTest {
 	}
 
 	@Test
-	void testAddMarker() throws Exception {
+	void testAddAndGetMarker() throws Exception {
 		Marker marker = new Marker(0, "test_title", "test_description", 11.111, 22.222,
-				LocalDate.now(), LocalDate.now().plusDays(1));
+				LocalDateTime.now(), LocalDateTime.now().plusDays(1));
 
 		var response = mockMvc.perform(post("/api/markers/addMarker")
 				.contentType("application/json")
 				.content(testUtil.convertObjectToJsonBytes(marker)))
+				.andExpect(status().isOk());
+
+		int id = objectMapper.readTree(response.andReturn().getResponse().getContentAsString()).get("id").asInt();
+
+		mockMvc.perform(get("/api/markers/getMarker")
+				.param("id", String.valueOf(id)))
 				.andExpect(status().isOk());
 	}
 }

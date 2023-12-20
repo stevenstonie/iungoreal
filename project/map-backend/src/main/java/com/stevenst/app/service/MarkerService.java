@@ -11,4 +11,6 @@ public interface MarkerService {
 	List<Marker> getAllMarkers();
 	
 	Marker addMarker(Marker marker);
+
+	Marker getMarker(int id);
 }

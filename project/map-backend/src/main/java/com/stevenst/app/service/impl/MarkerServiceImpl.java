@@ -24,4 +24,9 @@ public class MarkerServiceImpl implements MarkerService {
     public Marker addMarker(Marker marker) {
         return markerRepository.save(marker);
     }
+
+    @Override
+    public Marker getMarker(int id) {
+        return markerRepository.findById(id).orElse(null);
+    }
 }
