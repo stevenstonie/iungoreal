@@ -21,6 +21,7 @@
 		<mysql-connector.version>8.0.33</mysql-connector.version>
 		<springdoc-openapi.version>2.2.0</springdoc-openapi.version>
 		<junit.jupiter.version>5.10.1</junit.jupiter.version>
+		<jackson-datatype-jsr.version>2.16.0</jackson-datatype-jsr.version>
 	</properties>
 
 	<dependencies>
@@ -60,7 +61,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
@@ -86,6 +87,12 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>${jackson-datatype-jsr.version}</version>
 		</dependency>
 	</dependencies>
 
