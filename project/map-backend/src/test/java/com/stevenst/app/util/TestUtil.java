@@ -12,14 +12,14 @@ import lombok.RequiredArgsConstructor;
 public class TestUtil {
 	private final MarkerRepository markerRepository;
 	
-	public void insertMarkerIntoDB(Marker marker) {
-		markerRepository.save(marker);
+	public Marker insertMarkerIntoDB(Marker marker) {
+		return markerRepository.save(marker);
 	}
 	
 	public byte[] convertObjectToJsonBytes(Object object) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());
-		
+
 		return mapper.writeValueAsBytes(object);
 	}
 }
