@@ -7,16 +7,15 @@
 - tasks:
 	- (recurring) show window dialogs on errors for users, catch exceptions, etc.
 	- (recurring) do tests for everything
-	- (recurring) (bk) careful with sql injection when implementing db requests for specific requests
 	------------------
-	- [ ] (fr) add verification through email
-	- [ ] (fr, bk) notifications
-	- [ ] (fr, bk) calendar
+	- [ ] (bk) rename app-backend to security-backend, add a new app-backend and connect them
 	- [ ] (fr, bk) the app per se
 	- [ ] (fr, bk) live chat
+	- [ ] (fr) add verification through email
+	- [ ] (fr, bk) calendar
 	- [ ] (fr, bk) news section
 	- [ ] (fr) do not store the token in the local storage. store it in an httpOnly cookie instead. (--> https://blog.logrocket.com/jwt-authentication-best-practices/)
-	- [ ] (bk) rewrite the backend with new exceptions and tests
+	- [ ] (fr, bk) notifications
 	- [ ] (bk) change the return type of each controller to ResponseEntity<> to "handle" edge cases that cannot be handled through exceptions 
 
 	_________________________________
@@ -27,6 +26,7 @@
 	- [x] (fr) redirect to main page on successful authentication
 	- [x] (fr) save the token locally and check for its availability when accessing the site
 	- [x] (fr, bk) add a button for a window where the map should be, create the map microservice and connect it to the app (make db queries for saved data like markers)
+	- [x] (bk) rewrite the backend with new exceptions and tests
 
 
 
