@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
@@ -25,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stevenst.app.exception.IgorMarkerException;
 import com.stevenst.app.model.Marker;
 import com.stevenst.app.repository.MarkerRepository;
 import com.stevenst.app.util.TestUtil;
@@ -121,5 +123,36 @@ class MarkerControllerIntegrationTest {
 
 		assertEquals(expectedLatitude, actualLatitude);
 		assertEquals(expectedLongitude, actualLongitude);
+	}
+
+	@Test
+	void testAddMarker_nonNullCredentialsAreNull() throws Exception {
+		Marker marker = new Marker(0L, null, "test_description", 11.111, 22.222,
+				LocalDateTime.now(), null);
+
+		mockMvc.perform(post("/api/markers/addMarker")
+				.contentType("application/json")
+				.content(testUtil.convertObjectToJsonBytes(marker)))
+				.andExpect(status().isBadRequest())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorMarkerException))
+				.andExpect(result -> assertTrue(
+						Objects.requireNonNull(result.getResolvedException()).getMessage()
+								.contains("not-null property references a null or transient value")));
+	}
+
+	@Test
+	void testAddMarker_requiredCredentialsMissing() throws Exception {
+		String badMarker = "{\"id\":37,\"description\":\"description\",\"startDate\":[2023,12,22,16,49,44,617777300],\"endDate\":[2023,12,24,16,49,44,619777400]}";
+
+		mockMvc.perform(post("/api/markers/addMarker")
+				.contentType("application/json")
+				.content(badMarker))
+				.andExpect(status().isBadRequest())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorMarkerException))
+				.andExpect(result -> assertTrue(
+						Objects.requireNonNull(result.getResolvedException()).getMessage()
+								.contains("not-null property references a null or transient value")));
 	}
 }

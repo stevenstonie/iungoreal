@@ -28,6 +28,3 @@ public class GlobalExceptionHandler {
         return apiException;
     }
 }
-/*
- * DataIntegrityViolationException
- */
