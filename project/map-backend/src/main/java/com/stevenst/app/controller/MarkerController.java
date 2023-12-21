@@ -18,7 +18,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @RestController
 @RequestMapping("/api/markers")
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class MarkerController {
 
 	@PostMapping("/addMarker")
 	public Marker addMarker(@RequestBody Marker marker) {
-		try{
+		try {
 			return markerService.addMarker(marker);
 		} catch (DataIntegrityViolationException ex) {
 			throw new IgorMarkerException(ex.getMessage());

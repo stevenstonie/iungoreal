@@ -69,11 +69,45 @@ public class MarkerServiceImplTest {
 				.longitude(-118.2437).startDate(LocalDateTime.now().plusDays(1))
 				.endDate(LocalDateTime.now().plusDays(2))
 				.build();
-		
+
 		when(markerRepository.findById(marker.getId())).thenReturn(Optional.of(marker));
-		
+
 		Marker result = markerService.getMarker(marker.getId());
-		
+
 		assertEquals(marker, result);
+	}
+	
+	@Test
+	void getAllMarkers_emptyList() {
+		List<Marker> markers = Arrays.asList();
+
+		when(markerRepository.findAll()).thenReturn(markers);
+
+		List<Marker> result = markerService.getAllMarkers();
+
+		assertEquals(markers, result);
+	}
+
+	@Test
+	void addMarker_null() {
+		Marker marker = null;
+
+		Marker result = markerService.addMarker(marker);
+
+		assertEquals(null, result);
+	}
+	
+	@Test
+	void getMarker_notFound() {
+		Marker marker = Marker.builder().id(-1L).title("Marker One").description("Description One").latitude(34.0522)
+				.longitude(-118.2437).startDate(LocalDateTime.now().plusDays(1))
+				.endDate(LocalDateTime.now().plusDays(2))
+				.build();
+
+		when(markerRepository.findById(marker.getId())).thenReturn(Optional.empty());
+
+		Marker result = markerService.getMarker(marker.getId());
+
+		assertEquals(null, result);
 	}
 }
