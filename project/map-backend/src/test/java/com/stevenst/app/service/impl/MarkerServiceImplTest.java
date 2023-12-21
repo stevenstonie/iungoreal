@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 import com.stevenst.app.model.Marker;
 import com.stevenst.app.repository.MarkerRepository;
 
-public class MarkerServiceImplTest {
+class MarkerServiceImplTest {
 	@Mock
 	private MarkerRepository markerRepository;
 

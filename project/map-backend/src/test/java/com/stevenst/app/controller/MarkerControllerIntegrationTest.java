@@ -14,6 +14,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stevenst.app.exception.IgorMarkerException;
@@ -154,5 +156,18 @@ class MarkerControllerIntegrationTest {
 				.andExpect(result -> assertTrue(
 						Objects.requireNonNull(result.getResolvedException()).getMessage()
 								.contains("not-null property references a null or transient value")));
+	}
+
+	@Test
+	void addMarker_null() throws JsonProcessingException, Exception {
+		mockMvc.perform(post("/api/markers/addMarker")
+				.contentType("application/json")
+				.content(testUtil.convertObjectToJsonBytes(null)))
+				.andExpect(status().isBadRequest())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof HttpMessageNotReadableException))
+				.andExpect(result -> assertTrue(
+						Objects.requireNonNull(result.getResolvedException()).getMessage()
+								.contains("Required request body is missing")));
 	}
 }
