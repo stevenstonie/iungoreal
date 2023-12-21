@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import io.jsonwebtoken.SignatureAlgorithm;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,20 +42,13 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
-	public String generateToken(UserDetails userDetails) {
-		return generateToken(new HashMap<>(), userDetails);
+	public String generateToken(String email) {
+		return generateToken(new HashMap<>(), email);
 	}
 
 	@Override
-	public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-		return Jwts
-				.builder()
-				.setClaims(extraClaims)
-				.setSubject(userDetails.getUsername())
-				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-				.signWith(getSignInKey(), SignatureAlgorithm.HS256)
-				.compact();
+	public String generateToken(UserDetails userDetails) {
+		return generateToken(new HashMap<>(), userDetails);
 	}
 
 	@Override
@@ -79,26 +73,50 @@ public class JwtServiceImpl implements JwtService {
 		return extractClaim(token, Claims::getExpiration);
 	}
 
-	private Claims extractAllClaims(String token) {
-		return Jwts
-				.parserBuilder()
-				.setSigningKey(getSignInKey())
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
-
-	}
-
-	private Key getSignInKey() {
-		byte[] keyBites = Decoders.BASE64.decode(secretKey);
-		return Keys.hmacShaKeyFor(keyBites);
-	}
-
 	@Override
 	public String extractToken(String authHeader) {
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 			throw new IllegalArgumentException("Invalid Authorization header");
 		}
 		return authHeader.substring(7);
+	}
+
+	private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+		return Jwts
+				.builder()
+				.claims(extraClaims)
+				.subject(userDetails.getUsername())
+				.issuedAt(new Date(System.currentTimeMillis()))
+				.expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.signWith(getSignInKey())
+				.compact();
+	}
+	// TODO: check if the key is enough without the signature algorithm
+
+	private String generateToken(Map<String, Object> extraClaims, String email) {
+		return Jwts
+				.builder()
+				.claims(extraClaims)
+				.subject(email)
+				.issuedAt(new Date(System.currentTimeMillis()))
+				.expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.signWith(getSignInKey())
+				.compact();
+	}
+
+	private Claims extractAllClaims(String token) {
+		Key key = getSignInKey();
+		SecretKey secretKey2 = new SecretKeySpec(key.getEncoded(), key.getAlgorithm());
+
+		return Jwts.parser()
+				.verifyWith(secretKey2)
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();
+	}
+
+	private Key getSignInKey() {
+		byte[] keyBites = Decoders.BASE64.decode(secretKey);
+		return Keys.hmacShaKeyFor(keyBites);
 	}
 }

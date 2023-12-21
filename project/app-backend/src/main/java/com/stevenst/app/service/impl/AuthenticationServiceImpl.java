@@ -1,15 +1,19 @@
 package com.stevenst.app.service.impl;
 
-import com.stevenst.app.auth.AuthenticationRequest;
-import com.stevenst.app.auth.AuthenticationResponse;
+import com.stevenst.app.auth.AuthRequest;
+import com.stevenst.app.auth.AuthResponse;
 import com.stevenst.app.auth.RegisterRequest;
+import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.model.Role;
 import com.stevenst.app.model.User;
 import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.service.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,15 +22,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationServiceImpl {
-	private final UserRepository userRepo;
+public class AuthenticationServiceImpl implements AuthenticationService {
+	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtServiceImpl jwtService;
 	private final AuthenticationManager authenticationManager;
 
-	public AuthenticationResponse register(RegisterRequest request) {
-		if (request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
-			throw new IllegalStateException("Credentials cannot be empty");
+	public AuthResponse register(RegisterRequest request) {
+		if (request.getEmail() == null || request.getPassword() == null || request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
+			throw new IgorAuthenticationException("Credentials cannot be empty");
+		}
+
+		Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
+		if (existingUser.isPresent()) {
+			throw new IgorAuthenticationException("Email already taken");
 		}
 
 		var user = User.builder()
@@ -37,27 +46,31 @@ public class AuthenticationServiceImpl {
 				.role(Role.USER)
 				.build();
 
-		userRepo.save(user);
+		userRepository.save(user);
 		var jwtToken = jwtService.generateToken(user);
 
-		return AuthenticationResponse.builder()
+		return AuthResponse.builder()
 				.token(jwtToken)
 				.build();
 	}
 
-	public AuthenticationResponse authenticate(AuthenticationRequest request) {
+	public AuthResponse login(AuthRequest request) {
+		if (request.getEmail() == null || request.getPassword() == null || request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
+			throw new IgorAuthenticationException("Credentials cannot be empty");
+		}
+
 		try {
 			authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-		} catch (AuthenticationException ex) {
-			throw new BadCredentialsException("Authentication Failed");
+		} catch (AuthenticationException e) {
+			throw new IgorAuthenticationException("Authentication failed");
 		}
 
-		var user = userRepo.findByEmail(request.getEmail())
+		var user = userRepository.findByEmail(request.getEmail())
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 		var jwtToken = jwtService.generateToken(user);
 
-		return AuthenticationResponse.builder()
+		return AuthResponse.builder()
 				.token(jwtToken)
 				.build();
 	}

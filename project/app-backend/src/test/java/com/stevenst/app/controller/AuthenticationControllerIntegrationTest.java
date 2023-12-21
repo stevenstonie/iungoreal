@@ -1,15 +1,13 @@
 package com.stevenst.app.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stevenst.app.auth.AuthenticationRequest;
+import com.stevenst.app.auth.AuthRequest;
 import com.stevenst.app.auth.RegisterRequest;
+import com.stevenst.app.exception.IgorAuthenticationException;
+import com.stevenst.app.model.Role;
+import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.util.TestUtil;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
-import jakarta.servlet.ServletException;
 import jakarta.transaction.Transactional;
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
@@ -24,10 +22,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -36,136 +34,135 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AuthenticationControllerIntegrationTest {
-    private static Server server;
-    private static final String EMAIL = "testuser123";
-    private static final String PASSWORD = "testpassword123";
+	private static Server server;
+	private static final String EMAIL = "testuser123";
+	private static final String PASSWORD = "testpassword123";
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
-    @BeforeAll
-    void init() throws Exception {
-        server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
-        server.start();
+	@Autowired
+	private UserRepository userRepository;
 
-        insertUserIntoDB();
-    }
+	@BeforeAll
+	void init() throws Exception {
+		server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
+		server.start();
 
-    @AfterAll
-    void tearDown() throws SQLException {
-        server.stop();
-    }
+		TestUtil testUtil = new TestUtil(userRepository);
+		testUtil.insertUserIntoDB(EMAIL, PASSWORD, "test", "user", Role.USER);
+	}
 
-    @Test
-    @Transactional
-    void testRegistrationEndpoint() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest("testuser123456", "testpassword123456", "test", "user");
+	@AfterAll
+	void tearDown() throws SQLException {
+		userRepository.deleteAll();
 
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").isNotEmpty());
-    }
+		server.stop();
+	}
 
-    @Test
-    @Transactional
-    void testAuthenticationEndpoint() throws Exception {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest(EMAIL, PASSWORD);
+	@Test
+	@Transactional
+	void registrationEndpoint() throws Exception {
+		RegisterRequest registerRequest = new RegisterRequest("testuser123456", "testpassword123456", "test",
+				"user");
 
-        mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(authenticationRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").isNotEmpty());
-    }
+		mockMvc.perform(post("/api/auth/register")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(registerRequest)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.token").isNotEmpty());
+	}
 
-    // TODO: check if these tests dont belong in AuthenticationServiceTest.java
+	@Test
+	@Transactional
+	void authenticationEndpoint() throws Exception {
+		AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
 
-    @Test
-    @Transactional
-    void testAuthenticationEndpointWithInvalidCredentials() throws Exception {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest("testuser123", "wrong_password");
+		mockMvc.perform(post("/api/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(authenticationRequest)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.token").isNotEmpty());
+	}
 
-        mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(authenticationRequest)))
-                .andExpect(status().isUnauthorized());
-        // TODO: add another assertion for a thrown exception
-    }
+	@Test
+	@Transactional
+	void authenticationEndpointWithInvalidCredentials() throws Exception {
+		AuthRequest authenticationRequest = new AuthRequest("testuser123", "wrong_password");
 
-    @Test
-    @Transactional
-    void testRegistrationEndpointWithExistingEmail() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, "test", "user");
+		mockMvc.perform(post("/api/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(authenticationRequest)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorAuthenticationException))
+				.andExpect(result -> assertEquals("Authentication failed",
+						Objects.requireNonNull(result.getResolvedException()).getMessage()));
+	}
 
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)))
-                .andExpect(status().isBadRequest());
-    }
+	@Test
+	@Transactional
+	void registrationEndpointWithExistingEmail() throws Exception {
+		RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, "test", "user");
 
-    @Test
-    @Transactional
-    void testRegistrationEndpointWithMissingCredentials() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest("", "", "", "");
+		mockMvc.perform(post("/api/auth/register")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(registerRequest)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorAuthenticationException))
+				.andExpect(result -> assertEquals("Email already taken",
+						Objects.requireNonNull(result.getResolvedException()).getMessage()));
+	}
 
-        assertThrows(ServletException.class,
-                () -> mockMvc.perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerRequest))));
-    }
+	@Test
+	@Transactional
+	void registrationEndpointWithMissingCredentials() throws Exception {
+		RegisterRequest registerRequest = new RegisterRequest("", "", "", "");
 
-    @Test
-    @Transactional
-    void testAuthenticationEndpointWithMissingCredentials() throws Exception {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest("", "");
+		mockMvc.perform(post("/api/auth/register")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(registerRequest)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorAuthenticationException))
+				.andExpect(result -> assertEquals("Credentials cannot be empty",
+						Objects.requireNonNull(result.getResolvedException()).getMessage()));
+	}
 
-        mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(authenticationRequest)))
-                .andExpect(status().isUnauthorized());
-    }
+	@Test
+	@Transactional
+	void authenticationEndpointWithMissingCredentials() throws Exception {
+		AuthRequest authenticationRequest = new AuthRequest("", "");
 
-    @Test
-    @Transactional
-    void testAuthenticationWithABadSignature() throws Exception {
-        String expiredToken = generateTokenWithBadSignature();
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest(EMAIL, PASSWORD);
+		mockMvc.perform(post("/api/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(authenticationRequest)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorAuthenticationException))
+				.andExpect(result -> assertEquals("Credentials cannot be empty",
+						Objects.requireNonNull(result.getResolvedException()).getMessage()));
+	}
 
-        assertThrows(SignatureException.class, () -> {
-            mockMvc.perform(post("/api/auth/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(authenticationRequest))
-                    .header("Authorization", "Bearer " + expiredToken))
-                    .andExpect(status().isUnauthorized());
-        });
-    }
+	@Test
+	@Transactional
+	void authenticationWithABadSignature() throws Exception {
+		AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
+		TestUtil testUtil = new TestUtil(userRepository);
 
-    // ------------------------------------------------------------------------
+		mockMvc.perform(post("/api/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(authenticationRequest))
+				.header("Authorization", "Bearer " + testUtil.generateTokenWithBadSignature(EMAIL)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertEquals("Invalid token",
+						result.getResponse().getContentAsString()));
+	}
 
-    void insertUserIntoDB() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, "test", "user");
-
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)));
-    }
-
-    public String generateTokenWithBadSignature() {
-        return Jwts
-                .builder()
-                .setClaims(new HashMap<>())
-                .setSubject(EMAIL)
-                .setIssuedAt(new Date(System.currentTimeMillis() - 1000))
-                .setExpiration(new Date(System.currentTimeMillis() - 10))
-                .signWith(
-                        Keys.hmacShaKeyFor(Decoders.BASE64
-                                .decode("1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd")),
-                        SignatureAlgorithm.HS256)
-                .compact();
-    }
+	// TODO: test an expired token
 }
+// TODO: add a unit test class for this class as well

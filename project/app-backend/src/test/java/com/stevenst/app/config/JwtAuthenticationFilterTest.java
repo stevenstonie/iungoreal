@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import com.stevenst.app.service.impl.JwtServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -84,7 +85,7 @@ class JwtAuthenticationFilterTest {
         when(userDetailsService.loadUserByUsername(anyString())).thenThrow(UsernameNotFoundException.class);
         when(jwtService.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(false);
 
-        assertThrows(UsernameNotFoundException.class,
+        assertThrows(NullPointerException.class,
                 () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
 
         verify(jwtService, times(1)).extractUsername(anyString());

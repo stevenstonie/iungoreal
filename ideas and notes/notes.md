@@ -5,17 +5,19 @@
 
 
 - tasks:
-	- [ ] (recurring) show window dialogs on errors for users, catch exceptions, etc.
-	- [ ] (recurring) do tests for everything
-	- [ ] (recurring) (bk) careful with sql injection when implementing db requests for specific requests
+	- (recurring) show window dialogs on errors for users, catch exceptions, etc.
+	- (recurring) do tests for everything
+	- (recurring) (bk) careful with sql injection when implementing db requests for specific requests
 	------------------
 	- [ ] (fr) add verification through email
 	- [ ] (fr, bk) notifications
 	- [ ] (fr, bk) calendar
+	- [ ] (fr, bk) the app per se
 	- [ ] (fr, bk) live chat
 	- [ ] (fr, bk) news section
 	- [ ] (fr) do not store the token in the local storage. store it in an httpOnly cookie instead. (--> https://blog.logrocket.com/jwt-authentication-best-practices/)
 	- [ ] (bk) rewrite the backend with new exceptions and tests
+	- [ ] (bk) change the return type of each controller to ResponseEntity<> to "handle" edge cases that cannot be handled through exceptions 
 
 	_________________________________
 	---------------------------------

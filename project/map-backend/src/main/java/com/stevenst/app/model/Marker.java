@@ -1,5 +1,7 @@
 package com.stevenst.app.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class Marker {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 
 	@Column(nullable = false)
 	private String title;
@@ -28,14 +30,14 @@ public class Marker {
 	private String description;
 
 	@Column(nullable = false)
-	private double latitude;
+	private Double latitude;
 
 	@Column(nullable = false)
-	private double longitude;
+	private Double longitude;
 
-	private String startDate;
+	private LocalDateTime startDate;
 
 	@Column(nullable = false)
-	private String endDate;
+	private LocalDateTime endDate;
 	// TODO: these markers should be automatically removed from the db when the end date is reached
 }

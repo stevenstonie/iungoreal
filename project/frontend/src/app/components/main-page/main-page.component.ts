@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Role, User } from 'src/app/models/user';
+import { User } from 'src/app/models/user';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { catchError, delayWhen, firstValueFrom, retry, throwError, timeout, timer } from 'rxjs';
 
 @Component({
   selector: 'app-main-page',
@@ -9,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
-  currentUser: User;
+  currentUser: User | null = null;
   showMap: boolean = false;
   mapParams: any;
 
@@ -18,17 +19,40 @@ export class MainPageComponent implements OnInit {
   }
 
   constructor(private userService: UserService, private AuthService: AuthService) {
-    this.currentUser = { id: 0, email: '', password: '', firstname: '', lastname: '', role: Role.USER };
   }
 
-  ngOnInit() {
-    this.userService.getCurrentUser().subscribe(user => {
-      this.currentUser = user;
-    });
+  async ngOnInit() {
+    try {
+      this.currentUser = await firstValueFrom(
+        this.userService.getCurrentUser().pipe(
+          retry(11),
+          delayWhen((_, attempt) => timer(attempt * 1000)),
+          timeout(10000),
+          catchError(error => {
+            if (error.name === 'TimeoutError') {
+              throw new Error('Timeout');
+            } else {
+              return throwError(() => error);
+            }
+          })
+        )
+      );
+
+      if (!this.currentUser) {
+        this.logout();
+      }
+    } catch (err: any) {
+      if (err.message === 'Timeout') {
+        this.logout();
+      }
+
+      if (err.status === 401) {
+        window.location.href = '/auth';
+      }
+    }
   }
 
   logout() {
-    this.AuthService.removeCredentialsFromStorage();
-    window.location.reload();
+    this.AuthService.logout();
   }
 }

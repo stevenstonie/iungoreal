@@ -1,24 +1,31 @@
 package com.stevenst.app.service.impl;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
+import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.model.User;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
-	
-	public UserServiceImpl(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
-	
+	private final JwtServiceImpl jwtService;
+
 	@Override
-	public Optional<User> getUserByEmail(String email) {
-		return userRepository.findByEmail(email);
+	public User getCurrentUserByToken(String authHeader) {
+		String token = jwtService.extractToken(authHeader);
+		String email = jwtService.extractUsername(token);
+		var user = userRepository.findByEmail(email);
+
+		if (!user.isPresent()) {
+			throw new IgorAuthenticationException("User not found");
+		}
+
+		return user.get();
 	}
-	
+
 }
