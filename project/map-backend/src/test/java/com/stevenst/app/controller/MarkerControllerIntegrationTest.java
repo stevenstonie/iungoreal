@@ -35,7 +35,7 @@ import com.stevenst.app.util.TestUtil;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MarkerControllerIntegrationTest {
 	private static Server server;
-	private static Marker marker = new Marker(0, "title", "description", 12.345, 67.890,
+	private static Marker marker = new Marker(0L, "title", "description", 12.345, 67.890,
 			LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3));
 	private TestUtil testUtil;
 
@@ -54,7 +54,7 @@ class MarkerControllerIntegrationTest {
 		server.start();
 
 		testUtil = new TestUtil(markerRepository);
-		int idOfMarkerFromDb = testUtil.insertMarkerIntoDB(marker).getId();
+		Long idOfMarkerFromDb = testUtil.insertMarkerIntoDB(marker).getId();
 		marker.setId(idOfMarkerFromDb);
 	}
 
@@ -82,7 +82,7 @@ class MarkerControllerIntegrationTest {
 
 	@Test
 	void testAddMarker() throws Exception {
-		Marker marker = new Marker(0, "test_title", "test_description", 11.111, 22.222,
+		Marker marker = new Marker(0L, "test_title", "test_description", 11.111, 22.222,
 				LocalDateTime.now(), LocalDateTime.now().plusDays(1));
 
 		var response = mockMvc.perform(post("/api/markers/addMarker")

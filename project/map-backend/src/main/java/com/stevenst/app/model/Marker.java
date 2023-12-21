@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class Marker {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 
 	@Column(nullable = false)
 	private String title;
@@ -30,10 +30,10 @@ public class Marker {
 	private String description;
 
 	@Column(nullable = false)
-	private double latitude;
+	private Double latitude;
 
 	@Column(nullable = false)
-	private double longitude;
+	private Double longitude;
 
 	private LocalDateTime startDate;
 

@@ -12,5 +12,5 @@ public interface MarkerService {
 	
 	Marker addMarker(Marker marker);
 
-	Marker getMarker(int id);
+	Marker getMarker(Long id);
 }

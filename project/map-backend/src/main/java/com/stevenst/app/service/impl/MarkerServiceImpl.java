@@ -13,20 +13,20 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MarkerServiceImpl implements MarkerService {
-	private final MarkerRepository markerRepository;
+    private final MarkerRepository markerRepository;
 
     @Override
     public List<Marker> getAllMarkers() {
         return markerRepository.findAll();
     }
 
-	@Override
+    @Override
     public Marker addMarker(Marker marker) {
         return markerRepository.save(marker);
     }
 
     @Override
-    public Marker getMarker(int id) {
+    public Marker getMarker(Long id) {
         return markerRepository.findById(id).orElse(null);
     }
 }
