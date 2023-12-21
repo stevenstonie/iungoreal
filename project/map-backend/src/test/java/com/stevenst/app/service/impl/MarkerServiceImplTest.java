@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,5 +47,33 @@ public class MarkerServiceImplTest {
 		List<Marker> result = markerService.getAllMarkers();
 
 		assertEquals(markers, result);
+	}
+
+	@Test
+	void addMarker() {
+		Marker marker = Marker.builder().id(-1L).title("Marker One").description("Description One").latitude(34.0522)
+				.longitude(-118.2437).startDate(LocalDateTime.now().plusDays(1))
+				.endDate(LocalDateTime.now().plusDays(2))
+				.build();
+
+		when(markerRepository.save(marker)).thenReturn(marker);
+
+		Marker result = markerService.addMarker(marker);
+
+		assertEquals(marker, result);
+	}
+	
+	@Test
+	void getMarker() {
+		Marker marker = Marker.builder().id(-1L).title("Marker One").description("Description One").latitude(34.0522)
+				.longitude(-118.2437).startDate(LocalDateTime.now().plusDays(1))
+				.endDate(LocalDateTime.now().plusDays(2))
+				.build();
+		
+		when(markerRepository.findById(marker.getId())).thenReturn(Optional.of(marker));
+		
+		Marker result = markerService.getMarker(marker.getId());
+		
+		assertEquals(marker, result);
 	}
 }
