@@ -58,5 +58,19 @@
 	& ul li:hover button {
 		color: rgb(247, 250, 151);
 	}
-}
 
+	& .drop-down-menu {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		align-items: flex-end;
+		top: 120px;
+		right: 30px;
+		width: auto;
+
+		li {
+			margin: 5px 0;
+		}
+	}
+}

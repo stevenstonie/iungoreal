@@ -12,11 +12,8 @@ import { catchError, delayWhen, firstValueFrom, retry, throwError, timeout, time
 export class MainPageComponent implements OnInit {
   currentUser: User | null = null;
   showMap: boolean = false;
+  showUserMenu: boolean = false;
   mapParams: any;
-
-  toggleMap() {
-    this.showMap = !this.showMap;
-  }
 
   constructor(private userService: UserService, private AuthService: AuthService) {
   }
@@ -50,6 +47,22 @@ export class MainPageComponent implements OnInit {
         window.location.href = '/auth';
       }
     }
+  }
+
+  toggleMap() {
+    this.showMap = !this.showMap;
+  }
+
+  toggleUserMenu() {
+    this.showUserMenu = !this.showUserMenu;
+  }
+
+  profile() {
+    window.location.href = '/profile';
+  }
+
+  settings() {
+    window.location.href = '/settings';
   }
 
   logout() {
