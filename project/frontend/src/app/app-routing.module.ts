@@ -5,14 +5,19 @@ import { authGuard } from './guards/auth.guard';
 import { AuthComponent } from './components/auth/auth.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
 
 const routes: Routes = [
-  { path: 'main-page', component: MainPageComponent, canActivate: [authGuard] },
-  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
-  { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
+  {
+    path: '', canActivate: [authGuard], children: [
+      { path: '', component: MainPageComponent },
+      { path: 'profile', component: ProfileComponent },
+      { path: 'settings', component: SettingsComponent },
+      { path: '404', component: NotFoundPageComponent }
+    ]
+  },
   { path: 'auth', component: AuthComponent },
-  { path: '', redirectTo: '/main-page', pathMatch: 'full' },
-  { path: '**', redirectTo: '/main-page', pathMatch: 'full' } // TODO: change this for a 404 page maybe
+  { path: '**', redirectTo: '/404' }
 ];
 
 @NgModule({

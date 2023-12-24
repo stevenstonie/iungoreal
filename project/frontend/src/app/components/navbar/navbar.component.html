@@ -1,0 +1,21 @@
+<ng-container *ngIf="!currentUser">
+	<p>connecting to the app..</p>
+	<button (click)="logout()">Logout</button>
+</ng-container>
+
+<ng-container *ngIf="currentUser">
+	<div id="navbar">
+		<ul>
+			<li><button (click)="toggleMap()">Toggle Map</button></li>
+			<li><button (click)="toggleUserMenu()">{{currentUser.email}} ({{currentUser.role}})</button></li>
+
+			<div *ngIf="showUserMenu">
+				<ul class="drop-down-menu">
+					<li><button (click)="profile()">Profile</button></li>
+					<li><button (click)="settings()">User Settings</button></li>
+					<li><button (click)="logout()">Logout</button></li>
+				</ul>
+			</div>
+		</ul>
+	</div>
+</ng-container>

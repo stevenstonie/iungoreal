@@ -11,6 +11,8 @@ import { MapComponent } from './components/map/map.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProfileComponent } from './components/profile/profile.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { SettingsComponent } from './components/settings/settings.component';
     MainPageComponent,
     MapComponent,
     ProfileComponent,
-    SettingsComponent
+    SettingsComponent,
+    NotFoundPageComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
