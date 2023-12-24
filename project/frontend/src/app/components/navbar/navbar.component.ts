@@ -63,6 +63,10 @@ export class NavbarComponent implements OnInit {
     window.location.href = '/settings';
   }
 
+  mainPage() {
+    window.location.href = '/';
+  }
+
   logout() {
     this.authService.logout();
   }

@@ -6,6 +6,7 @@
 <ng-container *ngIf="currentUser">
 	<div id="navbar">
 		<ul>
+			<li><button (click)="mainPage()">Main Page</button></li>
 			<li><button (click)="toggleMap()">Toggle Map</button></li>
 			<li><button (click)="toggleUserMenu()">{{currentUser.email}} ({{currentUser.role}})</button></li>
 
