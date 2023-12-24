@@ -29,14 +29,14 @@ export class AuthComponent {
   login() {
     const credentials = this.loginForm.value;
     this.authService.login(credentials).subscribe(response => {
-      this.router.navigate(['/main-page']);
+      this.router.navigate(['/']);
     });
   }
 
   register() {
     const user = this.registerForm.value;
     this.authService.register(user).subscribe(response => {
-      this.router.navigate(['/main-page']);
+      this.router.navigate(['/']);
     });
   }
 }

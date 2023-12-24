@@ -4,6 +4,8 @@
 </ng-container>
 
 <ng-container *ngIf="currentUser">
+	<app-map *ngIf="showMap" [currentUser]="currentUser"></app-map>
+
 	<div id="navbar">
 		<ul>
 			<li><button (click)="mainPage()">Main Page</button></li>
