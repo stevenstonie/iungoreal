@@ -13,6 +13,7 @@ export class NavbarComponent implements OnInit {
   currentUser: User | null = null;
   showMap: boolean = false;
   showUserMenu: boolean = false;
+  showCommunitiesMenu: boolean = false;
 
   constructor(private userService: UserService, private authService: AuthService) { }
 
@@ -47,8 +48,20 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  toggleCommunitiesMenu() {
+    this.showCommunitiesMenu = !this.showCommunitiesMenu;
+  }
+
+  search(): void {
+    // TODO: Implement search
+  }
+
   toggleMap() {
     this.showMap = !this.showMap;
+  }
+
+  toggleLiveChat() {
+    // TODO: Implement live chat
   }
 
   toggleUserMenu() {
