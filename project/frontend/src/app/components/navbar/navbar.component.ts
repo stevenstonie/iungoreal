@@ -56,6 +56,10 @@ export class NavbarComponent implements OnInit {
     // TODO: Implement search
   }
 
+  createPost(): void {
+    // TODO: Implement create post
+  }
+
   toggleMap() {
     this.showMap = !this.showMap;
   }
