@@ -12,6 +12,7 @@ import { UserService } from '../../services/user.service';
 export class NavbarComponent implements OnInit {
   currentUser: User | null = null;
   showMap: boolean = false;
+  showChat: boolean = false;
   showUserMenu: boolean = false;
   showCommunitiesMenu: boolean = false;
 
@@ -64,8 +65,8 @@ export class NavbarComponent implements OnInit {
     this.showMap = !this.showMap;
   }
 
-  toggleLiveChat() {
-    // TODO: Implement live chat
+  toggleChat() {
+    this.showChat = !this.showChat;
   }
 
   toggleUserMenu() {

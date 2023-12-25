@@ -1,5 +1,11 @@
+<ng-container *ngIf="!currentUser">
+	<p>connecting to the app..</p>
+	<button (click)="logout()">Logout</button>
+</ng-container>
+
 <ng-container *ngIf="currentUser">
 	<app-map *ngIf="showMap" [currentUser]="currentUser"></app-map>
+	<app-chat *ngIf="showChat"></app-chat>
 
 	<div id="navbar">
 		<div class="left-section">
@@ -29,7 +35,7 @@
 
 				<li><button (click)="toggleMap()">Toggle Map</button></li>
 
-				<li><button (click)="toggleLiveChat()">Live Chat</button></li>
+				<li><button (click)="toggleChat()">Chat</button></li>
 
 				<li><button (click)="toggleUserMenu()">{{currentUser.email}} ({{currentUser.role}})</button></li>
 				<div *ngIf="showUserMenu">

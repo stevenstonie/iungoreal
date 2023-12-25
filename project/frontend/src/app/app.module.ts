@@ -10,10 +10,11 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { MapComponent } from './components/map/map.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProfileComponent } from './components/profile/profile.component';
-import { SettingsComponent } from './components/settings/settings.component';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { CreatePostComponent } from './components/create-post/create-post.component';
+import { UserSettingsComponent } from './components/user-settings/user-settings.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -22,10 +23,11 @@ import { CreatePostComponent } from './components/create-post/create-post.compon
     MainPageComponent,
     MapComponent,
     ProfileComponent,
-    SettingsComponent,
     NotFoundPageComponent,
     NavbarComponent,
-    CreatePostComponent
+    CreatePostComponent,
+    UserSettingsComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
