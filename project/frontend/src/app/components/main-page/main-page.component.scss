@@ -9,24 +9,24 @@
 	display: flex;
 }
 
-#left-menu,
-#right-menu {
+#left-section,
+#right-section {
 	width: var(--left-right-menus-width);
 	position: fixed;
 	top: 0;
 	bottom: 0;
 }
 
-#left-menu {
+#left-section {
 	left: 0;
 }
 
-#right-menu {
+#right-section {
 	right: 0;
 }
 
-#content {
-	margin-left: calc(var(--left-right-menus-width) + 150px);
-	margin-right: calc(var(--left-right-menus-width) + 150px);
+#middle-section {
+	width: 600px;
+	margin: auto;
 	overflow-y: auto;
 }

@@ -73,13 +73,28 @@
 		color: rgb(247, 250, 151);
 	}
 
-	& .drop-down-menu {
-		position: relative;
+	& .profile-drop-down-menu {
+		position: absolute;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-end;
-		top: 50px;
-		right: 30px;
+		top: 100%;
+		right: 50px;
+		width: auto;
+
+		li {
+			margin: 5px 0;
+			background-color: white;
+		}
+	}
+
+	& .communities-drop-down-menu {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		top: 100%;
+		left: 210px;
 		width: auto;
 
 		li {

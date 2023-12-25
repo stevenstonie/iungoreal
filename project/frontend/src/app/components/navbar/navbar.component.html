@@ -1,8 +1,3 @@
-<!-- <ng-container *ngIf="!currentUser">
-	<p>connecting to the app..</p>
-	<button (click)="logout()">Logout</button>
-</ng-container> -->
-
 <ng-container *ngIf="currentUser">
 	<app-map *ngIf="showMap" [currentUser]="currentUser"></app-map>
 
@@ -13,7 +8,7 @@
 
 				<li><button (click)="toggleCommunitiesMenu()">Communities</button></li>
 				<div *ngIf="showCommunitiesMenu">
-					<ul class="drop-down-menu">
+					<ul class="communities-drop-down-menu">
 						<li><button>Community1</button></li>
 						<li><button>Community2</button></li>
 						<li><button>Community3</button></li>
@@ -36,7 +31,7 @@
 
 				<li><button (click)="toggleUserMenu()">{{currentUser.email}} ({{currentUser.role}})</button></li>
 				<div *ngIf="showUserMenu">
-					<ul class="drop-down-menu">
+					<ul class="profile-drop-down-menu">
 						<li><button (click)="profile()">Profile</button></li>
 						<li><button (click)="settings()">User Settings</button></li>
 						<li><button>About</button></li>
