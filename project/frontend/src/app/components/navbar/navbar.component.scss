@@ -6,9 +6,27 @@
 	background: transparent;
 	z-index: 1;
 	display: flex;
-	justify-content: space-around;
+	justify-content: space-between;
 	align-items: center;
 	height: 50px;
+
+	& .left-section {
+		display: flex;
+		align-items: center;
+		margin-left: 20px;
+	}
+
+	& .middle-section {
+		flex-grow: 1;
+		display: flex;
+		justify-content: center;
+	}
+
+	& .right-section {
+		display: flex;
+		align-items: center;
+		margin-right: 20px;
+	}
 
 	& button {
 		background: transparent;
