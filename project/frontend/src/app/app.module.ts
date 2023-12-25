@@ -13,6 +13,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { CreatePostComponent } from './components/create-post/create-post.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     ProfileComponent,
     SettingsComponent,
     NotFoundPageComponent,
-    NavbarComponent
+    NavbarComponent,
+    CreatePostComponent
   ],
   imports: [
     BrowserModule,

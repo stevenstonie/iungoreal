@@ -57,7 +57,7 @@ export class NavbarComponent implements OnInit {
   }
 
   createPost(): void {
-    // TODO: Implement create post
+    window.location.href = '/createPost';
   }
 
   toggleMap() {

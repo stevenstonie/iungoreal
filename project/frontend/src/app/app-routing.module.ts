@@ -6,6 +6,7 @@ import { AuthComponent } from './components/auth/auth.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
+import { CreatePostComponent } from './components/create-post/create-post.component';
 
 const routes: Routes = [
   {
@@ -13,6 +14,7 @@ const routes: Routes = [
       { path: '', component: MainPageComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'settings', component: SettingsComponent },
+      { path: 'createPost', component: CreatePostComponent },
       { path: '404', component: NotFoundPageComponent }
     ]
   },
