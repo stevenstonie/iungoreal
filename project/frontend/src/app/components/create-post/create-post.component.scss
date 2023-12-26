@@ -1,0 +1,48 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+#header, #body, #footer {
+	display: flex;
+	flex-direction: column;
+	margin-left: 20%;
+	margin-top: 50px;
+	width: 600px;
+
+	* {
+		margin: 5px;
+	}
+
+	button {
+		align-self: flex-start;
+		background: transparent;
+		min-width: 80px;
+		border: none;
+		outline: none;
+		margin-right: 30px;
+		padding: 5px 10px;
+		cursor: pointer;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+		border-radius: 2rem;
+		transition-duration: 0.3s;
+		list-style: none;
+
+		&:hover {
+			background-color: rgb(144, 197, 255);
+			box-shadow: 4px 3px 8px 0px rgb(144, 197, 255);
+			border-radius: 0.2rem;
+			cursor: pointer;
+			transition-duration: 0.3s;
+			color: rgb(247, 250, 151);
+		}
+	}
+}
+
+#body {
+	textarea {
+		min-height: 100px;
+	}
+}
+
