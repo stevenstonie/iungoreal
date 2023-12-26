@@ -74,7 +74,7 @@ export class NavbarComponent implements OnInit {
   }
 
   profile() {
-    window.location.href = '/profile';
+    window.location.href = '/user/' + this.currentUser?.email;
   }
 
   settings() {

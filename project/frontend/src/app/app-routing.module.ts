@@ -12,7 +12,7 @@ const routes: Routes = [
   {
     path: '', canActivate: [authGuard], children: [
       { path: '', component: MainPageComponent },
-      { path: 'profile', component: ProfileComponent },
+      { path: 'user/:email', component: ProfileComponent },
       { path: 'settings', component: UserSettingsComponent },
       { path: 'createPost', component: CreatePostComponent },
       { path: '404', component: NotFoundPageComponent }
