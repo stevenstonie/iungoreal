@@ -1,5 +1,5 @@
 * {
-	margin: 30px 0 0 0;
+	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
 	--left-right-menus-width: 200px;
@@ -7,14 +7,19 @@
 
 #body {
 	display: flex;
+	margin-top: 50px;
 }
 
 #left-section,
 #right-section {
 	width: var(--left-right-menus-width);
 	position: fixed;
+	display: flex;
+	flex-direction: column;
 	top: 0;
 	bottom: 0;
+	overflow-y: auto;
+	margin-top: 50px;
 }
 
 #left-section {
@@ -23,12 +28,35 @@
 
 #right-section {
 	right: 0;
+
+	justify-content: flex-start;
 }
 
 #middle-section {
 	width: 600px;
 	margin: auto;
 	overflow-y: auto;
+}
+
+button {
+	background: transparent;
+	border: none;
+	outline: none;
+	text-align: left;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	border-radius: 0.5rem;
+	padding: 10px 6px;
+	transition-duration: 0.3s;
+
+	&:hover {
+		background-color: rgb(144, 197, 255);
+		box-shadow: 4px 3px 8px 0px rgb(144, 197, 255);
+		border-radius: 0.2rem;
+		cursor: pointer;
+		transition-duration: 0.3s;
+		color: rgb(247, 250, 151);
+	}
 }
 
 @media (max-width: 1100px) {
