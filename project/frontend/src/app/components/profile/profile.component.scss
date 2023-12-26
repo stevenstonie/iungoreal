@@ -4,11 +4,16 @@
 	box-sizing: border-box;
 }
 
+#title {
+	margin-left: 20%;
+	margin-top: 50px;
+}
+
 #header {
 	display: flex;
 	flex-direction: row;
 	margin-left: 20%;
-	margin-top: 50px;
+	margin-top: 20px;
 
 	button {
 		background: transparent;
