@@ -11,7 +11,7 @@
 	height: 500px;
 	right: 80px;
 	bottom: 0;
-	background-color: #f2f2f2;
+	background-color: azure;
 	border: 1px solid #ccc;
 	border-radius: 5px;
 	padding: 10px;
@@ -28,13 +28,11 @@
 		
 		#left-section-header {
 			height: 50px;
-			background-color: #f2f2f2;
 			border-bottom: 1px solid #ccc;
 		}
 
 		#left-section-body {
 			height: auto;
-			background-color: #f2f2f2;
 			overflow-y: auto;
 		}
 	}
@@ -47,7 +45,6 @@
 
 		#right-section-header {
 			height: 30px;
-			background-color: #f2f2f2;
 			border-bottom: 1px solid #ccc;
 			display: flex;
 			flex-direction: row;
@@ -60,8 +57,31 @@
 
 		#right-section-body {
 			height: auto;
-			background-color: #f2f2f2;
 			overflow-y: auto;
 		}
+	}
+}
+
+button {
+	align-self: flex-start;
+	background: transparent;
+	min-width: 80px;
+	border: none;
+	outline: none;
+	margin-right: 30px;
+	padding: 5px 10px;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	border-radius: 2rem;
+	transition-duration: 0.3s;
+	list-style: none;
+
+	&:hover {
+		background-color: rgb(144, 197, 255);
+		box-shadow: 4px 3px 8px 0px rgb(144, 197, 255);
+		border-radius: 0.2rem;
+		cursor: pointer;
+		transition-duration: 0.3s;
+		color: rgb(247, 250, 151);
 	}
 }
