@@ -15,6 +15,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { CreatePostComponent } from './components/create-post/create-post.component';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
 import { ChatComponent } from './components/chat/chat.component';
+import { NotificationsComponent } from './components/notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ChatComponent } from './components/chat/chat.component';
     NavbarComponent,
     CreatePostComponent,
     UserSettingsComponent,
-    ChatComponent
+    ChatComponent,
+    NotificationsComponent
   ],
   imports: [
     BrowserModule,

@@ -14,7 +14,7 @@ export class NavbarComponent implements OnInit {
   showMap: boolean = false;
   showChat: boolean = false;
   showUserMenu: boolean = false;
-  showCommunitiesMenu: boolean = false;
+  showNotifications: boolean = false;
 
   constructor(private userService: UserService, private authService: AuthService) { }
 
@@ -49,10 +49,6 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  toggleCommunitiesMenu() {
-    this.showCommunitiesMenu = !this.showCommunitiesMenu;
-  }
-
   search(): void {
     // TODO: Implement search
   }
@@ -67,6 +63,10 @@ export class NavbarComponent implements OnInit {
 
   toggleChat() {
     this.showChat = !this.showChat;
+  }
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
   }
 
   toggleUserMenu() {
