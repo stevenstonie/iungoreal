@@ -9,44 +9,40 @@
 
 	<div id="navbar">
 		<div class="left-section">
-			<ul>
-				<li><button (click)="mainPage()">Main Page</button></li>
+			<button class="highlighted" (click)="mainPage()">Main Page</button>
 
-				<li><button (click)="toggleCommunitiesMenu()">Communities</button></li>
-				<div *ngIf="showCommunitiesMenu">
-					<ul class="communities-drop-down-menu">
-						<li><button>Community1</button></li>
-						<li><button>Community2</button></li>
-						<li><button>Community3</button></li>
-					</ul>
+			<button class="highlighted" (click)="toggleCommunitiesMenu()">Communities</button>
+			<div *ngIf="showCommunitiesMenu">
+				<div class="communities-drop-down-menu">
+					<button class="highlighted">Community1</button>
+					<button class="highlighted">Community2</button>
+					<button class="highlighted">Community3</button>
 				</div>
-			</ul>
+			</div>
 		</div>
 
 		<div class="middle-section">
-			<ul>
-				<li><input type="text" placeholder="Search..." (input)="search()"></li>
-			</ul>
+			<input class="highlighted" id="search-bar" type="text" placeholder="Search..." (input)="search()">
 		</div>
 
 		<div class="right-section">
-			<ul>
-				<li><button (click)="createPost()">Create Post</button></li>
+			<button class="highlighted" (click)="createPost()">Create Post</button>
 
-				<li><button (click)="toggleMap()">Toggle Map</button></li>
+			<button class="highlighted" (click)="toggleMap()">Toggle Map</button>
 
-				<li><button (click)="toggleChat()">Chat</button></li>
+			<button class="highlighted" (click)="toggleChat()">Chat</button>
 
-				<li><button (click)="toggleUserMenu()">{{currentUser.email}} ({{currentUser.role}})</button></li>
-				<div *ngIf="showUserMenu">
-					<ul class="profile-drop-down-menu">
-						<li><button (click)="profile()">Profile</button></li>
-						<li><button (click)="settings()">User Settings</button></li>
-						<li><button>About</button></li>
-						<li><button (click)="logout()">Logout</button></li>
-					</ul>
+			<button class="highlighted">Notifications</button>
+
+			<button class="highlighted" (click)="toggleUserMenu()">{{currentUser.email}} ({{currentUser.role}})</button>
+			<div *ngIf="showUserMenu">
+				<div class="profile-drop-down-menu">
+					<button class="highlighted" (click)="profile()">Profile</button>
+					<button class="highlighted" (click)="settings()">User Settings</button>
+					<button class="highlighted">About</button>
+					<button class="highlighted" (click)="logout()">Logout</button>
 				</div>
-			</ul>
+			</div>
 		</div>
 	</div>
 </ng-container>

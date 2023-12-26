@@ -6,71 +6,60 @@
 	background: transparent;
 	z-index: 1;
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
 	height: 50px;
 
-	& .left-section {
+	.left-section,
+	.middle-section,
+	.right-section {
 		display: flex;
 		align-items: center;
 	}
 
-	& .middle-section {
-		display: flex;
-		justify-content: center;
+	.left-section {
+		flex: 1;
+		justify-content: start;
+	}
+	
+	.middle-section {
+		flex: 2;
+
+		#search-bar {
+			width: 100%;
+		}
 	}
 
-	& .right-section {
-		display: flex;
-		align-items: center;
+	.right-section {
+		flex: 3;
+		justify-content: end;
 	}
 
-	& button {
+	.highlighted {
 		background: transparent;
 		border: none;
 		outline: none;
+		margin: 0 auto;
 		cursor: pointer;
-	}
-
-	& ul {
-		display: flex;
-		justify-content: right;
-		align-items: center;
-		width: 100%;
-		height: 100%;
-	}
-
-	& img {
-		height: 100%;
-	}
-
-	& ul li {
-		list-style: none;
-		margin: 0 30px;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		border-radius: 2rem;
 		padding: 5px 10px;
 		transition-duration: 0.3s;
+		list-style: none;
+
+		&:hover {
+			background-color: rgb(144, 197, 255);
+			box-shadow: 4px 3px 8px 0px rgb(144, 197, 255);
+			border-radius: 0.2rem;
+			cursor: pointer;
+			transition-duration: 0.3s;
+			color: rgb(247, 250, 151);
+		}
 	}
 
-	& ul li button {
-		text-decoration: none;
-		color: black;
+	img {
+		height: 100%;
 	}
 
-	& ul li:hover {
-		background-color: rgb(144, 197, 255);
-		box-shadow: 4px 3px 8px 0px rgb(144, 197, 255);
-		border-radius: 0.2rem;
-		cursor: pointer;
-		transition-duration: 0.3s;
-	}
-
-	& ul li:hover button {
-		color: rgb(247, 250, 151);
-	}
-
-	& .profile-drop-down-menu {
+	.profile-drop-down-menu {
 		position: absolute;
 		display: flex;
 		flex-direction: column;
@@ -80,14 +69,9 @@
 		width: auto;
 		height: auto;
 		background-color: aliceblue;
-
-		li {
-			margin: 5px 0;
-			background-color: white;
-		}
 	}
 
-	& .communities-drop-down-menu {
+	.communities-drop-down-menu {
 		position: absolute;
 		display: flex;
 		flex-direction: column;
@@ -99,13 +83,8 @@
 		max-height: 400px;
 		overflow-y: auto;
 		background-color: aliceblue;
-
-		li {
-			margin: 5px 0;
-			background-color: aliceblue;
-		}
 	}
-	
+
 	input {
 		border: none;
 		outline: none;
