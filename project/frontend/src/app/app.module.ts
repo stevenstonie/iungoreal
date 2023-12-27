@@ -16,6 +16,7 @@ import { CreatePostComponent } from './components/create-post/create-post.compon
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
+import { FriendRequestsComponent } from './components/friend-requests/friend-requests.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { NotificationsComponent } from './components/notifications/notifications
     CreatePostComponent,
     UserSettingsComponent,
     ChatComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    FriendRequestsComponent
   ],
   imports: [
     BrowserModule,

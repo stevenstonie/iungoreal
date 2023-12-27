@@ -15,6 +15,7 @@ export class NavbarComponent implements OnInit {
   showChat: boolean = false;
   showUserMenu: boolean = false;
   showNotifications: boolean = false;
+  showFriendRequests: boolean = false;
 
   constructor(private userService: UserService, private authService: AuthService) { }
 
@@ -63,6 +64,10 @@ export class NavbarComponent implements OnInit {
 
   toggleChat() {
     this.showChat = !this.showChat;
+  }
+
+  toggleFriendRequests() {
+    this.showFriendRequests = !this.showFriendRequests;
   }
 
   toggleNotifications() {

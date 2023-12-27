@@ -1,0 +1,43 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+#friend-requests-container {
+	position: fixed;
+	z-index: 9;
+	width: 350px;
+	height: 500px;
+	right: 145px;
+	top: 50px;
+	background-color: azure;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+}
+
+button {
+	background: transparent;
+	min-width: 80px;
+	border: none;
+	outline: none;
+	margin-bottom: 10px;
+	padding: 10px;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	border-radius: 2rem;
+	transition-duration: 0.3s;
+	list-style: none;
+
+	&:hover {
+		background-color: rgb(144, 197, 255);
+		box-shadow: 4px 3px 8px 0px rgb(144, 197, 255);
+		border-radius: 0.2rem;
+		cursor: pointer;
+		transition-duration: 0.3s;
+		color: rgb(247, 250, 151);
+	}
+}
