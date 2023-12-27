@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { MainPageComponent } from './main-page.component';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 describe('MainPageComponent', () => {
   let component: MainPageComponent;
@@ -10,7 +11,7 @@ describe('MainPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      declarations: [MainPageComponent],
+      declarations: [MainPageComponent, NavbarComponent],
     }).compileComponents();
   });
 
