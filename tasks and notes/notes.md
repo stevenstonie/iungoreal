@@ -18,12 +18,13 @@
 	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
 	- [ ] (fr) user settings
 	- [ ] (fr) user profile
+	- [ ] (bk) archive notifications (when the user clicks 'x' on frontend or when the notification is older than 30 days)
 	- [ ] (fr, bk) chat rooms -> (3 types: dms, regional and custom)
-	- [ ] (bk) remove pins from bk when expiration date is reached
 	- [ ] (fr, bk) add more functionalities to the map
 	- [ ] (fr, bk) calendar
 	- [ ] (fr) news section
 	- [ ] (fr, bk) reset email / password
+	- [ ] (bk) remove pins from bk when expiration date is reached
 	- [ ] (fr) do not store the token in the local storage. store it in an httpOnly cookie instead. (--> https://blog.logrocket.com/jwt-authentication-best-practices/)
 	- [ ] (bk) change the return type of each controller to ResponseEntity<> to "handle" edge cases that cannot be handled through exceptions 
 
@@ -44,6 +45,7 @@
 	- calendar for events
 	- users can pin their recollections on the map (probably a private map for each user)
 	- news section
+	- friend requests older than 1 year should be removed
 
 
 - microservices: 
@@ -61,8 +63,7 @@
 	- security
 	- documentation
 	- caching
-	- messaging
-	- notifications
+		- reason1: performance (ex: db -> notifications table)
 	- monitoring
 	- scalability
 	- performance
