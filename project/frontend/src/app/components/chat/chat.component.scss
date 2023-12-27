@@ -1,0 +1,87 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+#chat-container {
+	position: fixed;
+	z-index: 9;
+	width: 700px;
+	height: 500px;
+	right: 80px;
+	bottom: 0;
+	background-color: azure;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 10px;
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: row;
+
+	#left-section {
+		flex: 1;
+		
+		display: flex;
+		flex-direction: column;
+		border-right: 1px solid #ccc;
+		
+		#left-section-header {
+			height: 50px;
+			border-bottom: 1px solid #ccc;
+		}
+
+		#left-section-body {
+			height: auto;
+			overflow-y: auto;
+		}
+	}
+
+	#right-section {
+		flex: 3;
+
+		display: flex;
+		flex-direction: column;
+
+		#right-section-header {
+			height: 30px;
+			border-bottom: 1px solid #ccc;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+
+			button {
+				cursor: pointer;
+			}
+		}
+
+		#right-section-body {
+			height: auto;
+			overflow-y: auto;
+		}
+	}
+}
+
+button {
+	align-self: flex-start;
+	background: transparent;
+	min-width: 80px;
+	border: none;
+	outline: none;
+	margin-right: 30px;
+	padding: 5px 10px;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	border-radius: 2rem;
+	transition-duration: 0.3s;
+	list-style: none;
+
+	&:hover {
+		background-color: rgb(144, 197, 255);
+		box-shadow: 4px 3px 8px 0px rgb(144, 197, 255);
+		border-radius: 0.2rem;
+		cursor: pointer;
+		transition-duration: 0.3s;
+		color: rgb(247, 250, 151);
+	}
+}

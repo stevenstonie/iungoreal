@@ -44,12 +44,12 @@ describe('AuthComponent', () => {
       component.login();
 
       expect(authServiceSpy.login).toHaveBeenCalledWith(credentials);
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/main-page']);
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
     });
   });
 
   describe('register', () => {
-    it('should call authService.register and navigate to main-page', () => {
+    it('should call authService.register and navigate to /', () => {
       const user = { email: 'test@example.com', firstName: 'John', lastName: 'Doe', password: 'password' };
       authServiceSpy.register.and.returnValue(of({}));
 
@@ -57,7 +57,7 @@ describe('AuthComponent', () => {
       component.register();
 
       expect(authServiceSpy.register).toHaveBeenCalledWith(user);
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/main-page']);
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
     });
   });
 });

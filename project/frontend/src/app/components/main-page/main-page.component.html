@@ -1,93 +1,23 @@
-<ng-container *ngIf="!currentUser">
-  <div id="navbar">
-    <ul>
-      <li><button (click)="logout()">Logout</button></li>
-    </ul>
-  </div>
+<app-navbar></app-navbar>
 
-  <p>connecting to the app..</p>
-</ng-container>
+<div id="body">
+	<div id="left-section">
+		<p>left menu content. left menu content. left menu content. left menu content.
+			left menu content. left menu content. left menu content. left menu content.
+			left menu content. left menu content. left menu content.
+		</p>
+	</div>
+	<div id="middle-section">
+		<p>content content. content content. content content. content content.
+			content content. content content. content content. content content.
+			content content. content content. content content.
+		</p>
+	</div>
+	<div id="right-section">
+		<h4>friends</h4>
 
-<ng-container *ngIf="currentUser">
-  <div id="navbar">
-    <ul>
-      <li><button (click)="toggleMap()">Toggle Map</button></li>
-      <li><button (click)="logout()">Logout</button></li>
-    </ul>
-  </div>
-
-  <div id="main">
-    <h1>welcome {{ currentUser.email }} ( {{ currentUser.role }} )</h1>
-    <app-map *ngIf="showMap" [currentUser]="currentUser"></app-map>
-
-    <h1>Lorem Ipsum</h1>
-    <h2>Lorem Ipsum</h2>
-    <h3>Lorem Ipsum</h3>
-    <h4>Lorem Ipsum</h4>
-    <h5>Lorem Ipsum</h5>
-    <h6>Lorem Ipsum</h6>
-
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed aliquet turpis auctor, pulvinar lacus eu, fringilla
-      metus. Vestibulum accumsan metus vitae euismod aliquam. Nulla facilisi. Mauris nec lectus a magna fermentum
-      viverra.
-    </p>
-
-    <p>Nullam commodo vestibulum arcu, vitae ultricies purus. Quisque sed imperdiet nunc, sit amet condimentum eros.
-      Phasellus non vulputate mauris. Mauris interdum feugiat dictum. Sed venenatis, nisl eget consectetur placerat,
-      tellus
-      leo bibendum mi, id iaculis orci purus sit amet risus.</p>
-
-    <ul>
-      <li>Lorem ipsum dolor sit amet</li>
-      <li>Consectetur adipiscing elit</li>
-      <li>Sed aliquet turpis auctor</li>
-      <li>Pulvinar lacus eu</li>
-      <li>Fringilla metus</li>
-      <li>Vestibulum accumsan metus vitae</li>
-      <li>Euismod aliquam</li>
-      <li>Nulla facilisi</li>
-      <li>Mauris nec lectus</li>
-      <li>A magna fermentum viverra</li>
-    </ul>
-
-    <p>Egestas purus viverra accumsan in nisl nisi scelerisque eu ultrices. Nulla pharetra diam sit amet nisl suscipit.
-      Aliquam faucibus purus in massa tempor nec. Et netus et malesuada fames ac turpis egestas maecenas. Maecenas sed
-      enim
-      ut sem viverra. Sed blandit libero volutpat sed cras. Nunc vel risus commodo viverra maecenas accumsan lacus.
-      Egestas
-      pretium aenean pharetra magna ac placerat vestibulum. Elit pellentesque habitant morbi tristique. Magna eget est
-      lorem
-      ipsum dolor sit. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Quam lacus suspendisse faucibus
-      interdum.
-      Congue eu consequat ac felis donec et odio pellentesque. Gravida arcu ac tortor dignissim. Tristique senectus et
-      netus
-      et malesuada. Ipsum dolor sit amet consectetur adipiscing elit. Et egestas quis ipsum suspendisse. Quis commodo
-      odio
-      aenean sed adipiscing diam donec adipiscing tristique. Orci a scelerisque purus semper eget duis. Sed arcu non
-      odio
-      euismod lacinia at quis risus sed.</p>
-
-    <p>Sed nisi lacus sed viverra tellus in hac. Venenatis cras sed felis eget velit. Iaculis eu non diam phasellus
-      vestibulum lorem sed. Ut tortor pretium viverra suspendisse potenti nullam ac tortor vitae. Quis varius quam
-      quisque
-      id diam vel quam elementum pulvinar. A diam maecenas sed enim ut. Phasellus vestibulum lorem sed risus ultricies.
-      Ullamcorper eget nulla facilisi etiam dignissim. Nibh sit amet commodo nulla. Ultrices dui sapien eget mi. Risus
-      quis
-      varius quam quisque id. Et tortor consequat id porta nibh. Molestie a iaculis at erat pellentesque adipiscing
-      commodo.
-    </p>
-
-    <p>Sed blandit libero volutpat sed cras. Eleifend donec pretium vulputate sapien. Tortor condimentum lacinia quis
-      vel
-      eros donec ac odio tempor. Eu lobortis elementum nibh tellus molestie nunc non blandit massa. Ut aliquam purus sit
-      amet luctus venenatis. Potenti nullam ac tortor vitae purus faucibus. Accumsan tortor posuere ac ut consequat
-      semper
-      viverra nam libero. Dignissim diam quis enim lobortis scelerisque fermentum dui faucibus in. Velit egestas dui id
-      ornare arcu odio ut sem nulla. Molestie at elementum eu facilisis sed odio morbi quis. Mauris ultrices eros in
-      cursus.
-      Non odio euismod lacinia at quis risus sed. Tellus molestie nunc non blandit massa enim nec dui nunc. Curabitur
-      gravida arcu ac tortor dignissim convallis. Facilisis gravida neque convallis a cras semper. Massa sed elementum
-      tempus egestas sed. Maecenas ultricies mi eget mauris pharetra et ultrices neque ornare. Felis imperdiet proin
-      fermentum leo vel orci porta non pulvinar. Pellentesque nec nam aliquam sem et.</p>
-  </div>
-</ng-container>
+		<button>friend1</button>
+		<button>friend2</button>
+		<button>friend3</button>
+	</div>
+</div>

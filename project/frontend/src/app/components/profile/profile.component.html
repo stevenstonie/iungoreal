@@ -1,0 +1,59 @@
+<app-navbar></app-navbar>
+
+<div id="title">
+	<h2>Profile</h2>
+</div>
+
+<div id="header">
+	<button>About</button>
+	<button>Posts</button>
+	<button>Comments</button>
+	<button>Saved</button>
+	<button>Liked</button>
+	<button>Disliked</button>
+</div>
+
+<div id="body">
+	<div id="section-left">
+		<div id="section-sort">Sort by:
+			<button>New</button>
+			<button>Hot</button>
+			<button>Top</button>
+		</div>
+
+		<div class="section-post">
+			<h3>post1 title</h3>
+			<p>post1 description</p>
+
+			<div class="post-buttons">
+				<button>Like</button>
+				<button>Dislike</button>
+				<button>Comment</button>
+				<button>Save</button>
+			</div>
+		</div>
+
+		<div class="section-post">
+			<h3>post2 title</h3>
+			<p>post2 description</p>
+
+			<div class="post-buttons">
+				<button>Like</button>
+				<button>Dislike</button>
+				<button>Comment</button>
+				<button>Save</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="section-right">
+		<div id="image-cover">
+
+		</div>
+		<div id="image-profile">
+
+		</div>
+		
+		<button id="friend-request" (click)="sendFriendRequest()">Send friend request</button>
+	</div>
+</div>

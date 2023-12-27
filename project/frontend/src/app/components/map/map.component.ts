@@ -13,7 +13,7 @@ import { MapService } from 'src/app/services/map.service';
 export class MapComponent implements AfterViewInit, OnDestroy {
   declare map: L.Map;
   @ViewChild('map') mapElement!: ElementRef;
-  @Input() currentUser: User;
+  @Input() currentUser: User | null = null;
   showMarkerInputs: boolean = false;
   latitude!: number;
   longitude!: number;
@@ -30,7 +30,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   constructor(private mapService: MapService) {
-    this.currentUser = { id: 0, email: '', password: '', firstname: '', lastname: '', role: Role.USER };
+
   }
 
   ngAfterViewInit() {
@@ -74,10 +74,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   };
 
-  get isCurrentUserAdmin(): boolean {
-    return this.currentUser?.role === Role.ADMIN;
-  }
-
   submitMarker() {
     const marker: Marker = {
       id: 0,
@@ -110,5 +106,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     return {
       'click-cursor': this.showMarkerInputs
     }
+  }
+
+  get isCurrentUserAdmin(): boolean {
+    return this.currentUser?.role === Role.ADMIN;
   }
 }

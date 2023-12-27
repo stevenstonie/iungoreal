@@ -1,11 +1,14 @@
 * {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 	--map-width: 80%;
 	--map-height: 80%;
 }
 
 .map-ui {
 	position: fixed;
-	z-index: 999;
+	z-index: 9;
 }
 
 #map {
@@ -16,7 +19,7 @@
 	left: calc((100% - (var(--map-width))) / 2);
 	right: 0;
 	bottom: 0;
-	z-index: 999;
+	z-index: 9;
 }
 
 #add-marker-button {
