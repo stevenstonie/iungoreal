@@ -67,7 +67,8 @@ class AuthenticationControllerIntegrationTest {
 	@Test
 	@Transactional
 	void registrationEndpoint() throws Exception {
-		RegisterRequest registerRequest = new RegisterRequest("testemail123456", "testpassword123456", "testusername123456");
+		RegisterRequest registerRequest = new RegisterRequest("testemail123456", "testpassword123456",
+				"testusername123456");
 
 		mockMvc.perform(post("/api/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +92,7 @@ class AuthenticationControllerIntegrationTest {
 	@Test
 	@Transactional
 	void authenticationEndpointWithInvalidCredentials() throws Exception {
-		AuthRequest authenticationRequest = new AuthRequest("testemail123", "wrong_password");
+		AuthRequest authenticationRequest = new AuthRequest(EMAIL, "wrong_password");
 
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -99,14 +100,14 @@ class AuthenticationControllerIntegrationTest {
 				.andExpect(status().isUnauthorized())
 				.andExpect(result -> assertTrue(
 						result.getResolvedException() instanceof IgorAuthenticationException))
-				.andExpect(result -> assertEquals("Authentication failed",
+				.andExpect(result -> assertEquals("Invalid credentials",
 						Objects.requireNonNull(result.getResolvedException()).getMessage()));
 	}
 
 	@Test
 	@Transactional
 	void registrationEndpointWithExistingEmail() throws Exception {
-		RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, USERNAME);
+		RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, "new_username");
 
 		mockMvc.perform(post("/api/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -115,6 +116,21 @@ class AuthenticationControllerIntegrationTest {
 				.andExpect(result -> assertTrue(
 						result.getResolvedException() instanceof IgorAuthenticationException))
 				.andExpect(result -> assertEquals("Email already taken",
+						Objects.requireNonNull(result.getResolvedException()).getMessage()));
+	}
+
+	@Test
+	@Transactional
+	void registrationEndpointWithExistingUsername() throws Exception {
+		RegisterRequest registerRequest = new RegisterRequest("new_email", PASSWORD, USERNAME);
+
+		mockMvc.perform(post("/api/auth/register")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(registerRequest)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorAuthenticationException))
+				.andExpect(result -> assertEquals("Username already taken",
 						Objects.requireNonNull(result.getResolvedException()).getMessage()));
 	}
 
@@ -135,8 +151,38 @@ class AuthenticationControllerIntegrationTest {
 
 	@Test
 	@Transactional
+	void registrationEndpointWithNullCredentials() throws Exception {
+		RegisterRequest registerRequest = new RegisterRequest(null, null, null);
+
+		mockMvc.perform(post("/api/auth/register")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(registerRequest)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorAuthenticationException))
+				.andExpect(result -> assertEquals("Credentials cannot be empty",
+						Objects.requireNonNull(result.getResolvedException()).getMessage()));
+	}
+
+	@Test
+	@Transactional
 	void authenticationEndpointWithMissingCredentials() throws Exception {
 		AuthRequest authenticationRequest = new AuthRequest("", "");
+
+		mockMvc.perform(post("/api/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(authenticationRequest)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorAuthenticationException))
+				.andExpect(result -> assertEquals("Credentials cannot be empty",
+						Objects.requireNonNull(result.getResolvedException()).getMessage()));
+	}
+
+	@Test
+	@Transactional
+	void authenticationEndpointWithNullCredentials() throws Exception {
+		AuthRequest authenticationRequest = new AuthRequest(null, null);
 
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)

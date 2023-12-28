@@ -1,5 +1,6 @@
 package com.stevenst.app.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,7 +17,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
+import com.jayway.jsonpath.JsonPath;
 import com.stevenst.app.model.Role;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.JwtService;
@@ -73,12 +76,27 @@ class UserControllerIntegrationTest {
 
 	@Test
 	@Transactional
+	void getCurrentUserEmailEqualToEmailInToken() throws Exception {
+		MvcResult result = mockMvc.perform(get("/api/user/currentUser")
+				.header("Authorization", "Bearer " + token))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		String email = JsonPath.read(result.getResponse().getContentAsString(), "$.email");
+
+		assertEquals(EMAIL, email);
+	}
+
+	@Test
+	@Transactional
 	void getCurrentUser_inexistent() throws Exception {
 		String inexistentUserToken = jwtService.generateToken("inexistent");
 
 		mockMvc.perform(get("/api/user/currentUser")
 				.header("Authorization", "Bearer " + inexistentUserToken))
-				.andExpect(status().isUnauthorized());
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertEquals("Invalid token",
+						result.getResponse().getContentAsString()));
 	}
 
 	@Test
@@ -88,7 +106,9 @@ class UserControllerIntegrationTest {
 
 		mockMvc.perform(get("/api/user/currentUser")
 				.header("Authorization", "Bearer " + alteredToken))
-				.andExpect(status().isUnauthorized());
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertEquals("Invalid token signature",
+						result.getResponse().getContentAsString()));
 	}
 
 }

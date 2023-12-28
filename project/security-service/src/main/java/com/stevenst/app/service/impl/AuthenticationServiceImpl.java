@@ -70,7 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		} catch (AuthenticationException e) {
-			throw new IgorAuthenticationException("Authentication failed");
+			throw new IgorAuthenticationException("Invalid credentials");
 		}
 
 		var user = userRepository.findByEmail(request.getEmail())
