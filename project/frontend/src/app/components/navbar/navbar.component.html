@@ -29,7 +29,7 @@
 
 			<button class="highlighted" (click)="toggleNotifications()">Notifications</button>
 
-			<button class="highlighted" (click)="toggleUserMenu()">{{currentUser.email}} ({{currentUser.role}})</button>
+			<button class="highlighted" (click)="toggleUserMenu()">{{currentUser.username}} ({{currentUser.role}})</button>
 			<div *ngIf="showUserMenu">
 				<div class="profile-drop-down-menu">
 					<button class="highlighted" (click)="profile()">Profile</button>

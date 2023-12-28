@@ -34,6 +34,7 @@ export class AuthService {
           this.token = response.token;
           localStorage.setItem('token', this.token);
           localStorage.setItem('email', credentials.email);
+          localStorage.setItem('username', credentials.username);
         })
       )
   }
@@ -44,6 +45,10 @@ export class AuthService {
 
   getEmail(): string {
     return localStorage.getItem('email') ?? '';
+  }
+
+  getUsername(): string {
+    return localStorage.getItem('username') ?? '';
   }
 
   logout() {

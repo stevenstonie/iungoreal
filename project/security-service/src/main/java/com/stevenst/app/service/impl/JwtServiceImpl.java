@@ -20,10 +20,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
-/**
- * !!! email and username here are interchangeable !!!
- * 
- */
 @Service
 public class JwtServiceImpl implements JwtService {
 	@Value("${jwt.secret-key}")
@@ -120,3 +116,5 @@ public class JwtServiceImpl implements JwtService {
 		return Keys.hmacShaKeyFor(keyBites);
 	}
 }
+
+//TODO: test this class (ex: check if the token returns the right email)

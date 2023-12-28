@@ -21,6 +21,7 @@ export class AuthComponent {
     this.registerForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
+      repeatPassword: ['', Validators.required],
       username: ['', Validators.required]
     });
   }
@@ -34,6 +35,11 @@ export class AuthComponent {
 
   register() {
     const user = this.registerForm.value;
+
+    if (user.password !== user.repeatPassword) {
+      window.alert('Passwords do not match');
+      return;
+    }
     this.authService.register(user).subscribe(response => {
       this.router.navigate(['/']);
     });
