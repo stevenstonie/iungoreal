@@ -20,9 +20,8 @@ export class AuthComponent {
 
     this.registerForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
       password: ['', Validators.required],
+      username: ['', Validators.required]
     });
   }
 
