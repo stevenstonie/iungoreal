@@ -2,8 +2,11 @@ package com.stevenst.app.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -17,13 +20,14 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.model.Role;
 import com.stevenst.app.model.User;
 import com.stevenst.app.repository.UserRepository;
-import com.stevenst.app.service.impl.UserDetailsServiceImpl;
 
 class ApplicationConfigurationTest {
     @Mock
@@ -33,7 +37,7 @@ class ApplicationConfigurationTest {
     private AuthenticationConfiguration authenticationConfiguration;
 
     @Mock
-    private UserDetailsServiceImpl userDetailsServiceImpl;
+    private UserDetailsService userDetailsService;
 
     @InjectMocks
     private ApplicationConfiguration applicationConfiguration;
@@ -44,34 +48,35 @@ class ApplicationConfigurationTest {
     }
 
     @Test
-    void testUserDetailsService_WhenUserFound_ReturnsUserDetails() {
-        when(userRepository.findByEmail("test@example.com")).thenReturn(
+    void userDetailsService() {
+        when(userRepository.findByEmail("test@email.com")).thenReturn(
                 Optional.of(User
                         .builder()
-                        .email("test@example.com")
-                        .password("password")
+                        .email("test@email.com")
+                        .password("testpassword")
                         .username("testusername")
                         .role(Role.USER)
                         .build()));
 
-        UserDetails userDetails = applicationConfiguration.userDetailsService().loadUserByUsername("test@example.com");
+        User user = (User) applicationConfiguration.userDetailsService().loadUserByUsername("test@email.com");
 
-        assertNotNull(userDetails);
-        assertEquals("testusername", userDetails.getUsername());
+        assertNotNull(user);
+        assertEquals("test@email.com", user.getEmail());
     }
 
     @Test
-    void testUserDetailsService_UserNotFound() {
-        String email = "test@example.com";
+    void userDetailsService_userNotFound() {
+        String email = "test@email.com";
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-        assertThrows(IgorAuthenticationException.class, () -> {
+        var exception = assertThrows(IgorAuthenticationException.class, () -> {
             applicationConfiguration.userDetailsService().loadUserByUsername(email);
         });
+        assertEquals("Email not found", exception.getMessage());
     }
 
     @Test
-    void testAuthenticationProvider_ReturnsDaoAuthenticationProvider() {
+    void authenticationProvider_ReturnsDaoAuthenticationProvider() {
         AuthenticationProvider authenticationProvider = applicationConfiguration.authenticationProvider();
 
         assertNotNull(authenticationProvider);
@@ -79,7 +84,7 @@ class ApplicationConfigurationTest {
     }
 
     @Test
-    void testPasswordEncoder_ReturnsBCryptPasswordEncoder() {
+    void passwordEncoder_ReturnsBCryptPasswordEncoder() {
         BCryptPasswordEncoder passwordEncoder = applicationConfiguration.passwordEncoder();
 
         assertNotNull(passwordEncoder);

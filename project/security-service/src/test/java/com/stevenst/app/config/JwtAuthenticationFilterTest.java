@@ -10,8 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.model.User;
 import com.stevenst.app.service.impl.JwtServiceImpl;
 import jakarta.servlet.FilterChain;
@@ -60,16 +60,7 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void testDoFilterInternal_InvokesFilterChainDoFilter() throws ServletException, IOException {
-        mockTokenRequest(true);
-
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        verify(filterChain, times(1)).doFilter(request, response);
-    }
-
-    @Test
-    void testDoFilterInternal_WithValidToken_ShouldAuthenticateUser() throws ServletException, IOException {
+    void doFilterInternal_withValidRequest_shouldHaveNormalFlow() throws ServletException, IOException {
         mockTokenRequest(true);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
@@ -77,32 +68,7 @@ class JwtAuthenticationFilterTest {
         verify(jwtService, times(1)).extractEmail(anyString());
         verify(userDetailsService, times(1)).loadUserByUsername(anyString());
         verify(jwtService, times(1)).isTokenValid(anyString(), any(User.class));
-    }
-
-    @Test
-    void testDoFilterInternal_WithInvalidToken_UserNotFound() throws ServletException, IOException {
-        mockTokenRequest(false);
-        when(userDetailsService.loadUserByUsername(anyString())).thenThrow(UsernameNotFoundException.class);
-        when(jwtService.isTokenValid(anyString(), any(User.class))).thenReturn(false);
-
-        assertThrows(NullPointerException.class,
-                () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
-
-        verify(jwtService, times(1)).extractEmail(anyString());
-        verify(userDetailsService, times(1)).loadUserByUsername(anyString());
-        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
-    }
-
-    @Test
-    void testDoFilterInternal_WithMissingAuthorizationHeader_ShouldNotAuthenticateUser()
-            throws ServletException, IOException {
-        when(request.getHeader("Authorization")).thenReturn(null);
-
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        verify(jwtService, times(0)).extractEmail(anyString());
-        verify(userDetailsService, times(0)).loadUserByUsername(anyString());
-        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
+        verify(filterChain, times(1)).doFilter(request, response);
     }
 
     @Test
@@ -116,8 +82,37 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        assertSame(existingAuth, SecurityContextHolder.getContext().getAuthentication(),
-                "Existing authentication should not be overwritten");
+        assertSame(existingAuth, SecurityContextHolder.getContext().getAuthentication());
+
+        verify(jwtService, times(1)).extractEmail(anyString());
+        verify(userDetailsService, times(0)).loadUserByUsername(anyString());
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
+        verify(filterChain, times(1)).doFilter(request, response);
+    }
+
+    @Test
+    void doFilterInternal_WithInvalidToken_UserNotFound() throws ServletException, IOException {
+        mockTokenRequest(false);
+
+        assertThrows(NullPointerException.class,
+                () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
+
+        verify(jwtService, times(1)).extractEmail(anyString());
+        verify(userDetailsService, times(1)).loadUserByUsername(anyString());
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
+    }
+
+    @Test
+    void doFilterInternal_WithMissingAuthorizationHeader_ShouldNotAuthenticateUser()
+            throws ServletException, IOException {
+        when(request.getHeader("Authorization")).thenReturn(null);
+
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain, times(1)).doFilter(request, response);
+        verify(jwtService, times(0)).extractEmail(anyString());
+        verify(userDetailsService, times(0)).loadUserByUsername(anyString());
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
     }
 
     @Test
@@ -127,6 +122,7 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        verify(filterChain, times(1)).doFilter(request, response);
         verify(jwtService, times(0)).extractEmail(anyString());
         verify(userDetailsService, times(0)).loadUserByUsername(anyString());
         verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
@@ -138,6 +134,7 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        verify(filterChain, times(1)).doFilter(request, response);
         verify(jwtService, times(0)).extractEmail(anyString());
         verify(userDetailsService, times(0)).loadUserByUsername(anyString());
         verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
@@ -153,6 +150,9 @@ class JwtAuthenticationFilterTest {
             User user = mock(User.class);
             when(userDetailsService.loadUserByUsername(anyString())).thenReturn(user);
             when(jwtService.isTokenValid(anyString(), any(User.class))).thenReturn(true);
+        } else {
+            when(userDetailsService.loadUserByUsername(anyString())).thenThrow(IgorAuthenticationException.class);
+            when(jwtService.isTokenValid(anyString(), any(User.class))).thenReturn(false);
         }
     }
 }

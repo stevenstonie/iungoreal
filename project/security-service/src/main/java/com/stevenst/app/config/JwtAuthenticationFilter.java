@@ -20,7 +20,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -75,6 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (IgorAuthenticationException ex) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid token");
+            // TODO: try to throw IgorAuthenticationException here and see if it is being handled or not (in the test that fails after this change)
         }
     }
 }

@@ -15,11 +15,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfiguration {
-	private final UserRepository userRepo;
+	private final UserRepository userRepository;
 
 	@Bean
 	UserDetailsService userDetailsService() {
-		return email -> userRepo.findByEmail(email)
+		return email -> userRepository.findByEmail(email)
 				.orElseThrow(() -> new IgorAuthenticationException("Email not found"));
 	}
 
