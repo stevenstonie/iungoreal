@@ -20,9 +20,9 @@ public class TestUtil {
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public void insertUserIntoDB(String email, String password, String firstName, String lastName, Role role)
+    public void insertUserIntoDB(String email, String password, String username, Role role)
             throws Exception {
-        User user = new User(0L, email, passwordEncoder.encode(password), firstName, lastName, role);
+        User user = new User(0L, email, passwordEncoder.encode(password), username, role);
 
         userRepository.save(user);
     }

@@ -3,22 +3,23 @@ package com.stevenst.app.service;
 import java.util.Date;
 import java.util.function.Function;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.stevenst.app.model.User;
 
 import io.jsonwebtoken.Claims;
 
 @Service
 public interface JwtService {
-	String extractUsername(String token);
+	String extractEmail(String token);
 
 	<T> T extractClaim(String token, Function<Claims, T> claimsResolver);
 
 	String generateToken(String email);
 	
-	String generateToken(UserDetails userDetails);
+	String generateToken(User user);
 
-	boolean isTokenValid(String token, UserDetails userDetails);
+	boolean isTokenValid(String token, User user);
 
 	boolean isTokenValid(String token, String email);
 

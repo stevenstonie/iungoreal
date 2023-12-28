@@ -41,9 +41,8 @@ public class User implements UserDetails {
 	@JsonIgnore
 	private String password;
 
-	private String firstname;
-
-	private String lastname;
+	@Column(nullable = false, unique = true)
+	private String username;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -72,15 +71,5 @@ public class User implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
-	}
-
-	@Override
-	public String getUsername() {
-		return email;
-	}
-
-	@Override
-	public String getPassword() {
-		return password;
 	}
 }

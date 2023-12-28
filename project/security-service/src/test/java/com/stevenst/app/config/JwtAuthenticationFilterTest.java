@@ -9,10 +9,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import com.stevenst.app.model.User;
 import com.stevenst.app.service.impl.JwtServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -74,23 +74,23 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(jwtService, times(1)).extractUsername(anyString());
+        verify(jwtService, times(1)).extractEmail(anyString());
         verify(userDetailsService, times(1)).loadUserByUsername(anyString());
-        verify(jwtService, times(1)).isTokenValid(anyString(), any(UserDetails.class));
+        verify(jwtService, times(1)).isTokenValid(anyString(), any(User.class));
     }
 
     @Test
     void testDoFilterInternal_WithInvalidToken_UserNotFound() throws ServletException, IOException {
         mockTokenRequest(false);
         when(userDetailsService.loadUserByUsername(anyString())).thenThrow(UsernameNotFoundException.class);
-        when(jwtService.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(false);
+        when(jwtService.isTokenValid(anyString(), any(User.class))).thenReturn(false);
 
         assertThrows(NullPointerException.class,
                 () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
 
-        verify(jwtService, times(1)).extractUsername(anyString());
+        verify(jwtService, times(1)).extractEmail(anyString());
         verify(userDetailsService, times(1)).loadUserByUsername(anyString());
-        verify(jwtService, times(0)).isTokenValid(anyString(), any(UserDetails.class));
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
     }
 
     @Test
@@ -100,9 +100,9 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(jwtService, times(0)).extractUsername(anyString());
+        verify(jwtService, times(0)).extractEmail(anyString());
         verify(userDetailsService, times(0)).loadUserByUsername(anyString());
-        verify(jwtService, times(0)).isTokenValid(anyString(), any(UserDetails.class));
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
     }
 
     @Test
@@ -127,9 +127,9 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(jwtService, times(0)).extractUsername(anyString());
+        verify(jwtService, times(0)).extractEmail(anyString());
         verify(userDetailsService, times(0)).loadUserByUsername(anyString());
-        verify(jwtService, times(0)).isTokenValid(anyString(), any(UserDetails.class));
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
     }
 
     @Test
@@ -138,21 +138,21 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(jwtService, times(0)).extractUsername(anyString());
+        verify(jwtService, times(0)).extractEmail(anyString());
         verify(userDetailsService, times(0)).loadUserByUsername(anyString());
-        verify(jwtService, times(0)).isTokenValid(anyString(), any(UserDetails.class));
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
     }
 
     // -------------------------------------------------
 
     private void mockTokenRequest(boolean isValid) {
         when(request.getHeader("Authorization")).thenReturn("Bearer " + this.token);
-        when(jwtService.extractUsername(anyString())).thenReturn(this.userEmail);
+        when(jwtService.extractEmail(anyString())).thenReturn(this.userEmail);
 
         if (isValid) {
-            UserDetails userDetails = mock(UserDetails.class);
-            when(userDetailsService.loadUserByUsername(anyString())).thenReturn(userDetails);
-            when(jwtService.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(true);
+            User user = mock(User.class);
+            when(userDetailsService.loadUserByUsername(anyString())).thenReturn(user);
+            when(jwtService.isTokenValid(anyString(), any(User.class))).thenReturn(true);
         }
     }
 }

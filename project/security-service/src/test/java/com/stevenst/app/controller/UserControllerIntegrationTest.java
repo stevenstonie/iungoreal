@@ -30,8 +30,9 @@ import jakarta.transaction.Transactional;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerIntegrationTest {
 	private static Server server;
-	private static final String EMAIL = "testuser123";
+	private static final String EMAIL = "testemail123";
 	private static final String PASSWORD = "testpassword123";
+	private static final String USERNAME = "testusername123";
 	private String token;
 
 	@Autowired
@@ -49,7 +50,7 @@ class UserControllerIntegrationTest {
 		server.start();
 
 		TestUtil testUtil = new TestUtil(userRepository);
-		testUtil.insertUserIntoDB(EMAIL, PASSWORD, "test", "user", Role.USER);
+		testUtil.insertUserIntoDB(EMAIL, PASSWORD, USERNAME, Role.USER);
 
 		token = jwtService.generateToken(EMAIL);
 	}

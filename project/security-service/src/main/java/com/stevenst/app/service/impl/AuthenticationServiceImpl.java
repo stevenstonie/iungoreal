@@ -29,7 +29,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private final AuthenticationManager authenticationManager;
 
 	public AuthResponse register(RegisterRequest request) {
-		if (request.getEmail() == null || request.getPassword() == null || request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
+		if (request.getEmail() == null || request.getEmail().isEmpty() || request.getPassword() == null
+				|| request.getPassword().isEmpty() || request.getUsername() == null
+				|| request.getUsername().isEmpty()) {
 			throw new IgorAuthenticationException("Credentials cannot be empty");
 		}
 
@@ -38,11 +40,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new IgorAuthenticationException("Email already taken");
 		}
 
+		existingUser = userRepository.findByUsername(request.getUsername());
+		if (existingUser.isPresent()) {
+			throw new IgorAuthenticationException("Username already taken");
+		}
+
 		var user = User.builder()
-				.firstname(request.getFirstName())
-				.lastname(request.getLastName())
 				.email(request.getEmail())
 				.password(passwordEncoder.encode(request.getPassword()))
+				.username(request.getUsername())
 				.role(Role.USER)
 				.build();
 
@@ -55,7 +61,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	public AuthResponse login(AuthRequest request) {
-		if (request.getEmail() == null || request.getPassword() == null || request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
+		if (request.getEmail() == null || request.getEmail().isEmpty() || request.getPassword() == null
+				|| request.getPassword().isEmpty()) {
 			throw new IgorAuthenticationException("Credentials cannot be empty");
 		}
 

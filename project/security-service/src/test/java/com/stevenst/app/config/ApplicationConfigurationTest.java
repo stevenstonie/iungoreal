@@ -17,9 +17,9 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.model.Role;
 import com.stevenst.app.model.User;
 import com.stevenst.app.repository.UserRepository;
@@ -50,13 +50,14 @@ class ApplicationConfigurationTest {
                         .builder()
                         .email("test@example.com")
                         .password("password")
+                        .username("testusername")
                         .role(Role.USER)
                         .build()));
 
         UserDetails userDetails = applicationConfiguration.userDetailsService().loadUserByUsername("test@example.com");
 
         assertNotNull(userDetails);
-        assertEquals("test@example.com", userDetails.getUsername());
+        assertEquals("testusername", userDetails.getUsername());
     }
 
     @Test
@@ -64,7 +65,7 @@ class ApplicationConfigurationTest {
         String email = "test@example.com";
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class, () -> {
+        assertThrows(IgorAuthenticationException.class, () -> {
             applicationConfiguration.userDetailsService().loadUserByUsername(email);
         });
     }

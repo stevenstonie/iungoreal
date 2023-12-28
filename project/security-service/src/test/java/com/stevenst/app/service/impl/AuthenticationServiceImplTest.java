@@ -40,7 +40,7 @@ class AuthenticationServiceImplTest {
 	@InjectMocks
 	private AuthenticationServiceImpl authenticationService;
 
-	User user = new User(0L, "normal@email.com", "password", "first", "last", Role.USER);
+	User user = new User(0L, "test@email.com", "password", "testusername", Role.USER);
 
 	@BeforeEach
 	void setUp() {
@@ -49,8 +49,7 @@ class AuthenticationServiceImplTest {
 
 	@Test
 	void register_validCredentials() {
-		RegisterRequest request = new RegisterRequest(user.getEmail(), user.getPassword(), user.getFirstname(),
-				user.getLastname());
+		RegisterRequest request = new RegisterRequest(user.getEmail(), user.getPassword(), user.getUsername());
 
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 		when(passwordEncoder.encode(anyString())).thenReturn(user.getPassword());
@@ -61,10 +60,8 @@ class AuthenticationServiceImplTest {
 
 	@Test
 	void register_withEmptyCredentials() {
-		RegisterRequest requestWithEmptyEmail = new RegisterRequest("", user.getPassword(), user.getFirstname(),
-				user.getLastname());
-		RegisterRequest requestWithEmptyPassword = new RegisterRequest(user.getEmail(), "", user.getFirstname(),
-				user.getLastname());
+		RegisterRequest requestWithEmptyEmail = new RegisterRequest("", user.getPassword(), user.getUsername());
+		RegisterRequest requestWithEmptyPassword = new RegisterRequest(user.getEmail(), "", user.getUsername());
 
 		assertThrows(IgorAuthenticationException.class, () -> authenticationService.register(requestWithEmptyEmail));
 		assertThrows(IgorAuthenticationException.class, () -> authenticationService.register(requestWithEmptyPassword));
@@ -72,8 +69,7 @@ class AuthenticationServiceImplTest {
 
 	@Test
 	void register_theUserAlreadyExists() {
-		RegisterRequest request = new RegisterRequest(user.getEmail(), user.getPassword(), user.getFirstname(),
-				user.getLastname());
+		RegisterRequest request = new RegisterRequest(user.getEmail(), user.getPassword(), user.getUsername());
 
 		when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
 

@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getCurrentUserByToken(String authHeader) {
 		String token = jwtService.extractToken(authHeader);
-		String email = jwtService.extractUsername(token);
+		String email = jwtService.extractEmail(token);
 		var user = userRepository.findByEmail(email);
 
 		if (!user.isPresent()) {

@@ -12,6 +12,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.stevenst.app.exception.IgorAuthenticationException;
+import com.stevenst.app.model.User;
 import com.stevenst.app.service.impl.JwtServiceImpl;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -47,13 +49,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             jwt = authHeader.substring(7);
-            userEmail = jwtService.extractUsername(jwt);
+            userEmail = jwtService.extractEmail(jwt);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-                if (jwtService.isTokenValid(jwt, userDetails)) {
+                User user = (User) userDetailsService.loadUserByUsername(userEmail);
+
+                if (jwtService.isTokenValid(jwt, user)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
+                            user, null, user.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
@@ -62,13 +65,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (SignatureException ex) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid token");
+            response.getWriter().write("Invalid token signature");
         } catch (ExpiredJwtException ex) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Expired token");
         } catch (UsernameNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("User not found");
+        } catch (IgorAuthenticationException ex) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid token");
         }
     }
 }

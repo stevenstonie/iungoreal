@@ -35,8 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AuthenticationControllerIntegrationTest {
 	private static Server server;
-	private static final String EMAIL = "testuser123";
+	private static final String EMAIL = "testemail123";
 	private static final String PASSWORD = "testpassword123";
+	private static final String USERNAME = "testusername123";
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -53,7 +54,7 @@ class AuthenticationControllerIntegrationTest {
 		server.start();
 
 		TestUtil testUtil = new TestUtil(userRepository);
-		testUtil.insertUserIntoDB(EMAIL, PASSWORD, "test", "user", Role.USER);
+		testUtil.insertUserIntoDB(EMAIL, PASSWORD, USERNAME, Role.USER);
 	}
 
 	@AfterAll
@@ -66,8 +67,7 @@ class AuthenticationControllerIntegrationTest {
 	@Test
 	@Transactional
 	void registrationEndpoint() throws Exception {
-		RegisterRequest registerRequest = new RegisterRequest("testuser123456", "testpassword123456", "test",
-				"user");
+		RegisterRequest registerRequest = new RegisterRequest("testemail123456", "testpassword123456", "testusername123456");
 
 		mockMvc.perform(post("/api/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +91,7 @@ class AuthenticationControllerIntegrationTest {
 	@Test
 	@Transactional
 	void authenticationEndpointWithInvalidCredentials() throws Exception {
-		AuthRequest authenticationRequest = new AuthRequest("testuser123", "wrong_password");
+		AuthRequest authenticationRequest = new AuthRequest("testemail123", "wrong_password");
 
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +106,7 @@ class AuthenticationControllerIntegrationTest {
 	@Test
 	@Transactional
 	void registrationEndpointWithExistingEmail() throws Exception {
-		RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, "test", "user");
+		RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, USERNAME);
 
 		mockMvc.perform(post("/api/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +121,7 @@ class AuthenticationControllerIntegrationTest {
 	@Test
 	@Transactional
 	void registrationEndpointWithMissingCredentials() throws Exception {
-		RegisterRequest registerRequest = new RegisterRequest("", "", "", "");
+		RegisterRequest registerRequest = new RegisterRequest("", "", "");
 
 		mockMvc.perform(post("/api/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -159,7 +159,7 @@ class AuthenticationControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(authenticationRequest))
 				.header("Authorization", "Bearer " + testUtil.generateTokenWithBadSignature(EMAIL)))
 				.andExpect(status().isUnauthorized())
-				.andExpect(result -> assertEquals("Invalid token",
+				.andExpect(result -> assertEquals("Invalid token signature",
 						result.getResponse().getContentAsString()));
 	}
 
