@@ -20,6 +20,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -47,6 +48,9 @@ public class User implements UserDetails {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Role role;
+
+	@Column(nullable = false)
+	private final LocalDateTime createdAt = LocalDateTime.now();
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
