@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
+import com.stevenst.lib.model.User;
+
 class UserTest {
 	
 	@Test

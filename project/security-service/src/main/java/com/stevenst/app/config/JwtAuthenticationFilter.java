@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.stevenst.app.exception.IgorAuthenticationException;
-import com.stevenst.app.model.User;
+import com.stevenst.lib.model.User;
 import com.stevenst.app.service.impl.JwtServiceImpl;
 
 import io.jsonwebtoken.ExpiredJwtException;

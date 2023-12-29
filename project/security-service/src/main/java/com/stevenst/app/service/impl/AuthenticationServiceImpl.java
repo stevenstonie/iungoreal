@@ -4,8 +4,8 @@ import com.stevenst.app.auth.AuthRequest;
 import com.stevenst.app.auth.AuthResponse;
 import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.exception.IgorAuthenticationException;
-import com.stevenst.app.model.Role;
-import com.stevenst.app.model.User;
+import com.stevenst.lib.model.Role;
+import com.stevenst.lib.model.User;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.AuthenticationService;
 

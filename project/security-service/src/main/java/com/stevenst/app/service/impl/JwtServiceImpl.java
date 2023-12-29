@@ -12,7 +12,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.stevenst.app.model.User;
+import com.stevenst.lib.model.User;
 import com.stevenst.app.service.JwtService;
 
 import io.jsonwebtoken.Claims;

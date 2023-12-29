@@ -12,7 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.stevenst.app.exception.IgorAuthenticationException;
-import com.stevenst.app.model.User;
+import com.stevenst.lib.model.User;
 import com.stevenst.app.service.impl.JwtServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

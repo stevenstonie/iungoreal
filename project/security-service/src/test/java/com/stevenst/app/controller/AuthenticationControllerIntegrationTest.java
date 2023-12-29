@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stevenst.app.auth.AuthRequest;
 import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.exception.IgorAuthenticationException;
-import com.stevenst.app.model.Role;
+import com.stevenst.lib.model.Role;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.util.TestUtil;
 
