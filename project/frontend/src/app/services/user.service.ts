@@ -1,34 +1,35 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, of, throwError } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { User } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8081/api/user';
+  private apiUrl = 'http://localhost:8080/api/user';
 
   constructor(private http: HttpClient) { }
 
-  getLoggedUser(): Observable<User> {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-      return this.http.get<User>(`${this.apiUrl}/getUserByToken`, { headers });
-    } else {
-      return of(null as unknown as User);
-    }
-  }
-
   getUserByUsername(username: string): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/getUserByUsername/${username}`)
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<User>(`${this.apiUrl}/getByUsername`, { params })
       .pipe(
         catchError(this.handleError)
       );
   }
-  
+
+  getUserByEmail(email: string): Observable<User> {
+    const params = new HttpParams().set('email', email);
+
+    return this.http.get<User>(`${this.apiUrl}/getByEmail`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   private handleError(error: HttpErrorResponse) {
-    return throwError(() => new Error('An error occurred.'));
+    return throwError(() => new Error('An error occurred in user service.'));
   }
 }

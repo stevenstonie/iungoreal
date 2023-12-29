@@ -9,3 +9,5 @@ import { User } from 'src/app/models/user';
 export class ChatComponent {
   @Input() loggedUser: User | null = null;
 }
+
+// TODO: make sure its ok for all instances of 'loggedUser' to be null 

@@ -47,10 +47,6 @@ export class AuthService {
     return localStorage.getItem('email') ?? '';
   }
 
-  getUsername(): string {
-    return localStorage.getItem('username') ?? '';
-  }
-
   logout() {
     this.removeCredentialsFromStorage();
     window.location.reload();

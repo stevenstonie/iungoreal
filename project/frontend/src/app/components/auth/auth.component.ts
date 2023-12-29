@@ -28,20 +28,38 @@ export class AuthComponent {
 
   login() {
     const credentials = this.loginForm.value;
+
+    if (!credentials.email || !credentials.password) {
+      window.alert('Cannot have empty credentials');
+      return;
+    }
+
     this.authService.login(credentials).subscribe(response => {
-      this.router.navigate(['/']);
+      this.insertEmailInStorageAndNavigateToMainPage(credentials.email);
     });
   }
 
   register() {
-    const user = this.registerForm.value;
+    const credentials = this.registerForm.value;
 
-    if (user.password !== user.repeatPassword) {
+    if (!credentials.email || !credentials.password || !credentials.repeatPassword || !credentials.username) {
+      window.alert('Cannot have empty credentials');
+      return;
+    }
+    if (credentials.password !== credentials.repeatPassword) {
       window.alert('Passwords do not match');
       return;
     }
-    this.authService.register(user).subscribe(response => {
-      this.router.navigate(['/']);
+
+    this.authService.register(credentials).subscribe(response => {
+      this.insertEmailInStorageAndNavigateToMainPage(credentials.email);
     });
+  }
+
+  // -------------------------------------
+
+  private insertEmailInStorageAndNavigateToMainPage(email: string) {
+    localStorage.setItem('email', email);
+    this.router.navigate(['/']);
   }
 }

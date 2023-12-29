@@ -19,10 +19,13 @@ export class NavbarComponent implements OnInit {
 
   constructor(private userService: UserService, private authService: AuthService) { }
 
+  // TODO: test this thoroughly
   async ngOnInit() {
+    const email = localStorage.getItem('email') ?? '';
+
     try {
       this.loggedUser = await firstValueFrom(
-        this.userService.getLoggedUser().pipe(
+        this.userService.getUserByEmail(email).pipe(
           retry(11),
           delayWhen((_, attempt) => timer(attempt * 1000)),
           timeout(10000),
