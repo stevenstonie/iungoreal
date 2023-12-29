@@ -25,6 +25,12 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.stevenst</groupId>
+			<artifactId>lib</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 		<!-- db -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

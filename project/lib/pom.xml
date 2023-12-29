@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.stevenst</groupId>
 	<artifactId>lib</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<name>lib</name>
 	<description>a shared library for the project</description>
