@@ -3,7 +3,7 @@ package com.stevenst.app.service.impl;
 import org.springframework.stereotype.Service;
 
 import com.stevenst.app.exception.IgorAuthenticationException;
-import com.stevenst.app.model.User;
+import com.stevenst.lib.model.User;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.UserService;
 

@@ -2,7 +2,7 @@ package com.stevenst.app.service;
 
 import org.springframework.stereotype.Service;
 
-import com.stevenst.app.model.User;
+import com.stevenst.lib.model.User;
 
 @Service
 public interface UserService {

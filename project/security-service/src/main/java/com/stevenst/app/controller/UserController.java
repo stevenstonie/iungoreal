@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stevenst.app.controller.api.UserApi;
-import com.stevenst.app.model.User;
+import com.stevenst.lib.model.User;
 import com.stevenst.app.service.UserService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

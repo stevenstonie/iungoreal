@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.stevenst.app.model.Role;
-import com.stevenst.app.model.User;
+import com.stevenst.lib.model.Role;
+import com.stevenst.lib.model.User;
 import com.stevenst.app.repository.UserRepository;
 
 import io.jsonwebtoken.Jwts;

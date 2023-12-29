@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.stevenst.app.model.Role;
+import com.stevenst.lib.model.Role;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.JwtService;
 import com.stevenst.app.util.TestUtil;
