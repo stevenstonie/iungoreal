@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8080
   error:
     include-message: always
 spring:
@@ -20,12 +20,6 @@ spring:
       hibernate:
         dialect: _
     database: mysql
-  security:
-    user:
-      name: _
-      password: _
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-jwt:
-  secret-key: 1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd

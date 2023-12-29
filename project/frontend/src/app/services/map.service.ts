@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class MapService {
-  private apiUrl = 'http://localhost:8081/api/markers';
+  private apiUrl = 'http://localhost:8082/api/markers';
 
   constructor(private httpClient: HttpClient) { }
 

@@ -2,7 +2,7 @@
 #
 #
 
-
+- (dont save): change the security endpoint to 8081 and the app's endpoint to 8080
 
 - tasks:
 	- (recurring) show window dialogs on errors for users, catch exceptions, etc.

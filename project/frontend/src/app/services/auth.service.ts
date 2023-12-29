@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8080';
+  private apiUrl = 'http://localhost:8081/api/auth';
   private token: string;
   private email: string;
 
@@ -17,7 +17,7 @@ export class AuthService {
   }
 
   login(credentials: { email: string, password: string }): Observable<any> {
-    return this.http.post<{ token: string }>(`${this.baseUrl}/api/auth/login`, credentials)
+    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, credentials)
       .pipe(
         tap(response => {
           this.token = response.token;
@@ -28,7 +28,7 @@ export class AuthService {
   }
 
   register(credentials: { email: string, password: string, username: string }): Observable<any> {
-    return this.http.post<{ token: string }>(`${this.baseUrl}/api/auth/register`, credentials)
+    return this.http.post<{ token: string }>(`${this.apiUrl}/register`, credentials)
       .pipe(
         tap(response => {
           this.token = response.token;
