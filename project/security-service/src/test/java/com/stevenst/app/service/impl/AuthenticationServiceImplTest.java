@@ -19,9 +19,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.stevenst.app.auth.AuthRequest;
-import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.exception.IgorAuthenticationException;
+import com.stevenst.app.payload.AuthRequest;
+import com.stevenst.app.payload.RegisterRequest;
 import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
 import com.stevenst.app.repository.UserRepository;

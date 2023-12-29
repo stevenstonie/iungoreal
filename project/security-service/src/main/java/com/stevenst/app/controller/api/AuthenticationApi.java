@@ -5,9 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.stevenst.app.auth.AuthRequest;
-import com.stevenst.app.auth.AuthResponse;
-import com.stevenst.app.auth.RegisterRequest;
+import com.stevenst.app.payload.AuthRequest;
+import com.stevenst.app.payload.AuthResponse;
+import com.stevenst.app.payload.RegisterRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

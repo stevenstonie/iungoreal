@@ -1,9 +1,9 @@
 package com.stevenst.app.service.impl;
 
-import com.stevenst.app.auth.AuthRequest;
-import com.stevenst.app.auth.AuthResponse;
-import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.exception.IgorAuthenticationException;
+import com.stevenst.app.payload.AuthRequest;
+import com.stevenst.app.payload.AuthResponse;
+import com.stevenst.app.payload.RegisterRequest;
 import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
 import com.stevenst.app.repository.UserRepository;
