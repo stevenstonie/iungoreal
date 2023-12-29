@@ -5,7 +5,7 @@ import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.payload.AuthRequest;
 import com.stevenst.app.payload.RegisterRequest;
 import com.stevenst.lib.model.Role;
-import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.AuthRepository;
 import com.stevenst.app.util.TestUtil;
 
 import jakarta.transaction.Transactional;
@@ -46,20 +46,20 @@ class AuthenticationControllerIntegrationTest {
 	private ObjectMapper objectMapper;
 
 	@Autowired
-	private UserRepository userRepository;
+	private AuthRepository authRepository;
 
 	@BeforeAll
 	void init() throws Exception {
 		server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
 		server.start();
 
-		TestUtil testUtil = new TestUtil(userRepository);
+		TestUtil testUtil = new TestUtil(authRepository);
 		testUtil.insertUserIntoDB(EMAIL, PASSWORD, USERNAME, Role.USER);
 	}
 
 	@AfterAll
 	void tearDown() throws SQLException {
-		userRepository.deleteAll();
+		authRepository.deleteAll();
 
 		server.stop();
 	}
@@ -198,7 +198,7 @@ class AuthenticationControllerIntegrationTest {
 	@Transactional
 	void authenticationWithABadSignature() throws Exception {
 		AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
-		TestUtil testUtil = new TestUtil(userRepository);
+		TestUtil testUtil = new TestUtil(authRepository);
 
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)

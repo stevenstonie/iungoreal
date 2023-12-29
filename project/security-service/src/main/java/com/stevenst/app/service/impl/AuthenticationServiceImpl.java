@@ -6,7 +6,7 @@ import com.stevenst.app.payload.AuthResponse;
 import com.stevenst.app.payload.RegisterRequest;
 import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
-import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.AuthRepository;
 import com.stevenst.app.service.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-	private final UserRepository userRepository;
+	private final AuthRepository authRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtServiceImpl jwtService;
 	private final AuthenticationManager authenticationManager;
@@ -34,12 +34,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new IgorAuthenticationException("Credentials cannot be empty");
 		}
 
-		Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
+		Optional<User> existingUser = authRepository.findByEmail(request.getEmail());
 		if (existingUser.isPresent()) {
 			throw new IgorAuthenticationException("Email already taken");
 		}
 
-		existingUser = userRepository.findByUsername(request.getUsername());
+		existingUser = authRepository.findByUsername(request.getUsername());
 		if (existingUser.isPresent()) {
 			throw new IgorAuthenticationException("Username already taken");
 		}
@@ -51,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				.role(Role.USER)
 				.build();
 
-		userRepository.save(user);
+		authRepository.save(user);
 		var jwtToken = jwtService.generateToken(user);
 
 		return AuthResponse.builder()
@@ -65,6 +65,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new IgorAuthenticationException("Credentials cannot be empty");
 		}
 
+		var user = authRepository.findByEmail(request.getEmail())
+				.orElseThrow(() -> new IgorAuthenticationException("User not found"));
 		try {
 			authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -72,8 +74,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new IgorAuthenticationException("Invalid credentials");
 		}
 
-		var user = userRepository.findByEmail(request.getEmail())
-				.orElseThrow(() -> new IgorAuthenticationException("User not found"));
 		var jwtToken = jwtService.generateToken(user);
 
 		return AuthResponse.builder()

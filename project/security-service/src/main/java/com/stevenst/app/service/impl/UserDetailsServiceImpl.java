@@ -10,19 +10,19 @@ import org.springframework.stereotype.Service;
 
 import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.lib.model.User;
-import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.AuthRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final AuthRepository authRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(AuthRepository authRepository) {
+        this.authRepository = authRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByEmail(email);
+        Optional<User> user = authRepository.findByEmail(email);
 
         if (user.isEmpty()) {
             throw new IgorAuthenticationException("Email not found");

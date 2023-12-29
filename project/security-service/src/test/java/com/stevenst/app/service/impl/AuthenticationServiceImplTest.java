@@ -24,11 +24,11 @@ import com.stevenst.app.payload.AuthRequest;
 import com.stevenst.app.payload.RegisterRequest;
 import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
-import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.AuthRepository;
 
 class AuthenticationServiceImplTest {
 	@Mock
-	private UserRepository userRepository;
+	private AuthRepository authRepository;
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
@@ -40,7 +40,7 @@ class AuthenticationServiceImplTest {
 	private AuthenticationManager authenticationManager;
 
 	@InjectMocks
-	private AuthenticationServiceImpl authenticationService;
+	private AuthenticationServiceImpl authService;
 
 	User user = new User(0L, "test@email.com", "testpassword", "testusername", Role.USER);
 
@@ -53,16 +53,16 @@ class AuthenticationServiceImplTest {
 	void register() {
 		RegisterRequest request = new RegisterRequest(user.getEmail(), user.getPassword(), user.getUsername());
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+		when(authRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 		when(passwordEncoder.encode(anyString())).thenReturn(user.getPassword());
 		when(jwtService.generateToken(anyString())).thenReturn("token");
 
-		assertDoesNotThrow(() -> authenticationService.register(request));
+		assertDoesNotThrow(() -> authService.register(request));
 
-		verify(userRepository, times(1)).findByEmail(anyString());
-		verify(userRepository, times(1)).findByUsername(anyString());
+		verify(authRepository, times(1)).findByEmail(anyString());
+		verify(authRepository, times(1)).findByUsername(anyString());
 		verify(passwordEncoder, times(1)).encode(anyString());
-		verify(userRepository, times(1)).save(any(User.class));
+		verify(authRepository, times(1)).save(any(User.class));
 		verify(jwtService, times(1)).generateToken(any(User.class));
 	}
 
@@ -70,13 +70,13 @@ class AuthenticationServiceImplTest {
 	void login() {
 		AuthRequest request = new AuthRequest(user.getEmail(), user.getPassword());
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+		when(authRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 		when(jwtService.generateToken(user)).thenReturn("token");
 
-		assertDoesNotThrow(() -> authenticationService.login(request));
+		assertDoesNotThrow(() -> authService.login(request));
 
 		verify(authenticationManager, times(1)).authenticate(any());
-		verify(userRepository, times(1)).findByEmail(anyString());
+		verify(authRepository, times(1)).findByEmail(anyString());
 		verify(jwtService, times(1)).generateToken(user);
 	}
 
@@ -87,11 +87,11 @@ class AuthenticationServiceImplTest {
 		RegisterRequest requestWithEmptyUsername = new RegisterRequest(user.getEmail(), user.getPassword(), "");
 
 		var emptyEmailException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.register(requestWithEmptyEmail));
+				() -> authService.register(requestWithEmptyEmail));
 		var emptyPasswordException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.register(requestWithEmptyPassword));
+				() -> authService.register(requestWithEmptyPassword));
 		var emptyUsernameException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.register(requestWithEmptyUsername));
+				() -> authService.register(requestWithEmptyUsername));
 
 		assertEquals("Credentials cannot be empty", emptyEmailException.getMessage());
 		assertEquals("Credentials cannot be empty", emptyPasswordException.getMessage());
@@ -105,11 +105,11 @@ class AuthenticationServiceImplTest {
 		RegisterRequest requestWithNullUsername = new RegisterRequest(user.getEmail(), user.getPassword(), null);
 
 		var nullEmailException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.register(requestWithNullEmail));
+				() -> authService.register(requestWithNullEmail));
 		var nullPasswordException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.register(requestWithNullPassword));
+				() -> authService.register(requestWithNullPassword));
 		var nullUsernameException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.register(requestWithNullUsername));
+				() -> authService.register(requestWithNullUsername));
 
 		assertEquals("Credentials cannot be empty", nullEmailException.getMessage());
 		assertEquals("Credentials cannot be empty", nullPasswordException.getMessage());
@@ -120,10 +120,10 @@ class AuthenticationServiceImplTest {
 	void register_emailAlreadyExists() {
 		RegisterRequest request = new RegisterRequest(user.getEmail(), user.getPassword(), user.getUsername());
 
-		when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+		when(authRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
 
 		var alreadyExistsException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.register(request));
+				() -> authService.register(request));
 
 		assertEquals("Email already taken", alreadyExistsException.getMessage());
 	}
@@ -132,10 +132,10 @@ class AuthenticationServiceImplTest {
 	void register_usernameAlreadyExists() {
 		RegisterRequest request = new RegisterRequest(user.getEmail(), user.getPassword(), user.getUsername());
 
-		when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.of(user));
+		when(authRepository.findByUsername(request.getUsername())).thenReturn(Optional.of(user));
 
 		var alreadyExistsException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.register(request));
+				() -> authService.register(request));
 
 		assertEquals("Username already taken", alreadyExistsException.getMessage());
 	}
@@ -145,7 +145,7 @@ class AuthenticationServiceImplTest {
 		RegisterRequest request = new RegisterRequest();
 
 		var emptyRequestException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.register(request));
+				() -> authService.register(request));
 
 		assertEquals("Credentials cannot be empty", emptyRequestException.getMessage());
 	}
@@ -156,9 +156,9 @@ class AuthenticationServiceImplTest {
 		AuthRequest requestWithEmptyPassword = new AuthRequest(user.getEmail(), "");
 
 		var emptyEmailException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.login(requestWithEmptyEmail));
+				() -> authService.login(requestWithEmptyEmail));
 		var emptyPasswordException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.login(requestWithEmptyPassword));
+				() -> authService.login(requestWithEmptyPassword));
 
 		assertEquals("Credentials cannot be empty", emptyEmailException.getMessage());
 		assertEquals("Credentials cannot be empty", emptyPasswordException.getMessage());
@@ -171,7 +171,7 @@ class AuthenticationServiceImplTest {
 		when(authenticationManager.authenticate(any())).thenThrow(new IgorAuthenticationException("User not found"));
 
 		var userNotFoundException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.login(request));
+				() -> authService.login(request));
 
 		assertEquals("User not found", userNotFoundException.getMessage());
 	}
@@ -181,7 +181,7 @@ class AuthenticationServiceImplTest {
 		AuthRequest authRequest = new AuthRequest();
 
 		var emptyRequestException = assertThrows(IgorAuthenticationException.class,
-				() -> authenticationService.login(authRequest));
+				() -> authService.login(authRequest));
 		
 		assertEquals("Credentials cannot be empty", emptyRequestException.getMessage());
 	}

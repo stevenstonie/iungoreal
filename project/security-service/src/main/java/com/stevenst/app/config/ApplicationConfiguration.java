@@ -1,7 +1,7 @@
 package com.stevenst.app.config;
 
 import com.stevenst.app.exception.IgorAuthenticationException;
-import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.AuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,11 +15,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfiguration {
-	private final UserRepository userRepository;
+	private final AuthRepository authRepository;
 
 	@Bean
 	UserDetailsService userDetailsService() {
-		return email -> userRepository.findByEmail(email)
+		return email -> authRepository.findByEmail(email)
 				.orElseThrow(() -> new IgorAuthenticationException("Email not found"));
 	}
 

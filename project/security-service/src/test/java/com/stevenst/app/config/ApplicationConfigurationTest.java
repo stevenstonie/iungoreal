@@ -22,11 +22,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
-import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.AuthRepository;
 
 class ApplicationConfigurationTest {
     @Mock
-    private UserRepository userRepository;
+    private AuthRepository authRepository;
 
     @Mock
     private AuthenticationConfiguration authenticationConfiguration;
@@ -44,7 +44,7 @@ class ApplicationConfigurationTest {
 
     @Test
     void userDetailsService() {
-        when(userRepository.findByEmail("test@email.com")).thenReturn(
+        when(authRepository.findByEmail("test@email.com")).thenReturn(
                 Optional.of(User
                         .builder()
                         .email("test@email.com")
@@ -62,7 +62,7 @@ class ApplicationConfigurationTest {
     @Test
     void userDetailsService_userNotFound() {
         String email = "test@email.com";
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(authRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         var exception = assertThrows(IgorAuthenticationException.class, () -> {
             applicationConfiguration.userDetailsService().loadUserByUsername(email);

@@ -7,7 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
-import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.AuthRepository;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class TestUtil {
-    private final UserRepository userRepository;
+    private final AuthRepository authRepository;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -24,7 +24,7 @@ public class TestUtil {
             throws Exception {
         User user = new User(0L, email, passwordEncoder.encode(password), username, role);
 
-        userRepository.save(user);
+        authRepository.save(user);
     }
 
     public String generateTokenWithBadSignature(String email) {
