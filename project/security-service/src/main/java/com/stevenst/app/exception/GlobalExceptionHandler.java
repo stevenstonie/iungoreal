@@ -22,6 +22,13 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseBody
+    @ExceptionHandler(IgorNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiExceptionFormat handleIgorNotFoundException(IgorNotFoundException ex) {
+        return buildResponseEntity(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ResponseBody
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiExceptionFormat handleDataIntegrityViolationException(DataIntegrityViolationException ex) {

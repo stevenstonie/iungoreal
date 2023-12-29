@@ -24,4 +24,9 @@ public class UserController implements UserApi {
 	public ResponseEntity<User> getUserByToken(@RequestHeader("Authorization") String authHeader) {
 		return ResponseEntity.ok(userService.getUserByToken(authHeader));
 	}
+
+	@GetMapping("/getUserByUsername")
+	public ResponseEntity<User> getUserByUsername(String username) {
+		return ResponseEntity.ok(userService.getUserByUsername(username));
+	}
 }

@@ -20,7 +20,16 @@ public interface UserApi {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = User.class)) }),
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
-			
+
 	@GetMapping("/currentUser")
 	public ResponseEntity<User> getUserByToken(@RequestHeader("Authorization") String authHeader);
+
+	@Operation(summary = "Get User by Username", description = "Retrieve a user by username", tags = "User")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful", content = {
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = User.class)) }),
+			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
+
+	@GetMapping("/getUserByUsername")
+	public ResponseEntity<User> getUserByUsername(String username);
 }

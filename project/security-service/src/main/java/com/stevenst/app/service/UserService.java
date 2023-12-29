@@ -7,4 +7,6 @@ import com.stevenst.lib.model.User;
 @Service
 public interface UserService {
 	User getUserByToken(String authHeader);
+
+	User getUserByUsername(String username);
 }
