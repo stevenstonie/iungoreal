@@ -8,14 +8,14 @@
 	- (recurring) show window dialogs on errors for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
-	- [ ] (fr) change the register to add an unique username + password reentering
-	- [ ] (fr) add verification through email after registration
+	- [ ] (bk) add a shared library
 	- [ ] (fr) if the user doesnt exist when accessing a profile, redirect to 404
 	- [ ] (fr, bk) notifications
 	- [ ] (fr, bk) implement friend requests
 	- [ ] (fr, bk) implement search functionality
 	- [ ] (fr, bk) functionality for the main page (fetching friends posts)
 	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
+	- [ ] (fr) add verification through email after registration
 	- [ ] (fr) user settings
 	- [ ] (fr) user profile
 	- [ ] (bk) archive notifications (when the user clicks 'x' on frontend or when the notification is older than 30 days)
@@ -30,14 +30,15 @@
 
 	_________________________________
 	---------------------------------
-	- [x] add a frontend and connect it to the backend
-	- [x] backend login / register by token
-	- [x] frontend login / register
-	- [x] (fr) redirect to main page on successful authentication
-	- [x] (fr) save the token locally and check for its availability when accessing the site
-	- [x] (fr, bk) add a button for a window where the map should be, create the map microservice and connect it to the app (make db queries for saved data like markers)
-	- [x] (bk) rewrite the backend with new exceptions and tests
+	- [x] (fr) change the register to add an unique username + password reentering
 	- [x] (fr) add some general layout to the frontend pages
+	- [x] (bk) rewrite the backend with new exceptions and tests
+	- [x] (fr, bk) add a button for a window where the map should be, create the map microservice and connect it to the app (make db queries for saved data like markers)
+	- [x] (fr) save the token locally and check for its availability when accessing the site
+	- [x] (fr) redirect to main page on successful authentication
+	- [x] frontend login / register
+	- [x] backend login / register by token
+	- [x] add a frontend and connect it to the backend
 
 
 - task ideas:
