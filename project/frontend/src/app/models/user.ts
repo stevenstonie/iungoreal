@@ -4,6 +4,7 @@ export interface User {
 	password: string;
 	username: string;
 	role: Role;
+	createdAt: Date;
 }
 
 export enum Role {

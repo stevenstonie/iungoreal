@@ -22,5 +22,5 @@ public interface UserApi {
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
 			
 	@GetMapping("/currentUser")
-	public ResponseEntity<User> getCurrentUser(@RequestHeader("Authorization") String authHeader);
+	public ResponseEntity<User> getUserByToken(@RequestHeader("Authorization") String authHeader);
 }

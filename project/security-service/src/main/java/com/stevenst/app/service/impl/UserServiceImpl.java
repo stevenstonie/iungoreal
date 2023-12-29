@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService {
 	private final JwtServiceImpl jwtService;
 
 	@Override
-	public User getCurrentUserByToken(String authHeader) {
+	public User getUserByToken(String authHeader) {
 		String token = jwtService.extractToken(authHeader);
 		String email = jwtService.extractEmail(token);
 		var user = userRepository.findByEmail(email);

@@ -20,8 +20,8 @@ import lombok.RequiredArgsConstructor;
 public class UserController implements UserApi {
 	private final UserService userService;
 
-	@GetMapping("/currentUser")
-	public ResponseEntity<User> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
-		return ResponseEntity.ok(userService.getCurrentUserByToken(authHeader));
+	@GetMapping("/getUserByToken")
+	public ResponseEntity<User> getUserByToken(@RequestHeader("Authorization") String authHeader) {
+		return ResponseEntity.ok(userService.getUserByToken(authHeader));
 	}
 }

@@ -10,7 +10,7 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-  currentUser: User | null = null;
+  loggedUser: User | null = null;
   showMap: boolean = false;
   showChat: boolean = false;
   showUserMenu: boolean = false;
@@ -21,8 +21,8 @@ export class NavbarComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      this.currentUser = await firstValueFrom(
-        this.userService.getCurrentUser().pipe(
+      this.loggedUser = await firstValueFrom(
+        this.userService.getLoggedUser().pipe(
           retry(11),
           delayWhen((_, attempt) => timer(attempt * 1000)),
           timeout(10000),
@@ -36,7 +36,7 @@ export class NavbarComponent implements OnInit {
         )
       );
 
-      if (!this.currentUser) {
+      if (!this.loggedUser) {
         this.logout();
       }
     } catch (err: any) {
@@ -79,7 +79,7 @@ export class NavbarComponent implements OnInit {
   }
 
   profile() {
-    window.location.href = '/user/' + this.currentUser?.email;
+    window.location.href = '/user/' + this.loggedUser?.email;
   }
 
   settings() {

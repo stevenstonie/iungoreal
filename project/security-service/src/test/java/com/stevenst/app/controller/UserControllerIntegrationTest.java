@@ -67,8 +67,8 @@ class UserControllerIntegrationTest {
 
 	@Test
 	@Transactional
-	void getCurrentUserEndpoint() throws Exception {
-		mockMvc.perform(get("/api/user/currentUser")
+	void getUserByTokenEndpoint() throws Exception {
+		mockMvc.perform(get("/api/user/getUserByToken")
 				.header("Authorization", "Bearer " + token))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.email").value(EMAIL));
@@ -76,8 +76,8 @@ class UserControllerIntegrationTest {
 
 	@Test
 	@Transactional
-	void getCurrentUserEmailEqualToEmailInToken() throws Exception {
-		MvcResult result = mockMvc.perform(get("/api/user/currentUser")
+	void getUserByTokenEmailEqualToEmailInToken() throws Exception {
+		MvcResult result = mockMvc.perform(get("/api/user/getUserByToken")
 				.header("Authorization", "Bearer " + token))
 				.andExpect(status().isOk())
 				.andReturn();
@@ -89,10 +89,10 @@ class UserControllerIntegrationTest {
 
 	@Test
 	@Transactional
-	void getCurrentUser_inexistent() throws Exception {
+	void getUserByToken_inexistent() throws Exception {
 		String inexistentUserToken = jwtService.generateToken("inexistent");
 
-		mockMvc.perform(get("/api/user/currentUser")
+		mockMvc.perform(get("/api/user/getUserByToken")
 				.header("Authorization", "Bearer " + inexistentUserToken))
 				.andExpect(status().isUnauthorized())
 				.andExpect(result -> assertEquals("Invalid token",
@@ -101,10 +101,10 @@ class UserControllerIntegrationTest {
 
 	@Test
 	@Transactional
-	void getCurrentUser_withAlteredToken() throws Exception {
+	void getUserByToken_withAlteredToken() throws Exception {
 		String alteredToken = token.substring(0, token.length() - 1) + 'x';
 
-		mockMvc.perform(get("/api/user/currentUser")
+		mockMvc.perform(get("/api/user/getUserByToken")
 				.header("Authorization", "Bearer " + alteredToken))
 				.andExpect(status().isUnauthorized())
 				.andExpect(result -> assertEquals("Invalid token signature",

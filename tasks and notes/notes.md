@@ -8,7 +8,6 @@
 	- (recurring) show window dialogs on errors for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
-	- [ ] (bk) add a shared library
 	- [ ] (fr) if the user doesnt exist when accessing a profile, redirect to 404
 	- [ ] (fr, bk) notifications
 	- [ ] (fr, bk) implement friend requests
@@ -30,6 +29,7 @@
 
 	_________________________________
 	---------------------------------
+	- [x] (bk) add a shared library
 	- [x] (fr) change the register to add an unique username + password reentering
 	- [x] (fr) add some general layout to the frontend pages
 	- [x] (bk) rewrite the backend with new exceptions and tests

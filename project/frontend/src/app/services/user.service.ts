@@ -10,11 +10,11 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  getCurrentUser(): Observable<any> {
+  getLoggedUser(): Observable<any> {
     const token = localStorage.getItem('token');
     if (token) {
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-      return this.http.get(`${this.apiUrl}/currentUser`, { headers });
+      return this.http.get(`${this.apiUrl}/getUserByToken`, { headers });
     } else {
       return of(null);
     }
