@@ -2,31 +2,29 @@ package com.stevenst.app.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stevenst.app.controller.api.UserApi;
-import com.stevenst.lib.model.User;
 import com.stevenst.app.service.UserService;
+import com.stevenst.lib.model.User;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController implements UserApi {
 	private final UserService userService;
 
-	// @GetMapping("/getUserByToken")
-	// public ResponseEntity<User> getUserByToken(@RequestHeader("Authorization") String authHeader) {
-	// 	return ResponseEntity.ok(userService.getUserByToken(authHeader));
-	// }
+	@GetMapping("/getByUsername")
+	public ResponseEntity<User> getUserByUsername(@RequestParam String username) {
+		return ResponseEntity.ok(userService.getUserByUsername(username));
+	}
 
-	// @GetMapping("/getUserByUsername")
-	// public ResponseEntity<User> getUserByUsername(String username) {
-	// 	return ResponseEntity.ok(userService.getUserByUsername(username));
-	// }
+	@GetMapping("/getByEmail")
+	public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
+		return ResponseEntity.ok(userService.getUserByEmail(email));
+	}
 }
