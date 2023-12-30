@@ -5,6 +5,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @EntityScan("com.stevenst.lib.model")
 @SpringBootTest
-class SecurityBackendApplicationTests {
+class SecurityApplicationTests {
 
 }

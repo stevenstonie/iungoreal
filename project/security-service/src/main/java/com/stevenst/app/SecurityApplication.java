@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @EntityScan("com.stevenst.lib.model")
 @SpringBootApplication
-public class AppBackendApplication {
+public class SecurityApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(AppBackendApplication.class, args);
+		SpringApplication.run(SecurityApplication.class, args);
 	}
 }
