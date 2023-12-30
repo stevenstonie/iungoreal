@@ -11,9 +11,9 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  getUserByUsername(username: string, isPrivate: boolean): Observable<User> {
+  getUserByUsername(username: string, isTheUserTheLoggedOne: boolean): Observable<User> {
     let urlPart = 'getPublicByUsername';
-    if (isPrivate) {
+    if (isTheUserTheLoggedOne) {
       urlPart = 'getPrivateByUsername';
     }
     const params = new HttpParams().set('username', username);

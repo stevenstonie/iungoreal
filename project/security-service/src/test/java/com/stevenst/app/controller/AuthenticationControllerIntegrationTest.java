@@ -75,6 +75,8 @@ class AuthenticationControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(registerRequest)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.token").isNotEmpty());
+		
+		// TODO: test if the password is encrypted and if the role is set to USER
 	}
 
 	@Test

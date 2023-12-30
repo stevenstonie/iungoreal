@@ -1,8 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component} from '@angular/core';
 import { User } from 'src/app/models/user';
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-profile',
@@ -10,7 +9,8 @@ import { NavbarComponent } from '../navbar/navbar.component';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent {
-  currentUser: User = {} as User;
+  userOnScreen: User = {} as User;
+  isUserOnScreenTheLoggedOne: boolean = false;
 
   constructor(private userService: UserService, private route: ActivatedRoute, private router: Router) { }
 
@@ -19,16 +19,14 @@ export class ProfileComponent {
     const username = this.route.snapshot.paramMap.get('username');
 
     if (username) {
-      console.log('username: ', username);
-      console.log('usernameOfLoggedUser: ', usernameOfLoggedUser);
-      let isPrivate = false;
       if (username === usernameOfLoggedUser) {
-        isPrivate = true;
+        this.isUserOnScreenTheLoggedOne = true;
       }
-      
-      this.userService.getUserByUsername(username, isPrivate).subscribe({
+
+      this.userService.getUserByUsername(username, this.isUserOnScreenTheLoggedOne).subscribe({
         next: (user: User) => {
-          this.currentUser = user;
+          this.userOnScreen = user;
+          console.log('user: ', user);
         },
         error: (error) => {
           console.error('Error getting user.', error);
@@ -39,6 +37,6 @@ export class ProfileComponent {
   }
 
   sendFriendRequest() {
-    console.log("sent friend request to: ", this.currentUser.username);
+    console.log("sent friend request to: ", this.userOnScreen.username);
   }
 }
