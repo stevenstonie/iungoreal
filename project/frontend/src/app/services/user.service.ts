@@ -11,10 +11,14 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  getUserByUsername(username: string): Observable<User> {
+  getUserByUsername(username: string, isPrivate: boolean): Observable<User> {
+    let urlPart = 'getPublicByUsername';
+    if (isPrivate) {
+      urlPart = 'getPrivateByUsername';
+    }
     const params = new HttpParams().set('username', username);
 
-    return this.http.get<User>(`${this.apiUrl}/getByUsername`, { params })
+    return this.http.get<User>(`${this.apiUrl}/${urlPart}`, { params })
       .pipe(
         catchError(this.handleError)
       );

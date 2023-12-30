@@ -19,7 +19,7 @@ export class NavbarComponent implements OnInit {
 
   constructor(private userService: UserService, private authService: AuthService) { }
 
-  // TODO: test this thoroughly
+  // TODO: test this thoroughly (also make it so that this only happens once and not every time the page reloads or smth)
   async ngOnInit() {
     const email = localStorage.getItem('email') ?? '';
 
@@ -39,7 +39,10 @@ export class NavbarComponent implements OnInit {
         )
       );
 
-      if (!this.loggedUser) {
+      if (this.loggedUser) {
+        localStorage.setItem('username', this.loggedUser.username);
+      }
+      else {
         this.logout();
       }
     } catch (err: any) {
