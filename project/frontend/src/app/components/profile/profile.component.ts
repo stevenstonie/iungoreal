@@ -11,10 +11,19 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class ProfileComponent {
   userOnScreen: User = {} as User;
   isUserOnScreenTheLoggedOne: boolean = false;
+  userSentFriendRequest: boolean = false;
+  loggedUserSentFriendRequest: boolean = false;
+  isFriends: boolean = false;
 
   constructor(private userService: UserService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
+    this.getUserFromService();
+
+    this.getFriendshipStatusFromService();
+  }
+
+  getUserFromService() {
     const usernameOfLoggedUser = localStorage.getItem('username');
     const username = this.route.snapshot.paramMap.get('username');
 
@@ -36,7 +45,31 @@ export class ProfileComponent {
     }
   }
 
+  getFriendshipStatusFromService() {
+    console.log("to implement")
+  }
+
   sendFriendRequest() {
-    console.log("sent friend request to: ", this.userOnScreen.username);
+    console.log("to implement");
+  }
+
+  cancelFriendRequest() {
+    console.log("to implement");
+  }
+
+  acceptFriendRequest() {
+    console.log("to implement");
+  }
+
+  declineFriendRequest() {
+    console.log("to implement");
+  }
+  
+  unfriend() {
+    console.log("to implement");
+  }
+
+  editProfile() {
+    console.log("to implement");
   }
 }

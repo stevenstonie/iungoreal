@@ -8,9 +8,12 @@
 	<button>About</button>
 	<button>Posts</button>
 	<button>Comments</button>
-	<button>Saved</button>
-	<button>Liked</button>
-	<button>Disliked</button>
+	<ng-container *ngIf="isUserOnScreenTheLoggedOne">
+		<button>Liked</button>
+		<button>Disliked</button>
+		<button>Saved posts</button>
+		<button>Saved comments</button>
+	</ng-container>
 </div>
 
 <div id="body">
@@ -53,7 +56,27 @@
 		<div id="image-profile">
 
 		</div>
-		
-		<button id="friend-request" (click)="sendFriendRequest()">Send friend request</button>
+
+		<ng-container *ngIf="!isUserOnScreenTheLoggedOne">
+			<ng-container *ngIf="!isFriends && !loggedUserSentFriendRequest && !userSentFriendRequest">
+				<button id="send-friend-request-button" (click)="sendFriendRequest()">Send friend request</button>
+			</ng-container>
+			
+			<ng-container *ngIf="!isFriends && loggedUserSentFriendRequest && !userSentFriendRequest">
+				<button id="cancel-friend-request-button" (click)="cancelFriendRequest()">Cancel friend request</button>
+			</ng-container>
+			
+			<ng-container *ngIf="!isFriends && !loggedUserSentFriendRequest && userSentFriendRequest">
+				<button id="accept-friend-request-button" (click)="acceptFriendRequest()">Accept friend request</button>
+				<button id="decline-friend-request-button" (click)="declineFriendRequest()">Decline friend request</button>
+			</ng-container>
+			
+			<ng-container *ngIf="isFriends">
+				<button id="unfriend-button" (click)="unfriend()">Unfriend</button>
+			</ng-container>
+		</ng-container>
+		<ng-container *ngIf="isUserOnScreenTheLoggedOne">
+			<button id="edit-profile-button" (click)="editProfile()">Edit profile</button>
+		</ng-container>
 	</div>
 </div>
