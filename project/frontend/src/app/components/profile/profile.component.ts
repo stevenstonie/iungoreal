@@ -23,7 +23,9 @@ export class ProfileComponent {
   ngOnInit() {
     this.getUserFromService();
 
-    this.getFriendshipStatusFromService();
+    if (this.usernameOfLoggedUser !== this.usernameOfUserOnScreen) {
+      this.getFriendshipStatusFromService();
+    }
   }
 
   getUserFromService() {
@@ -34,8 +36,8 @@ export class ProfileComponent {
 
       this.userService.getUserByUsername(this.usernameOfUserOnScreen, this.isUserOnScreenTheLoggedOne).subscribe({
         next: (user: User) => {
-          this.userOnScreen = user;
           console.log('user: ', user);
+          this.userOnScreen = user;
         },
         error: (error) => {
           console.error('Error getting user.', error);
@@ -46,14 +48,44 @@ export class ProfileComponent {
   }
 
   getFriendshipStatusFromService() {
-    console.log("to implement")
+    this.friendsService.checkRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
+      next: (response) => {
+        console.log(response.message);
+        this.loggedUserSentFriendRequest = response.success;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+
+    this.friendsService.checkRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
+      next: (response) => {
+        console.log(response.message);
+        this.userSentFriendRequest = response.success;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+
+    this.friendsService.checkFriendship(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
+      next: (response) => {
+        console.log(response.message);
+        this.isFriends = response.success;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   sendFriendRequest() {
     this.friendsService.sendFriendRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
         console.log(response);
-        this.userSentFriendRequest = true;
+        this.loggedUserSentFriendRequest = true;
+        this.userSentFriendRequest = false;
+        this.isFriends = false;
       },
       error: (error) => {
         console.error(error);
@@ -63,18 +95,37 @@ export class ProfileComponent {
 
   cancelFriendRequest() {
     console.log("to implement");
+    // this.loggedUserSentFriendRequest = false;
+    // this.userSentFriendRequest = false;
+    // this.isFriends = false;
   }
 
   acceptFriendRequest() {
-    console.log("to implement");
+    this.friendsService.acceptFriendRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.loggedUserSentFriendRequest = false;
+        this.userSentFriendRequest = false;
+        this.isFriends = true;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   declineFriendRequest() {
     console.log("to implement");
+    // this.loggedUserSentFriendRequest = false;
+    // this.userSentFriendRequest = false;
+    // this.isFriends = false;
   }
 
   unfriend() {
     console.log("to implement");
+    // this.loggedUserSentFriendRequest = false;
+    // this.userSentFriendRequest = false;
+    // this.isFriends = false;
   }
 
   editProfile() {

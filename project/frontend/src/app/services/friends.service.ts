@@ -38,8 +38,8 @@ export class FriendsService {
       );
   }
 
-  checkFriendship(sender: string, receiver: string): Observable<MessagePayload> {
-    const params = new HttpParams().set('sender', sender).set('receiver', receiver);
+  checkFriendship(user1: string, user2: string): Observable<MessagePayload> {
+    const params = new HttpParams().set('user1', user1).set('user2', user2);
 
     return this.http.get<MessagePayload>(`${this.apiUrl}/checkFriendship`, { params })
       .pipe(
@@ -48,6 +48,7 @@ export class FriendsService {
   }
 
   private handleError(error: HttpErrorResponse) {
-    return throwError(() => new Error('An error occurred in friends service. ' + error.message));
+    console.error(error);
+    return throwError(() => new Error('An error occurred in friends service.'));
   }
 }
