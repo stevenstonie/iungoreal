@@ -38,5 +38,5 @@ public class FriendRequests {
     private User receiverId;
 
     @Column(nullable = false)
-    private LocalDateTime sentAt;
+    private final LocalDateTime sentAt = LocalDateTime.now();
 }

@@ -17,12 +17,6 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 
 	@Override
-	public Long getIdByUsername(String username) {
-		return userRepository.findIdByUsername(username)
-				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND));
-	}
-
-	@Override
 	public UserPublicPayload getUserPublicByUsername(String username) {
 		return userRepository.findByUsername(username)
 				.map(user -> UserPublicPayload.builder()

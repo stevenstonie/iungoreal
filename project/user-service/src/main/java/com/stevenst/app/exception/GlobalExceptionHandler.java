@@ -20,4 +20,15 @@ public class GlobalExceptionHandler {
                 .message(ex.getMessage())
                 .build();
     }
+
+    @ResponseBody
+    @ExceptionHandler(IgorFriendRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiExceptionFormat handleIgorFriendRequestException(IgorFriendRequestException ex) {
+        return ApiExceptionFormat.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .build();
+    }
 }
