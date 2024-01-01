@@ -19,24 +19,24 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "\"friendships\"")
+@Table(name = "\"friendship\"")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Friendships {
+public class Friendship {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "user1_id")
+	@JoinColumn(name = "\"user1_id\"")
 	private User user1;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "user2_id")
+	@JoinColumn(name = "\"user2_id\"")
 	private User user2;
 
 	@Column(nullable = false)
-	private LocalDateTime createdAt;
+	private final LocalDateTime createdAt = LocalDateTime.now();
 }

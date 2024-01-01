@@ -11,8 +11,8 @@ export class FriendsService {
 
   constructor(private http: HttpClient) { }
 
-  sendFriendRequest(from: string, to: string): Observable<MessagePayload> {
-    const params = new HttpParams().set('from', from).set('to', to);
+  sendFriendRequest(sender: string, receiver: string): Observable<MessagePayload> {
+    const params = new HttpParams().set('sender', sender).set('receiver', receiver);
 
     return this.http.post<MessagePayload>(`${this.apiUrl}/sendRequest`, {}, { params })
       .pipe(
