@@ -23,7 +23,6 @@ public interface AuthenticationApi {
 			@ApiResponse(responseCode = "400", description = "Unauthorized - invalid credentials", content = @Content),
 			@ApiResponse(responseCode = "401", description = "Unauthorized - token expired", content = @Content) })
 
-	@PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request);
 
 	@Operation(summary = "Login", description = "Authenticate user and return JWT token", tags = "Authentication")
@@ -33,6 +32,5 @@ public interface AuthenticationApi {
 			@ApiResponse(responseCode = "401", description = "Unauthorized - invalid credentials", content = @Content),
 			@ApiResponse(responseCode = "401", description = "Unauthorized - token expired", content = @Content) })
 
-	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request);
 }

@@ -10,7 +10,6 @@ import com.stevenst.app.controller.api.UserApi;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.service.UserService;
-import com.stevenst.lib.model.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,18 +19,18 @@ import lombok.RequiredArgsConstructor;
 public class UserController implements UserApi {
 	private final UserService userService;
 
-	@GetMapping("getPublicByUsername")
+	@GetMapping("/getPublicByUsername")
 	public ResponseEntity<UserPublicPayload> getUserPublicByUsername(@RequestParam String username) {
 		return ResponseEntity.ok(userService.getUserPublicByUsername(username));
 	}
 
-	@GetMapping("getPrivateByUsername")
+	@GetMapping("/getPrivateByUsername")
 	public ResponseEntity<UserPrivatePayload> getUserPrivateByUsername(@RequestParam String username) {
 		return ResponseEntity.ok(userService.getUserPrivateByUsername(username));
 	}
 
 	@GetMapping("/getByEmail")
-	public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
+	public ResponseEntity<UserPrivatePayload> getUserByEmail(@RequestParam String email) {
 		return ResponseEntity.ok(userService.getUserByEmail(email));
 	}
 }

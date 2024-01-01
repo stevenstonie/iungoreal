@@ -7,7 +7,6 @@ import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.UserService;
-import com.stevenst.lib.model.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +15,12 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 	private static final String USER_NOT_FOUND = "User not found";
 	private final UserRepository userRepository;
+
+	@Override
+	public Long getIdByUsername(String username) {
+		return userRepository.findIdByUsername(username)
+				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND));
+	}
 
 	@Override
 	public UserPublicPayload getUserPublicByUsername(String username) {
@@ -41,8 +46,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUserByEmail(String email) {
+	public UserPrivatePayload getUserByEmail(String email) {
 		return userRepository.findByEmail(email)
+				.map(user -> UserPrivatePayload.builder()
+						.id(user.getId())
+						.email(user.getEmail())
+						.username(user.getUsername())
+						.role(user.getRole())
+						.createdAt(user.getCreatedAt())
+						.build())
 				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND));
 	}
 }

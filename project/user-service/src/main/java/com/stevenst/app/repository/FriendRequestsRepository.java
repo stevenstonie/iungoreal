@@ -7,5 +7,5 @@ import com.stevenst.app.model.FriendRequests;
 
 @Repository
 public interface FriendRequestsRepository extends JpaRepository<FriendRequests, Long> {
-   
+
 }

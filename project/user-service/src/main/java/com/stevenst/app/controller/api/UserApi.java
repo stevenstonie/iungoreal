@@ -2,7 +2,6 @@ package com.stevenst.app.controller.api;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
@@ -21,7 +20,6 @@ public interface UserApi {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
 
-	@GetMapping("/getPublicPayloadByUsername")
 	public ResponseEntity<UserPublicPayload> getUserPublicByUsername(String username);
 
 	@Operation(summary = "Get User Private Payload by Username", description = "Retrieve an user's private data by username", tags = "User")
@@ -30,7 +28,6 @@ public interface UserApi {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPrivatePayload.class)) }),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
 
-	@GetMapping("/getPrivatePayloadByUsername")
 	public ResponseEntity<UserPrivatePayload> getUserPrivateByUsername(String username);
 
 	@Operation(summary = "Get User by Email", description = "Retrieve an user by email", tags = "User")
@@ -39,6 +36,5 @@ public interface UserApi {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = User.class)) }),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
 
-	@GetMapping("/getByEmail")
-	public ResponseEntity<User> getUserByEmail(String email);
+	public ResponseEntity<UserPrivatePayload> getUserByEmail(String email);
 }
