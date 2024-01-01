@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class ResponsePayload {
+public class MessagePayload {
 	private String message;
 }

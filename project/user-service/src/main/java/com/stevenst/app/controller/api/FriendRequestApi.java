@@ -3,7 +3,7 @@ package com.stevenst.app.controller.api;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import com.stevenst.app.payload.ResponsePayload;
+import com.stevenst.app.payload.MessagePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,5 +20,5 @@ public interface FriendRequestApi {
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content),
 			@ApiResponse(responseCode = "400", description = "Friend request already sent", content = @Content) })
 
-	public ResponseEntity<ResponsePayload> sendFriendRequest(String from, String to);
+	public ResponseEntity<MessagePayload> sendFriendRequest(String from, String to);
 }

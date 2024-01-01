@@ -2,8 +2,8 @@ package com.stevenst.app.service;
 
 import org.springframework.http.ResponseEntity;
 
-import com.stevenst.app.payload.ResponsePayload;
+import com.stevenst.app.payload.MessagePayload;
 
 public interface FriendRequestService {
-	ResponseEntity<ResponsePayload> sendFriendRequest(String from, String to);
+	ResponseEntity<MessagePayload> sendFriendRequest(String from, String to);
 }

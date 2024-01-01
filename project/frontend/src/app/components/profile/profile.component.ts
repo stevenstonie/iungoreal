@@ -1,7 +1,8 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { User } from 'src/app/models/user';
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FriendsService } from 'src/app/services/friends.service';
 
 @Component({
   selector: 'app-profile',
@@ -14,8 +15,10 @@ export class ProfileComponent {
   userSentFriendRequest: boolean = false;
   loggedUserSentFriendRequest: boolean = false;
   isFriends: boolean = false;
+  usernameOfLoggedUser = localStorage.getItem('username') ?? '';
+  usernameOfUserOnScreen = this.route.snapshot.paramMap.get('username') ?? '';
 
-  constructor(private userService: UserService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private userService: UserService, private friendsService: FriendsService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
     this.getUserFromService();
@@ -24,15 +27,12 @@ export class ProfileComponent {
   }
 
   getUserFromService() {
-    const usernameOfLoggedUser = localStorage.getItem('username');
-    const username = this.route.snapshot.paramMap.get('username');
-
-    if (username) {
-      if (username === usernameOfLoggedUser) {
+    if (this.usernameOfUserOnScreen) {
+      if (this.usernameOfUserOnScreen === this.usernameOfLoggedUser) {
         this.isUserOnScreenTheLoggedOne = true;
       }
 
-      this.userService.getUserByUsername(username, this.isUserOnScreenTheLoggedOne).subscribe({
+      this.userService.getUserByUsername(this.usernameOfUserOnScreen, this.isUserOnScreenTheLoggedOne).subscribe({
         next: (user: User) => {
           this.userOnScreen = user;
           console.log('user: ', user);
@@ -50,7 +50,15 @@ export class ProfileComponent {
   }
 
   sendFriendRequest() {
-    console.log("to implement");
+    this.friendsService.sendFriendRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.userSentFriendRequest = true;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   cancelFriendRequest() {
@@ -64,7 +72,7 @@ export class ProfileComponent {
   declineFriendRequest() {
     console.log("to implement");
   }
-  
+
   unfriend() {
     console.log("to implement");
   }
