@@ -10,5 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class MessagePayload {
+	private boolean success;
 	private String message;
 }

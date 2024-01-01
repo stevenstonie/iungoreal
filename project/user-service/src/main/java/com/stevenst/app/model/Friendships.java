@@ -1,11 +1,11 @@
 package com.stevenst.app.model;
 
-import com.stevenst.lib.model.User;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import com.stevenst.lib.model.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,24 +19,24 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "\"friend_request\"")
+@Table(name = "\"friendships\"")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FriendRequest {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Friendships {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "\"sender_id\"")
-    private User sender;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "\"user1_id\"")
+	private User user1;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "\"receiver_id\"")
-    private User receiver;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "\"user2_id\"")
+	private User user2;
 
-    @Column(nullable = false)
-    private final LocalDateTime sentAt = LocalDateTime.now();
+	@Column(nullable = false)
+	private final LocalDateTime createdAt = LocalDateTime.now();
 }

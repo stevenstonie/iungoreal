@@ -30,8 +30,14 @@ public class FriendsController implements FriendsApi {
 		return friendsService.acceptFriendRequest(sender, receiver);
 	}
 
-	// @GetMapping("/checkRequest")
-	// public ResponseEntity<MessagePayload> checkFriendRequest(@RequestParam String from, @RequestParam String to) {
-	// 	return friendRequestService.checkFriendRequest(from, to);
-	// }
+	@GetMapping("/checkRequest")
+	public ResponseEntity<MessagePayload> checkFriendRequest(@RequestParam String sender,
+			@RequestParam String receiver) {
+		return friendsService.checkFriendRequest(sender, receiver);
+	}
+	
+	@GetMapping("/checkFriendship")
+	public ResponseEntity<MessagePayload> checkFriendship(@RequestParam String user1, @RequestParam String user2) {
+		return friendsService.checkFriendship(user1, user2);
+	}
 }

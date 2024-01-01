@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 
 import com.stevenst.app.exception.IgorFriendRequestException;
 import com.stevenst.app.exception.IgorNotFoundException;
-import com.stevenst.app.model.FriendRequest;
-import com.stevenst.app.model.Friendship;
+import com.stevenst.app.model.FriendRequests;
+import com.stevenst.app.model.Friendships;
 import com.stevenst.app.payload.MessagePayload;
-import com.stevenst.app.repository.FriendRequestRepository;
-import com.stevenst.app.repository.FriendshipRepository;
+import com.stevenst.app.repository.FriendRequestsRepository;
+import com.stevenst.app.repository.FriendshipsRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.FriendsService;
 import com.stevenst.lib.model.User;
@@ -20,8 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FriendsServiceImpl implements FriendsService {
 	private final UserRepository userRepository;
-	private final FriendRequestRepository friendRequestRepository;
-	private final FriendshipRepository friendshipRepository;
+	private final FriendRequestsRepository friendRequestsRepository;
+	private final FriendshipsRepository friendshipsRepository;
 
 	public ResponseEntity<MessagePayload> sendFriendRequest(String senderUsername, String receiverUsername) {
 		User sender = userRepository.findByUsername(senderUsername)
@@ -29,28 +29,33 @@ public class FriendsServiceImpl implements FriendsService {
 		User receiver = userRepository.findByUsername(receiverUsername)
 				.orElseThrow(() -> new IgorNotFoundException("User with username " + receiverUsername + " not found."));
 
-		if (friendRequestRepository.existsBySenderAndReceiver(sender, receiver)) {
+		if (sender.equals(receiver)) {
+			throw new IgorFriendRequestException(
+					"Cannot send a friend request to oneself");
+		}
+
+		if (friendRequestsRepository.existsBySenderAndReceiver(sender, receiver)) {
 			throw new IgorFriendRequestException(
 					"Cannot send a friend request twice (from " + senderUsername + " to " + receiverUsername + ")");
 		}
 
-		if (friendRequestRepository.existsBySenderAndReceiver(receiver, sender)) {
+		if (friendRequestsRepository.existsBySenderAndReceiver(receiver, sender)) {
 			throw new IgorFriendRequestException(
 					"Cannot send a friend request when having one already received (from " + receiverUsername
 							+ " to " + senderUsername + ")");
 		}
 
-		if (friendshipRepository.existsByUsers(sender, receiver)) {
+		if (friendshipsRepository.existsByUsers(sender, receiver)) {
 			throw new IgorFriendRequestException(
 					"Cannot send a friend request when already friends");
 		}
 
-		friendRequestRepository.save(FriendRequest.builder()
+		friendRequestsRepository.save(FriendRequests.builder()
 				.sender(sender)
 				.receiver(receiver)
 				.build());
 
-		return ResponseEntity.ok(MessagePayload.builder()
+		return ResponseEntity.ok(MessagePayload.builder().success(true)
 				.message("Friend request sent successfully from " + senderUsername + " to " + receiverUsername + ".")
 				.build());
 	}
@@ -61,32 +66,66 @@ public class FriendsServiceImpl implements FriendsService {
 		User receiver = userRepository.findByUsername(receiverUsername)
 				.orElseThrow(() -> new IgorNotFoundException("User with username " + receiverUsername + " not found."));
 
-		if (!friendRequestRepository.existsBySenderAndReceiver(sender, receiver)) {
+		if (!friendRequestsRepository.existsBySenderAndReceiver(sender, receiver)) {
 			throw new IgorFriendRequestException(
 					"Cannot accept friend request when no friend request found from " + senderUsername + " to "
 							+ receiverUsername);
 		}
 
-		if (friendRequestRepository.existsBySenderAndReceiver(receiver, sender)) {
+		if (friendRequestsRepository.existsBySenderAndReceiver(receiver, sender)) {
 			throw new IgorFriendRequestException(
 					receiverUsername + " already sent a friend request to " + senderUsername);
 		}
 
-		if (friendshipRepository.existsByUsers(sender, receiver)) {
+		if (friendshipsRepository.existsByUsers(sender, receiver)) {
 			throw new IgorFriendRequestException(
 					"Friendship already exists between " + senderUsername + " and " + receiverUsername);
 		}
 
-		friendRequestRepository.deleteBySenderAndReceiver(sender, receiver);
+		friendRequestsRepository.deleteBySenderAndReceiver(sender, receiver);
 
-		friendshipRepository.save(Friendship.builder()
+		friendshipsRepository.save(Friendships.builder()
 				.user1(sender)
 				.user2(receiver)
 				.build());
 
-		return ResponseEntity.ok(MessagePayload.builder()
+		return ResponseEntity.ok(MessagePayload.builder().success(true)
 				.message(
 						"Friend request from " + senderUsername + " accepted successfully by " + receiverUsername + ".")
 				.build());
+	}
+
+	public ResponseEntity<MessagePayload> checkFriendRequest(String senderUsername, String receiverUsername) {
+		User sender = userRepository.findByUsername(senderUsername)
+				.orElseThrow(() -> new IgorNotFoundException("User with username " + senderUsername + " not found."));
+		User receiver = userRepository.findByUsername(receiverUsername)
+				.orElseThrow(() -> new IgorNotFoundException("User with username " + receiverUsername + " not found."));
+
+		if (friendRequestsRepository.existsBySenderAndReceiver(sender, receiver)) {
+			return ResponseEntity.ok(MessagePayload.builder().success(true)
+					.message("Friend request found from " + senderUsername + " to " + receiverUsername + ".")
+					.build());
+		} else {
+			return ResponseEntity.ok(MessagePayload.builder().success(false)
+					.message("No friend request found from " + senderUsername + " to " + receiverUsername + ".")
+					.build());
+		}
+	}
+
+	public ResponseEntity<MessagePayload> checkFriendship(String user1Username, String user2Username) {
+		User user1 = userRepository.findByUsername(user1Username)
+				.orElseThrow(() -> new IgorNotFoundException("User with username " + user1Username + " not found."));
+		User user2 = userRepository.findByUsername(user2Username)
+				.orElseThrow(() -> new IgorNotFoundException("User with username " + user2Username + " not found."));
+
+		if (friendshipsRepository.existsByUsers(user1, user2)) {
+			return ResponseEntity.ok(MessagePayload.builder().success(true)
+					.message("Friendship found between " + user1Username + " and " + user2Username + ".")
+					.build());
+		} else {
+			return ResponseEntity.ok(MessagePayload.builder().success(false)
+					.message("No friendship found between " + user1Username + " and " + user2Username + ".")
+					.build());
+		}
 	}
 }
