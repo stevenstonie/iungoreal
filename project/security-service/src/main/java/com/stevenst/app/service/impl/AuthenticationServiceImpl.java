@@ -66,12 +66,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 
 		var user = authRepository.findByEmail(request.getEmail())
-				.orElseThrow(() -> new IgorAuthenticationException("User not found"));
+				.orElseThrow(() -> new IgorAuthenticationException("Invalid credentials or inexistent account"));
 		try {
 			authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		} catch (AuthenticationException e) {
-			throw new IgorAuthenticationException("Invalid credentials");
+			throw new IgorAuthenticationException("Invalid credentials or inexistent account");
 		}
 
 		var jwtToken = jwtService.generateToken(user);

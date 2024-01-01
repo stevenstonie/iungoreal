@@ -173,7 +173,7 @@ class AuthenticationServiceImplTest {
 		var userNotFoundException = assertThrows(IgorAuthenticationException.class,
 				() -> authService.login(request));
 
-		assertEquals("User not found", userNotFoundException.getMessage());
+		assertEquals("Invalid credentials or inexistent account", userNotFoundException.getMessage());
 	}
 
 	@Test

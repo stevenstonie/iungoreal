@@ -102,7 +102,7 @@ class AuthenticationControllerIntegrationTest {
 				.andExpect(status().isUnauthorized())
 				.andExpect(result -> assertTrue(
 						result.getResolvedException() instanceof IgorAuthenticationException))
-				.andExpect(result -> assertEquals("Invalid credentials",
+				.andExpect(result -> assertEquals("Invalid credentials or inexistent account",
 						Objects.requireNonNull(result.getResolvedException()).getMessage()));
 	}
 
