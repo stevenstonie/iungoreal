@@ -47,6 +47,15 @@ export class ProfileComponent {
     }
   }
 
+  /*
+    the logic is like this:
+    the one who sends the friend request is the sender(duuh)
+    the one who cancels it is the sender
+    the one who accepts or declines is the receiver
+    the one who unfriends is the unfriender
+    the one who is supposed to do all the actions is the logged user (so careful with the parameters)
+  */
+
   getFriendshipStatusFromService() {
     this.friendsService.checkRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
@@ -94,10 +103,17 @@ export class ProfileComponent {
   }
 
   cancelFriendRequest() {
-    console.log("to implement");
-    // this.loggedUserSentFriendRequest = false;
-    // this.userSentFriendRequest = false;
-    // this.isFriends = false;
+    this.friendsService.cancelFriendRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.loggedUserSentFriendRequest = false;
+        this.userSentFriendRequest = false;
+        this.isFriends = false;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   acceptFriendRequest() {
@@ -115,17 +131,31 @@ export class ProfileComponent {
   }
 
   declineFriendRequest() {
-    console.log("to implement");
-    // this.loggedUserSentFriendRequest = false;
-    // this.userSentFriendRequest = false;
-    // this.isFriends = false;
+    this.friendsService.declineFriendRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.loggedUserSentFriendRequest = false;
+        this.userSentFriendRequest = false;
+        this.isFriends = false;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   unfriend() {
-    console.log("to implement");
-    // this.loggedUserSentFriendRequest = false;
-    // this.userSentFriendRequest = false;
-    // this.isFriends = false;
+    this.friendsService.unfriend(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.loggedUserSentFriendRequest = false;
+        this.userSentFriendRequest = false;
+        this.isFriends = false;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   editProfile() {

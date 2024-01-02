@@ -65,8 +65,8 @@ export class FriendsService {
       );
   }
 
-  unfriend(user1: string, user2: string): Observable<MessagePayload> {
-    const params = new HttpParams().set('user1', user1).set('user2', user2);
+  unfriend(unfriender: string, unfriended: string): Observable<MessagePayload> {
+    const params = new HttpParams().set('unfriender', unfriender).set('unfriended', unfriended);
 
     return this.http.delete<MessagePayload>(`${this.apiUrl}/unfriend`, { params })
       .pipe(
