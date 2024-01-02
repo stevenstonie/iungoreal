@@ -13,7 +13,7 @@ public interface FriendsService {
 
 	ResponseEntity<MessagePayload> checkFriendship(String user1Username, String user2Username);
 
-	ResponseEntity<List<String>> getAllFriends(String username);
+	ResponseEntity<List<String>> getAllFriendsUsernames(String username);
 
 	ResponseEntity<MessagePayload> acceptFriendRequest(String senderUsername, String receiverUsername);
 

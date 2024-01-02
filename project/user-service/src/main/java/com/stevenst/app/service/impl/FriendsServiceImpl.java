@@ -100,7 +100,7 @@ public class FriendsServiceImpl implements FriendsService {
 	}
 
 	@Override
-	public ResponseEntity<List<String>> getAllFriends(String username) {
+	public ResponseEntity<List<String>> getAllFriendsUsernames(String username) {
 		User user = userRepository.findByUsername(username)
 				.orElseThrow(() -> new IgorNotFoundException("User with username " + username + " not found"));
 

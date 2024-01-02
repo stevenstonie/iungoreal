@@ -46,7 +46,7 @@ public interface FriendsApi {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
 
-	public ResponseEntity<List<String>> getAllFriends(String username);
+	public ResponseEntity<List<String>> getAllFriendsUsernames(String username);
 
 	@Operation(summary = "Accept Friend Request", description = "Accept an user's friend request", tags = "User")
 	@ApiResponses(value = {

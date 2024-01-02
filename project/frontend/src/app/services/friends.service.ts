@@ -20,15 +20,6 @@ export class FriendsService {
       );
   }
 
-  acceptFriendRequest(sender: string, receiver: string): Observable<MessagePayload> {
-    const params = new HttpParams().set('sender', sender).set('receiver', receiver);
-
-    return this.http.put<MessagePayload>(`${this.apiUrl}/acceptRequest`, {}, { params })
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
   checkRequest(sender: string, receiver: string): Observable<MessagePayload> {
     const params = new HttpParams().set('sender', sender).set('receiver', receiver);
 
@@ -42,6 +33,24 @@ export class FriendsService {
     const params = new HttpParams().set('user1', user1).set('user2', user2);
 
     return this.http.get<MessagePayload>(`${this.apiUrl}/checkFriendship`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getAllUsernamesOfFriends(username: string): Observable<string[]> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<string[]>(`${this.apiUrl}/getAllFriendsUsernames`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  acceptFriendRequest(sender: string, receiver: string): Observable<MessagePayload> {
+    const params = new HttpParams().set('sender', sender).set('receiver', receiver);
+
+    return this.http.put<MessagePayload>(`${this.apiUrl}/acceptRequest`, {}, { params })
       .pipe(
         catchError(this.handleError)
       );
