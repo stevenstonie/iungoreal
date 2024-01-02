@@ -128,4 +128,24 @@ public class FriendsServiceImpl implements FriendsService {
 					.build());
 		}
 	}
+
+	@Override
+	public ResponseEntity<MessagePayload> cancelFriendRequest(String senderUsername, String receiverUsername) {
+		System.out.println("unimplemented method");
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<MessagePayload> declineFriendRequest(String senderUsername, String receiverUsername) {
+		System.out.println("unimplemented method");
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<MessagePayload> unfriend(String user1Username, String user2Username) {
+		System.out.println("unimplemented method");
+		return null;
+	}
+
+	
 }

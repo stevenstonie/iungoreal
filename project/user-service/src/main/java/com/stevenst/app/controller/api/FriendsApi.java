@@ -47,4 +47,31 @@ public interface FriendsApi {
 			@ApiResponse(responseCode = "404", description = "Friendship not found", content = @Content) })
 
 	public ResponseEntity<MessagePayload> checkFriendship(String user1, String user2);
+
+	@Operation(summary = "Cancel Friend Request", description = "Cancel an user's friend request to another user", tags = "User")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful", content = {
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
+			@ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Friend request not found", content = @Content) })
+
+	public ResponseEntity<MessagePayload> cancelFriendRequest(String sender, String receiver);
+
+	@Operation(summary = "Decline Friend Request", description = "Decline an user's friend request to another user", tags = "User")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful", content = {
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
+			@ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Friend request not found", content = @Content) })
+
+	public ResponseEntity<MessagePayload> declineFriendRequest(String sender, String receiver);
+
+	@Operation(summary = "Unfriend", description = "Unfriend an user from another user", tags = "User")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful", content = {
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
+			@ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+			@ApiResponse(responseCode = "404", description = "Friend not found", content = @Content) })
+
+	public ResponseEntity<MessagePayload> unfriend(String user1, String user2);
 }
