@@ -40,9 +40,9 @@ public class FriendsController implements FriendsApi {
 		return friendsService.checkFriendship(user1, user2);
 	}
 
-	@GetMapping("/getAllFriends")
-	public ResponseEntity<List<String>> getAllFriends(@RequestParam String username) {
-		return friendsService.getAllFriends(username);
+	@GetMapping("/getAllFriendsUsernames")
+	public ResponseEntity<List<String>> getAllFriendsUsernames(@RequestParam String username) {
+		return friendsService.getAllFriendsUsernames(username);
 	}
 
 	@PutMapping("/acceptRequest")

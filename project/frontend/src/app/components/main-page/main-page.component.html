@@ -16,8 +16,14 @@
 	<div id="right-section">
 		<h4>friends</h4>
 
-		<button>friend1</button>
-		<button>friend2</button>
-		<button>friend3</button>
+		<ng-container *ngIf="friendsUsernames.length > 0; else noFriends">
+			<button *ngFor="let friendUsername of friendsUsernames" type="button" [routerLink]="['/user', friendUsername]">
+				{{ friendUsername }}
+			</button>
+		</ng-container>
+
+		<ng-template #noFriends>
+			<p>this place is kind of empty..</p>
+		</ng-template>
 	</div>
 </div>
