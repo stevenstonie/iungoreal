@@ -47,6 +47,33 @@ export class FriendsService {
       );
   }
 
+  cancelFriendRequest(sender: string, receiver: string): Observable<MessagePayload> {
+    const params = new HttpParams().set('sender', sender).set('receiver', receiver);
+
+    return this.http.delete<MessagePayload>(`${this.apiUrl}/cancelRequest`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  declineFriendRequest(sender: string, receiver: string): Observable<MessagePayload> {
+    const params = new HttpParams().set('sender', sender).set('receiver', receiver);
+
+    return this.http.delete<MessagePayload>(`${this.apiUrl}/declineRequest`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  unfriend(user1: string, user2: string): Observable<MessagePayload> {
+    const params = new HttpParams().set('user1', user1).set('user2', user2);
+
+    return this.http.delete<MessagePayload>(`${this.apiUrl}/unfriend`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error(error);
     return throwError(() => new Error('An error occurred in friends service.'));

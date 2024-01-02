@@ -1,6 +1,7 @@
 package com.stevenst.app.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,19 +43,19 @@ public class FriendsController implements FriendsApi {
 		return friendsService.checkFriendship(user1, user2);
 	}
 
-	@PostMapping("/cancelRequest")
+	@DeleteMapping("/cancelRequest")
 	public ResponseEntity<MessagePayload> cancelFriendRequest(@RequestParam String sender,
 			@RequestParam String receiver) {
 		return friendsService.cancelFriendRequest(sender, receiver);
 	}
 
-	@PostMapping("/declineRequest")
+	@DeleteMapping("/declineRequest")
 	public ResponseEntity<MessagePayload> declineFriendRequest(@RequestParam String sender,
 			@RequestParam String receiver) {
 		return friendsService.declineFriendRequest(sender, receiver);
 	}
 
-	@PostMapping("/unfriend")
+	@DeleteMapping("/unfriend")
 	public ResponseEntity<MessagePayload> unfriend(@RequestParam String unfriender, @RequestParam String unfriended) {
 		return friendsService.unfriend(unfriender, unfriended);
 	}
