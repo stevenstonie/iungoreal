@@ -1,9 +1,12 @@
 package com.stevenst.app.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,12 +29,6 @@ public class FriendsController implements FriendsApi {
 		return friendsService.sendFriendRequest(sender, receiver);
 	}
 
-	@PostMapping("/acceptRequest")
-	public ResponseEntity<MessagePayload> acceptFriendRequest(@RequestParam String sender,
-			@RequestParam String receiver) {
-		return friendsService.acceptFriendRequest(sender, receiver);
-	}
-
 	@GetMapping("/checkRequest")
 	public ResponseEntity<MessagePayload> checkFriendRequest(@RequestParam String sender,
 			@RequestParam String receiver) {
@@ -41,6 +38,17 @@ public class FriendsController implements FriendsApi {
 	@GetMapping("/checkFriendship")
 	public ResponseEntity<MessagePayload> checkFriendship(@RequestParam String user1, @RequestParam String user2) {
 		return friendsService.checkFriendship(user1, user2);
+	}
+
+	@GetMapping("/getAllFriends")
+	public ResponseEntity<List<String>> getAllFriends(@RequestParam String username) {
+		return friendsService.getAllFriends(username);
+	}
+
+	@PutMapping("/acceptRequest")
+	public ResponseEntity<MessagePayload> acceptFriendRequest(@RequestParam String sender,
+			@RequestParam String receiver) {
+		return friendsService.acceptFriendRequest(sender, receiver);
 	}
 
 	@DeleteMapping("/cancelRequest")

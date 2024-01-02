@@ -23,7 +23,7 @@ export class FriendsService {
   acceptFriendRequest(sender: string, receiver: string): Observable<MessagePayload> {
     const params = new HttpParams().set('sender', sender).set('receiver', receiver);
 
-    return this.http.post<MessagePayload>(`${this.apiUrl}/acceptRequest`, {}, { params })
+    return this.http.put<MessagePayload>(`${this.apiUrl}/acceptRequest`, {}, { params })
       .pipe(
         catchError(this.handleError)
       );

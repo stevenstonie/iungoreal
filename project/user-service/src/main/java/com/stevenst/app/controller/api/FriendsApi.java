@@ -1,5 +1,7 @@
 package com.stevenst.app.controller.api;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,14 +24,6 @@ public interface FriendsApi {
 
 	public ResponseEntity<MessagePayload> sendFriendRequest(String sender, String receiver);
 
-	@Operation(summary = "Accept Friend Request", description = "Accept an user's friend request", tags = "User")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Successful", content = {
-					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
-			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
-
-	public ResponseEntity<MessagePayload> acceptFriendRequest(String sender, String receiver);
-
 	@Operation(summary = "Check Friend Request", description = "Check if an user sent a friend request to another user", tags = "User")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Successful or friend request not found", content = {
@@ -45,6 +39,22 @@ public interface FriendsApi {
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
 
 	public ResponseEntity<MessagePayload> checkFriendship(String user1, String user2);
+
+	@Operation(summary = "Get All Friends", description = "Get all friends of an user", tags = "User")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful", content = {
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
+			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
+
+	public ResponseEntity<List<String>> getAllFriends(String username);
+
+	@Operation(summary = "Accept Friend Request", description = "Accept an user's friend request", tags = "User")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful", content = {
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
+			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
+
+	public ResponseEntity<MessagePayload> acceptFriendRequest(String sender, String receiver);
 
 	@Operation(summary = "Cancel Friend Request", description = "Cancel an user's friend request to another user", tags = "User")
 	@ApiResponses(value = {
