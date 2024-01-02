@@ -55,7 +55,7 @@ public class FriendsController implements FriendsApi {
 	}
 
 	@PostMapping("/unfriend")
-	public ResponseEntity<MessagePayload> unfriend(@RequestParam String user1, @RequestParam String user2) {
-		return friendsService.unfriend(user1, user2);
+	public ResponseEntity<MessagePayload> unfriend(@RequestParam String unfriender, @RequestParam String unfriended) {
+		return friendsService.unfriend(unfriender, unfriended);
 	}
 }

@@ -32,19 +32,17 @@ public interface FriendsApi {
 
 	@Operation(summary = "Check Friend Request", description = "Check if an user sent a friend request to another user", tags = "User")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Successful", content = {
+			@ApiResponse(responseCode = "200", description = "Successful or friend request not found", content = {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
-			@ApiResponse(responseCode = "404", description = "User not found", content = @Content),
-			@ApiResponse(responseCode = "404", description = "Friend request not found", content = @Content) })
+			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
 
 	public ResponseEntity<MessagePayload> checkFriendRequest(String from, String to);
 
 	@Operation(summary = "Check Friendship", description = "Check if two users are friends", tags = "User")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Successful", content = {
+			@ApiResponse(responseCode = "200", description = "Successful or friendship not found", content = {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
-			@ApiResponse(responseCode = "404", description = "User not found", content = @Content),
-			@ApiResponse(responseCode = "404", description = "Friendship not found", content = @Content) })
+			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
 
 	public ResponseEntity<MessagePayload> checkFriendship(String user1, String user2);
 
@@ -71,7 +69,7 @@ public interface FriendsApi {
 			@ApiResponse(responseCode = "200", description = "Successful", content = {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPublicPayload.class)) }),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content),
-			@ApiResponse(responseCode = "404", description = "Friend not found", content = @Content) })
+			@ApiResponse(responseCode = "404", description = "Friendship not found", content = @Content) })
 
-	public ResponseEntity<MessagePayload> unfriend(String user1, String user2);
+	public ResponseEntity<MessagePayload> unfriend(String unfriender, String unfriended);
 }
