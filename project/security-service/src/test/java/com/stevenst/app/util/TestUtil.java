@@ -22,7 +22,11 @@ public class TestUtil {
 
     public void insertUserIntoDB(String email, String password, String username, Role role)
             throws Exception {
-        User user = new User(0L, email, passwordEncoder.encode(password), username, role);
+        User user = User.builder()
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .username(username)
+                .build();
 
         authRepository.save(user);
     }

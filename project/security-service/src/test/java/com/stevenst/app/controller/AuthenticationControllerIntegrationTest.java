@@ -5,6 +5,7 @@ import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.payload.AuthRequest;
 import com.stevenst.app.payload.RegisterRequest;
 import com.stevenst.lib.model.Role;
+import com.stevenst.lib.model.User;
 import com.stevenst.app.repository.AuthRepository;
 import com.stevenst.app.util.TestUtil;
 
@@ -25,6 +26,8 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -76,7 +79,10 @@ class AuthenticationControllerIntegrationTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.token").isNotEmpty());
 		
-		// TODO: test if the password is encrypted and if the role is set to USER
+		User savedUser = authRepository.findByEmail("testemail123456").orElse(null);
+		assertNotNull(savedUser);
+		assertEquals(Role.USER, savedUser.getRole());
+		assertNotEquals("testpassword123456", savedUser.getPassword());
 	}
 
 	@Test

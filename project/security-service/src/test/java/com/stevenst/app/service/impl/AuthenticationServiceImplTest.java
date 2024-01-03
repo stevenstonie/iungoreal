@@ -22,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.payload.AuthRequest;
 import com.stevenst.app.payload.RegisterRequest;
-import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
 import com.stevenst.app.repository.AuthRepository;
 
@@ -42,7 +41,11 @@ class AuthenticationServiceImplTest {
 	@InjectMocks
 	private AuthenticationServiceImpl authService;
 
-	User user = new User(0L, "test@email.com", "testpassword", "testusername", Role.USER);
+	User user = User.builder()
+			.email("test@email.com")
+			.password("testpassword")
+			.username("testusername")
+			.build();
 
 	@BeforeEach
 	void setUp() {

@@ -4,7 +4,6 @@ import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.app.payload.AuthRequest;
 import com.stevenst.app.payload.AuthResponse;
 import com.stevenst.app.payload.RegisterRequest;
-import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
 import com.stevenst.app.repository.AuthRepository;
 import com.stevenst.app.service.AuthenticationService;
@@ -26,12 +25,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtServiceImpl jwtService;
 	private final AuthenticationManager authenticationManager;
+	private static final String CREDENTIALS_EMPTY_MESSAGE = "Credentials cannot be empty";
+	private static final String INVALID_CREDENTIALS_OR_INEXISTENT_ACC_MESSAGE = "Invalid credentials or inexistent account";
 
 	public AuthResponse register(RegisterRequest request) {
 		if (request.getEmail() == null || request.getEmail().isEmpty() || request.getPassword() == null
 				|| request.getPassword().isEmpty() || request.getUsername() == null
 				|| request.getUsername().isEmpty()) {
-			throw new IgorAuthenticationException("Credentials cannot be empty");
+			throw new IgorAuthenticationException(CREDENTIALS_EMPTY_MESSAGE);
 		}
 
 		Optional<User> existingUser = authRepository.findByEmail(request.getEmail());
@@ -48,7 +49,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				.email(request.getEmail())
 				.password(passwordEncoder.encode(request.getPassword()))
 				.username(request.getUsername())
-				.role(Role.USER)
 				.build();
 
 		authRepository.save(user);
@@ -62,16 +62,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public AuthResponse login(AuthRequest request) {
 		if (request.getEmail() == null || request.getEmail().isEmpty() || request.getPassword() == null
 				|| request.getPassword().isEmpty()) {
-			throw new IgorAuthenticationException("Credentials cannot be empty");
+			throw new IgorAuthenticationException(CREDENTIALS_EMPTY_MESSAGE);
 		}
 
 		var user = authRepository.findByEmail(request.getEmail())
-				.orElseThrow(() -> new IgorAuthenticationException("Invalid credentials or inexistent account"));
+				.orElseThrow(() -> new IgorAuthenticationException(INVALID_CREDENTIALS_OR_INEXISTENT_ACC_MESSAGE));
 		try {
 			authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		} catch (AuthenticationException e) {
-			throw new IgorAuthenticationException("Invalid credentials or inexistent account");
+			throw new IgorAuthenticationException(INVALID_CREDENTIALS_OR_INEXISTENT_ACC_MESSAGE);
 		}
 
 		var jwtToken = jwtService.generateToken(user);

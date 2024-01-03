@@ -20,7 +20,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.stevenst.app.exception.IgorAuthenticationException;
-import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
 import com.stevenst.app.repository.AuthRepository;
 
@@ -50,7 +49,6 @@ class ApplicationConfigurationTest {
                         .email("test@email.com")
                         .password("testpassword")
                         .username("testusername")
-                        .role(Role.USER)
                         .build()));
 
         User user = (User) applicationConfiguration.userDetailsService().loadUserByUsername("test@email.com");

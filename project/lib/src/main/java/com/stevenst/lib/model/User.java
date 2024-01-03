@@ -47,7 +47,7 @@ public class User implements UserDetails {
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private Role role;
+	private final Role role = Role.USER;
 
 	@Column(nullable = false)
 	private final LocalDateTime createdAt = LocalDateTime.now();
