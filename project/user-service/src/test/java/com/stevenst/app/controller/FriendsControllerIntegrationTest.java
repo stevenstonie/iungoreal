@@ -25,9 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.jayway.jsonpath.JsonPath;
+import com.stevenst.app.model.FriendRequests;
 import com.stevenst.app.payload.MessagePayload;
-import com.stevenst.app.repository.TestRepository;
-import com.stevenst.app.util.TestUtil;
+import com.stevenst.app.repository.FriendRequestsRepository;
+import com.stevenst.app.repository.FriendshipsRepository;
+import com.stevenst.app.repository.UserRepository;
 import com.stevenst.lib.model.User;
 
 @SpringBootTest
@@ -36,7 +38,6 @@ import com.stevenst.lib.model.User;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FriendsControllerIntegrationTest {
 	private Server server;
-	private TestUtil testUtil;
 	private static final User testSender = User.builder()
 			.email("test_sender_email123")
 			.password("test_sender_password123")
@@ -48,30 +49,33 @@ class FriendsControllerIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;
-
 	@Autowired
-	private TestRepository testRepository;
+	private FriendshipsRepository friendshipsRepository;
+	@Autowired
+	private FriendRequestsRepository friendRequestsRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-	@BeforeEach
+	@BeforeAll
 	void init() throws Exception {
 		server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
 		server.start();
-
-		testUtil = new TestUtil(testRepository);
-		testUtil.insertUserIntoDB(testSender);
-		testUtil.insertUserIntoDB(testReceiver);
 	}
 
-	@AfterEach
-	void exit() throws SQLException {
-		testUtil.cleanDB();
-
+	@AfterAll
+	void exit() throws Exception {
 		server.stop();
+	}
+
+	@BeforeEach
+	void setUp() throws Exception {
+		insertUserIntoDB(testSender);
+		insertUserIntoDB(testReceiver);
 	}
 
 	@AfterEach
 	void tearDown() throws SQLException {
-		testUtil.cleanDB();
+		cleanDB();
 	}
 
 	@Test
@@ -89,7 +93,41 @@ class FriendsControllerIntegrationTest {
 				+ testReceiver.getUsername() + ")", response.getMessage());
 	}
 
+	@Test
+	void checkFriendRequest() throws Exception {
+		addFriendRequest(testSender, testReceiver);
+
+		var result = mockMvc.perform(
+				get("/api/friends/checkRequest?sender=" + testSender.getUsername() + "&receiver="
+						+ testReceiver.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		MessagePayload response = getMessagePayloadFromMvcResult(result);
+
+		assertTrue(response.isSuccess());
+		assertEquals("Friend request found (from " + testSender.getUsername() + " to "
+				+ testReceiver.getUsername() + ")", response.getMessage());
+	}
+
 	// -------------------------------------------------
+
+	private void insertUserIntoDB(User user) {
+		userRepository.save(user);
+	}
+
+	private void addFriendRequest(User sender, User receiver) {
+		friendRequestsRepository.save(FriendRequests.builder()
+				.sender(sender)
+				.receiver(receiver)
+				.build());
+	}
+	
+	private void cleanDB() {
+		friendRequestsRepository.deleteAll();
+		friendshipsRepository.deleteAll();
+		userRepository.deleteAll();
+	}
 
 	MessagePayload getMessagePayloadFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
 		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());

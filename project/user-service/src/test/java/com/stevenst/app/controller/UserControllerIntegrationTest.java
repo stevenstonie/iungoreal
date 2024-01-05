@@ -29,8 +29,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.stevenst.app.exception.IgorNotFoundException;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
-import com.stevenst.app.repository.TestRepository;
-import com.stevenst.app.util.TestUtil;
+import com.stevenst.app.repository.UserRepository;
 import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
 
@@ -40,7 +39,6 @@ import com.stevenst.lib.model.User;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerIntegrationTest {
 	private static Server server;
-	private static TestUtil testUtil;
 	private static final User testUser = User.builder()
 			.email("testemail123")
 			.password("testpassword123")
@@ -50,20 +48,19 @@ class UserControllerIntegrationTest {
 	private MockMvc mockMvc;
 
 	@Autowired
-	private TestRepository testRepository;
+	private UserRepository userRepository;
 
 	@BeforeAll
 	void init() throws Exception {
 		server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
 		server.start();
 
-		testUtil = new TestUtil(testRepository);
-		testUtil.insertUserIntoDB(testUser);
+		insertUserIntoDB(testUser);
 	}
 
 	@AfterAll
 	void tearDown() throws SQLException {
-		testUtil.cleanDB();
+		cleanDB();
 
 		server.stop();
 	}
@@ -150,7 +147,15 @@ class UserControllerIntegrationTest {
 
 	// --------------------------------------------
 
-	UserPrivatePayload getPrivateUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
+	private void insertUserIntoDB(User user) {
+		userRepository.save(user);
+	}
+
+	private void cleanDB() {
+		userRepository.deleteAll();
+	}
+
+	private UserPrivatePayload getPrivateUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
 		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
 		String username = responseJson.read("$.username");
 		String email = responseJson.read("$.email");
@@ -166,7 +171,7 @@ class UserControllerIntegrationTest {
 				.build();
 	}
 
-	UserPublicPayload getPublicUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
+	private UserPublicPayload getPublicUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
 		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
 		String username = responseJson.read("$.username");
 		String createdAtString = responseJson.read("$.createdAt");
