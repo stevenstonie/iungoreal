@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.stevenst.app.payload.MessagePayload;
 import com.stevenst.app.payload.UserPublicPayload;

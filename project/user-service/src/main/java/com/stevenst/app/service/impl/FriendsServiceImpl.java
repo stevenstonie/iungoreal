@@ -11,7 +11,6 @@ import com.stevenst.app.exception.IgorNotFoundException;
 import com.stevenst.app.model.FriendRequests;
 import com.stevenst.app.model.Friendships;
 import com.stevenst.app.payload.MessagePayload;
-import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.FriendRequestsRepository;
 import com.stevenst.app.repository.FriendshipsRepository;
 import com.stevenst.app.repository.UserRepository;

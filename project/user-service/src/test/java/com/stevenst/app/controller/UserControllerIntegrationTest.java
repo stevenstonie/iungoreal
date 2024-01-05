@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 
 import org.h2.tools.Server;
@@ -39,6 +40,7 @@ import com.stevenst.lib.model.User;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerIntegrationTest {
 	private static Server server;
+	private static TestUtil testUtil;
 	private static final User testUser = User.builder()
 			.email("testemail123")
 			.password("testpassword123")
@@ -55,13 +57,13 @@ class UserControllerIntegrationTest {
 		server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
 		server.start();
 
-		TestUtil testUtil = new TestUtil(testRepository);
+		testUtil = new TestUtil(testRepository);
 		testUtil.insertUserIntoDB(testUser);
 	}
 
 	@AfterAll
 	void tearDown() throws SQLException {
-		testRepository.deleteAll();
+		testUtil.cleanDB();
 
 		server.stop();
 	}
@@ -78,7 +80,7 @@ class UserControllerIntegrationTest {
 		assertNotNull(user.getUsername());
 		assertNotNull(user.getCreatedAt());
 		assertEquals(testUser.getUsername(), user.getUsername());
-		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toSeconds() > 0);
+		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toDays() < 1);
 	}
 
 	@Test
@@ -97,7 +99,7 @@ class UserControllerIntegrationTest {
 		assertEquals(testUser.getUsername(), user.getUsername());
 		assertEquals(testUser.getEmail(), user.getEmail());
 		assertEquals(Role.USER, user.getRole());
-		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toSeconds() > 0);
+		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toDays() < 1);
 	}
 
 	@Test
@@ -116,7 +118,7 @@ class UserControllerIntegrationTest {
 		assertEquals(testUser.getUsername(), user.getUsername());
 		assertEquals(testUser.getEmail(), user.getEmail());
 		assertEquals(Role.USER, user.getRole());
-		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toSeconds() > 0);
+		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toDays() < 1);
 	}
 
 	@Test

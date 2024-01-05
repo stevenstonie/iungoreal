@@ -12,4 +12,10 @@ public class TestUtil {
 	public void insertUserIntoDB(User user) {
 		testRepository.save(user);
 	}
+
+	public void cleanDB() {
+		testRepository.deleteAllFriendRequests();
+		testRepository.deleteAllFriendships();
+		testRepository.deleteAllUsers();
+	}
 }
