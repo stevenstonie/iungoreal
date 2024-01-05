@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
 						.username(user.getUsername())
 						.createdAt(user.getCreatedAt())
 						.build())
-				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND));
+				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 						.role(user.getRole())
 						.createdAt(user.getCreatedAt())
 						.build())
-				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND));
+				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 	}
 	// TODO: users dont need to know their role is of a USER so update the code on front and back to return the role only to admins
 
@@ -50,6 +50,6 @@ public class UserServiceImpl implements UserService {
 						.role(user.getRole())
 						.createdAt(user.getCreatedAt())
 						.build())
-				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND));
+				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND + " (with email: " + email + ")"));
 	}
 }

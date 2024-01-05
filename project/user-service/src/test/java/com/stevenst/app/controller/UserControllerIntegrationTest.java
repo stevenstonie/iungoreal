@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.jayway.jsonpath.JsonPath;
+import com.stevenst.app.exception.IgorNotFoundException;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.TestRepository;
@@ -72,15 +73,12 @@ class UserControllerIntegrationTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
-		String username = responseJson.read("$.username");
-		String createdAtString = responseJson.read("$.createdAt");
-		LocalDateTime createdAt = LocalDateTime.parse(createdAtString, DateTimeFormatter.ISO_DATE_TIME);
+		UserPublicPayload user = getPublicUserFromMvcResult(result);
 
-		assertNotNull(username);
-		assertNotNull(createdAt);
-		assertEquals(testUser.getUsername(), username);
-		assertTrue(Duration.between(createdAt, LocalDateTime.now()).toSeconds() > 0);
+		assertNotNull(user.getUsername());
+		assertNotNull(user.getCreatedAt());
+		assertEquals(testUser.getUsername(), user.getUsername());
+		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toSeconds() > 0);
 	}
 
 	@Test
@@ -120,7 +118,34 @@ class UserControllerIntegrationTest {
 		assertEquals(Role.USER, user.getRole());
 		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toSeconds() > 0);
 	}
-	
+
+	@Test
+	void getPublicByUsername_notFound() throws Exception {
+		mockMvc.perform(get("/api/user/getPublicByUsername?username=inexistenttestusername"))
+				.andExpect(status().isNotFound())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorNotFoundException))
+				.andExpect(result -> assertEquals("User not found (with username: inexistenttestusername)",
+						result.getResolvedException().getMessage()));
+	}
+
+	@Test
+	void getPrivateByUsername_notFound() throws Exception {
+		mockMvc.perform(get("/api/user/getPrivateByUsername?username=inexistenttestusername"))
+				.andExpect(status().isNotFound())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorNotFoundException))
+				.andExpect(result -> assertEquals("User not found (with username: inexistenttestusername)",
+						result.getResolvedException().getMessage()));
+	}
+
+	@Test
+	void getByEmail_notFound() throws Exception {
+		mockMvc.perform(get("/api/user/getByEmail?email=inexistenttestemail"))
+				.andExpect(status().isNotFound())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorNotFoundException))
+				.andExpect(result -> assertEquals("User not found (with email: inexistenttestemail)",
+						result.getResolvedException().getMessage()));
+	}
+
 	// --------------------------------------------
 
 	UserPrivatePayload getPrivateUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
@@ -135,6 +160,18 @@ class UserControllerIntegrationTest {
 				.username(username)
 				.email(email)
 				.role(role)
+				.createdAt(createdAt)
+				.build();
+	}
+
+	UserPublicPayload getPublicUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
+		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
+		String username = responseJson.read("$.username");
+		String createdAtString = responseJson.read("$.createdAt");
+		LocalDateTime createdAt = LocalDateTime.parse(createdAtString, DateTimeFormatter.ISO_DATE_TIME);
+
+		return UserPublicPayload.builder()
+				.username(username)
 				.createdAt(createdAt)
 				.build();
 	}
