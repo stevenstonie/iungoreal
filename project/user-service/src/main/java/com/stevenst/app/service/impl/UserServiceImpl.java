@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
 						.build())
 				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND));
 	}
+	// TODO: users dont need to know their role is of a USER so update the code on front and back to return the role only to admins
 
 	@Override
 	public UserPrivatePayload getUserByEmail(String email) {

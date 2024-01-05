@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -21,13 +22,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.jayway.jsonpath.JsonPath;
-import com.stevenst.app.exception.IgorNotFoundException;
+import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.TestRepository;
-import com.stevenst.app.service.UserService;
 import com.stevenst.app.util.TestUtil;
+import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
 
 @SpringBootTest
@@ -64,7 +66,7 @@ class UserControllerIntegrationTest {
 	}
 
 	@Test
-	void testGetPublicByUsername() throws Exception {
+	void getUserPublicByUsername() throws Exception {
 		var result = mockMvc.perform(
 				get("/api/user/getPublicByUsername?username=" + testUser.getUsername()))
 				.andExpect(status().isOk())
@@ -79,5 +81,61 @@ class UserControllerIntegrationTest {
 		assertNotNull(createdAt);
 		assertEquals(testUser.getUsername(), username);
 		assertTrue(Duration.between(createdAt, LocalDateTime.now()).toSeconds() > 0);
+	}
+
+	@Test
+	void getUserPrivateByUsername() throws Exception {
+		var result = mockMvc.perform(
+				get("/api/user/getPrivateByUsername?username=" + testUser.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		UserPrivatePayload user = getPrivateUserFromMvcResult(result);
+
+		assertNotNull(user.getUsername());
+		assertNotNull(user.getEmail());
+		assertNotNull(user.getRole());
+		assertNotNull(user.getCreatedAt());
+		assertEquals(testUser.getUsername(), user.getUsername());
+		assertEquals(testUser.getEmail(), user.getEmail());
+		assertEquals(Role.USER, user.getRole());
+		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toSeconds() > 0);
+	}
+
+	@Test
+	void getUserByEmail() throws Exception {
+		var result = mockMvc.perform(
+				get("/api/user/getByEmail?email=" + testUser.getEmail()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		UserPrivatePayload user = getPrivateUserFromMvcResult(result);
+
+		assertNotNull(user.getUsername());
+		assertNotNull(user.getEmail());
+		assertNotNull(user.getRole());
+		assertNotNull(user.getCreatedAt());
+		assertEquals(testUser.getUsername(), user.getUsername());
+		assertEquals(testUser.getEmail(), user.getEmail());
+		assertEquals(Role.USER, user.getRole());
+		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toSeconds() > 0);
+	}
+	
+	// --------------------------------------------
+
+	UserPrivatePayload getPrivateUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
+		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
+		String username = responseJson.read("$.username");
+		String email = responseJson.read("$.email");
+		Role role = Role.valueOf(responseJson.read("$.role"));
+		String createdAtString = responseJson.read("$.createdAt");
+		LocalDateTime createdAt = LocalDateTime.parse(createdAtString, DateTimeFormatter.ISO_DATE_TIME);
+
+		return UserPrivatePayload.builder()
+				.username(username)
+				.email(email)
+				.role(role)
+				.createdAt(createdAt)
+				.build();
 	}
 }
