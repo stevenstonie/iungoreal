@@ -2,6 +2,7 @@ package com.stevenst.app.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
@@ -26,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.jayway.jsonpath.JsonPath;
 import com.stevenst.app.model.FriendRequests;
-import com.stevenst.app.payload.MessagePayload;
+import com.stevenst.app.model.Friendships;
+import com.stevenst.app.payload.ResponsePayload;
 import com.stevenst.app.repository.FriendRequestsRepository;
 import com.stevenst.app.repository.FriendshipsRepository;
 import com.stevenst.app.repository.UserRepository;
@@ -38,14 +40,14 @@ import com.stevenst.lib.model.User;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FriendsControllerIntegrationTest {
 	private Server server;
-	private static final User testSender = User.builder()
-			.email("test_sender_email123")
-			.password("test_sender_password123")
-			.username("test_sender_username123").build();
-	private static final User testReceiver = User.builder()
-			.email("test_receiver_email123")
-			.password("test_receiver_password123")
-			.username("test_receiver_username123").build();
+	private static final User userAndrew = User.builder()
+			.email("andrew_email123")
+			.password("andrew_password123")
+			.username("andrew_username123").build();
+	private static final User userBobby = User.builder()
+			.email("bobby_email123")
+			.password("bobby_password123")
+			.username("bobby_username123").build();
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -69,8 +71,8 @@ class FriendsControllerIntegrationTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		insertUserIntoDB(testSender);
-		insertUserIntoDB(testReceiver);
+		insertUserIntoDB(userAndrew);
+		insertUserIntoDB(userBobby);
 	}
 
 	@AfterEach
@@ -81,33 +83,74 @@ class FriendsControllerIntegrationTest {
 	@Test
 	void sendFriendRequest() throws Exception {
 		var result = mockMvc.perform(
-				post("/api/friends/sendRequest?sender=" + testSender.getUsername() + "&receiver="
-						+ testReceiver.getUsername()))
+				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
 				.andExpect(status().isOk())
 				.andReturn();
 
-		MessagePayload response = getMessagePayloadFromMvcResult(result);
+		ResponsePayload response = getMessagePayloadFromMvcResult(result);
 
 		assertTrue(response.isSuccess());
-		assertEquals("Friend request sent successfully (from " + testSender.getUsername() + " to "
-				+ testReceiver.getUsername() + ")", response.getMessage());
+		assertEquals("Friend request sent successfully (from " + userAndrew.getUsername() + " to "
+				+ userBobby.getUsername() + ")", response.getMessage());
 	}
 
 	@Test
 	void checkFriendRequest() throws Exception {
-		addFriendRequest(testSender, testReceiver);
+		addFriendRequest(userAndrew, userBobby);
 
 		var result = mockMvc.perform(
-				get("/api/friends/checkRequest?sender=" + testSender.getUsername() + "&receiver="
-						+ testReceiver.getUsername()))
+				get("/api/friends/checkRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
 				.andExpect(status().isOk())
 				.andReturn();
 
-		MessagePayload response = getMessagePayloadFromMvcResult(result);
+		ResponsePayload response = getMessagePayloadFromMvcResult(result);
 
 		assertTrue(response.isSuccess());
-		assertEquals("Friend request found (from " + testSender.getUsername() + " to "
-				+ testReceiver.getUsername() + ")", response.getMessage());
+		assertEquals("Friend request found (from " + userAndrew.getUsername() + " to "
+				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void checkFriendship() throws Exception {
+		addFriendship(userAndrew, userBobby);
+
+		var result = mockMvc.perform(
+				get("/api/friends/checkFriendship?user1=" + userAndrew.getUsername() + "&user2="
+						+ userBobby.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		ResponsePayload response = getMessagePayloadFromMvcResult(result);
+
+		assertTrue(response.isSuccess());
+		assertEquals("Friendship found (between " + userAndrew.getUsername() + " and "
+				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void getAllFriendsUsernames() throws Exception {
+		User userJoe = User.builder()
+				.email("blob_joe_email123")
+				.password("blob_joe_password123")
+				.username("blob_joe_username123").build();
+		insertUserIntoDB(userJoe);
+		addFriendship(userAndrew, userJoe);
+		addFriendship(userBobby, userJoe);
+
+		var result = mockMvc.perform(
+				get("/api/friends/getAllFriendsUsernames?username=" + userJoe.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
+		int nbOfFriendsReturned = responseJson.read("$.length()");
+		List<String> friendsUsernames = responseJson.read("$");
+
+		assertEquals(2, nbOfFriendsReturned);
+		assertTrue(friendsUsernames.contains(userBobby.getUsername()));
+		assertTrue(friendsUsernames.contains(userAndrew.getUsername()));
 	}
 
 	// -------------------------------------------------
@@ -122,6 +165,13 @@ class FriendsControllerIntegrationTest {
 				.receiver(receiver)
 				.build());
 	}
+
+	private void addFriendship(User user1, User user2) {
+		friendshipsRepository.save(Friendships.builder()
+				.user1(user1)
+				.user2(user2)
+				.build());
+	}
 	
 	private void cleanDB() {
 		friendRequestsRepository.deleteAll();
@@ -129,11 +179,11 @@ class FriendsControllerIntegrationTest {
 		userRepository.deleteAll();
 	}
 
-	MessagePayload getMessagePayloadFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
+	ResponsePayload getMessagePayloadFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
 		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
 		String message = responseJson.read("$.message");
 		boolean success = responseJson.read("$.success");
-		return MessagePayload.builder()
+		return ResponsePayload.builder()
 				.message(message)
 				.success(success)
 				.build();

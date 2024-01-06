@@ -4,22 +4,22 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.stevenst.app.payload.MessagePayload;
+import com.stevenst.app.payload.ResponsePayload;
 
 public interface FriendsService {
-	ResponseEntity<MessagePayload> sendFriendRequest(String senderUsername, String receiverUsername);
+	ResponseEntity<ResponsePayload> sendFriendRequest(String senderUsername, String receiverUsername);
 
-	ResponseEntity<MessagePayload> checkFriendRequest(String senderUsername, String receiverUsername);
+	ResponseEntity<ResponsePayload> checkFriendRequest(String senderUsername, String receiverUsername);
 
-	ResponseEntity<MessagePayload> checkFriendship(String user1Username, String user2Username);
+	ResponseEntity<ResponsePayload> checkFriendship(String user1Username, String user2Username);
 
 	ResponseEntity<List<String>> getAllFriendsUsernames(String username);
 
-	ResponseEntity<MessagePayload> acceptFriendRequest(String senderUsername, String receiverUsername);
+	ResponseEntity<ResponsePayload> acceptFriendRequest(String senderUsername, String receiverUsername);
 
-	ResponseEntity<MessagePayload> cancelFriendRequest(String senderUsername, String receiverUsername);
+	ResponseEntity<ResponsePayload> cancelFriendRequest(String senderUsername, String receiverUsername);
 
-	ResponseEntity<MessagePayload> declineFriendRequest(String senderUsername, String receiverUsername);
+	ResponseEntity<ResponsePayload> declineFriendRequest(String senderUsername, String receiverUsername);
 
-	ResponseEntity<MessagePayload> unfriend(String user1Username, String user2Username);
+	ResponseEntity<ResponsePayload> unfriend(String user1Username, String user2Username);
 }

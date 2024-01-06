@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-public class MessagePayload {
+public class ResponsePayload {
 	private boolean success;
 	private String message;
 }
