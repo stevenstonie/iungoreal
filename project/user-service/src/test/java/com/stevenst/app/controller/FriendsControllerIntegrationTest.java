@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.jayway.jsonpath.JsonPath;
@@ -90,9 +91,9 @@ class FriendsControllerIntegrationTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		ResponsePayload response = getMessagePayloadFromMvcResult(result);
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
 
-		assertTrue(response.isSuccess());
+		assertEquals(200, response.getStatus());
 		assertEquals("Friend request sent successfully (from " + userAndrew.getUsername() + " to "
 				+ userBobby.getUsername() + ")", response.getMessage());
 	}
@@ -107,9 +108,9 @@ class FriendsControllerIntegrationTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		ResponsePayload response = getMessagePayloadFromMvcResult(result);
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
 
-		assertTrue(response.isSuccess());
+		assertEquals(200, response.getStatus());
 		assertEquals("Friend request found (from " + userAndrew.getUsername() + " to "
 				+ userBobby.getUsername() + ")", response.getMessage());
 	}
@@ -124,9 +125,9 @@ class FriendsControllerIntegrationTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		ResponsePayload response = getMessagePayloadFromMvcResult(result);
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
 
-		assertTrue(response.isSuccess());
+		assertEquals(200, response.getStatus());
 		assertEquals("Friendship found (between " + userAndrew.getUsername() + " and "
 				+ userBobby.getUsername() + ")", response.getMessage());
 	}
@@ -165,9 +166,9 @@ class FriendsControllerIntegrationTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		ResponsePayload response = getMessagePayloadFromMvcResult(result);
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
 
-		assertTrue(response.isSuccess());
+		assertEquals(200, response.getStatus());
 		assertEquals("Friend request accepted successfully (from " + userAndrew.getUsername() + " accepted by "
 				+ userBobby.getUsername() + ")", response.getMessage());
 	}
@@ -182,9 +183,9 @@ class FriendsControllerIntegrationTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		ResponsePayload response = getMessagePayloadFromMvcResult(result);
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
 
-		assertTrue(response.isSuccess());
+		assertEquals(200, response.getStatus());
 		assertEquals("Friend request canceled successfully (from " + userAndrew.getUsername() + " to "
 				+ userBobby.getUsername() + ")", response.getMessage());
 	}
@@ -199,11 +200,45 @@ class FriendsControllerIntegrationTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		ResponsePayload response = getMessagePayloadFromMvcResult(result);
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
 
-		assertTrue(response.isSuccess());
+		assertEquals(200, response.getStatus());
 		assertEquals("Friend request declined successfully (from " + userAndrew.getUsername() + " to "
 				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void unfriend() throws Exception {
+		addFriendship(userAndrew, userBobby);
+
+		var result = mockMvc.perform(
+				delete("/api/friends/unfriend?unfriender=" + userAndrew.getUsername() + "&unfriended="
+						+ userBobby.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(200, response.getStatus());
+		assertEquals("Unfriend successfully done (" + userAndrew.getUsername() + " unfriended "
+				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void sendRequest_alreadyReceivingOne() throws Exception {
+		addFriendRequest(userBobby, userAndrew);
+
+		var result = mockMvc.perform(
+				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals("Cannot send a friend request when having one already received (from " + userBobby.getUsername()
+				+ " to " + userAndrew.getUsername() + ")", response.getMessage());
 	}
 
 	// -------------------------------------------------
@@ -232,13 +267,13 @@ class FriendsControllerIntegrationTest {
 		userRepository.deleteAll();
 	}
 
-	ResponsePayload getMessagePayloadFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
+	ResponsePayload getResponsePayloadFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
 		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
 		String message = responseJson.read("$.message");
-		boolean success = responseJson.read("$.success");
+		int status = responseJson.read("$.status");
 		return ResponsePayload.builder()
 				.message(message)
-				.success(success)
+				.status(status)
 				.build();
 	}
 }

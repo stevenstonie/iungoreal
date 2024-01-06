@@ -59,7 +59,7 @@ public class FriendsServiceImpl implements FriendsService {
 				.receiver(receiver)
 				.build());
 
-		return ResponseEntity.ok(ResponsePayload.builder().success(true)
+		return ResponseEntity.ok(ResponsePayload.builder().status(200)
 				.message("Friend request sent successfully (from " + senderUsername + " to " + receiverUsername + ")")
 				.build());
 	}
@@ -72,11 +72,11 @@ public class FriendsServiceImpl implements FriendsService {
 				.orElseThrow(() -> new IgorNotFoundException("User with username " + receiverUsername + " not found"));
 
 		if (friendRequestsRepository.existsBySenderAndReceiver(sender, receiver)) {
-			return ResponseEntity.ok(ResponsePayload.builder().success(true)
+			return ResponseEntity.ok(ResponsePayload.builder().status(200)
 					.message("Friend request found (from " + senderUsername + " to " + receiverUsername + ")")
 					.build());
 		} else {
-			return ResponseEntity.ok(ResponsePayload.builder().success(false)
+			return ResponseEntity.ok(ResponsePayload.builder().status(404)
 					.message("No friend request found (from " + senderUsername + " to " + receiverUsername + ")")
 					.build());
 		}
@@ -90,10 +90,10 @@ public class FriendsServiceImpl implements FriendsService {
 				.orElseThrow(() -> new IgorNotFoundException("User with username " + user2Username + " not found"));
 
 		if (friendshipsRepository.existsByUsers(user1, user2)) {
-			return ResponseEntity.ok(ResponsePayload.builder().success(true)
+			return ResponseEntity.ok(ResponsePayload.builder().status(200)
 					.message("Friendship found (between " + user1Username + " and " + user2Username + ")").build());
 		} else {
-			return ResponseEntity.ok(ResponsePayload.builder().success(false)
+			return ResponseEntity.ok(ResponsePayload.builder().status(404)
 					.message("No friendship found (between " + user1Username + " and " + user2Username + ")").build());
 		}
 	}
@@ -137,7 +137,7 @@ public class FriendsServiceImpl implements FriendsService {
 				.build());
 
 		return ResponseEntity
-				.ok(ResponsePayload.builder().success(true).message("Friend request accepted successfully (from "
+				.ok(ResponsePayload.builder().status(200).message("Friend request accepted successfully (from "
 						+ senderUsername + " accepted by " + receiverUsername + ")").build());
 	}
 
@@ -160,7 +160,7 @@ public class FriendsServiceImpl implements FriendsService {
 
 		friendRequestsRepository.deleteBySenderAndReceiver(sender, receiver);
 
-		return ResponseEntity.ok(ResponsePayload.builder().success(true).message(
+		return ResponseEntity.ok(ResponsePayload.builder().status(200).message(
 				"Friend request canceled successfully (from " + senderUsername + " to " + receiverUsername + ")")
 				.build());
 	}
@@ -184,7 +184,7 @@ public class FriendsServiceImpl implements FriendsService {
 
 		friendRequestsRepository.deleteBySenderAndReceiver(sender, receiver);
 
-		return ResponseEntity.ok(ResponsePayload.builder().success(true).message(
+		return ResponseEntity.ok(ResponsePayload.builder().status(200).message(
 				"Friend request declined successfully (from " + senderUsername + " to " + receiverUsername + ")")
 				.build());
 	}
@@ -206,7 +206,7 @@ public class FriendsServiceImpl implements FriendsService {
 
 		friendshipsRepository.deleteByUsers(unfriender, unfriended);
 
-		return ResponseEntity.ok(ResponsePayload.builder().success(true).message(
+		return ResponseEntity.ok(ResponsePayload.builder().status(200).message(
 				"Unfriend successfully done (" + unfrienderUsername + " unfriended " + unfriendedUsername + ")")
 				.build());
 	}
