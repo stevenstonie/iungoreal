@@ -35,12 +35,13 @@ public class FriendsServiceImpl implements FriendsService {
 
 		if (sender.equals(receiver)) {
 			throw new IgorFriendRequestException(
-					"Cannot send a friend request to oneself");
+					"Cannot send a friend request to oneself (" + senderUsername + ")");
 		}
 
 		if (friendshipsRepository.existsByUsers(sender, receiver)) {
 			throw new IgorFriendRequestException(
-					"Cannot send a friend request when already friends");
+					"Cannot send a friend request when already friends (from " + senderUsername + " to " + receiverUsername
+							+ ")");
 		}
 
 		if (friendRequestsRepository.existsBySenderAndReceiver(receiver, sender)) {

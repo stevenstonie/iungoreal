@@ -224,6 +224,53 @@ class FriendsControllerIntegrationTest {
 				+ userBobby.getUsername() + ")", response.getMessage());
 	}
 
+	// tests for unsuccessfull requests
+
+	@Test
+	void sendRequest_noReceiver() throws Exception {
+		var result = mockMvc.perform(
+				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="))
+				.andExpect(status().isNotFound())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(404, response.getStatus());
+		assertEquals("User with username " + "" + " not found", response.getMessage());
+	}
+
+	@Test
+	void sendRequest_sentToSelf() throws Exception {
+		var result = mockMvc.perform(
+				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userAndrew.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals("Cannot send a friend request to oneself (" + userAndrew.getUsername() + ")",
+				response.getMessage());
+	}
+	
+	@Test
+	void sendRequest_alreadyFriends() throws Exception {
+		addFriendship(userAndrew, userBobby);
+
+		var result = mockMvc.perform(
+				post("/api/friends/sendRequest?sender=" + userBobby.getUsername() + "&receiver="
+						+ userAndrew.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals("Cannot send a friend request when already friends (from " + userBobby.getUsername() + " to "
+				+ userAndrew.getUsername() + ")", response.getMessage());
+	}
+
 	@Test
 	void sendRequest_alreadyReceivingOne() throws Exception {
 		addFriendRequest(userBobby, userAndrew);
@@ -241,7 +288,24 @@ class FriendsControllerIntegrationTest {
 				+ " to " + userAndrew.getUsername() + ")", response.getMessage());
 	}
 
-	// -------------------------------------------------
+	@Test
+	void sendRequest_alreadySentOne() throws Exception {
+		addFriendRequest(userAndrew, userBobby);
+
+		var result = mockMvc.perform(
+				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals("Cannot send a friend request twice (from " + userAndrew.getUsername() + " to "
+				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	// ---------------------------------------------------------------
 
 	private void insertUserIntoDB(User user) {
 		userRepository.save(user);
