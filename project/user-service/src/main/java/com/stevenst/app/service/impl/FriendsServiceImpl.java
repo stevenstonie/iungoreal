@@ -161,7 +161,7 @@ public class FriendsServiceImpl implements FriendsService {
 		friendRequestsRepository.deleteBySenderAndReceiver(sender, receiver);
 
 		return ResponseEntity.ok(ResponsePayload.builder().success(true).message(
-				"Friend request cancelled successfully (from " + senderUsername + " to " + receiverUsername + ")")
+				"Friend request canceled successfully (from " + senderUsername + " to " + receiverUsername + ")")
 				.build());
 	}
 

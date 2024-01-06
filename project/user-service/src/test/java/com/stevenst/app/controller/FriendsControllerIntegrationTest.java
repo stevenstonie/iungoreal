@@ -18,8 +18,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -153,6 +155,57 @@ class FriendsControllerIntegrationTest {
 		assertTrue(friendsUsernames.contains(userAndrew.getUsername()));
 	}
 
+	@Test
+	void acceptFriendRequest() throws Exception {
+		addFriendRequest(userAndrew, userBobby);
+
+		var result = mockMvc.perform(
+				put("/api/friends/acceptRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		ResponsePayload response = getMessagePayloadFromMvcResult(result);
+
+		assertTrue(response.isSuccess());
+		assertEquals("Friend request accepted successfully (from " + userAndrew.getUsername() + " accepted by "
+				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void cancelFriendRequest() throws Exception {
+		addFriendRequest(userAndrew, userBobby);
+
+		var result = mockMvc.perform(
+				delete("/api/friends/cancelRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		ResponsePayload response = getMessagePayloadFromMvcResult(result);
+
+		assertTrue(response.isSuccess());
+		assertEquals("Friend request canceled successfully (from " + userAndrew.getUsername() + " to "
+				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void declineFriendRequest() throws Exception {
+		addFriendRequest(userAndrew, userBobby);
+
+		var result = mockMvc.perform(
+				delete("/api/friends/declineRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		ResponsePayload response = getMessagePayloadFromMvcResult(result);
+
+		assertTrue(response.isSuccess());
+		assertEquals("Friend request declined successfully (from " + userAndrew.getUsername() + " to "
+				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
 	// -------------------------------------------------
 
 	private void insertUserIntoDB(User user) {
@@ -172,7 +225,7 @@ class FriendsControllerIntegrationTest {
 				.user2(user2)
 				.build());
 	}
-	
+
 	private void cleanDB() {
 		friendRequestsRepository.deleteAll();
 		friendshipsRepository.deleteAll();

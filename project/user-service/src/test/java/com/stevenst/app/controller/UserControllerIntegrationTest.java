@@ -10,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 
 import org.h2.tools.Server;
@@ -122,27 +121,39 @@ class UserControllerIntegrationTest {
 	void getPublicByUsername_notFound() throws Exception {
 		mockMvc.perform(get("/api/user/getPublicByUsername?username=inexistenttestusername"))
 				.andExpect(status().isNotFound())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorNotFoundException))
-				.andExpect(result -> assertEquals("User not found (with username: inexistenttestusername)",
-						result.getResolvedException().getMessage()));
+				.andExpect(result -> {
+					Exception resolvedException = result.getResolvedException();
+					assertNotNull(resolvedException);
+					assertTrue(resolvedException instanceof IgorNotFoundException);
+					assertEquals("User not found (with username: inexistenttestusername)",
+							resolvedException.getMessage());
+				});
 	}
 
 	@Test
 	void getPrivateByUsername_notFound() throws Exception {
 		mockMvc.perform(get("/api/user/getPrivateByUsername?username=inexistenttestusername"))
 				.andExpect(status().isNotFound())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorNotFoundException))
-				.andExpect(result -> assertEquals("User not found (with username: inexistenttestusername)",
-						result.getResolvedException().getMessage()));
+				.andExpect(result -> {
+					Exception resolvedException = result.getResolvedException();
+					assertNotNull(resolvedException);
+					assertTrue(resolvedException instanceof IgorNotFoundException);
+					assertEquals("User not found (with username: inexistenttestusername)",
+							resolvedException.getMessage());
+				});
 	}
 
 	@Test
 	void getByEmail_notFound() throws Exception {
 		mockMvc.perform(get("/api/user/getByEmail?email=inexistenttestemail"))
 				.andExpect(status().isNotFound())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof IgorNotFoundException))
-				.andExpect(result -> assertEquals("User not found (with email: inexistenttestemail)",
-						result.getResolvedException().getMessage()));
+				.andExpect(result -> {
+					Exception resolvedException = result.getResolvedException();
+					assertNotNull(resolvedException);
+					assertTrue(resolvedException instanceof IgorNotFoundException);
+					assertEquals("User not found (with email: inexistenttestemail)",
+							resolvedException.getMessage());
+				});
 	}
 
 	// --------------------------------------------
