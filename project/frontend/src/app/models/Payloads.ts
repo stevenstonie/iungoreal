@@ -1,4 +1,4 @@
-export interface MessagePayload {
+export interface ResponsePayload {
 	success: boolean;
 	message: string;
 }
