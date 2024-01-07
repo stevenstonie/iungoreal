@@ -17,6 +17,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -117,43 +119,21 @@ class UserControllerIntegrationTest {
 		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toDays() < 1);
 	}
 
-	@Test
-	void getPublicByUsername_notFound() throws Exception {
-		mockMvc.perform(get("/api/user/getPublicByUsername?username=inexistenttestusername"))
+	@ParameterizedTest
+	@CsvSource({
+			"/getPublicByUsername, username, nonexistenttestusername",
+			"/getPrivateByUsername, username, nonexistenttestusername",
+			"/getByEmail, email, nonexistenttestemail"
+	})
+	void allGetEndpoints_notFound(String endpoint, String paramType, String nameOrEmail) throws Exception {
+		MvcResult result = mockMvc.perform(get("/api/user" + endpoint + "?" + paramType + "=" + nameOrEmail))
 				.andExpect(status().isNotFound())
-				.andExpect(result -> {
-					Exception resolvedException = result.getResolvedException();
-					assertNotNull(resolvedException);
-					assertTrue(resolvedException instanceof IgorNotFoundException);
-					assertEquals("User not found (with username: inexistenttestusername)",
-							resolvedException.getMessage());
-				});
-	}
+				.andReturn();
+		Exception resolvedException = result.getResolvedException();
 
-	@Test
-	void getPrivateByUsername_notFound() throws Exception {
-		mockMvc.perform(get("/api/user/getPrivateByUsername?username=inexistenttestusername"))
-				.andExpect(status().isNotFound())
-				.andExpect(result -> {
-					Exception resolvedException = result.getResolvedException();
-					assertNotNull(resolvedException);
-					assertTrue(resolvedException instanceof IgorNotFoundException);
-					assertEquals("User not found (with username: inexistenttestusername)",
-							resolvedException.getMessage());
-				});
-	}
-
-	@Test
-	void getByEmail_notFound() throws Exception {
-		mockMvc.perform(get("/api/user/getByEmail?email=inexistenttestemail"))
-				.andExpect(status().isNotFound())
-				.andExpect(result -> {
-					Exception resolvedException = result.getResolvedException();
-					assertNotNull(resolvedException);
-					assertTrue(resolvedException instanceof IgorNotFoundException);
-					assertEquals("User not found (with email: inexistenttestemail)",
-							resolvedException.getMessage());
-				});
+		assertNotNull(resolvedException);
+		assertTrue(resolvedException instanceof IgorNotFoundException);
+		assertEquals("User not found (with " + paramType + ": " + nameOrEmail + ")", resolvedException.getMessage());
 	}
 
 	// --------------------------------------------

@@ -85,7 +85,7 @@ class FriendsControllerIntegrationTest {
 
 	@Test
 	void sendFriendRequest() throws Exception {
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="
 						+ userBobby.getUsername()))
 				.andExpect(status().isOk())
@@ -102,7 +102,7 @@ class FriendsControllerIntegrationTest {
 	void checkFriendRequest() throws Exception {
 		addFriendRequest(userAndrew, userBobby);
 
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				get("/api/friends/checkRequest?sender=" + userAndrew.getUsername() + "&receiver="
 						+ userBobby.getUsername()))
 				.andExpect(status().isOk())
@@ -119,7 +119,7 @@ class FriendsControllerIntegrationTest {
 	void checkFriendship() throws Exception {
 		addFriendship(userAndrew, userBobby);
 
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				get("/api/friends/checkFriendship?user1=" + userAndrew.getUsername() + "&user2="
 						+ userBobby.getUsername()))
 				.andExpect(status().isOk())
@@ -142,7 +142,7 @@ class FriendsControllerIntegrationTest {
 		addFriendship(userAndrew, userJoe);
 		addFriendship(userBobby, userJoe);
 
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				get("/api/friends/getAllFriendsUsernames?username=" + userJoe.getUsername()))
 				.andExpect(status().isOk())
 				.andReturn();
@@ -160,7 +160,7 @@ class FriendsControllerIntegrationTest {
 	void acceptFriendRequest() throws Exception {
 		addFriendRequest(userAndrew, userBobby);
 
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				put("/api/friends/acceptRequest?sender=" + userAndrew.getUsername() + "&receiver="
 						+ userBobby.getUsername()))
 				.andExpect(status().isOk())
@@ -177,7 +177,7 @@ class FriendsControllerIntegrationTest {
 	void cancelFriendRequest() throws Exception {
 		addFriendRequest(userAndrew, userBobby);
 
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				delete("/api/friends/cancelRequest?sender=" + userAndrew.getUsername() + "&receiver="
 						+ userBobby.getUsername()))
 				.andExpect(status().isOk())
@@ -194,7 +194,7 @@ class FriendsControllerIntegrationTest {
 	void declineFriendRequest() throws Exception {
 		addFriendRequest(userAndrew, userBobby);
 
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				delete("/api/friends/declineRequest?sender=" + userAndrew.getUsername() + "&receiver="
 						+ userBobby.getUsername()))
 				.andExpect(status().isOk())
@@ -211,7 +211,7 @@ class FriendsControllerIntegrationTest {
 	void unfriend() throws Exception {
 		addFriendship(userAndrew, userBobby);
 
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				delete("/api/friends/unfriend?unfriender=" + userAndrew.getUsername() + "&unfriended="
 						+ userBobby.getUsername()))
 				.andExpect(status().isOk())
@@ -228,7 +228,7 @@ class FriendsControllerIntegrationTest {
 
 	@Test
 	void sendRequest_noReceiver() throws Exception {
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="))
 				.andExpect(status().isNotFound())
 				.andReturn();
@@ -241,7 +241,7 @@ class FriendsControllerIntegrationTest {
 
 	@Test
 	void sendRequest_sentToSelf() throws Exception {
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="
 						+ userAndrew.getUsername()))
 				.andExpect(status().isBadRequest())
@@ -258,7 +258,7 @@ class FriendsControllerIntegrationTest {
 	void sendRequest_alreadyFriends() throws Exception {
 		addFriendship(userAndrew, userBobby);
 
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				post("/api/friends/sendRequest?sender=" + userBobby.getUsername() + "&receiver="
 						+ userAndrew.getUsername()))
 				.andExpect(status().isBadRequest())
@@ -275,7 +275,7 @@ class FriendsControllerIntegrationTest {
 	void sendRequest_alreadyReceivingOne() throws Exception {
 		addFriendRequest(userBobby, userAndrew);
 
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="
 						+ userBobby.getUsername()))
 				.andExpect(status().isBadRequest())
@@ -292,7 +292,7 @@ class FriendsControllerIntegrationTest {
 	void sendRequest_alreadySentOne() throws Exception {
 		addFriendRequest(userAndrew, userBobby);
 
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="
 						+ userBobby.getUsername()))
 				.andExpect(status().isBadRequest())
@@ -304,6 +304,8 @@ class FriendsControllerIntegrationTest {
 		assertEquals("Cannot send a friend request twice (from " + userAndrew.getUsername() + " to "
 				+ userBobby.getUsername() + ")", response.getMessage());
 	}
+
+	
 
 	// ---------------------------------------------------------------
 
