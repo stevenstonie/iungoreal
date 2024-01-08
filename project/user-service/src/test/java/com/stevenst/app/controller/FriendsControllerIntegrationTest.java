@@ -227,7 +227,7 @@ class FriendsControllerIntegrationTest {
 	// tests for unsuccessfull requests
 
 	@Test
-	void sendRequest_noReceiver() throws Exception {
+	void sendFriendRequest_noReceiver() throws Exception {
 		MvcResult result = mockMvc.perform(
 				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="))
 				.andExpect(status().isNotFound())
@@ -240,7 +240,20 @@ class FriendsControllerIntegrationTest {
 	}
 
 	@Test
-	void sendRequest_sentToSelf() throws Exception {
+	void sendFriendRequest_userDoesntExist() throws Exception {
+		MvcResult result = mockMvc.perform(
+				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver=" + "doesntexist"))
+				.andExpect(status().isNotFound())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(404, response.getStatus());
+		assertEquals("User with username " + "doesntexist" + " not found", response.getMessage());
+	}
+
+	@Test
+	void sendFriendRequest_sentToSelf() throws Exception {
 		MvcResult result = mockMvc.perform(
 				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="
 						+ userAndrew.getUsername()))
@@ -253,9 +266,9 @@ class FriendsControllerIntegrationTest {
 		assertEquals("Cannot send a friend request to oneself (" + userAndrew.getUsername() + ")",
 				response.getMessage());
 	}
-	
+
 	@Test
-	void sendRequest_alreadyFriends() throws Exception {
+	void sendFriendRequest_alreadyFriends() throws Exception {
 		addFriendship(userAndrew, userBobby);
 
 		MvcResult result = mockMvc.perform(
@@ -272,7 +285,7 @@ class FriendsControllerIntegrationTest {
 	}
 
 	@Test
-	void sendRequest_alreadyReceivingOne() throws Exception {
+	void sendFriendRequest_alreadyReceivingOne() throws Exception {
 		addFriendRequest(userBobby, userAndrew);
 
 		MvcResult result = mockMvc.perform(
@@ -289,7 +302,7 @@ class FriendsControllerIntegrationTest {
 	}
 
 	@Test
-	void sendRequest_alreadySentOne() throws Exception {
+	void sendFriendRequest_alreadySentOne() throws Exception {
 		addFriendRequest(userAndrew, userBobby);
 
 		MvcResult result = mockMvc.perform(
@@ -305,7 +318,34 @@ class FriendsControllerIntegrationTest {
 				+ userBobby.getUsername() + ")", response.getMessage());
 	}
 
-	
+	@Test
+	void checkFriendRequest_userDoesntExist() throws Exception {
+		MvcResult result = mockMvc.perform(
+				get("/api/friends/checkRequest?sender=" + "doesntexist" + "&receiver=" + userBobby.getUsername()))
+				.andExpect(status().isNotFound())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(404, response.getStatus());
+		assertEquals("User with username " + "doesntexist" + " not found", response.getMessage());
+	}
+
+	@Test
+	void checkFriendRequest_friendRequestNotFound() throws Exception {
+		MvcResult result = mockMvc.perform(
+				get("/api/friends/checkRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(404, response.getStatus());
+		assertEquals(
+				"No friend request found (from " + userAndrew.getUsername() + " to " + userBobby.getUsername() + ")",
+				response.getMessage());
+	}
 
 	// ---------------------------------------------------------------
 
