@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +27,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.jayway.jsonpath.JsonPath;
@@ -116,6 +117,22 @@ class FriendsControllerIntegrationTest {
 	}
 
 	@Test
+	void checkFriendRequest_friendRequestNotFound() throws Exception {
+		MvcResult result = mockMvc.perform(
+				get("/api/friends/checkRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(404, response.getStatus());
+		assertEquals(
+				"No friend request found (from " + userAndrew.getUsername() + " to " + userBobby.getUsername() + ")",
+				response.getMessage());
+	}
+
+	@Test
 	void checkFriendship() throws Exception {
 		addFriendship(userAndrew, userBobby);
 
@@ -130,6 +147,22 @@ class FriendsControllerIntegrationTest {
 		assertEquals(200, response.getStatus());
 		assertEquals("Friendship found (between " + userAndrew.getUsername() + " and "
 				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void checkFriendship_friendshipNotFound() throws Exception {
+		MvcResult result = mockMvc.perform(
+				get("/api/friends/checkFriendship?user1=" + userAndrew.getUsername() + "&user2="
+						+ userBobby.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(404, response.getStatus());
+		assertEquals(
+				"No friendship found (between " + userAndrew.getUsername() + " and " + userBobby.getUsername() + ")",
+				response.getMessage());
 	}
 
 	@Test
@@ -154,6 +187,21 @@ class FriendsControllerIntegrationTest {
 		assertEquals(2, nbOfFriendsReturned);
 		assertTrue(friendsUsernames.contains(userBobby.getUsername()));
 		assertTrue(friendsUsernames.contains(userAndrew.getUsername()));
+	}
+
+	@Test
+	void getAllFriendsUsernames_noFriends() throws Exception {
+		MvcResult result = mockMvc.perform(
+				get("/api/friends/getAllFriendsUsernames?username=" + userAndrew.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
+		int nbOfFriendsReturned = responseJson.read("$.length()");
+		List<String> friendsUsernames = responseJson.read("$");
+
+		assertEquals(0, nbOfFriendsReturned);
+		assertTrue(friendsUsernames.isEmpty());
 	}
 
 	@Test
@@ -226,30 +274,60 @@ class FriendsControllerIntegrationTest {
 
 	// tests for unsuccessfull requests
 
-	@Test
-	void sendFriendRequest_noReceiver() throws Exception {
-		MvcResult result = mockMvc.perform(
-				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver="))
-				.andExpect(status().isNotFound())
-				.andReturn();
+	@ParameterizedTest
+	@CsvSource({
+			"POST, /sendRequest, sender, receiver",
+			"GET, /checkRequest, sender, receiver",
+			"GET, /checkFriendship, user1, user2",
+			"GET, /getAllFriendsUsernames, username,",
+			"PUT, /acceptRequest, sender, receiver",
+			"DELETE, /cancelRequest, sender, receiver",
+			"DELETE, /declineRequest, sender, receiver",
+			"DELETE, /unfriend, unfriender, unfriended",
+	})
+	void allEndpoints_userDoesntExist(String requestType, String endpoint, String param1, String param2)
+			throws Exception {
+		String requestUrl1 = "/api/friends" + endpoint + "?";
+		String requestUrl2 = "/api/friends" + endpoint + "?";
+		if (endpoint.equals("/getAllFriendsUsernames")) {
+			requestUrl1 += param1 + "=" + "doesntexist";
+			requestUrl2 += param1 + "=" + "doesntexist";
+		} else {
+			requestUrl1 += param1 + "=" + "doesntexist" + "&" + param2 + "=" + userBobby.getUsername();
+			requestUrl2 += param1 + "=" + userAndrew.getUsername() + "&" + param2 + "=" + "doesntexist";
+		}
+		MvcResult result1, result2;
 
-		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+		switch (requestType) {
+			case "GET":
+				result1 = mockMvc.perform(get(requestUrl1)).andExpect(status().isNotFound()).andReturn();
+				result2 = mockMvc.perform(get(requestUrl2)).andExpect(status().isNotFound()).andReturn();
+				break;
+			case "POST":
+				result1 = mockMvc.perform(post(requestUrl1)).andExpect(status().isNotFound()).andReturn();
+				result2 = mockMvc.perform(post(requestUrl2)).andExpect(status().isNotFound()).andReturn();
+				break;
+			case "PUT":
+				result1 = mockMvc.perform(put(requestUrl1)).andExpect(status().isNotFound()).andReturn();
+				result2 = mockMvc.perform(put(requestUrl2)).andExpect(status().isNotFound()).andReturn();
+				break;
+			case "DELETE":
+				result1 = mockMvc.perform(delete(requestUrl1)).andExpect(status().isNotFound()).andReturn();
+				result2 = mockMvc.perform(delete(requestUrl2)).andExpect(status().isNotFound()).andReturn();
+				break;
 
-		assertEquals(404, response.getStatus());
-		assertEquals("User with username " + "" + " not found", response.getMessage());
-	}
+			default:
+				result1 = mockMvc.perform(get(requestUrl1)).andExpect(status().isNotFound()).andReturn();
+				result2 = mockMvc.perform(get(requestUrl2)).andExpect(status().isNotFound()).andReturn();
+				break;
+		}
 
-	@Test
-	void sendFriendRequest_userDoesntExist() throws Exception {
-		MvcResult result = mockMvc.perform(
-				post("/api/friends/sendRequest?sender=" + userAndrew.getUsername() + "&receiver=" + "doesntexist"))
-				.andExpect(status().isNotFound())
-				.andReturn();
-
-		ResponsePayload response = getResponsePayloadFromMvcResult(result);
-
-		assertEquals(404, response.getStatus());
-		assertEquals("User with username " + "doesntexist" + " not found", response.getMessage());
+		ResponsePayload response1 = getResponsePayloadFromMvcResult(result1);
+		ResponsePayload response2 = getResponsePayloadFromMvcResult(result2);
+		assertEquals(404, response1.getStatus());
+		assertEquals(404, response2.getStatus());
+		assertEquals("User with username " + "doesntexist" + " not found", response1.getMessage());
+		assertEquals("User with username " + "doesntexist" + " not found", response2.getMessage());
 	}
 
 	@Test
@@ -316,35 +394,6 @@ class FriendsControllerIntegrationTest {
 		assertEquals(400, response.getStatus());
 		assertEquals("Cannot send a friend request twice (from " + userAndrew.getUsername() + " to "
 				+ userBobby.getUsername() + ")", response.getMessage());
-	}
-
-	@Test
-	void checkFriendRequest_userDoesntExist() throws Exception {
-		MvcResult result = mockMvc.perform(
-				get("/api/friends/checkRequest?sender=" + "doesntexist" + "&receiver=" + userBobby.getUsername()))
-				.andExpect(status().isNotFound())
-				.andReturn();
-
-		ResponsePayload response = getResponsePayloadFromMvcResult(result);
-
-		assertEquals(404, response.getStatus());
-		assertEquals("User with username " + "doesntexist" + " not found", response.getMessage());
-	}
-
-	@Test
-	void checkFriendRequest_friendRequestNotFound() throws Exception {
-		MvcResult result = mockMvc.perform(
-				get("/api/friends/checkRequest?sender=" + userAndrew.getUsername() + "&receiver="
-						+ userBobby.getUsername()))
-				.andExpect(status().isOk())
-				.andReturn();
-
-		ResponsePayload response = getResponsePayloadFromMvcResult(result);
-
-		assertEquals(404, response.getStatus());
-		assertEquals(
-				"No friend request found (from " + userAndrew.getUsername() + " to " + userBobby.getUsername() + ")",
-				response.getMessage());
 	}
 
 	// ---------------------------------------------------------------
