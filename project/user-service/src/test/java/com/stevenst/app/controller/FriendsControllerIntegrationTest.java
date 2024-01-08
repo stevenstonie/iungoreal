@@ -396,6 +396,118 @@ class FriendsControllerIntegrationTest {
 				+ userBobby.getUsername() + ")", response.getMessage());
 	}
 
+	@Test
+	void acceptFriendRequest_acceptingOnesOwnRequest() throws Exception {
+		addFriendRequest(userAndrew, userBobby);
+
+		MvcResult result = mockMvc.perform(
+				put("/api/friends/acceptRequest?sender=" + userBobby.getUsername() + "&receiver="
+						+ userAndrew.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals("Cannot accept one's own friend request (from " + userAndrew.getUsername() + " to "
+				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void acceptFriendRequest_friendRequestDoesntExist() throws Exception {
+		MvcResult result = mockMvc.perform(
+				put("/api/friends/acceptRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals("Cannot accept friend request when no friend request found (from " + userAndrew.getUsername()
+				+ " to " + userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void cancelFriendRequest_cancelingRequestToSelf() throws Exception {
+		addFriendRequest(userAndrew, userBobby);
+
+		MvcResult result = mockMvc.perform(
+				delete("/api/friends/cancelRequest?sender=" + userBobby.getUsername() + "&receiver="
+						+ userAndrew.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals(
+				"Cannot cancel someone else's friend request (from " + userAndrew.getUsername() + " to "
+						+ userBobby.getUsername() + ")",
+				response.getMessage());
+	}
+
+	@Test
+	void cancelFriendRequest_friendRequestDoesntExist() throws Exception {
+		MvcResult result = mockMvc.perform(
+				delete("/api/friends/cancelRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals("Cannot cancel friend request when no friend request found (from " + userAndrew.getUsername()
+				+ " to " + userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void declineFriendRequest_decliningOnesOwnRequest() throws Exception {
+		addFriendRequest(userAndrew, userBobby);
+
+		MvcResult result = mockMvc.perform(
+				delete("/api/friends/declineRequest?sender=" + userBobby.getUsername() + "&receiver="
+						+ userAndrew.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals("Cannot decline one's own friend request (from " + userAndrew.getUsername() + " to "
+				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void declineFriendRequest_friendRequestDoesntExist() throws Exception {
+		MvcResult result = mockMvc.perform(
+				delete("/api/friends/declineRequest?sender=" + userAndrew.getUsername() + "&receiver="
+						+ userBobby.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals("Cannot decline friend request when no friend request found (from " + userAndrew.getUsername()
+				+ " to " + userBobby.getUsername() + ")", response.getMessage());
+	}
+
+	@Test
+	void unfriend_friendshipDoesntExist() throws Exception {
+		MvcResult result = mockMvc.perform(
+				delete("/api/friends/unfriend?unfriender=" + userAndrew.getUsername() + "&unfriended=" + userBobby.getUsername()))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+
+		assertEquals(400, response.getStatus());
+		assertEquals("Cannot unfriend when no friendship found (between " + userAndrew.getUsername() + " and "
+				+ userBobby.getUsername() + ")", response.getMessage());
+	}
+
 	// ---------------------------------------------------------------
 
 	private void insertUserIntoDB(User user) {
