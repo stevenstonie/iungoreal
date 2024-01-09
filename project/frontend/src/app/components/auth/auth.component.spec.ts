@@ -50,7 +50,7 @@ describe('AuthComponent', () => {
 
   describe('register', () => {
     it('should call authService.register and navigate to /', () => {
-      const user = { email: 'test@example.com', firstName: 'John', lastName: 'Doe', password: 'password' };
+      const user = { email: 'test@example.com', username: 'username', password: 'password' };
       authServiceSpy.register.and.returnValue(of({}));
 
       component.registerForm.setValue(user);

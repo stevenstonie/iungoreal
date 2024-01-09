@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,13 +42,15 @@ public class User implements UserDetails {
 	@JsonIgnore
 	private String password;
 
-	private String firstname;
-
-	private String lastname;
+	@Column(nullable = false, unique = true)
+	private String username;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private Role role;
+	private final Role role = Role.USER;
+
+	@Column(nullable = false)
+	private final LocalDateTime createdAt = LocalDateTime.now();
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -72,15 +75,5 @@ public class User implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
-	}
-
-	@Override
-	public String getUsername() {
-		return email;
-	}
-
-	@Override
-	public String getPassword() {
-		return password;
 	}
 }

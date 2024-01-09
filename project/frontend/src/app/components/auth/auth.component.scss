@@ -24,7 +24,7 @@ body {
 	display: none;
 }
 
-.signup {
+.login {
 	position: relative;
 	width: 100%;
 	height: 100%;
@@ -76,27 +76,27 @@ button:hover {
 	background: #6d44b8;
 }
 
-.login {
+.signup {
 	height: 460px;
 	background: #eee;
 	border-radius: 60% / 10%;
-	transform: translateY(-160px);
+	transform: translateY(-180px);
 	transition: .8s ease-in-out;
 }
 
-.login label {
+.signup label {
 	color: #573b8a;
-	transform: scale(.6) translateY(10px);
+	transform: scale(.6) translateY(20px);
 }
 
-#chk:checked~.login {
+#chk:checked~.signup {
 	transform: translateY(-500px);
 }
 
-#chk:checked~.login label {
-	transform: scale(1);
+#chk:checked~.signup label {
+	transform: scale(1) translateY(15px);
 }
 
-#chk:checked~.signup label {
+#chk:checked~.login label {
 	transform: scale(.6);
 }

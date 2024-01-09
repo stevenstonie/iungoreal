@@ -1,4 +1,4 @@
-package com.stevenst.app.auth;
+package com.stevenst.app.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class AuthRequest {
 	private String email;
 	private String password;
-	private String firstName;
-	private String lastName;
 }

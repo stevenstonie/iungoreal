@@ -7,5 +7,7 @@ import { User } from 'src/app/models/user';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent {
-  @Input() currentUser: User | null = null;
+  @Input() loggedUser: User | null = null;
 }
+
+// TODO: make sure its ok for all instances of 'loggedUser' to be null 

@@ -1,11 +1,12 @@
 package com.stevenst.app.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stevenst.app.auth.AuthRequest;
-import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.exception.IgorAuthenticationException;
+import com.stevenst.app.payload.AuthRequest;
+import com.stevenst.app.payload.RegisterRequest;
 import com.stevenst.lib.model.Role;
-import com.stevenst.app.repository.UserRepository;
+import com.stevenst.lib.model.User;
+import com.stevenst.app.repository.AuthRepository;
 import com.stevenst.app.util.TestUtil;
 
 import jakarta.transaction.Transactional;
@@ -25,6 +26,8 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -35,8 +38,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AuthenticationControllerIntegrationTest {
 	private static Server server;
-	private static final String EMAIL = "testuser123";
+	private static final String EMAIL = "testemail123";
 	private static final String PASSWORD = "testpassword123";
+	private static final String USERNAME = "testusername123";
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -45,20 +49,20 @@ class AuthenticationControllerIntegrationTest {
 	private ObjectMapper objectMapper;
 
 	@Autowired
-	private UserRepository userRepository;
+	private AuthRepository authRepository;
 
 	@BeforeAll
 	void init() throws Exception {
 		server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
 		server.start();
 
-		TestUtil testUtil = new TestUtil(userRepository);
-		testUtil.insertUserIntoDB(EMAIL, PASSWORD, "test", "user", Role.USER);
+		TestUtil testUtil = new TestUtil(authRepository);
+		testUtil.insertUserIntoDB(EMAIL, PASSWORD, USERNAME, Role.USER);
 	}
 
 	@AfterAll
 	void tearDown() throws SQLException {
-		userRepository.deleteAll();
+		authRepository.deleteAll();
 
 		server.stop();
 	}
@@ -66,14 +70,19 @@ class AuthenticationControllerIntegrationTest {
 	@Test
 	@Transactional
 	void registrationEndpoint() throws Exception {
-		RegisterRequest registerRequest = new RegisterRequest("testuser123456", "testpassword123456", "test",
-				"user");
+		RegisterRequest registerRequest = new RegisterRequest("testemail123456", "testpassword123456",
+				"testusername123456");
 
 		mockMvc.perform(post("/api/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(registerRequest)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.token").isNotEmpty());
+		
+		User savedUser = authRepository.findByEmail("testemail123456").orElse(null);
+		assertNotNull(savedUser);
+		assertEquals(Role.USER, savedUser.getRole());
+		assertNotEquals("testpassword123456", savedUser.getPassword());
 	}
 
 	@Test
@@ -91,7 +100,7 @@ class AuthenticationControllerIntegrationTest {
 	@Test
 	@Transactional
 	void authenticationEndpointWithInvalidCredentials() throws Exception {
-		AuthRequest authenticationRequest = new AuthRequest("testuser123", "wrong_password");
+		AuthRequest authenticationRequest = new AuthRequest(EMAIL, "wrong_password");
 
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -99,14 +108,14 @@ class AuthenticationControllerIntegrationTest {
 				.andExpect(status().isUnauthorized())
 				.andExpect(result -> assertTrue(
 						result.getResolvedException() instanceof IgorAuthenticationException))
-				.andExpect(result -> assertEquals("Authentication failed",
+				.andExpect(result -> assertEquals("Invalid credentials or inexistent account",
 						Objects.requireNonNull(result.getResolvedException()).getMessage()));
 	}
 
 	@Test
 	@Transactional
 	void registrationEndpointWithExistingEmail() throws Exception {
-		RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, "test", "user");
+		RegisterRequest registerRequest = new RegisterRequest(EMAIL, PASSWORD, "new_username");
 
 		mockMvc.perform(post("/api/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -120,8 +129,38 @@ class AuthenticationControllerIntegrationTest {
 
 	@Test
 	@Transactional
+	void registrationEndpointWithExistingUsername() throws Exception {
+		RegisterRequest registerRequest = new RegisterRequest("new_email", PASSWORD, USERNAME);
+
+		mockMvc.perform(post("/api/auth/register")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(registerRequest)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorAuthenticationException))
+				.andExpect(result -> assertEquals("Username already taken",
+						Objects.requireNonNull(result.getResolvedException()).getMessage()));
+	}
+
+	@Test
+	@Transactional
 	void registrationEndpointWithMissingCredentials() throws Exception {
-		RegisterRequest registerRequest = new RegisterRequest("", "", "", "");
+		RegisterRequest registerRequest = new RegisterRequest("", "", "");
+
+		mockMvc.perform(post("/api/auth/register")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(registerRequest)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorAuthenticationException))
+				.andExpect(result -> assertEquals("Credentials cannot be empty",
+						Objects.requireNonNull(result.getResolvedException()).getMessage()));
+	}
+
+	@Test
+	@Transactional
+	void registrationEndpointWithNullCredentials() throws Exception {
+		RegisterRequest registerRequest = new RegisterRequest(null, null, null);
 
 		mockMvc.perform(post("/api/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -150,16 +189,31 @@ class AuthenticationControllerIntegrationTest {
 
 	@Test
 	@Transactional
+	void authenticationEndpointWithNullCredentials() throws Exception {
+		AuthRequest authenticationRequest = new AuthRequest(null, null);
+
+		mockMvc.perform(post("/api/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(authenticationRequest)))
+				.andExpect(status().isUnauthorized())
+				.andExpect(result -> assertTrue(
+						result.getResolvedException() instanceof IgorAuthenticationException))
+				.andExpect(result -> assertEquals("Credentials cannot be empty",
+						Objects.requireNonNull(result.getResolvedException()).getMessage()));
+	}
+
+	@Test
+	@Transactional
 	void authenticationWithABadSignature() throws Exception {
 		AuthRequest authenticationRequest = new AuthRequest(EMAIL, PASSWORD);
-		TestUtil testUtil = new TestUtil(userRepository);
+		TestUtil testUtil = new TestUtil(authRepository);
 
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(authenticationRequest))
 				.header("Authorization", "Bearer " + testUtil.generateTokenWithBadSignature(EMAIL)))
 				.andExpect(status().isUnauthorized())
-				.andExpect(result -> assertEquals("Invalid token",
+				.andExpect(result -> assertEquals("Invalid token signature",
 						result.getResponse().getContentAsString()));
 	}
 

@@ -58,7 +58,7 @@
 		}
 
 		&-right {
-			width: 400px;
+			width: 450px;
 			height: 200px;
 			border: 1px solid #000;
 
@@ -80,10 +80,16 @@
 				}
 			}
 
-			#friend-request {
+			#send-friend-request-button, #cancel-friend-request-button, #accept-friend-request-button, #unfriend-button, #edit-profile-button {
 				position: absolute;
 				margin-top: -45px;
 				margin-left: 120px;
+			}
+
+			#decline-friend-request-button {
+				position: absolute;
+				margin-top: -45px;
+				margin-left: 280px;
 			}
 		}
 	}

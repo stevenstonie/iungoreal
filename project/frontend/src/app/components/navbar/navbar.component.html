@@ -1,10 +1,10 @@
-<ng-container *ngIf="!currentUser">
+<ng-container *ngIf="!loggedUser">
 	<p>connecting to the app..</p>
 	<button (click)="logout()">Logout</button>
 </ng-container>
 
-<ng-container *ngIf="currentUser">
-	<app-map *ngIf="showMap" [currentUser]="currentUser"></app-map>
+<ng-container *ngIf="loggedUser">
+	<app-map *ngIf="showMap" [loggedUser]="loggedUser"></app-map>
 	<app-chat *ngIf="showChat"></app-chat>
 	<app-notifications *ngIf="showNotifications"></app-notifications>
 	<app-friend-requests *ngIf="showFriendRequests"></app-friend-requests>
@@ -29,7 +29,7 @@
 
 			<button class="highlighted" (click)="toggleNotifications()">Notifications</button>
 
-			<button class="highlighted" (click)="toggleUserMenu()">{{currentUser.email}} ({{currentUser.role}})</button>
+			<button class="highlighted" (click)="toggleUserMenu()">{{loggedUser.username}} ({{loggedUser.role}})</button>
 			<div *ngIf="showUserMenu">
 				<div class="profile-drop-down-menu">
 					<button class="highlighted" (click)="profile()">Profile</button>

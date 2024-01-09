@@ -9,10 +9,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import com.stevenst.app.exception.IgorAuthenticationException;
+import com.stevenst.lib.model.User;
 import com.stevenst.app.service.impl.JwtServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -60,49 +60,15 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void testDoFilterInternal_InvokesFilterChainDoFilter() throws ServletException, IOException {
+    void doFilterInternal_withValidRequest_shouldHaveNormalFlow() throws ServletException, IOException {
         mockTokenRequest(true);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
+        verify(jwtService, times(1)).extractEmail(anyString());
+        verify(userDetailsService, times(1)).loadUserByUsername(anyString());
+        verify(jwtService, times(1)).isTokenValid(anyString(), any(User.class));
         verify(filterChain, times(1)).doFilter(request, response);
-    }
-
-    @Test
-    void testDoFilterInternal_WithValidToken_ShouldAuthenticateUser() throws ServletException, IOException {
-        mockTokenRequest(true);
-
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        verify(jwtService, times(1)).extractUsername(anyString());
-        verify(userDetailsService, times(1)).loadUserByUsername(anyString());
-        verify(jwtService, times(1)).isTokenValid(anyString(), any(UserDetails.class));
-    }
-
-    @Test
-    void testDoFilterInternal_WithInvalidToken_UserNotFound() throws ServletException, IOException {
-        mockTokenRequest(false);
-        when(userDetailsService.loadUserByUsername(anyString())).thenThrow(UsernameNotFoundException.class);
-        when(jwtService.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(false);
-
-        assertThrows(NullPointerException.class,
-                () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
-
-        verify(jwtService, times(1)).extractUsername(anyString());
-        verify(userDetailsService, times(1)).loadUserByUsername(anyString());
-        verify(jwtService, times(0)).isTokenValid(anyString(), any(UserDetails.class));
-    }
-
-    @Test
-    void testDoFilterInternal_WithMissingAuthorizationHeader_ShouldNotAuthenticateUser()
-            throws ServletException, IOException {
-        when(request.getHeader("Authorization")).thenReturn(null);
-
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        verify(jwtService, times(0)).extractUsername(anyString());
-        verify(userDetailsService, times(0)).loadUserByUsername(anyString());
-        verify(jwtService, times(0)).isTokenValid(anyString(), any(UserDetails.class));
     }
 
     @Test
@@ -116,8 +82,37 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        assertSame(existingAuth, SecurityContextHolder.getContext().getAuthentication(),
-                "Existing authentication should not be overwritten");
+        assertSame(existingAuth, SecurityContextHolder.getContext().getAuthentication());
+
+        verify(jwtService, times(1)).extractEmail(anyString());
+        verify(userDetailsService, times(0)).loadUserByUsername(anyString());
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
+        verify(filterChain, times(1)).doFilter(request, response);
+    }
+
+    @Test
+    void doFilterInternal_WithInvalidToken_UserNotFound() throws ServletException, IOException {
+        mockTokenRequest(false);
+
+        assertThrows(NullPointerException.class,
+                () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
+
+        verify(jwtService, times(1)).extractEmail(anyString());
+        verify(userDetailsService, times(1)).loadUserByUsername(anyString());
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
+    }
+
+    @Test
+    void doFilterInternal_WithMissingAuthorizationHeader_ShouldNotAuthenticateUser()
+            throws ServletException, IOException {
+        when(request.getHeader("Authorization")).thenReturn(null);
+
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+
+        verify(filterChain, times(1)).doFilter(request, response);
+        verify(jwtService, times(0)).extractEmail(anyString());
+        verify(userDetailsService, times(0)).loadUserByUsername(anyString());
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
     }
 
     @Test
@@ -127,9 +122,10 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(jwtService, times(0)).extractUsername(anyString());
+        verify(filterChain, times(1)).doFilter(request, response);
+        verify(jwtService, times(0)).extractEmail(anyString());
         verify(userDetailsService, times(0)).loadUserByUsername(anyString());
-        verify(jwtService, times(0)).isTokenValid(anyString(), any(UserDetails.class));
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
     }
 
     @Test
@@ -138,21 +134,25 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 
-        verify(jwtService, times(0)).extractUsername(anyString());
+        verify(filterChain, times(1)).doFilter(request, response);
+        verify(jwtService, times(0)).extractEmail(anyString());
         verify(userDetailsService, times(0)).loadUserByUsername(anyString());
-        verify(jwtService, times(0)).isTokenValid(anyString(), any(UserDetails.class));
+        verify(jwtService, times(0)).isTokenValid(anyString(), any(User.class));
     }
 
     // -------------------------------------------------
 
     private void mockTokenRequest(boolean isValid) {
         when(request.getHeader("Authorization")).thenReturn("Bearer " + this.token);
-        when(jwtService.extractUsername(anyString())).thenReturn(this.userEmail);
+        when(jwtService.extractEmail(anyString())).thenReturn(this.userEmail);
 
         if (isValid) {
-            UserDetails userDetails = mock(UserDetails.class);
-            when(userDetailsService.loadUserByUsername(anyString())).thenReturn(userDetails);
-            when(jwtService.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(true);
+            User user = mock(User.class);
+            when(userDetailsService.loadUserByUsername(anyString())).thenReturn(user);
+            when(jwtService.isTokenValid(anyString(), any(User.class))).thenReturn(true);
+        } else {
+            when(userDetailsService.loadUserByUsername(anyString())).thenThrow(IgorAuthenticationException.class);
+            when(jwtService.isTokenValid(anyString(), any(User.class))).thenReturn(false);
         }
     }
 }

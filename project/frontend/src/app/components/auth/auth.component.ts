@@ -20,23 +20,46 @@ export class AuthComponent {
 
     this.registerForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
       password: ['', Validators.required],
+      repeatPassword: ['', Validators.required],
+      username: ['', Validators.required]
     });
   }
 
   login() {
     const credentials = this.loginForm.value;
+
+    if (!credentials.email || !credentials.password) {
+      window.alert('Cannot have empty credentials');
+      return;
+    }
+
     this.authService.login(credentials).subscribe(response => {
-      this.router.navigate(['/']);
+      this.insertEmailInStorageAndNavigateToMainPage(credentials.email);
     });
   }
 
   register() {
-    const user = this.registerForm.value;
-    this.authService.register(user).subscribe(response => {
-      this.router.navigate(['/']);
+    const credentials = this.registerForm.value;
+
+    if (!credentials.email || !credentials.password || !credentials.repeatPassword || !credentials.username) {
+      window.alert('Cannot have empty credentials');
+      return;
+    }
+    if (credentials.password !== credentials.repeatPassword) {
+      window.alert('Passwords do not match');
+      return;
+    }
+
+    this.authService.register(credentials).subscribe(response => {
+      this.insertEmailInStorageAndNavigateToMainPage(credentials.email);
     });
+  }
+
+  // -------------------------------------
+
+  private insertEmailInStorageAndNavigateToMainPage(email: string) {
+    localStorage.setItem('email', email);
+    this.router.navigate(['/']);
   }
 }
