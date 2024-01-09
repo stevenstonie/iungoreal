@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
-import com.stevenst.lib.model.User;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +32,7 @@ public interface UserApi {
 	@Operation(summary = "Get User by Email", description = "Retrieve an user by email", tags = "User")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Successful", content = {
-					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = User.class)) }),
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserPrivatePayload.class)) }),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
 
 	public ResponseEntity<UserPrivatePayload> getUserByEmail(String email);

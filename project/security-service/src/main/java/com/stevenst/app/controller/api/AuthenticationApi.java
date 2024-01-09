@@ -18,7 +18,7 @@ public interface AuthenticationApi {
 	@Operation(summary = "Register", description = "Create a new user account and return JWT token", tags = "Authentication")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Registration Successful", content = {
-					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = String.class)) }),
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = AuthResponse.class)) }),
 			@ApiResponse(responseCode = "400", description = "Unauthorized - invalid credentials", content = @Content),
 			@ApiResponse(responseCode = "401", description = "Unauthorized - token expired", content = @Content) })
 
@@ -27,7 +27,7 @@ public interface AuthenticationApi {
 	@Operation(summary = "Login", description = "Authenticate user and return JWT token", tags = "Authentication")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Login Successful", content = {
-					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = String.class)) }),
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = AuthResponse.class)) }),
 			@ApiResponse(responseCode = "401", description = "Unauthorized - invalid credentials", content = @Content),
 			@ApiResponse(responseCode = "401", description = "Unauthorized - token expired", content = @Content) })
 

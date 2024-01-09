@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.stevenst.app.payload.ResponsePayload;
+import com.stevenst.lib.payload.ResponsePayload;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

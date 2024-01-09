@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-@EntityScan(basePackages = { "com.stevenst.app.model", "com.stevenst.lib.model" })
+@EntityScan(basePackages = { "com.stevenst.app.model", "com.stevenst.lib.model", "com.stevenst.lib.payload" })
 @SpringBootApplication
 public class AppApplication {
 

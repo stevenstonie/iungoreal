@@ -1,13 +1,13 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { ResponsePayload } from '../models/Payloads';
+import { ResponsePayload } from '../models/payloads';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FriendsService {
-  private apiUrl = 'http://localhost:8080/api/friends';
+  private apiUrl = 'http://localhost:8080/api/friend';
 
   constructor(private http: HttpClient) { }
 

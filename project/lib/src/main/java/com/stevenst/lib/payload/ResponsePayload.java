@@ -1,8 +1,8 @@
-package com.stevenst.app.payload;
+package com.stevenst.lib.payload;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Builder;
 
 @Getter
 @Setter
@@ -11,3 +11,4 @@ public class ResponsePayload {
 	private int status;
 	private String message;
 }
+

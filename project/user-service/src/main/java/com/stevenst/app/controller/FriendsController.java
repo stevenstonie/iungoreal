@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stevenst.app.controller.api.FriendsApi;
-import com.stevenst.app.payload.ResponsePayload;
+import com.stevenst.lib.payload.ResponsePayload;
 import com.stevenst.app.service.FriendsService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/friends")
+@RequestMapping("/api/friend")
 @RequiredArgsConstructor
 public class FriendsController implements FriendsApi {
 	private final FriendsService friendsService;
