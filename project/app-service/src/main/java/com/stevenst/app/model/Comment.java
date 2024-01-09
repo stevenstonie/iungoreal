@@ -29,10 +29,10 @@ public class Comment {
 	private Long id;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "\"author_id\"")
+	@JoinColumn(name = "\"author_id\"", nullable = false)
 	private User author;
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "post_id", nullable = false)
 	private Post post;
 

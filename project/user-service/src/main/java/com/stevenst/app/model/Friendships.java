@@ -30,11 +30,11 @@ public class Friendships {
 	private Long id;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "\"user1_id\"")
+	@JoinColumn(name = "\"user1_id\"", nullable = false)
 	private User user1;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "\"user2_id\"")
+	@JoinColumn(name = "\"user2_id\"", nullable = false)
 	private User user2;
 
 	@Column(nullable = false)

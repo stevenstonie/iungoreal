@@ -7,11 +7,10 @@
 	- (recurring) show window dialogs on errors for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
-	- [ ] (fr, bk) implement friend requests
-	- [ ] (fr, bk) implement search functionality
-	- [ ] (fr, bk) notifications
 	- [ ] (fr, bk) create posts
 	- [ ] (fr, bk) functionality for the main page (fetching friends posts)
+	- [ ] (fr, bk) implement search functionality
+	- [ ] (fr, bk) notifications
 	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
 	- [ ] (fr) add verification through email when registering
 	- [ ] (fr) user settings
@@ -28,6 +27,7 @@
 
 	_________________________________
 	---------------------------------
+	- [x] (fr, bk) implement friend requests
 	- [x] (fr) if the user doesnt exist when accessing a profile, redirect to 404
 	- [x] (bk) add a shared library
 	- [x] (fr) change the register to add an unique username + password reentering
