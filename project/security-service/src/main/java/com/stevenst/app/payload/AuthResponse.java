@@ -1,4 +1,4 @@
-package com.stevenst.app.auth;
+package com.stevenst.app.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

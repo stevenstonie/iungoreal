@@ -10,7 +10,7 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-  currentUser: User | null = null;
+  loggedUser: User | null = null;
   showMap: boolean = false;
   showChat: boolean = false;
   showUserMenu: boolean = false;
@@ -19,10 +19,13 @@ export class NavbarComponent implements OnInit {
 
   constructor(private userService: UserService, private authService: AuthService) { }
 
+  // TODO: test this thoroughly (also make it so that this only happens once and not every time the page reloads or smth)
   async ngOnInit() {
+    const email = localStorage.getItem('email') ?? '';
+
     try {
-      this.currentUser = await firstValueFrom(
-        this.userService.getCurrentUser().pipe(
+      this.loggedUser = await firstValueFrom(
+        this.userService.getUserByEmail(email).pipe(
           retry(11),
           delayWhen((_, attempt) => timer(attempt * 1000)),
           timeout(10000),
@@ -36,7 +39,10 @@ export class NavbarComponent implements OnInit {
         )
       );
 
-      if (!this.currentUser) {
+      if (this.loggedUser) {
+        localStorage.setItem('username', this.loggedUser.username);
+      }
+      else {
         this.logout();
       }
     } catch (err: any) {
@@ -79,7 +85,7 @@ export class NavbarComponent implements OnInit {
   }
 
   profile() {
-    window.location.href = '/user/' + this.currentUser?.email;
+    window.location.href = '/user/' + this.loggedUser?.username;
   }
 
   settings() {

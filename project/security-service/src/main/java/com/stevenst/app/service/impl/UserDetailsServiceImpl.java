@@ -8,26 +8,27 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.stevenst.app.exception.IgorAuthenticationException;
 import com.stevenst.lib.model.User;
-import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.AuthRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final AuthRepository authRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(AuthRepository authRepository) {
+        this.authRepository = authRepository;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByEmail(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> user = authRepository.findByEmail(email);
 
         if (user.isEmpty()) {
-            throw new UsernameNotFoundException("User not found");
+            throw new IgorAuthenticationException("Email not found");
         }
         
-        return new org.springframework.security.core.userdetails.User(user.get().getUsername(),
+        return new org.springframework.security.core.userdetails.User(user.get().getEmail(),
                 user.get().getPassword(),
                 new ArrayList<>());
     }

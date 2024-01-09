@@ -4,7 +4,7 @@
 	integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <div id="map" [ngClass]="getMarkerSelectionCursor()" #map></div>
 
-<div *ngIf="isCurrentUserAdmin">
+<div *ngIf="isLoggedUserAdmin">
 	<button class="map-ui" id="add-marker-button" (click)="toggleAddMarker()">Add Marker</button>
 
 	<div *ngIf="showMarkerInputs">

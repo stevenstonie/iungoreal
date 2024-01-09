@@ -10,9 +10,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.stevenst.lib.model.User;
 import com.stevenst.app.service.JwtService;
 
 import io.jsonwebtoken.Claims;
@@ -20,10 +20,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
-/**
- * !!! email and username here are interchangeable !!!
- * 
- */
 @Service
 public class JwtServiceImpl implements JwtService {
 	@Value("${jwt.secret-key}")
@@ -31,7 +27,7 @@ public class JwtServiceImpl implements JwtService {
 	private static final long EXPIRATION_TIME = 24L * 60L * 60L * 1000L; // 24 hours
 
 	@Override
-	public String extractUsername(String token) {
+	public String extractEmail(String token) {
 		return extractClaim(token, Claims::getSubject);
 	}
 
@@ -47,20 +43,20 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
-	public String generateToken(UserDetails userDetails) {
-		return generateToken(new HashMap<>(), userDetails);
+	public String generateToken(User user) {
+		return generateToken(new HashMap<>(), user);
 	}
 
 	@Override
-	public boolean isTokenValid(String token, UserDetails userDetails) {
-		final String username = extractUsername(token);
-		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+	public boolean isTokenValid(String token, User user) {
+		final String extractedEmail = extractEmail(token);
+		return (extractedEmail.equals(user.getEmail()) && !isTokenExpired(token));
 	}
 
 	@Override
 	public boolean isTokenValid(String token, String email) {
-		final String username = extractUsername(token);
-		return (username.equals(email) && !isTokenExpired(token));
+		final String extractedEmail = extractEmail(token);
+		return (extractedEmail.equals(email) && !isTokenExpired(token));
 	}
 
 	@Override
@@ -81,11 +77,11 @@ public class JwtServiceImpl implements JwtService {
 		return authHeader.substring(7);
 	}
 
-	private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+	private String generateToken(Map<String, Object> extraClaims, User user) {
 		return Jwts
 				.builder()
 				.claims(extraClaims)
-				.subject(userDetails.getUsername())
+				.subject(user.getEmail())
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
 				.signWith(getSignInKey())
@@ -120,3 +116,5 @@ public class JwtServiceImpl implements JwtService {
 		return Keys.hmacShaKeyFor(keyBites);
 	}
 }
+
+//TODO: test this class (ex: check if the token returns the right email)

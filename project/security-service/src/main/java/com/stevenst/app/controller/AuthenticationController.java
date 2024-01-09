@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.stevenst.app.auth.AuthRequest;
-import com.stevenst.app.auth.AuthResponse;
-import com.stevenst.app.auth.RegisterRequest;
 import com.stevenst.app.controller.api.AuthenticationApi;
+import com.stevenst.app.payload.AuthRequest;
+import com.stevenst.app.payload.AuthResponse;
+import com.stevenst.app.payload.RegisterRequest;
 import com.stevenst.app.service.impl.AuthenticationServiceImpl;
 
 import lombok.RequiredArgsConstructor;
