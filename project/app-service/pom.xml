@@ -24,11 +24,11 @@
 		<mockito-core.version>5.8.0</mockito-core.version>
 	</properties>
 	<dependencies>
-		<!-- <dependency>
+		<dependency>
 			<groupId>com.stevenst</groupId>
 			<artifactId>lib</artifactId>
 			<version>1.0.0</version>
-		</dependency> -->
+		</dependency>
 
 		<!-- db -->
 		<dependency>
