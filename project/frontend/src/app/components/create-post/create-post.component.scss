@@ -4,7 +4,9 @@
 	box-sizing: border-box;
 }
 
-#header, #body, #footer {
+#header,
+#body,
+#footer {
 	display: flex;
 	flex-direction: column;
 	margin-left: 20%;
@@ -19,6 +21,15 @@
 #body {
 	textarea {
 		min-height: 100px;
+	}
+}
+
+#preview {
+
+	img,
+	video {
+		max-width: 350px;
+		max-height: 350px;
 	}
 }
 
