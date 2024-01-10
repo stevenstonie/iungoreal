@@ -7,11 +7,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.stevenst.app.exception.IgorIoException;
+import com.stevenst.app.exception.IgorPostException;
 import com.stevenst.app.repository.PostRepository;
 import com.stevenst.app.service.PostService;
 import com.stevenst.lib.payload.ResponsePayload;
@@ -29,7 +32,7 @@ public class PostServiceImpl implements PostService {
 	public ResponseEntity<ResponsePayload> createPost(String title, String description, String authorUsername,
 			MultipartFile file) {
 		// search for the author
-		
+
 		// create the post
 
 		if (file != null) {
@@ -45,39 +48,41 @@ public class PostServiceImpl implements PostService {
 		try {
 			String originalFileName = file.getOriginalFilename();
 			if (originalFileName == null) {
-				throw new IllegalArgumentException("Cannot store a file with a null name.");
+				throw new IgorPostException("Cannot store a file with a null name.");
 			}
-			
+
 			Path targetDirectory = Paths.get(mediaPath, authorUsername, "post_images");
 			Path targetPath = targetDirectory.resolve(originalFileName);
-	
+
 			Files.createDirectories(targetDirectory);
-	
+
 			if (Files.exists(targetPath)) {
-				String fileNameWithoutExtension = originalFileName;
-				String fileExtension = "";
-				int lastIndexOfDot = originalFileName.lastIndexOf('.');
-				if (lastIndexOfDot > 0) {
-					fileNameWithoutExtension = originalFileName.substring(0, lastIndexOfDot);
-					fileExtension = originalFileName.substring(lastIndexOfDot);
-				}
-
-				int fileIndex = 0;
-				Path filePathWithIndex;
-				do {
-					fileIndex++;
-					String newFileName = fileNameWithoutExtension + "_" + fileIndex + fileExtension;
-					filePathWithIndex = targetDirectory.resolve(newFileName);
-				} while (Files.exists(filePathWithIndex));
-
-				targetPath = filePathWithIndex;
+				targetPath = getPathWithUniqueFileName(targetDirectory, originalFileName);
 			}
-	
+
 			Files.write(targetPath, file.getBytes(), StandardOpenOption.CREATE_NEW);
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MaxUploadSizeExceededException e) {
-			e.printStackTrace();
-		}	// TODO: you know what to do
+			throw new IgorIoException("Could not store file");
+		}
+	}
+
+	private Path getPathWithUniqueFileName(Path targetDirectory, String originalFileName) {
+		String fileNameWithoutExtension = originalFileName;
+		String fileExtension = "";
+		int lastIndexOfDot = originalFileName.lastIndexOf('.');
+		if (lastIndexOfDot > 0) {
+			fileNameWithoutExtension = originalFileName.substring(0, lastIndexOfDot);
+			fileExtension = originalFileName.substring(lastIndexOfDot);
+		}
+
+		int fileIndex = 0;
+		Path filePathWithIndex;
+		do {
+			fileIndex++;
+			String newFileName = fileNameWithoutExtension + "_" + fileIndex + fileExtension;
+			filePathWithIndex = targetDirectory.resolve(newFileName);
+		} while (Files.exists(filePathWithIndex));
+
+		return filePathWithIndex;
 	}
 }

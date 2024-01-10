@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stevenst.app.controller.api.PostApi;
-import com.stevenst.app.model.Post;
 import com.stevenst.app.service.PostService;
 import com.stevenst.lib.payload.ResponsePayload;
 
@@ -24,7 +23,8 @@ public class PostController implements PostApi {
 	@PostMapping("/create")
 	public ResponseEntity<ResponsePayload> createPost(
 			@RequestParam("title") String title, @RequestParam("description") String description,
-			@RequestParam("authorUsername") String authorUsername, @RequestParam(value = "file", required = false) MultipartFile file) {
+			@RequestParam("authorUsername") String authorUsername,
+			@RequestParam(value = "file", required = false) MultipartFile file) {
 		return postService.createPost(title, description, authorUsername, file);
 	}
 }
