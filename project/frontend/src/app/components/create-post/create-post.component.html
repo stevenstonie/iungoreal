@@ -5,13 +5,14 @@
 </div>
 
 <div id="body">
-	<input type="text" name="title" placeholder="Title">
+	<input [(ngModel)]="title" type="text" name="title" placeholder="Title" required>
+	<textarea [(ngModel)]="description" name="description" placeholder="Description"></textarea>
 	<input type="file" (change)="onFileSelected($event)" accept="image/*, video/*">
 	<div id="preview" *ngIf="file">
 		<img *ngIf="isImage(file)" [src]="previewUrl" alt="Image preview">
 		<video *ngIf="isVideo(file)" [src]="previewUrl" controls></video>
 	</div>
-	<textarea placeholder="Description"></textarea>
+	<!-- TODO: finish the funny logic -->
 </div>
 
 <div id="footer">

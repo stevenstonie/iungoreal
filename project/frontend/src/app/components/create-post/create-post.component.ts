@@ -1,17 +1,26 @@
-import { Component, OnDestroy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { AppService } from '../../services/app.service';
 
 @Component({
   selector: 'app-create-post',
   templateUrl: './create-post.component.html',
   styleUrls: ['./create-post.component.scss']
 })
-export class CreatePostComponent implements OnDestroy {
+export class CreatePostComponent implements OnInit, OnDestroy {
   previewUrl: SafeUrl | null = null;
   file: File | null = null;
+  title: string = '';
+  description: string = '';
+  authorUsername: string = '';
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(private sanitizer: DomSanitizer, private http: HttpClient, private appService: AppService) {
 
+  }
+
+  ngOnInit(): void {
+    this.authorUsername = localStorage.getItem('username') ?? '';
   }
 
   onFileSelected(event: Event): void {
@@ -24,7 +33,22 @@ export class CreatePostComponent implements OnDestroy {
   }
 
   createPost(): void {
-    // TODO: Implement
+    const formData = new FormData();
+    formData.append('title', this.title);
+    formData.append('description', this.description);
+    formData.append('authorUsername', this.authorUsername);
+    if (this.file) {
+      formData.append('file', this.file);
+    }
+
+    this.appService.createPost(formData).subscribe({
+      next: (response) => {
+        console.log('Post created successfully', response);
+      },
+      error: (error) => {
+        console.error('Error creating post', error);
+      }
+    });
   }
 
   isImage(file: File): boolean {
