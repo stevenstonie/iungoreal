@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import com.stevenst.lib.exception.IgorIoException;
+import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.payload.ResponsePayload;
 
 @ControllerAdvice

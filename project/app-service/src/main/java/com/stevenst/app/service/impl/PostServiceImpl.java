@@ -11,9 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.stevenst.app.exception.IgorIoException;
+import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.app.exception.IgorPostException;
-import com.stevenst.app.exception.IgorUserNotFoundException;
+import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.model.Post;
 import com.stevenst.app.repository.PostRepository;
 import com.stevenst.app.repository.UserRepository;

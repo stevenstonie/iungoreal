@@ -6,14 +6,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.stevenst.lib.exception.IgorEmptyFileNameException;
+import com.stevenst.lib.exception.IgorIoException;
+import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.payload.ResponsePayload;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ResponseBody
-    @ExceptionHandler(IgorNotFoundException.class)
+    @ExceptionHandler(IgorUserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponsePayload handleIgorNotFoundException(IgorNotFoundException ex) {
+    public ResponsePayload handleIgorNotFoundException(IgorUserNotFoundException ex) {
         return ResponsePayload.builder()
                 .status(HttpStatus.NOT_FOUND.value())
                 .message(ex.getMessage())

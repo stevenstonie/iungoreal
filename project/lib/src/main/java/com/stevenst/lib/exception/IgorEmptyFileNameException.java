@@ -1,4 +1,4 @@
-package com.stevenst.app.exception;
+package com.stevenst.lib.exception;
 
 public class IgorEmptyFileNameException extends RuntimeException {
 	public IgorEmptyFileNameException(String message) {

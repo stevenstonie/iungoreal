@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.jayway.jsonpath.JsonPath;
-import com.stevenst.app.exception.IgorNotFoundException;
+import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.UserRepository;
@@ -132,7 +132,7 @@ class UserControllerIntegrationTest {
 		Exception resolvedException = result.getResolvedException();
 
 		assertNotNull(resolvedException);
-		assertTrue(resolvedException instanceof IgorNotFoundException);
+		assertTrue(resolvedException instanceof IgorUserNotFoundException);
 		assertEquals("User not found (with " + paramType + ": " + nameOrEmail + ")", resolvedException.getMessage());
 	}
 

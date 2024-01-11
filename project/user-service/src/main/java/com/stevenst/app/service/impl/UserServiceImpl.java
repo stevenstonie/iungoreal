@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.stevenst.app.exception.IgorEmptyFileNameException;
-import com.stevenst.app.exception.IgorIoException;
-import com.stevenst.app.exception.IgorNotFoundException;
+import com.stevenst.lib.exception.IgorEmptyFileNameException;
+import com.stevenst.lib.exception.IgorIoException;
+import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.UserRepository;
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 						.username(user.getUsername())
 						.createdAt(user.getCreatedAt())
 						.build())
-				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 						.role(user.getRole())
 						.createdAt(user.getCreatedAt())
 						.build())
-				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 	}
 	// TODO: users dont need to know their role is of a USER so update the code on front and back to return the role only to admins
 
@@ -68,15 +68,18 @@ public class UserServiceImpl implements UserService {
 						.role(user.getRole())
 						.createdAt(user.getCreatedAt())
 						.build())
-				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND + " (with email: " + email + ")"));
+				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with email: " + email + ")"));
 	}
 
 	@Override
 	public ResponsePayload saveProfilePicture(String username, MultipartFile file) {
 		User user = userRepository.findByUsername(username)
-				.orElseThrow(() -> new IgorNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 
 		String fileName = storeProfilePictureAndReturnFileName(username, file);
+
+		user.setProfilePictureName(fileName);
+		userRepository.save(user);
 
 		return ResponsePayload.builder()
 				.status(200)
