@@ -22,6 +22,16 @@ public class GlobalExceptionHandler {
 	}
 
 	@ResponseBody
+	@ExceptionHandler(IgorUserNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ResponsePayload handleIgorUserNotFoundException(IgorUserNotFoundException ex) {
+		return ResponsePayload.builder()
+				.status(HttpStatus.NOT_FOUND.value())
+				.message(ex.getMessage())
+				.build();
+	}
+
+	@ResponseBody
 	@ExceptionHandler(IgorIoException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponsePayload handleIgorIoException(IgorIoException ex) {
@@ -37,7 +47,7 @@ public class GlobalExceptionHandler {
 	public ResponsePayload handleMaxSizeException(MaxUploadSizeExceededException exc) {
 		return ResponsePayload.builder()
 				.status(HttpStatus.PAYLOAD_TOO_LARGE.value())
-				.message("File size exceeds maximum allowed limit." + exc.getMessage())
+				.message("File size exceeds maximum allowed limit.")
 				.build();
 	}
 }

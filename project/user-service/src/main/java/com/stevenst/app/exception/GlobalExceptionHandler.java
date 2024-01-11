@@ -29,4 +29,24 @@ public class GlobalExceptionHandler {
                 .message(ex.getMessage())
                 .build();
     }
+
+    @ResponseBody
+    @ExceptionHandler(IgorEmptyFileNameException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponsePayload handleIgorEmptyFileNameException(IgorEmptyFileNameException ex) {
+        return ResponsePayload.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .build();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(IgorIoException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponsePayload handleIgorIoException(IgorIoException ex) {
+        return ResponsePayload.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .build();
+    }
 }

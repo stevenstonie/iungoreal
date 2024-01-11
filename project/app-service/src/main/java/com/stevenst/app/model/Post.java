@@ -37,7 +37,8 @@ public class Post {
 
 	private String description;
 
-	private String media;
+	private String mediaName;
 
+	@Column(nullable = false)
 	private final LocalDateTime createdAt = LocalDateTime.now();
 }

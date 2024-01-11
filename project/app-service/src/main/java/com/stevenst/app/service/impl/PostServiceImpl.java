@@ -7,16 +7,18 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stevenst.app.exception.IgorIoException;
 import com.stevenst.app.exception.IgorPostException;
+import com.stevenst.app.exception.IgorUserNotFoundException;
+import com.stevenst.app.model.Post;
 import com.stevenst.app.repository.PostRepository;
+import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.PostService;
+import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
 
 import lombok.RequiredArgsConstructor;
@@ -25,26 +27,38 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 	private final PostRepository postRepository;
+	private final UserRepository userRepository;
 	@Value("${app.media-path}")
 	private String mediaPath;
 
 	@Override
 	public ResponseEntity<ResponsePayload> createPost(String title, String description, String authorUsername,
 			MultipartFile file) {
-		// search for the author
-
-		// create the post
-
-		if (file != null) {
-			storeFile(file, authorUsername);
+		User author = userRepository.findByUsername(authorUsername)
+				.orElseThrow(() -> new IgorUserNotFoundException("Author not found"));
+		if(title == null || title.isEmpty()) {
+			throw new IgorPostException("Title cannot be null or empty");
 		}
+
+		String mediaName = "";
+		if (file != null) {
+			mediaName = storeFileAndReturnFileName(file, authorUsername);
+		}
+
+		Post post = Post.builder()
+				.author(author)
+				.title(title)
+				.description(description)
+				.mediaName(mediaName)
+				.build();
+		postRepository.save(post);
 
 		return ResponseEntity.ok(ResponsePayload.builder().status(200).message("Post created successfully").build());
 	}
 
 	// ---------------------------------------------
 
-	private void storeFile(MultipartFile file, String authorUsername) {
+	private String storeFileAndReturnFileName(MultipartFile file, String authorUsername) {
 		try {
 			String originalFileName = file.getOriginalFilename();
 			if (originalFileName == null) {
@@ -52,15 +66,16 @@ public class PostServiceImpl implements PostService {
 			}
 
 			Path targetDirectory = Paths.get(mediaPath, authorUsername, "post_images");
-			Path targetPath = targetDirectory.resolve(originalFileName);
-
 			Files.createDirectories(targetDirectory);
-
+			
+			Path targetPath = targetDirectory.resolve(originalFileName);
 			if (Files.exists(targetPath)) {
 				targetPath = getPathWithUniqueFileName(targetDirectory, originalFileName);
 			}
 
 			Files.write(targetPath, file.getBytes(), StandardOpenOption.CREATE_NEW);
+
+			return targetPath.getFileName().toString();
 		} catch (IOException e) {
 			throw new IgorIoException("Could not store file");
 		}

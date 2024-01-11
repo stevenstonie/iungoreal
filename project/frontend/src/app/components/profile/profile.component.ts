@@ -3,6 +3,8 @@ import { User } from 'src/app/models/user';
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FriendsService } from 'src/app/services/friends.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-profile',
@@ -17,8 +19,10 @@ export class ProfileComponent {
   isFriends: boolean = false;
   usernameOfLoggedUser = localStorage.getItem('username') ?? '';
   usernameOfUserOnScreen = this.route.snapshot.paramMap.get('username') ?? '';
+  file: File | null = null;
+  previewUrl: SafeUrl | null = null;
 
-  constructor(private userService: UserService, private friendsService: FriendsService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private userService: UserService, private friendsService: FriendsService, private route: ActivatedRoute, private router: Router, private sanitizer: DomSanitizer, private http: HttpClient) { }
 
   ngOnInit() {
     this.getUserFromService();
@@ -60,7 +64,9 @@ export class ProfileComponent {
     this.friendsService.checkRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
         console.log(response.message);
-        this.loggedUserSentFriendRequest = response.success;
+        if (response.status === 200) {
+          this.loggedUserSentFriendRequest = true;
+        }
       },
       error: (error) => {
         console.error(error);
@@ -70,7 +76,9 @@ export class ProfileComponent {
     this.friendsService.checkRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
       next: (response) => {
         console.log(response.message);
-        this.userSentFriendRequest = response.success;
+        if (response.status === 200) {
+          this.userSentFriendRequest = true;
+        }
       },
       error: (error) => {
         console.error(error);
@@ -80,7 +88,9 @@ export class ProfileComponent {
     this.friendsService.checkFriendship(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
         console.log(response.message);
-        this.isFriends = response.success;
+        if (response.status === 200) {
+          this.isFriends = true;
+        }
       },
       error: (error) => {
         console.error(error);
@@ -156,6 +166,25 @@ export class ProfileComponent {
         console.error(error);
       }
     });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.file = input.files[0];
+      const objectUrl = URL.createObjectURL(this.file);
+      this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+    }
+    if (this.file) {
+      this.userService.saveProfilePicture(this.file).subscribe({
+        next: (response) => {
+          console.log(response);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
   }
 
   editProfile() {

@@ -1,4 +1,4 @@
 export interface ResponsePayload {
-	success: boolean;
+	status: number;
 	message: string;
 }

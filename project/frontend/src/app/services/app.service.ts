@@ -1,6 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Post } from '../models/app';
 import { Observable, catchError, throwError } from 'rxjs';
 import { ResponsePayload } from '../models/payloads';
 

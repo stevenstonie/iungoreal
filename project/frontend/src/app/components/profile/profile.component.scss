@@ -80,13 +80,18 @@
 				}
 			}
 
-			#send-friend-request-button, #cancel-friend-request-button, #accept-friend-request-button, #unfriend-button, #edit-profile-button {
+			#send-friend-request-button,
+			#cancel-friend-request-button,
+			#accept-friend-request-button,
+			#unfriend-button,
+			#change-profile-picture-button {
 				position: absolute;
 				margin-top: -45px;
 				margin-left: 120px;
 			}
 
-			#decline-friend-request-button {
+			#decline-friend-request-button,
+			#edit-profile-button {
 				position: absolute;
 				margin-top: -45px;
 				margin-left: 280px;

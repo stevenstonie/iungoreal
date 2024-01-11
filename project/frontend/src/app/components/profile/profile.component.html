@@ -69,7 +69,7 @@
 			<ng-container *ngIf="!isFriends && loggedUserSentFriendRequest && !userSentFriendRequest">
 				<button id="cancel-friend-request-button" (click)="cancelFriendRequest()">Cancel friend request</button>
 			</ng-container>
-			
+
 			<ng-container *ngIf="!isFriends && !loggedUserSentFriendRequest && userSentFriendRequest">
 				<button id="accept-friend-request-button" (click)="acceptFriendRequest()">Accept friend request</button>
 				<button id="decline-friend-request-button" (click)="declineFriendRequest()">Decline friend
@@ -83,6 +83,7 @@
 
 		<ng-container *ngIf="isUserOnScreenTheLoggedOne">
 			<button id="edit-profile-button" (click)="editProfile()">Edit profile</button>
+			<input type="file" (change)="onFileSelected($event)" accept="image/*, video/*">
 		</ng-container>
 	</div>
 </div>
