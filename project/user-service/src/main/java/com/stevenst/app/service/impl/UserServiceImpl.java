@@ -23,7 +23,6 @@ import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.UserService;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -41,7 +40,8 @@ public class UserServiceImpl implements UserService {
 						.username(user.getUsername())
 						.createdAt(user.getCreatedAt())
 						.build())
-				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 	}
 
 	@Override
@@ -54,7 +54,8 @@ public class UserServiceImpl implements UserService {
 						.role(user.getRole())
 						.createdAt(user.getCreatedAt())
 						.build())
-				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 	}
 	// TODO: users dont need to know their role is of a USER so update the code on front and back to return the role only to admins
 
@@ -74,7 +75,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponsePayload saveProfilePicture(String username, MultipartFile file) {
 		User user = userRepository.findByUsername(username)
-				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 
 		String fileName = storeProfilePictureAndReturnFileName(username, file);
 
@@ -86,6 +88,8 @@ public class UserServiceImpl implements UserService {
 				.message("Profile picture stored successfully")
 				.build();
 	}
+
+	// --------------------------------------------------------
 
 	private String storeProfilePictureAndReturnFileName(String username, MultipartFile file) {
 		try {
