@@ -89,6 +89,19 @@ public class UserServiceImpl implements UserService {
 				.build();
 	}
 
+	@Override
+	public String getProfilePictureByUsername(String username) {
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(
+						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+
+		if (user.getProfilePictureName() != null || !user.getProfilePictureName().isEmpty()) {
+			return Paths.get(mediaPath, username, "profile_picture", user.getProfilePictureName()).toString();
+		}
+
+		return null;
+	}
+
 	// --------------------------------------------------------
 
 	private String storeProfilePictureAndReturnFileName(String username, MultipartFile file) {

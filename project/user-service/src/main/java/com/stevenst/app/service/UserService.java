@@ -14,4 +14,6 @@ public interface UserService {
 	UserPrivatePayload getUserByEmail(String email);
 
 	ResponsePayload saveProfilePicture(String username, MultipartFile file);
+
+	String getProfilePictureByUsername(String username);
 }

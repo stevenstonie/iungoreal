@@ -47,4 +47,12 @@ public interface UserApi {
 			@ApiResponse(responseCode = "413", description = "File too large", content = @Content) })
 
 	public ResponseEntity<ResponsePayload> saveProfilePicture(String username, MultipartFile file);
+
+	@Operation(summary = "Get profile picture", description = "Get an user's profile picture", tags = "User")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful", content = {
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ResponsePayload.class)) }),
+			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
+
+	public ResponseEntity<String> getProfilePictureByUsername(String username);
 }
