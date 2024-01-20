@@ -7,6 +7,7 @@
 	- (recurring) show window dialogs on errors for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
+	- [ ] (bk) integrate s3 as object storage service
 	- [ ] (fr, bk) create posts
 	- [ ] (fr, bk) functionality for the main page (fetching friends posts)
 	- [ ] (fr, bk) implement search functionality
