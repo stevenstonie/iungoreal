@@ -13,6 +13,7 @@
 	- [ ] (fr, bk) implement search functionality
 	- [ ] (fr, bk) notifications
 	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
+	- [ ] (fr) !!! add upload size cap for the file size -> tomcat blocks it without notice
 	- [ ] (fr) add verification through email when registering
 	- [ ] (fr) user settings
 	- [ ] (fr) user profile
@@ -41,6 +42,8 @@
 	- [x] backend login / register by token
 	- [x] add a frontend and connect it to the backend
 
+- to add in the project documentation: 
+	- create a file "credentials" in %USERPROFILE%\.aws
 
 - task ideas:
 	- app time restriction

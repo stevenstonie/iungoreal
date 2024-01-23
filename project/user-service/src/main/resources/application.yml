@@ -2,6 +2,9 @@ server:
   port: 8080
   error:
     include-message: always
+  tomcat:
+    # set it to something (like 50MB) to not let tomcat cancel the requests
+    max-swallow-size: _
 spring:
   profiles:
     include: dev
@@ -25,5 +28,5 @@ spring:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-app:
-  media-path: _
+aws:
+  bucketName: _
