@@ -8,5 +8,5 @@ import com.stevenst.lib.payload.ResponsePayload;
 
 @Service
 public interface AmazonS3Service {
-	ResponseEntity<ResponsePayload> uploadPfpToS3(String username, MultipartFile file);
+	// ResponseEntity<String> getPfpFromS3(String username);
 }

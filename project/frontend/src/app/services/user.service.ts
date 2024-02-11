@@ -40,11 +40,13 @@ export class UserService {
     formData.append('username', localStorage.getItem('username') ?? '');
     formData.append('file', file);
 
-    return this.http.post<ResponsePayload>(`${this.apiUrl}/saveProfilePicture`, formData)
+    return this.http.put<ResponsePayload>(`${this.apiUrl}/saveProfilePicture`, formData)
       .pipe(
         catchError(this.handleError)
       );
   }
+
+  // -------------------------------------------------------
 
   private handleError(error: HttpErrorResponse) {
     console.error(error);

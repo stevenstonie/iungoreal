@@ -26,8 +26,8 @@ public class DummyController {
 		return "hello";
 	}
 
-	@PutMapping("/placeins3")
-	public ResponseEntity<ResponsePayload> placeInS3(@RequestParam String username, MultipartFile file) {
-		return amazonS3Service.uploadPfpToS3(username, file);
-	}
+	// @GetMapping("/getpfpfroms3")
+	// public ResponseEntity<String> getPfpFromS3(@RequestParam String username) {
+	// 	return amazonS3Service.getPfpFromS3(username);
+	// }
 }
