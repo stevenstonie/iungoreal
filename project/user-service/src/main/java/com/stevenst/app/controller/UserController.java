@@ -41,4 +41,9 @@ public class UserController implements UserApi {
 	public ResponseEntity<ResponsePayload> putProfilePicture(@RequestParam String username, MultipartFile file) {
 		return ResponseEntity.ok(userService.savePfpToS3(username, file));
 	}
+
+	@GetMapping("getProfilePicture")
+	public ResponseEntity<String> getProfilePicture(@RequestParam String username) {
+		return ResponseEntity.ok(userService.getPfpLinkFromS3(username));
+	}
 }

@@ -2,6 +2,8 @@ package com.stevenst.app.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -11,15 +13,21 @@ import org.springframework.web.multipart.MultipartFile;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.payload.ResponsePayload;
+import com.stevenst.app.config.AmazonS3Config;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -89,6 +97,14 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@Override
+	public String getPfpLinkFromS3(String username) {
+		String fileName = "Screenshot 2023-07-11 122122.png";
+
+		GetObjectRequest getObjectRequest = createGetObjectRequest(username, fileName);
+		return generatePresignedUrl(getObjectRequest);
+	}
+
 	// ----------------------------------------------------------------------------------------------------------
 
 	private ResponsePayload convertAndUploadToS3(PutObjectRequest putObjectRequest, String folder,
@@ -105,4 +121,30 @@ public class UserServiceImpl implements UserService {
 			throw new IgorIoException(e.getMessage());
 		}
 	}
+
+	private GetObjectRequest createGetObjectRequest(String username, String fileName) {
+		String folder = username;
+		String key = (folder != null && !folder.isEmpty() ? folder : "") + "/profile_picture/" + fileName;
+
+		return GetObjectRequest.builder()
+				.bucket(bucketName)
+				.key(key)
+				.build();
+	}
+
+	private String generatePresignedUrl(GetObjectRequest getObjectRequest) {
+		Duration expiration = Duration.ofHours(1);
+		S3Presigner presigner = S3Presigner.builder().region(Region.EU_CENTRAL_1).build();
+
+		GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+				.getObjectRequest(getObjectRequest)
+				.signatureDuration(expiration)
+				.build();
+
+		PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
+		presigner.close();
+
+		return presignedRequest.url().toString();
+	}
+
 }

@@ -14,4 +14,6 @@ public interface UserService {
 	UserPrivatePayload getUserByEmail(String email);
 
 	ResponsePayload savePfpToS3(String username, MultipartFile file);
+
+	String getPfpLinkFromS3(String username);
 }
