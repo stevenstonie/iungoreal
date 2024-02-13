@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
+import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
-import com.stevenst.app.config.AmazonS3Config;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.UserRepository;
@@ -77,29 +78,19 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with email: " + email + ")"));
 	}
 
+	@Override
 	public ResponsePayload savePfpToS3(String username, MultipartFile file) {
 		String fileName = file.getOriginalFilename();
-		String folder = username;
-		String key = (folder != null && !folder.isEmpty() ? folder : "") + "/profile_picture/" + fileName;
 
-		try {
-			PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-					.bucket(bucketName)
-					.key(key)
-					.build();
+		setFileNameInDb(username, fileName);
 
-			System.out.println("Uploading " + fileName + " to S3 bucket " + bucketName + " at key " + key);
-
-			return convertAndUploadToS3(putObjectRequest, folder, key, file);
-		} catch (S3Exception e) {
-			System.err.println(e.awsErrorDetails().errorMessage());
-			throw e;
-		}
+		PutObjectRequest putObjectRequest = createPutObjectRequest(username, fileName);
+		return convertAndUploadToS3(putObjectRequest, file);
 	}
 
 	@Override
 	public String getPfpLinkFromS3(String username) {
-		String fileName = "Screenshot 2023-07-11 122122.png";
+		String fileName = getFileNameFromDb(username);;
 
 		GetObjectRequest getObjectRequest = createGetObjectRequest(username, fileName);
 		return generatePresignedUrl(getObjectRequest);
@@ -107,19 +98,30 @@ public class UserServiceImpl implements UserService {
 
 	// ----------------------------------------------------------------------------------------------------------
 
-	private ResponsePayload convertAndUploadToS3(PutObjectRequest putObjectRequest, String folder,
-			String key, MultipartFile file) {
-		try (InputStream inputStream = file.getInputStream()) {
-			s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
+	private void setFileNameInDb(String username, String fileName) {
+		User user = userRepository.findByUsername(username).orElseThrow(
+				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+		
+		user.setProfilePictureName(fileName);
 
-			return ResponsePayload.builder()
-					.status(200)
-					.message("File uploaded to S3 bucket " + bucketName + " at key " + key)
-					.build();
-		} catch (IOException e) {
-			System.err.println("Unable to convert MultipartFile to InputStream: " + e.getMessage());
-			throw new IgorIoException(e.getMessage());
-		}
+		userRepository.save(user);
+	}
+	
+	private String getFileNameFromDb(String username) {
+		User user = userRepository.findByUsername(username).orElseThrow(
+				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+		
+		return user.getProfilePictureName();
+	}
+
+	private PutObjectRequest createPutObjectRequest(String username, String fileName) {
+		String folder = username;
+		String key = (folder != null && !folder.isEmpty() ? folder : "") + "/profile_picture/" + fileName;
+
+		return PutObjectRequest.builder()
+				.bucket(bucketName)
+				.key(key)
+				.build();
 	}
 
 	private GetObjectRequest createGetObjectRequest(String username, String fileName) {
@@ -132,19 +134,37 @@ public class UserServiceImpl implements UserService {
 				.build();
 	}
 
+	private ResponsePayload convertAndUploadToS3(PutObjectRequest putObjectRequest, MultipartFile file) {
+		try (InputStream inputStream = file.getInputStream()) {
+			s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
+
+			return ResponsePayload.builder()
+					.status(200)
+					.message("File uploaded to S3 bucket successfully")
+					.build();
+		} catch (IOException e) {
+			System.err.println("Unable to convert MultipartFile to InputStream: " + e.getMessage());
+			throw new IgorIoException(e.getMessage());
+		}
+	}
+
 	private String generatePresignedUrl(GetObjectRequest getObjectRequest) {
 		Duration expiration = Duration.ofHours(1);
-		S3Presigner presigner = S3Presigner.builder().region(Region.EU_CENTRAL_1).build();
 
-		GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-				.getObjectRequest(getObjectRequest)
-				.signatureDuration(expiration)
-				.build();
+		try (S3Presigner presigner = S3Presigner.builder().region(Region.EU_CENTRAL_1).build()) {
+			GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+					.getObjectRequest(getObjectRequest)
+					.signatureDuration(expiration)
+					.build();
 
-		PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
-		presigner.close();
+			PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
+			presigner.close();
 
-		return presignedRequest.url().toString();
+			return presignedRequest.url().toString();
+		} catch (S3Exception e) {
+			System.out.println("Unable to generate a presigned url:" + e.getMessage());
+			throw new IgorIoException(e.getMessage());
+		}
 	}
 
 }
