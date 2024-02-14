@@ -23,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -79,39 +81,100 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponsePayload savePfpToS3(String username, MultipartFile file) {
+	public ResponsePayload savePfp(String username, MultipartFile file) {
+		User user = userRepository.findByUsername(username).orElseThrow(
+				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 		String fileName = file.getOriginalFilename();
 
-		setFileNameInDb(username, fileName);
+		removePfp(username);
 
-		PutObjectRequest putObjectRequest = createPutObjectRequest(username, fileName);
-		return convertAndUploadToS3(putObjectRequest, file);
+		setPfpNameInDb(user, fileName);
+		return uploadPfpToS3(username, file);
 	}
 
 	@Override
-	public String getPfpLinkFromS3(String username) {
-		String fileName = getFileNameFromDb(username);;
+	public String getPfpPreSignedLinkFromS3(String username) {
+		User user = userRepository.findByUsername(username).orElseThrow(
+				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 
-		GetObjectRequest getObjectRequest = createGetObjectRequest(username, fileName);
-		return generatePresignedUrl(getObjectRequest);
+		String pfpNameFromDb = user.getProfilePictureName();
+		if (pfpNameFromDb == null || pfpNameFromDb == "") {
+			System.out.println("No profile picture found for user: " + username);
+			return "";
+		}
+
+		return generatePresignedUrl(username, pfpNameFromDb);
+	}
+
+	@Override
+	public ResponsePayload removePfp(String username) {
+		User user = userRepository.findByUsername(username).orElseThrow(
+				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+
+		String pfpNameFromDb = user.getProfilePictureName();
+		if (pfpNameFromDb == null || pfpNameFromDb == "") {
+			System.out.println("No profile picture found for user: " + username);
+			return ResponsePayload.builder()
+					.status(404)
+					.message("No profile picture found for user: " + username)
+					.build();
+		}
+
+		setPfpNameInDb(user, null);
+		return removePfpFromS3(username, pfpNameFromDb);
 	}
 
 	// ----------------------------------------------------------------------------------------------------------
 
-	private void setFileNameInDb(String username, String fileName) {
-		User user = userRepository.findByUsername(username).orElseThrow(
-				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
-		
+	private void setPfpNameInDb(User user, String fileName) {
 		user.setProfilePictureName(fileName);
-
 		userRepository.save(user);
 	}
-	
-	private String getFileNameFromDb(String username) {
-		User user = userRepository.findByUsername(username).orElseThrow(
-				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
-		
-		return user.getProfilePictureName();
+
+	private ResponsePayload removePfpFromS3(String username, String pfpNameFromDb) {
+		DeleteObjectRequest deleteObjectRequest = createDeleteObjectRequest(username, pfpNameFromDb);
+		s3Client.deleteObject(deleteObjectRequest);
+
+		System.out.println("Removed profile picture for user: " + username);
+		return ResponsePayload.builder()
+				.status(200)
+				.message("Removed profile picture for user: " + username)
+				.build();
+	}
+
+	private ResponsePayload uploadPfpToS3(String username, MultipartFile file) {
+		PutObjectRequest putObjectRequest = createPutObjectRequest(username, file.getOriginalFilename());
+
+		try (InputStream inputStream = file.getInputStream()) {
+			s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
+
+			return ResponsePayload.builder()
+					.status(200)
+					.message("File uploaded to S3 bucket successfully")
+					.build();
+		} catch (IOException e) {
+			System.err.println("Unable to convert MultipartFile to InputStream: " + e.getMessage());
+			throw new IgorIoException(e.getMessage());
+		}
+	}
+
+	private String generatePresignedUrl(String username, String pfpNameFromDb) {
+		GetObjectRequest getObjectRequest = createGetObjectRequest(username, pfpNameFromDb);
+		Duration expiration = Duration.ofHours(1);
+
+		try (S3Presigner presigner = S3Presigner.builder().region(Region.EU_CENTRAL_1).build()) {
+			GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+					.getObjectRequest(getObjectRequest)
+					.signatureDuration(expiration)
+					.build();
+
+			PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
+
+			return presignedRequest.url().toString();
+		} catch (S3Exception e) {
+			System.err.println("Unable to generate a presigned url:" + e.getMessage());
+			throw new IgorIoException(e.getMessage());
+		}
 	}
 
 	private PutObjectRequest createPutObjectRequest(String username, String fileName) {
@@ -134,37 +197,13 @@ public class UserServiceImpl implements UserService {
 				.build();
 	}
 
-	private ResponsePayload convertAndUploadToS3(PutObjectRequest putObjectRequest, MultipartFile file) {
-		try (InputStream inputStream = file.getInputStream()) {
-			s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
+	private DeleteObjectRequest createDeleteObjectRequest(String username, String fileName) {
+		String folder = username;
+		String key = (folder != null && !folder.isEmpty() ? folder : "") + "/profile_picture/" + fileName;
 
-			return ResponsePayload.builder()
-					.status(200)
-					.message("File uploaded to S3 bucket successfully")
-					.build();
-		} catch (IOException e) {
-			System.err.println("Unable to convert MultipartFile to InputStream: " + e.getMessage());
-			throw new IgorIoException(e.getMessage());
-		}
+		return DeleteObjectRequest.builder()
+				.bucket(bucketName)
+				.key(key)
+				.build();
 	}
-
-	private String generatePresignedUrl(GetObjectRequest getObjectRequest) {
-		Duration expiration = Duration.ofHours(1);
-
-		try (S3Presigner presigner = S3Presigner.builder().region(Region.EU_CENTRAL_1).build()) {
-			GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-					.getObjectRequest(getObjectRequest)
-					.signatureDuration(expiration)
-					.build();
-
-			PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
-			presigner.close();
-
-			return presignedRequest.url().toString();
-		} catch (S3Exception e) {
-			System.out.println("Unable to generate a presigned url:" + e.getMessage());
-			throw new IgorIoException(e.getMessage());
-		}
-	}
-
 }

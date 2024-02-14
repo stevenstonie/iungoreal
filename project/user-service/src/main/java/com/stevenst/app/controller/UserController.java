@@ -1,6 +1,7 @@
 package com.stevenst.app.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,11 +40,16 @@ public class UserController implements UserApi {
 
 	@PutMapping("/saveProfilePicture")
 	public ResponseEntity<ResponsePayload> putProfilePicture(@RequestParam String username, MultipartFile file) {
-		return ResponseEntity.ok(userService.savePfpToS3(username, file));
+		return ResponseEntity.ok(userService.savePfp(username, file));
 	}
 
 	@GetMapping("getProfilePicture")
 	public ResponseEntity<String> getProfilePicture(@RequestParam String username) {
-		return ResponseEntity.ok(userService.getPfpLinkFromS3(username));
+		return ResponseEntity.ok(userService.getPfpPreSignedLinkFromS3(username));
+	}
+
+	@DeleteMapping("deleteProfilePicture")
+	public ResponseEntity<ResponsePayload> deleteProfilePicture(@RequestParam String username) {
+		return ResponseEntity.ok(userService.removePfp(username));
 	}
 }
