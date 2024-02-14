@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { User } from '../models/user';
 import { ResponsePayload } from '../models/payloads';
+import { JsonString } from '../models/app';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +42,15 @@ export class UserService {
     formData.append('file', file);
 
     return this.http.put<ResponsePayload>(`${this.apiUrl}/saveProfilePicture`, formData)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getProfilePicture(username: string): Observable<JsonString> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<JsonString>(`${this.apiUrl}/getProfilePicture`, { params })
       .pipe(
         catchError(this.handleError)
       );

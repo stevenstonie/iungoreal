@@ -51,11 +51,9 @@
 
 	<div id="section-right">
 		<div id="profile-cover">
-
+			<img [src]="profileCoverUrl" alt="Profile cover">
 		</div>
-		<div id="profile-picture">
-			
-		</div>
+		<img id="profile-picture" [src]="profilePictureUrl" alt="Profile picture">
 
 		<ng-container *ngIf="!isUserOnScreenTheLoggedOne">
 			<!-- always check the status: 

@@ -63,6 +63,7 @@
 			border: 1px solid #000;
 
 			#profile {
+				// temporary -> TODO: if there is no cover or profile picture, have a default one
 				&-cover {
 					background-color: aqua;
 					width: 100%;

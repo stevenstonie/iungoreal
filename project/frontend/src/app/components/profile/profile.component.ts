@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FriendsService } from 'src/app/services/friends.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
+import { JsonString } from 'src/app/models/app';
 
 @Component({
   selector: 'app-profile',
@@ -21,6 +22,8 @@ export class ProfileComponent {
   usernameOfUserOnScreen = this.route.snapshot.paramMap.get('username') ?? '';
   file: File | null = null;
   previewUrl: SafeUrl | null = null;
+  profilePictureUrl: string = '';
+  profileCoverUrl: string = '';
 
   constructor(private userService: UserService, private friendsService: FriendsService, private route: ActivatedRoute, private router: Router, private sanitizer: DomSanitizer, private http: HttpClient) { }
 
@@ -38,17 +41,35 @@ export class ProfileComponent {
         this.isUserOnScreenTheLoggedOne = true;
       }
 
-      this.userService.getUserByUsername(this.usernameOfUserOnScreen, this.isUserOnScreenTheLoggedOne).subscribe({
-        next: (user: User) => {
-          console.log('user: ', user);
-          this.userOnScreen = user;
-        },
-        error: (error) => {
-          console.error('Error getting user.', error);
-          this.router.navigate(['/404']);
-        }
-      });
+      this.getUserObjectFromService();
+
+      this.getUserPfpFromService();
     }
+  }
+
+  getUserPfpFromService() : void {
+    this.userService.getProfilePicture(this.usernameOfUserOnScreen).subscribe({
+      next: (pfp: JsonString) => {
+        this.profilePictureUrl = pfp.string;
+        console.log(pfp.string);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  getUserObjectFromService() {
+    this.userService.getUserByUsername(this.usernameOfUserOnScreen, this.isUserOnScreenTheLoggedOne).subscribe({
+      next: (user: User) => {
+        console.log('user: ', user);
+        this.userOnScreen = user;
+      },
+      error: (error) => {
+        console.error('Error getting user.', error);
+        this.router.navigate(['/404']);
+      }
+    });
   }
 
   /*
@@ -59,7 +80,6 @@ export class ProfileComponent {
     the one who unfriends is the unfriender
     the one who is supposed to do all the actions is the logged user (so careful with the parameters)
   */
-
   getFriendshipStatusFromService() {
     this.friendsService.checkRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {

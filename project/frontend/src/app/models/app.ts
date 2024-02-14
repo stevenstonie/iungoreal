@@ -6,3 +6,7 @@ export interface Post{
 	media: string,
 	createdAt: Date
 }
+
+export interface JsonString {
+	string: string
+}
