@@ -3,11 +3,7 @@ package com.stevenst.app.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
-import java.util.Date;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,12 +15,13 @@ import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.UserService;
+import com.stevenst.app.util.JsonUtil;
+
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -103,7 +100,7 @@ public class UserServiceImpl implements UserService {
 			return "";
 		}
 
-		return generatePresignedUrl(username, pfpNameFromDb);
+		return JsonUtil.convertStringToJson(generatePresignedUrl(username, pfpNameFromDb));
 	}
 
 	@Override
