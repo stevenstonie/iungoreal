@@ -9,18 +9,18 @@ import { AppService } from '../../services/app.service';
   styleUrls: ['./create-post.component.scss']
 })
 export class CreatePostComponent implements OnInit, OnDestroy {
-  previewUrl: SafeUrl | null = null;
-  file: File | null = null;
   title: string = '';
-  description: string = '';
   authorUsername: string = localStorage.getItem('username') ?? '';
+  description: string | null = null;
+  file: File | null = null;
+  previewUrl: SafeUrl | null = null;
 
   constructor(private sanitizer: DomSanitizer, private http: HttpClient, private appService: AppService) {
 
   }
 
   ngOnInit(): void {
-    this.authorUsername = localStorage.getItem('username') ?? '';
+    
   }
 
   onFileSelected(event: Event): void {
@@ -35,10 +35,12 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   createPost(): void {
     const formData = new FormData();
     formData.append('title', this.title);
-    formData.append('description', this.description);
     formData.append('authorUsername', this.authorUsername);
     if (this.file) {
       formData.append('file', this.file);
+    }
+    if(this.description) {
+      formData.append('description', this.description);
     }
 
     this.appService.createPost(formData).subscribe({
@@ -52,7 +54,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
 
   isImage(file: File): boolean {
-    return this.file?.type.startsWith('image/') ?? false;
+    return file?.type.startsWith('image/') ?? false;
   }
 
   isVideo(file: File): boolean {

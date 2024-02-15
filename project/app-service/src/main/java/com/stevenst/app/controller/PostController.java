@@ -22,9 +22,10 @@ public class PostController implements PostApi {
 
 	@PostMapping("/create")
 	public ResponseEntity<ResponsePayload> createPost(
-			@RequestParam("title") String title, @RequestParam("description") String description,
 			@RequestParam("authorUsername") String authorUsername,
+			@RequestParam("title") String title,
+			@RequestParam(value = "description", required = false) String description,
 			@RequestParam(value = "file", required = false) MultipartFile file) {
-		return postService.createPost(title, description, authorUsername, file);
+		return ResponseEntity.ok(postService.createPost(authorUsername, title, description, file));
 	}
 }

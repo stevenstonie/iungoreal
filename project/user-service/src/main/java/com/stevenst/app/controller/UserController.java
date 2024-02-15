@@ -39,7 +39,7 @@ public class UserController implements UserApi {
 	}
 
 	@PutMapping("/saveProfilePicture")
-	public ResponseEntity<ResponsePayload> putProfilePicture(@RequestParam String username, MultipartFile file) {
+	public ResponseEntity<ResponsePayload> putProfilePicture(@RequestParam String username, @RequestParam MultipartFile file) {
 		return ResponseEntity.ok(userService.savePfp(username, file));
 	}
 

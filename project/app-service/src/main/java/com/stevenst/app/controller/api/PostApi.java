@@ -18,5 +18,6 @@ public interface PostApi {
 			@ApiResponse(responseCode = "200", description = "Successful", content = {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ResponsePayload.class)) })
 	})
-	public ResponseEntity<ResponsePayload> createPost(String title, String description, String authorUsername, MultipartFile file);
+	public ResponseEntity<ResponsePayload> createPost(String authorUsername, String title, String description,
+			MultipartFile file);
 }

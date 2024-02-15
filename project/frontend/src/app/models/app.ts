@@ -2,8 +2,8 @@ export interface Post{
 	id: number,
 	authorId: number,
 	title: string,
-	description: string,
-	mediaName: string,
+	description: string | null,
+	mediaName: string | null,
 	createdAt: Date
 }
 

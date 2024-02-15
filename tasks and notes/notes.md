@@ -4,7 +4,7 @@
 
 
 - tasks:
-	- (recurring) show window dialogs on errors for users, catch exceptions, etc.
+	- (recurring) show window dialogs on errors / restrictions for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
 	- [ ] (fr, bk) create posts
