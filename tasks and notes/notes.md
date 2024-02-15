@@ -7,13 +7,12 @@
 	- (recurring) show window dialogs on errors for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
-	- [ ] (bk) integrate s3 as object storage service
 	- [ ] (fr, bk) create posts
 	- [ ] (fr, bk) functionality for the main page (fetching friends posts)
 	- [ ] (fr, bk) implement search functionality
 	- [ ] (fr, bk) notifications
 	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
-	- [ ] (fr) !!! add upload size cap for the file size -> tomcat blocks it without notice
+	- [ ] (fr) add upload size cap for the file size on frontend (and update the existing ones from backend)
 	- [ ] (fr) add verification through email when registering
 	- [ ] (fr) user settings
 	- [ ] (fr) user profile
@@ -29,6 +28,7 @@
 
 	_________________________________
 	---------------------------------
+	- [x] (bk) integrate s3 as object storage service
 	- [x] (fr, bk) implement friend requests
 	- [x] (fr) if the user doesnt exist when accessing a profile, redirect to 404
 	- [x] (bk) add a shared library
