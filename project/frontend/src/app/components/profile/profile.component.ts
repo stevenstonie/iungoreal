@@ -6,6 +6,7 @@ import { FriendsService } from 'src/app/services/friends.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { JsonString } from 'src/app/models/app';
+import { ResponsePayload } from 'src/app/models/payloads';
 
 @Component({
   selector: 'app-profile',
@@ -47,29 +48,52 @@ export class ProfileComponent {
     }
   }
 
-  getUserPfpFromService() : void {
-    this.userService.getProfilePicture(this.usernameOfUserOnScreen).subscribe({
-      next: (pfp: JsonString) => {
-        this.profilePictureUrl = pfp.string;
-        console.log(pfp.string);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.file = input.files[0];
+    }
+
+    this.saveThePfpFromService();
+  }
+
+  getUserPfpFromService(): void {
+    // this.userService.getProfilePicture(this.usernameOfUserOnScreen).subscribe({
+    //   next: (pfp: JsonString) => {
+    //     this.profilePictureUrl = pfp.string;
+    //     console.log(pfp.string);
+    //   },
+    //   error: (error) => {
+    //     console.error(error);
+    //   }
+    // });
   }
 
   getUserObjectFromService() {
     this.userService.getUserByUsername(this.usernameOfUserOnScreen, this.isUserOnScreenTheLoggedOne).subscribe({
       next: (user: User) => {
-        console.log('user: ', user);
         this.userOnScreen = user;
+        console.log('user: ', user);
       },
       error: (error) => {
         console.error('Error getting user.', error);
         this.router.navigate(['/404']);
       }
     });
+  }
+
+  saveThePfpFromService() {
+    // if (this.file) {
+    //   this.userService.saveProfilePicture(this.file).subscribe({
+    //     next: (response: ResponsePayload) => {
+    //       this.getUserPfpFromService();
+    //       console.log(response);
+    //     },
+    //     error: (error) => {
+    //       console.error(error);
+    //     }
+    //   });
+    // }
   }
 
   /*
@@ -186,25 +210,6 @@ export class ProfileComponent {
         console.error(error);
       }
     });
-  }
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.file = input.files[0];
-      const objectUrl = URL.createObjectURL(this.file);
-      this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
-    }
-    if (this.file) {
-      this.userService.saveProfilePicture(this.file).subscribe({
-        next: (response) => {
-          console.log(response);
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      });
-    }
   }
 
   editProfile() {

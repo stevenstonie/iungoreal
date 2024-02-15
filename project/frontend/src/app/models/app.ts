@@ -3,7 +3,7 @@ export interface Post{
 	authorId: number,
 	title: string,
 	description: string,
-	media: string,
+	mediaName: string,
 	createdAt: Date
 }
 

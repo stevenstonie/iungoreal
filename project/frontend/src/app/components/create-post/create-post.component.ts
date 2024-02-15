@@ -13,7 +13,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   file: File | null = null;
   title: string = '';
   description: string = '';
-  authorUsername: string = '';
+  authorUsername: string = localStorage.getItem('username') ?? '';
 
   constructor(private sanitizer: DomSanitizer, private http: HttpClient, private appService: AppService) {
 
