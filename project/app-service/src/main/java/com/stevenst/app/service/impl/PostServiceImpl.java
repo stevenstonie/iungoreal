@@ -32,28 +32,29 @@ public class PostServiceImpl implements PostService {
 	private String mediaPath;
 
 	@Override
-	public ResponseEntity<ResponsePayload> createPost(String title, String description, String authorUsername,
+	public ResponsePayload createPost(String authorUsername, String title, String description,
 			MultipartFile file) {
 		User author = userRepository.findByUsername(authorUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("Author not found"));
+				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
 		if(title == null || title.isEmpty()) {
 			throw new IgorPostException("Title cannot be null or empty");
 		}
 
-		String mediaName = "";
-		if (file != null) {
-			mediaName = storeFileAndReturnFileName(file, authorUsername);
-		}
+		// String mediaName;
+		// if (file != null) {
+		// 	mediaName = storeFileAndReturnFileName(file, authorUsername);
+		// } else {
+		// 	mediaName = null;
+		// }
 
 		Post post = Post.builder()
 				.author(author)
 				.title(title)
 				.description(description)
-				.mediaName(mediaName)
 				.build();
 		postRepository.save(post);
 
-		return ResponseEntity.ok(ResponsePayload.builder().status(200).message("Post created successfully").build());
+		return ResponsePayload.builder().status(200).message("Post created successfully for " + author.getUsername() + ".").build();
 	}
 
 	// ---------------------------------------------

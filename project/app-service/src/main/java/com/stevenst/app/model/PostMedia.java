@@ -1,7 +1,5 @@
 package com.stevenst.app.model;
 
-import java.time.LocalDateTime;
-
 import com.stevenst.lib.model.User;
 
 import jakarta.persistence.Column;
@@ -18,25 +16,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "\"post\"")
+@Table(name = "\"post_media\"")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Post {
+public class PostMedia {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "\"author_id\"", nullable = false)
-	private User author;
+	@JoinColumn(name = "post_id", nullable = false)
+	private Post post;
 
 	@Column(nullable = false)
-	private String title;
-
-	private String description;
-
-	@Column(nullable = false)
-	private final LocalDateTime createdAt = LocalDateTime.now();
+	private String mediaName;
 }
+
