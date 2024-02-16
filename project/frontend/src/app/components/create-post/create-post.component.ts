@@ -8,39 +8,49 @@ import { AppService } from '../../services/app.service';
   templateUrl: './create-post.component.html',
   styleUrls: ['./create-post.component.scss']
 })
-export class CreatePostComponent implements OnInit, OnDestroy {
+export class CreatePostComponent implements OnDestroy {
   title: string = '';
   authorUsername: string = localStorage.getItem('username') ?? '';
   description: string | null = null;
-  file: File | null = null;
-  previewUrl: SafeUrl | null = null;
+  files: File[] = [];
+  previewUrls: any[] = [];
 
   constructor(private sanitizer: DomSanitizer, private http: HttpClient, private appService: AppService) {
 
   }
 
-  ngOnInit(): void {
-    
-  }
-
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.file = input.files[0];
-      const objectUrl = URL.createObjectURL(this.file);
-      this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+    if (input.files) {
+      this.files = [];
+      this.previewUrls = [];
+
+      this.files = Array.from(input.files);
+
+      for (let file of this.files) {
+        const objectUrl: string = URL.createObjectURL(file);
+        this.previewUrls.push(this.sanitizer.bypassSecurityTrustUrl(objectUrl));
+      }
     }
+    // const input = event.target as HTMLInputElement;
+    // if (input.files?.length) {
+    //   this.file = input.files[0];
+    //   const objectUrl = URL.createObjectURL(this.file);
+    //   this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+    // }
   }
 
   createPost(): void {
     const formData = new FormData();
     formData.append('title', this.title);
     formData.append('authorUsername', this.authorUsername);
-    if (this.file) {
-      formData.append('file', this.file);
-    }
-    if(this.description) {
+    if (this.description) {
       formData.append('description', this.description);
+    }
+    if (this.files?.length) {
+      this.files.forEach((file, index) => {
+        formData.append(`files[${index}]`, file, file.name);
+      });
     }
 
     this.appService.createPost(formData).subscribe({
@@ -62,9 +72,8 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.previewUrl) {
-      const originalUrl = (this.previewUrl as any).changingThisBreaksApplicationSecurity;
-      URL.revokeObjectURL(originalUrl);
-    }
+    this.previewUrls.forEach((previewUrl) => {
+      URL.revokeObjectURL(previewUrl);
+    });
   }
 }
