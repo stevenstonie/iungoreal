@@ -39,5 +39,3 @@ logging:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-app:
-  media-path: _

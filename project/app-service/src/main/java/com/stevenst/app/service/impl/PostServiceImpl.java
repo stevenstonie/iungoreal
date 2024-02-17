@@ -20,6 +20,8 @@ import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.app.exception.IgorPostException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.model.Post;
+import com.stevenst.app.model.PostMedia;
+import com.stevenst.app.repository.PostMediaRepository;
 import com.stevenst.app.repository.PostRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.PostService;
@@ -33,15 +35,13 @@ import lombok.RequiredArgsConstructor;
 public class PostServiceImpl implements PostService {
 	private final PostRepository postRepository;
 	private final UserRepository userRepository;
-	@Value("${app.media-path}")
-	private String mediaPath;
+	private final PostMediaRepository postMediaRepository;
 
 	@Override
 	public ResponsePayload createPost(String authorUsername, String title, String description,
 			List<MultipartFile> files) {
-		User author = userRepository.findByUsername(authorUsername)
-				.orElseThrow(
-						() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
+		User author = userRepository.findByUsername(authorUsername).orElseThrow(
+				() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
 		if (title == null || title.isEmpty()) {
 			throw new IgorPostException("Title cannot be null or empty");
 		}
@@ -72,11 +72,19 @@ public class PostServiceImpl implements PostService {
 	}
 
 	private void saveMediaNamesInDb(Post post, List<String> filenames) {
-
+		for (int i = 0; i < filenames.size(); i++) {
+			PostMedia media = PostMedia.builder()
+					.post(post)
+					.mediaIndex((byte) i)
+					.mediaName(filenames.get(i))
+					.build();
+			
+			postMediaRepository.save(media);
+		}
 	}
-	
+
 	private void saveMediaFilesInCloud() {
-		
+
 	}
 
 	private List<String> getUniqueFilenamesFromFiles(List<MultipartFile> files) {
@@ -99,7 +107,7 @@ public class PostServiceImpl implements PostService {
 			filenameCounts.put(originalFilename, (byte) (count + 1));
 			uniqueFilenames.add(uniqueFilename);
 		}
-		
+
 		return uniqueFilenames;
 	}
 }
