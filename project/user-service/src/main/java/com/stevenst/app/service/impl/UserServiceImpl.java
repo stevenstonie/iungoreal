@@ -175,9 +175,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private PutObjectRequest createPutObjectRequest(String username, String fileName) {
-		String folder = username;
-		String key = (folder != null && !folder.isEmpty() ? folder : "") + "/profile_picture/" + fileName;
-
+		String key = username + "/profile_picture/" + fileName;
+		// TODO: add metadata
 		return PutObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key)
@@ -185,8 +184,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private GetObjectRequest createGetObjectRequest(String username, String fileName) {
-		String folder = username;
-		String key = (folder != null && !folder.isEmpty() ? folder : "") + "/profile_picture/" + fileName;
+		String key = username + "/profile_picture/" + fileName;
 
 		return GetObjectRequest.builder()
 				.bucket(bucketName)
@@ -195,8 +193,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private DeleteObjectRequest createDeleteObjectRequest(String username, String fileName) {
-		String folder = username;
-		String key = (folder != null && !folder.isEmpty() ? folder : "") + "/profile_picture/" + fileName;
+		String key = username + "/profile_picture/" + fileName;
 
 		return DeleteObjectRequest.builder()
 				.bucket(bucketName)
