@@ -31,6 +31,9 @@ public class PostMedia {
 	private Post post;
 
 	@Column(nullable = false)
+	private byte mediaIndex;
+
+	@Column(nullable = false)
 	private String mediaName;
 }
 

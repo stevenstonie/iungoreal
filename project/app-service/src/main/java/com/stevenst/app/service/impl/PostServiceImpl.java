@@ -5,7 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,72 +38,68 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public ResponsePayload createPost(String authorUsername, String title, String description,
-			MultipartFile file) {
+			List<MultipartFile> files) {
 		User author = userRepository.findByUsername(authorUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
-		if(title == null || title.isEmpty()) {
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
+		if (title == null || title.isEmpty()) {
 			throw new IgorPostException("Title cannot be null or empty");
 		}
 
-		// String mediaName;
-		// if (file != null) {
-		// 	mediaName = storeFileAndReturnFileName(file, authorUsername);
-		// } else {
-		// 	mediaName = null;
-		// }
+		Post post = savePostInDbAndReturn(author, title, description);
 
+		if (files.size() > 0) {
+			List<String> uniqueFilenames = getUniqueFilenamesFromFiles(files);
+
+			saveMediaNamesInDb(post, uniqueFilenames);
+
+			saveMediaFilesInCloud();
+		}
+
+		return ResponsePayload.builder().status(200)
+				.message("Post created successfully for " + author.getUsername() + ".").build();
+	}
+
+	// ---------------------------------------------
+
+	private Post savePostInDbAndReturn(User author, String title, String description) {
 		Post post = Post.builder()
 				.author(author)
 				.title(title)
 				.description(description)
 				.build();
-		postRepository.save(post);
-
-		return ResponsePayload.builder().status(200).message("Post created successfully for " + author.getUsername() + ".").build();
+		return postRepository.save(post);
 	}
 
-	// ---------------------------------------------
+	private void saveMediaNamesInDb(Post post, List<String> filenames) {
 
-	private String storeFileAndReturnFileName(MultipartFile file, String authorUsername) {
-		try {
-			String originalFileName = file.getOriginalFilename();
-			if (originalFileName == null) {
-				throw new IgorPostException("Cannot store a file with a null name.");
-			}
-
-			Path targetDirectory = Paths.get(mediaPath, authorUsername, "post_images");
-			Files.createDirectories(targetDirectory);
-			
-			Path targetPath = targetDirectory.resolve(originalFileName);
-			if (Files.exists(targetPath)) {
-				targetPath = getPathWithUniqueFileName(targetDirectory, originalFileName);
-			}
-
-			Files.write(targetPath, file.getBytes(), StandardOpenOption.CREATE_NEW);
-
-			return targetPath.getFileName().toString();
-		} catch (IOException e) {
-			throw new IgorIoException("Could not store file");
-		}
+	}
+	
+	private void saveMediaFilesInCloud() {
+		
 	}
 
-	private Path getPathWithUniqueFileName(Path targetDirectory, String originalFileName) {
-		String fileNameWithoutExtension = originalFileName;
-		String fileExtension = "";
-		int lastIndexOfDot = originalFileName.lastIndexOf('.');
-		if (lastIndexOfDot > 0) {
-			fileNameWithoutExtension = originalFileName.substring(0, lastIndexOfDot);
-			fileExtension = originalFileName.substring(lastIndexOfDot);
+	private List<String> getUniqueFilenamesFromFiles(List<MultipartFile> files) {
+		Map<String, Byte> filenameCounts = new HashMap<>();
+		List<String> uniqueFilenames = new ArrayList<>();
+
+		for (MultipartFile file : files) {
+			String originalFilename = file.getOriginalFilename();
+			Byte count = filenameCounts.getOrDefault(originalFilename, (byte) 0);
+
+			String uniqueFilename;
+			if (count > 0) {
+				String baseName = FilenameUtils.removeExtension(originalFilename);
+				String extension = FilenameUtils.getExtension(originalFilename);
+				uniqueFilename = baseName + "_" + count + (extension.isEmpty() ? "" : "." + extension);
+			} else {
+				uniqueFilename = originalFilename;
+			}
+
+			filenameCounts.put(originalFilename, (byte) (count + 1));
+			uniqueFilenames.add(uniqueFilename);
 		}
-
-		int fileIndex = 0;
-		Path filePathWithIndex;
-		do {
-			fileIndex++;
-			String newFileName = fileNameWithoutExtension + "_" + fileIndex + fileExtension;
-			filePathWithIndex = targetDirectory.resolve(newFileName);
-		} while (Files.exists(filePathWithIndex));
-
-		return filePathWithIndex;
+		
+		return uniqueFilenames;
 	}
 }

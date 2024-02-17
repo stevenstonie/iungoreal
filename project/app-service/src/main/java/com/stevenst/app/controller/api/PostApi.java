@@ -1,5 +1,7 @@
 package com.stevenst.app.controller.api;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,5 +21,5 @@ public interface PostApi {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ResponsePayload.class)) })
 	})
 	public ResponseEntity<ResponsePayload> createPost(String authorUsername, String title, String description,
-			MultipartFile file);
+			List<MultipartFile> files);
 }

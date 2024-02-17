@@ -18,12 +18,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "\"post_likes\"")
+@Table(name = "\"comment_votes\"")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostLikes {
+public class CommentVotes {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -33,8 +33,8 @@ public class PostLikes {
 	private User user;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "post_id", nullable = false)
-	private Post post;
+	@JoinColumn(name = "comment_id", nullable = false)
+	private Comment comment;
 
 	private boolean liked;
 

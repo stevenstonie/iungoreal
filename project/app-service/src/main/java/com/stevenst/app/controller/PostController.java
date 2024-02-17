@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -25,7 +28,7 @@ public class PostController implements PostApi {
 			@RequestParam("authorUsername") String authorUsername,
 			@RequestParam("title") String title,
 			@RequestParam(value = "description", required = false) String description,
-			@RequestParam(value = "file", required = false) MultipartFile file) {
+			@RequestParam("files") List<MultipartFile> file) {
 		return ResponseEntity.ok(postService.createPost(authorUsername, title, description, file));
 	}
 }
