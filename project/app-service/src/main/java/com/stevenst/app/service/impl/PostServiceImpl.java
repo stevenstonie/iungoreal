@@ -1,10 +1,6 @@
 package com.stevenst.app.service.impl;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,12 +8,12 @@ import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.stevenst.lib.exception.IgorIoException;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.stevenst.app.exception.IgorPostException;
+import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.model.Post;
 import com.stevenst.app.model.PostMedia;
@@ -29,6 +25,9 @@ import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
 
 import lombok.RequiredArgsConstructor;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +35,9 @@ public class PostServiceImpl implements PostService {
 	private final PostRepository postRepository;
 	private final UserRepository userRepository;
 	private final PostMediaRepository postMediaRepository;
+	private final S3Client s3Client;
+	@Value("${aws.bucketName}")
+	private String bucketName;
 
 	@Override
 	public ResponsePayload createPost(String authorUsername, String title, String description,
@@ -53,7 +55,7 @@ public class PostServiceImpl implements PostService {
 
 			saveMediaNamesInDb(post, uniqueFilenames);
 
-			saveMediaFilesInCloud();
+			saveMediaFilesInCloud(author.getUsername(), post.getId(), files, uniqueFilenames);
 		}
 
 		return ResponsePayload.builder().status(200)
@@ -78,13 +80,26 @@ public class PostServiceImpl implements PostService {
 					.mediaIndex((byte) i)
 					.mediaName(filenames.get(i))
 					.build();
-			
+
 			postMediaRepository.save(media);
 		}
 	}
 
-	private void saveMediaFilesInCloud() {
+	private void saveMediaFilesInCloud(String username, Long postId, List<MultipartFile> files,
+			List<String> filenames) {
+		String keyPath = username + "/posts/" + postId;
 
+		if (files.size() != filenames.size()) {
+			throw new IllegalArgumentException("Change this into a custom exception pointing to a 500 status error");	// TODO:
+		}
+
+		for (int i = 0; i < files.size(); i++) {
+			MultipartFile file = files.get(i);
+			String filename = filenames.get(i);
+			String key = keyPath + "/" + filename;
+
+			saveFileInCloud(file, filename, key);
+		}
 	}
 
 	private List<String> getUniqueFilenamesFromFiles(List<MultipartFile> files) {
@@ -109,5 +124,28 @@ public class PostServiceImpl implements PostService {
 		}
 
 		return uniqueFilenames;
+	}
+
+	private void saveFileInCloud(MultipartFile file, String filename, String key) {
+		try {
+			Map<String, String> metadata = new HashMap<>();
+			String contentType = file.getContentType();
+
+			if (contentType != null && !contentType.isEmpty()) {
+				metadata.put("Content-Type", contentType);
+			}
+
+			RequestBody requestBody = RequestBody.fromInputStream(file.getInputStream(), file.getSize());
+
+			PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+					.bucket(bucketName)
+					.key(key)
+					.metadata(metadata)
+					.build();
+
+			s3Client.putObject(putObjectRequest, requestBody);
+		} catch (IOException e) {
+			throw new IgorIoException(e.getMessage());
+		}
 	}
 }
