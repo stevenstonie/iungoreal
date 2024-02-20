@@ -2,6 +2,7 @@ package com.stevenst.app.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,12 +12,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.stevenst.app.exception.IgorPostException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.model.Post;
 import com.stevenst.app.model.PostMedia;
+import com.stevenst.app.payload.PostPayload;
 import com.stevenst.app.repository.PostMediaRepository;
 import com.stevenst.app.repository.PostRepository;
 import com.stevenst.app.repository.UserRepository;
@@ -60,6 +61,11 @@ public class PostServiceImpl implements PostService {
 
 		return ResponsePayload.builder().status(200)
 				.message("Post created successfully for " + author.getUsername() + ".").build();
+	}
+
+	@Override
+	public List<PostPayload> getAllPosts(String authorUsername) {
+		return Collections.emptyList();
 	}
 
 	// ---------------------------------------------

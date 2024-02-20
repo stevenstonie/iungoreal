@@ -1,7 +1,5 @@
 package com.stevenst.app.model;
 
-import com.stevenst.lib.model.User;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

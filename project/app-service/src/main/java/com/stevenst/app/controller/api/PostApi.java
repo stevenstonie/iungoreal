@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.stevenst.app.payload.PostPayload;
 import com.stevenst.lib.payload.ResponsePayload;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,4 +23,11 @@ public interface PostApi {
 	})
 	public ResponseEntity<ResponsePayload> createPost(String authorUsername, String title, String description,
 			List<MultipartFile> files);
+
+	@Operation(summary = "Get all posts", description = "Get all posts of an user", tags = "Post")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful", content = {
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostPayload[].class)) })
+	})
+	public ResponseEntity<List<PostPayload>> getAllPosts(String authorUsername);
 }
