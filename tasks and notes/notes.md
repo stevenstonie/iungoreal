@@ -7,16 +7,14 @@
 	- (recurring) show window dialogs on errors / restrictions for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
-	- [ ] (fr, bk) create posts
 	- [ ] (fr, bk) functionality for the main page (fetching friends posts)
-	- [ ] (fr, bk) implement search functionality
 	- [ ] (fr, bk) notifications
 	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
 	- [ ] (fr) add upload size cap for the file size on frontend (and update the existing ones from backend)
 	- [ ] (fr) add verification through email when registering
 	- [ ] (fr) user settings
-	- [ ] (fr) user profile
 	- [ ] (bk) archive notifications (when the user clicks 'x' on frontend or when the notification is older than 30 days)
+	- [ ] (fr, bk) implement search functionality
 	- [ ] (fr, bk) chat rooms -> (3 types: dms, regional and custom)
 	- [ ] (fr, bk) add more functionalities to the map
 	- [ ] (fr, bk) calendar
@@ -28,6 +26,7 @@
 
 	_________________________________
 	---------------------------------
+	- [x] (fr, bk) create posts and display them on the profile
 	- [x] (bk) integrate s3 as object storage service
 	- [x] (fr, bk) implement friend requests
 	- [x] (fr) if the user doesnt exist when accessing a profile, redirect to 404
@@ -38,8 +37,8 @@
 	- [x] (fr, bk) add a button for a window where the map should be, create the map microservice and connect it to the app (make db queries for saved data like markers)
 	- [x] (fr) save the token locally and check for its availability when accessing the site
 	- [x] (fr) redirect to main page on successful authentication
-	- [x] frontend login / register
-	- [x] backend login / register by token
+	- [x] (fr) login / register
+	- [x] (bk) login / register
 	- [x] add a frontend and connect it to the backend
 
 - to add in the project documentation: 
