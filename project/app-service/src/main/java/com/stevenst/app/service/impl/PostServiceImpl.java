@@ -1,6 +1,7 @@
 package com.stevenst.app.service.impl;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,11 +29,16 @@ import com.stevenst.lib.payload.ResponsePayload;
 
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -71,43 +77,58 @@ public class PostServiceImpl implements PostService {
 	public List<PostPayload> getAllPosts(String authorUsername) {
 		User author = userRepository.findByUsername(authorUsername).orElseThrow(
 				() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
-
 		List<Post> posts = postRepository.findAllByAuthorUsernameOrderByCreatedAtDesc(author.getUsername());
+		List<PostPayload> postsDetails = new ArrayList<>();
+
 		for (Post post : posts) {
 			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
 			List<String> mediaLinks = getLinksForAllMediaOfAPost(author.getUsername(), post.getId(), mediaNames);
 
-			// List<String> mediaLinks = new ArrayList<>();
-			// for (PostMedia media : postMediaRepository.findAllByPostId(post.getId())) {
-			// 	mediaLinks.add(media.getMediaLink());
-			// }
-			// post.setMediaLinks(mediaLinks);
+			Long likes = 0L;
+			Long dislikes = 0L;
+
+			postsDetails.add(PostPayload.builder()
+					.authorUsername(author.getUsername())
+					.title(post.getTitle())
+					.description(post.getDescription())
+					.createdAt(post.getCreatedAt())
+					.mediaLinks(mediaLinks)
+					.likes(likes)
+					.dislikes(dislikes)
+					.build());
 		}
-		return null;
+
+		return postsDetails;
 	}
 
 	// ---------------------------------------------
 
 	private List<String> getLinksForAllMediaOfAPost(String username, Long postId, List<String> mediaNames) {
 		List<String> mediaLinks = new ArrayList<>();
+
 		for (String mediaName : mediaNames) {
-			mediaLinks.add(getLinkForAMediaOfAPost(username, postId, mediaName));
+			try {
+				mediaLinks.add(getLinkForAMediaOfAPost(username, postId, mediaName));
+			} catch (IgorIoException e) {
+				System.err.println("Unable to generate a presigned url:" + e.getMessage());
+			}
 		}
+
 		return mediaLinks;
 	}
 
 	private String getLinkForAMediaOfAPost(String username, Long postId, String mediaName) {
+		String key = username + "/posts/" + postId + "/" + mediaName;
 		try {
-			checkIfMediaFileExistsInS3(username, postId, mediaName);
+			checkIfMediaFileExistsInS3(key);
 		} catch (IgorImageNotFoundException e) {
-			throw new IgorImageNotFoundException(e.getMessage()); // TODO: change this exception message accordingly
+			return null;
 		}
-		
-		return null;
+
+		return generatePresignedUrl(key);
 	}
 
-	private void checkIfMediaFileExistsInS3(String username, Long postId, String mediaName) {
-		String key = username + "/posts/" + postId + "/" + mediaName;
+	private void checkIfMediaFileExistsInS3(String key) {
 		HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key)
@@ -117,6 +138,24 @@ public class PostServiceImpl implements PostService {
 			s3Client.headObject(headObjectRequest);
 		} catch (NoSuchKeyException e) {
 			throw new IgorImageNotFoundException(e.getMessage());
+		} catch (S3Exception e) {
+			throw new IgorIoException(e.getMessage());
+		}
+	}
+
+	private String generatePresignedUrl(String key) {
+		GetObjectRequest getObjectRequest = createGetObjectRequest(key);
+		Duration expiration = Duration.ofHours(1);
+
+		try (S3Presigner presigner = S3Presigner.builder().region(Region.EU_CENTRAL_1).build()) {
+			GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+					.getObjectRequest(getObjectRequest)
+					.signatureDuration(expiration)
+					.build();
+
+			PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
+
+			return presignedRequest.url().toString();
 		} catch (S3Exception e) {
 			throw new IgorIoException(e.getMessage());
 		}
@@ -205,5 +244,13 @@ public class PostServiceImpl implements PostService {
 		} catch (IOException e) {
 			throw new IgorIoException(e.getMessage());
 		}
+	}
+
+	private GetObjectRequest createGetObjectRequest(String key) {
+
+		return GetObjectRequest.builder()
+				.bucket(bucketName)
+				.key(key)
+				.build();
 	}
 }
