@@ -1,7 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { ResponsePayload } from '../models/payloads';
+import { PostPayload } from '../models/app';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,15 @@ export class AppService {
 
   createPost(formData: FormData): Observable<ResponsePayload> {
     return this.httpClient.post<ResponsePayload>(`${this.postApiUrl}/create`, formData)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getAllPosts(username: string): Observable<PostPayload[]> {
+    const params = new HttpParams().set('authorUsername', username);
+    
+    return this.httpClient.get<PostPayload[]>(`${this.postApiUrl}/getAll`, { params })
       .pipe(
         catchError(this.handleError)
       );

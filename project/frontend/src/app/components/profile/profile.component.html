@@ -16,72 +16,40 @@
 	</ng-container>
 </div>
 
+<app-posts [usernameOfUserOnScreen]="userOnScreen.username"></app-posts>
 <div id="body">
-	<div id="section-left">
-		<div id="section-sort">Sort by:
-			<button>New</button>
-			<button>Hot</button>
-			<button>Top</button>
-		</div>
 
-		<div class="section-post">
-			<h3>post1 title</h3>
-			<p>post1 description</p>
+	<img id="profile-cover" [src]="profileCoverUrl" alt="Profile cover">
+	<img id="profile-picture" [src]="profilePictureUrl" alt="Profile picture">
 
-			<div class="post-buttons">
-				<button>Like</button>
-				<button>Dislike</button>
-				<button>Comment</button>
-				<button>Save</button>
-			</div>
-		</div>
-
-		<div class="section-post">
-			<h3>post2 title</h3>
-			<p>post2 description</p>
-
-			<div class="post-buttons">
-				<button>Like</button>
-				<button>Dislike</button>
-				<button>Comment</button>
-				<button>Save</button>
-			</div>
-		</div>
-	</div>
-
-	<div id="section-right">
-		<img id="profile-cover" [src]="profileCoverUrl" alt="Profile cover">
-		<img id="profile-picture" [src]="profilePictureUrl" alt="Profile picture">
-
-		<ng-container *ngIf="!isUserOnScreenTheLoggedOne">
-			<!-- always check the status: 
+	<ng-container *ngIf="!isUserOnScreenTheLoggedOne">
+		<!-- always check the status: 
 				the users have no connection with each other
 				the user on screen either received the request or sent it 
 				the users are friends -->
-			<ng-container *ngIf="!isFriends && !loggedUserSentFriendRequest && !userSentFriendRequest">
-				<button id="send-friend-request-button" (click)="sendFriendRequest()">Send friend request</button>
-			</ng-container>
-
-			<ng-container *ngIf="!isFriends && loggedUserSentFriendRequest && !userSentFriendRequest">
-				<button id="cancel-friend-request-button" (click)="cancelFriendRequest()">Cancel friend
-					request</button>
-			</ng-container>
-
-			<ng-container *ngIf="!isFriends && !loggedUserSentFriendRequest && userSentFriendRequest">
-				<button id="accept-friend-request-button" (click)="acceptFriendRequest()">Accept friend
-					request</button>
-				<button id="decline-friend-request-button" (click)="declineFriendRequest()">Decline friend
-					request</button>
-			</ng-container>
-
-			<ng-container *ngIf="isFriends && !loggedUserSentFriendRequest && !userSentFriendRequest">
-				<button id="unfriend-button" (click)="unfriend()">Unfriend</button>
-			</ng-container>
+		<ng-container *ngIf="!isFriends && !loggedUserSentFriendRequest && !userSentFriendRequest">
+			<button id="send-friend-request-button" (click)="sendFriendRequest()">Send friend request</button>
 		</ng-container>
 
-		<ng-container *ngIf="isUserOnScreenTheLoggedOne">
-			<button id="edit-profile-button" (click)="editProfile()">Edit profile</button>
-			<input type="file" (change)="onFileSelected($event)" accept="image/*, video/*">
+		<ng-container *ngIf="!isFriends && loggedUserSentFriendRequest && !userSentFriendRequest">
+			<button id="cancel-friend-request-button" (click)="cancelFriendRequest()">Cancel friend
+				request</button>
 		</ng-container>
-	</div>
+
+		<ng-container *ngIf="!isFriends && !loggedUserSentFriendRequest && userSentFriendRequest">
+			<button id="accept-friend-request-button" (click)="acceptFriendRequest()">Accept friend
+				request</button>
+			<button id="decline-friend-request-button" (click)="declineFriendRequest()">Decline friend
+				request</button>
+		</ng-container>
+
+		<ng-container *ngIf="isFriends && !loggedUserSentFriendRequest && !userSentFriendRequest">
+			<button id="unfriend-button" (click)="unfriend()">Unfriend</button>
+		</ng-container>
+	</ng-container>
+
+	<ng-container *ngIf="isUserOnScreenTheLoggedOne">
+		<button id="edit-profile-button" (click)="editProfile()">Edit profile</button>
+		<input type="file" (change)="onFileSelected($event)" accept="image/*, video/*">
+	</ng-container>
 </div>

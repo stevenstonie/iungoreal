@@ -17,6 +17,7 @@ import { UserSettingsComponent } from './components/user-settings/user-settings.
 import { ChatComponent } from './components/chat/chat.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { FriendRequestsComponent } from './components/friend-requests/friend-requests.component';
+import { PostsComponent } from './components/posts/posts.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { FriendRequestsComponent } from './components/friend-requests/friend-req
     UserSettingsComponent,
     ChatComponent,
     NotificationsComponent,
-    FriendRequestsComponent
+    FriendRequestsComponent,
+    PostsComponent
   ],
   imports: [
     BrowserModule,
