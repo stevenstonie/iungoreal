@@ -9,8 +9,8 @@ import { AppService } from '../../services/app.service';
   styleUrls: ['./create-post.component.scss']
 })
 export class CreatePostComponent implements OnDestroy {
-  title: string = '';
   authorUsername: string = localStorage.getItem('username') ?? '';
+  title: string = '';
   description: string | null = null;
   files: File[] = [];
   previewUrls: any[] = [];
@@ -32,35 +32,29 @@ export class CreatePostComponent implements OnDestroy {
         this.previewUrls.push(this.sanitizer.bypassSecurityTrustUrl(objectUrl));
       }
     }
-    // const input = event.target as HTMLInputElement;
-    // if (input.files?.length) {
-    //   this.file = input.files[0];
-    //   const objectUrl = URL.createObjectURL(this.file);
-    //   this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
-    // }
   }
 
   createPost(): void {
-    const formData = new FormData();
-    formData.append('title', this.title);
-    formData.append('authorUsername', this.authorUsername);
-    if (this.description) {
-      formData.append('description', this.description);
-    }
-    if (this.files?.length) {
-      this.files.forEach((file) => {
-        formData.append('files', file, file.name);
-      });
-    }
+    // const formData = new FormData();
+    // formData.append('title', this.title);
+    // formData.append('authorUsername', this.authorUsername);
+    // if (this.description) {
+    //   formData.append('description', this.description);
+    // }
+    // if (this.files?.length) {
+    //   this.files.forEach((file) => {
+    //     formData.append('files', file, file.name);
+    //   });
+    // }
 
-    this.appService.createPost(formData).subscribe({
-      next: (response) => {
-        console.log('Post created successfully', response);
-      },
-      error: (error) => {
-        console.error('Error creating post', error);
-      }
-    });
+    // this.appService.createPost(formData).subscribe({
+    //   next: (response) => {
+    //     console.log('Post created successfully', response);
+    //   },
+    //   error: (error) => {
+    //     console.error('Error creating post', error);
+    //   }
+    // });
   }
 
   isImage(file: File): boolean {

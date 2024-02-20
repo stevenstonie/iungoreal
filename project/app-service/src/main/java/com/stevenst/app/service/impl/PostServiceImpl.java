@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stevenst.app.exception.IgorPostException;
+import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.model.Post;
@@ -28,7 +29,10 @@ import com.stevenst.lib.payload.ResponsePayload;
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Service
 @RequiredArgsConstructor
@@ -65,10 +69,58 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostPayload> getAllPosts(String authorUsername) {
-		return Collections.emptyList();
+		User author = userRepository.findByUsername(authorUsername).orElseThrow(
+				() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
+
+		List<Post> posts = postRepository.findAllByAuthorUsernameOrderByCreatedAtDesc(author.getUsername());
+		for (Post post : posts) {
+			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
+			List<String> mediaLinks = getLinksForAllMediaOfAPost(author.getUsername(), post.getId(), mediaNames);
+
+			// List<String> mediaLinks = new ArrayList<>();
+			// for (PostMedia media : postMediaRepository.findAllByPostId(post.getId())) {
+			// 	mediaLinks.add(media.getMediaLink());
+			// }
+			// post.setMediaLinks(mediaLinks);
+		}
+		return null;
 	}
 
 	// ---------------------------------------------
+
+	private List<String> getLinksForAllMediaOfAPost(String username, Long postId, List<String> mediaNames) {
+		List<String> mediaLinks = new ArrayList<>();
+		for (String mediaName : mediaNames) {
+			mediaLinks.add(getLinkForAMediaOfAPost(username, postId, mediaName));
+		}
+		return mediaLinks;
+	}
+
+	private String getLinkForAMediaOfAPost(String username, Long postId, String mediaName) {
+		try {
+			checkIfMediaFileExistsInS3(username, postId, mediaName);
+		} catch (IgorImageNotFoundException e) {
+			throw new IgorImageNotFoundException(e.getMessage()); // TODO: change this exception message accordingly
+		}
+		
+		return null;
+	}
+
+	private void checkIfMediaFileExistsInS3(String username, Long postId, String mediaName) {
+		String key = username + "/posts/" + postId + "/" + mediaName;
+		HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
+				.bucket(bucketName)
+				.key(key)
+				.build();
+
+		try {
+			s3Client.headObject(headObjectRequest);
+		} catch (NoSuchKeyException e) {
+			throw new IgorImageNotFoundException(e.getMessage());
+		} catch (S3Exception e) {
+			throw new IgorIoException(e.getMessage());
+		}
+	}
 
 	private Post savePostInDbAndReturn(User author, String title, String description) {
 		Post post = Post.builder()
@@ -96,7 +148,7 @@ public class PostServiceImpl implements PostService {
 		String keyPath = username + "/posts/" + postId;
 
 		if (files.size() != filenames.size()) {
-			throw new IllegalArgumentException("Change this into a custom exception pointing to a 500 status error");	// TODO:
+			throw new IllegalArgumentException("Change this into a custom exception pointing to a 500 status error"); // TODO:
 		}
 
 		for (int i = 0; i < files.size(); i++) {
