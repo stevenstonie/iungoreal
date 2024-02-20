@@ -48,8 +48,8 @@ export class CreatePostComponent implements OnDestroy {
       formData.append('description', this.description);
     }
     if (this.files?.length) {
-      this.files.forEach((file, index) => {
-        formData.append(`files[${index}]`, file, file.name);
+      this.files.forEach((file) => {
+        formData.append('files', file, file.name);
       });
     }
 
