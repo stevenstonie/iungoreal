@@ -183,10 +183,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void checkIfPfpExistsInS3(String username, String pfpNameFromDb) {
-		// TODO: make it check for the object in its path
+		String key = username + "/profile_picture/" + pfpNameFromDb;
 		HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
 				.bucket(bucketName)
-				.key(pfpNameFromDb)
+				.key(key)
 				.build();
 
 		try {

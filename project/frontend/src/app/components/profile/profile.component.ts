@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FriendsService } from 'src/app/services/friends.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
-import { JsonifiedString } from 'src/app/models/app';
+import { StringInJson } from 'src/app/models/app';
 import { ResponsePayload } from 'src/app/models/payloads';
 
 @Component({
@@ -59,7 +59,7 @@ export class ProfileComponent {
 
   getPfpFromService(): void {
     // this.userService.getProfilePicture(this.usernameOfUserOnScreen).subscribe({
-    //   next: (pfp: JsonString) => {
+    //   next: (pfp: StringInJson) => {
     //     if (pfp.string === '' || pfp.string === null) {
     //       return;
     //     }
@@ -69,6 +69,20 @@ export class ProfileComponent {
     //     console.error(error);
     //   }
     // });
+  }
+
+  saveThePfpFromService() {
+    // if (this.file) {
+    //   this.userService.saveProfilePicture(this.file).subscribe({
+    //     next: (response: ResponsePayload) => {
+    //       this.getPfpFromService();
+    //       console.log(response);
+    //     },
+    //     error: (error) => {
+    //       console.error(error);
+    //     }
+    //   });
+    // }
   }
 
   getUserObjectFromService() {
@@ -82,20 +96,6 @@ export class ProfileComponent {
         this.router.navigate(['/404']);
       }
     });
-  }
-
-  saveThePfpFromService() {
-    // if (this.file) {
-    //   this.userService.saveProfilePicture(this.file).subscribe({
-    //     next: (response: ResponsePayload) => {
-    //       this.getUserPfpFromService();
-    //       console.log(response);
-    //     },
-    //     error: (error) => {
-    //       console.error(error);
-    //     }
-    //   });
-    // }
   }
 
   /*

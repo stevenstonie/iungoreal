@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { User } from '../models/user';
 import { ResponsePayload } from '../models/payloads';
-import { JsonifiedString } from '../models/app';
+import { StringInJson } from '../models/app';
 
 @Injectable({
   providedIn: 'root'
@@ -47,10 +47,10 @@ export class UserService {
       );
   }
 
-  getProfilePicture(username: string): Observable<JsonifiedString> {
+  getProfilePicture(username: string): Observable<StringInJson> {
     const params = new HttpParams().set('username', username);
 
-    return this.http.get<JsonifiedString>(`${this.apiUrl}/getProfilePicture`, { params })
+    return this.http.get<StringInJson>(`${this.apiUrl}/getProfilePicture`, { params })
       .pipe(
         catchError(this.handleError)
       );

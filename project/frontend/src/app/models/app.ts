@@ -1,4 +1,4 @@
-export interface JsonifiedString {
+export interface StringInJson {
 	string: string
 }
 
