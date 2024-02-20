@@ -44,7 +44,7 @@ export class ProfileComponent {
 
       this.getUserObjectFromService();
 
-      this.getUserPfpFromService();
+      this.getPfpFromService();
     }
   }
 
@@ -57,11 +57,13 @@ export class ProfileComponent {
     this.saveThePfpFromService();
   }
 
-  getUserPfpFromService(): void {
+  getPfpFromService(): void {
     // this.userService.getProfilePicture(this.usernameOfUserOnScreen).subscribe({
     //   next: (pfp: JsonString) => {
+    //     if (pfp.string === '' || pfp.string === null) {
+    //       return;
+    //     }
     //     this.profilePictureUrl = pfp.string;
-    //     console.log(pfp.string);
     //   },
     //   error: (error) => {
     //     console.error(error);

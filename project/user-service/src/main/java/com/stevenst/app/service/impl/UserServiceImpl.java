@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.model.User;
@@ -23,6 +24,8 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -96,8 +99,13 @@ public class UserServiceImpl implements UserService {
 
 		String pfpNameFromDb = user.getProfilePictureName();
 		if (pfpNameFromDb == null || pfpNameFromDb == "") {
-			System.out.println("No profile picture found for user: " + username);
-			return "";
+			return JsonUtil.convertStringToJson("");
+		}
+
+		try{
+			checkIfPfpExistsInS3(username, pfpNameFromDb);
+		} catch (IgorImageNotFoundException e) {
+			throw new IgorImageNotFoundException("No stored profile picture found for user: " + username + ".");
 		}
 
 		return JsonUtil.convertStringToJson(generatePresignedUrl(username, pfpNameFromDb));
@@ -170,6 +178,21 @@ public class UserServiceImpl implements UserService {
 			return presignedRequest.url().toString();
 		} catch (S3Exception e) {
 			System.err.println("Unable to generate a presigned url:" + e.getMessage());
+			throw new IgorIoException(e.getMessage());
+		}
+	}
+
+	private void checkIfPfpExistsInS3(String username, String pfpNameFromDb) {
+		HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
+				.bucket(bucketName)
+				.key(pfpNameFromDb)
+				.build();
+
+		try {
+			s3Client.headObject(headObjectRequest);
+		} catch (NoSuchKeyException e) {
+			throw new IgorImageNotFoundException(e.getMessage());
+		} catch (S3Exception e) {
 			throw new IgorIoException(e.getMessage());
 		}
 	}
