@@ -10,65 +10,61 @@
 	margin-top: 20px;
 }
 
+#section {
+	&-left {
+		margin-left: 50px;
+		margin-top: 30px;
+		width: 46%;
+		height: auto;
+	}
 
-#section-left-right {
-	display:flex;
+	&-right {
+		position: fixed;
+		right: 50px;
+		top: 80px;
+		width: 400px;
 
-	#section {
-		&-left {
-			flex: 1;
-			margin-left: 50px;
-			margin-top: 30px;
-			width: 46%;
-			
+		#profile {
+			&-cover {
+				position: absolute;
+				background-color: aqua;
+				top: 0;
+				width: 100%;
+				height: 200px;
+			}
+
+			&-picture {
+				position: absolute;
+				background-color: aquamarine;
+				top: 150px;
+				width: 100px;
+				height: 100px;
+				margin: auto auto 10px 10px;
+				border-radius: 50px;
+
+			}
 		}
 
-		&-right {
-			flex: 1;
-			position: sticky;
-			top: 60px;
-			right: -10px;
-			height: 400px;
-			width: auto;
+		#send-friend-request-button,
+		#edit-profile-button,
+		#cancel-friend-request-button,
+		#accept-friend-request-button,
+		#unfriend-button,
+		#change-profile-picture-button {
+			position: absolute;
+			top: 210px;
+			left: 120px;
+		}
 
-			#profile {
-				&-cover {
-					background-color: aqua;
-					right: -10px;
-					top: 200px;
-					width: 70%;
-					height: 200px;
-					
-				}
+		#decline-friend-request-button {
+			position: absolute;
+			top: 240px;
+			left: 120px;
+		}
 
-				&-picture {
-					background-color: aquamarine;
-					right: -10px;
-					top: 200px;
-					width: 100px;
-					height: 100px;
-					margin: auto auto 10px 10px;
-					border-radius: 50px;
-					
-				}
-			}
-
-			#send-friend-request-button,
-			#cancel-friend-request-button,
-			#accept-friend-request-button,
-			#unfriend-button,
-			#change-profile-picture-button {
-				position: absolute;
-				margin-top: 65px;
-				margin-left: 120px;
-			}
-
-			#decline-friend-request-button,
-			#edit-profile-button {
-				position: absolute;
-				margin-top: 65px;
-				margin-left: 240px;
-			}
+		#add-pfp-button {
+			position: absolute;
+			margin-top: 260px;
 		}
 	}
 }

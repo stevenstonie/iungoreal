@@ -4,7 +4,7 @@
 	<h2>{{userOnScreen.username}}'s profile</h2>
 </div>
 
-<div id="header">
+<section id="section-left">
 	<button>About</button>
 	<button>Posts</button>
 	<button>Comments</button>
@@ -14,13 +14,10 @@
 		<button>Saved posts</button>
 		<button>Saved comments</button>
 	</ng-container>
-</div>
+	<app-posts [usernameOfUserOnScreen]="userOnScreen.username"></app-posts>
+</section>
 
-<section id="section-left-right">
-	<section id="section-left">
-		<app-posts [usernameOfUserOnScreen]="userOnScreen.username"></app-posts>
-	</section>
-
+<section id="section-right-container">
 	<section id="section-right">
 		<img id="profile-cover" [src]="profileCoverUrl" alt="Profile cover">
 		<img id="profile-picture" [src]="profilePictureUrl" alt="Profile picture">
@@ -53,7 +50,7 @@
 
 		<ng-container *ngIf="isUserOnScreenTheLoggedOne">
 			<button id="edit-profile-button" (click)="editProfile()">Edit profile</button>
-			<input type="file" (change)="onFileSelected($event)" accept="image/*, video/*">
+			<input id="add-pfp-button" type="file" (change)="onFileSelected($event)" accept="image/*, video/*">
 		</ng-container>
 	</section>
 </section>

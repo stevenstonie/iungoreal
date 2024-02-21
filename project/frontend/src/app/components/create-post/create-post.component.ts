@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Component, OnDestroy } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { AppService } from '../../services/app.service';
 
 @Component({
