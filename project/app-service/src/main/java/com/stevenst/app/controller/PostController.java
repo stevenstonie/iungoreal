@@ -38,4 +38,9 @@ public class PostController implements PostApi {
 	public ResponseEntity<List<PostPayload>> getAllPosts(@RequestParam("authorUsername") String authorUsername) {
 		return ResponseEntity.ok(postService.getAllPosts(authorUsername));
 	}
+
+	@GetMapping("/getAllOfAllFriends")
+	public ResponseEntity<List<PostPayload>> getAllPostsOfAllFriends(@RequestParam("username") String username) {
+		return ResponseEntity.ok(postService.getAllPostsOfAllFriends(username));
+	}
 }

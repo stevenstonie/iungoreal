@@ -101,6 +101,20 @@ public class PostServiceImpl implements PostService {
 		return postsDetails;
 	}
 
+	@Override
+	public List<PostPayload> getAllPostsOfAllFriends(String username) {
+		User user = userRepository.findByUsername(username).orElseThrow(
+				() -> new IgorUserNotFoundException("User with username " + username + " not found."));
+
+		// get a list of all friends's usernames
+
+		// use getAllPosts method with each friend's username and add all of those in a postsDetails variable
+
+		// return postsDetails
+
+		return Collections.emptyList();
+	}
+
 	// ---------------------------------------------
 
 	private List<String> getLinksForAllMediaOfAPost(String username, Long postId, List<String> mediaNames) {

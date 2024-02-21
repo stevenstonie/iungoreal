@@ -30,4 +30,11 @@ public interface PostApi {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostPayload[].class)) })
 	})
 	public ResponseEntity<List<PostPayload>> getAllPosts(String authorUsername);
+
+	@Operation(summary = "Get all posts of all friends", description = "Get all posts of all friends of an user", tags = "Post")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successful", content = {
+					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostPayload[].class)) })
+	})
+	public ResponseEntity<List<PostPayload>> getAllPostsOfAllFriends(String username);
 }
