@@ -16,9 +16,11 @@
 	</ng-container>
 </div>
 
-<app-posts [usernameOfUserOnScreen]="userOnScreen.username"></app-posts>
-<div id="body">
+<section id="section-left">
+	<app-posts [usernameOfUserOnScreen]="userOnScreen.username"></app-posts>
+</section>
 
+<section id="section-right">
 	<img id="profile-cover" [src]="profileCoverUrl" alt="Profile cover">
 	<img id="profile-picture" [src]="profilePictureUrl" alt="Profile picture">
 
@@ -52,4 +54,4 @@
 		<button id="edit-profile-button" (click)="editProfile()">Edit profile</button>
 		<input type="file" (change)="onFileSelected($event)" accept="image/*, video/*">
 	</ng-container>
-</div>
+</section>

@@ -5,8 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FriendsService } from 'src/app/services/friends.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
-import { StringInJson } from 'src/app/models/app';
-import { ResponsePayload } from 'src/app/models/payloads';
 
 @Component({
   selector: 'app-profile',
@@ -48,15 +46,6 @@ export class ProfileComponent {
     }
   }
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.file = input.files[0];
-    }
-
-    this.saveThePfpFromService();
-  }
-
   getPfpFromService(): void {
     // this.userService.getProfilePicture(this.usernameOfUserOnScreen).subscribe({
     //   next: (pfp: StringInJson) => {
@@ -71,7 +60,7 @@ export class ProfileComponent {
     // });
   }
 
-  saveThePfpFromService() {
+  savePfpInService() {
     // if (this.file) {
     //   this.userService.saveProfilePicture(this.file).subscribe({
     //     next: (response: ResponsePayload) => {
@@ -83,6 +72,15 @@ export class ProfileComponent {
     //     }
     //   });
     // }
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.file = input.files[0];
+    }
+
+    this.savePfpInService();
   }
 
   getUserObjectFromService() {
