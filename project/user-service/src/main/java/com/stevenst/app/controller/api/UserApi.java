@@ -47,19 +47,19 @@ public interface UserApi {
 			@ApiResponse(responseCode = "200", description = "Successful", content = {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ResponsePayload.class)) }),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
-	public ResponseEntity<ResponsePayload> putProfilePicture(String username, MultipartFile file);
+	public ResponseEntity<ResponsePayload> saveProfilePicture(String username, MultipartFile file);
 
 	@Operation(summary = "Get Profile Picture", description = "Get an user's profile picture", tags = "User")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Successful", content = {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = String.class)) }),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
-	public ResponseEntity<String> getProfilePicture(String username);
+	public ResponseEntity<String> getProfilePictureLink(String username);
 
 	@Operation(summary = "Delete Profile Picture", description = "Delete an user's profile picture", tags = "User")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Successful", content = {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ResponsePayload.class)) }),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
-	public ResponseEntity<ResponsePayload> deleteProfilePicture(String username);
+	public ResponseEntity<ResponsePayload> removeProfilePicture(String username);
 }

@@ -49,7 +49,7 @@ export class ProfileComponent {
   }
 
   getPfpFromService(): void {
-    // this.userService.getProfilePicture(this.usernameOfUserOnScreen).subscribe({
+    // this.userService.getProfilePictureLink(this.usernameOfUserOnScreen).subscribe({
     //   next: (pfp: StringInJson) => {
     //     if (pfp.string === '' || pfp.string === null) {
     //       return;

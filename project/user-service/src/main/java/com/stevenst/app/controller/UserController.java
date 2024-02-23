@@ -39,17 +39,17 @@ public class UserController implements UserApi {
 	}
 
 	@PutMapping("/saveProfilePicture")
-	public ResponseEntity<ResponsePayload> putProfilePicture(@RequestParam String username, @RequestParam MultipartFile file) {
+	public ResponseEntity<ResponsePayload> saveProfilePicture(@RequestParam String username, @RequestParam MultipartFile file) {
 		return ResponseEntity.ok(userService.savePfp(username, file));
 	}
 
-	@GetMapping("getProfilePicture")
-	public ResponseEntity<String> getProfilePicture(@RequestParam String username) {
+	@GetMapping("getProfilePictureLink")
+	public ResponseEntity<String> getProfilePictureLink(@RequestParam String username) {
 		return ResponseEntity.ok(userService.getPfpPreSignedLinkFromS3(username));
 	}
 
-	@DeleteMapping("deleteProfilePicture")
-	public ResponseEntity<ResponsePayload> deleteProfilePicture(@RequestParam String username) {
+	@DeleteMapping("removeProfilePicture")
+	public ResponseEntity<ResponsePayload> removeProfilePicture(@RequestParam String username) {
 		return ResponseEntity.ok(userService.removePfp(username));
 	}
 }

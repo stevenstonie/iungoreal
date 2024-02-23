@@ -3,11 +3,14 @@ package com.stevenst.app.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
@@ -22,9 +25,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
@@ -37,9 +44,20 @@ import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.service.UserService;
 import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
+
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.sync.ResponseTransformer;
+import software.amazon.awssdk.http.AbortableInputStream;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -58,8 +76,12 @@ class UserControllerIntegrationTest {
 	@Autowired
 	private UserRepository userRepository;
 
+	@MockBean
+	private S3Client s3Client;
+
 	@BeforeAll
 	void init() throws Exception {
+		MockitoAnnotations.openMocks(this);
 		server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
 		server.start();
 
@@ -131,6 +153,9 @@ class UserControllerIntegrationTest {
 		MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg",
 				"file content".getBytes(StandardCharsets.UTF_8));
 
+		when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class)))
+				.thenReturn(PutObjectResponse.builder().build());
+
 		MvcResult result = mockMvc.perform(
 				multipart("/api/user/saveProfilePicture")
 						.file(file)
@@ -144,6 +169,31 @@ class UserControllerIntegrationTest {
 		ResponsePayload response = getResponsePayloadFromMvcResult(result);
 		assertEquals(200, response.getStatus());
 		assertEquals("Profile picture uploaded successfully.", response.getMessage());
+	}
+
+	@Test
+	void getProfilePictureLink() throws Exception {
+		// ResponseInputStream<GetObjectResponse> mockResponseInputStream = new ResponseInputStream<>(
+		// 		GetObjectResponse.builder().build(),
+		// 		AbortableInputStream.create(new ByteArrayInputStream("mocked data".getBytes())));
+		// when(s3Client.getObject(any(GetObjectRequest.class), any(ResponseTransformer.class)))
+		// 		.thenReturn(mockResponseInputStream);
+
+		// MvcResult result = mockMvc.perform(
+		// 		multipart("/api/user/getProfilePictureLink")
+		// 				.param("username", testUser.getUsername())
+		// 				.with(request -> {
+		// 					request.setMethod("GET");
+		// 					return request;
+		// 				}))
+		// 		.andExpect(status().isOk()).andReturn();
+
+		// String responseBody = result.getResponse().getContentAsString();
+		// System.out.println(responseBody);
+
+		// String response = getStringFromMvcResult(result);
+		// assertEquals("mocked data", response);
+		assertTrue(false);
 	}
 
 	@ParameterizedTest
@@ -174,13 +224,21 @@ class UserControllerIntegrationTest {
 	}
 
 	private ResponsePayload getResponsePayloadFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
-		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
+		DocumentContext responseJson = JsonPath.parse(result.getResponse().getContentAsString());
 		String message = responseJson.read("$.message");
 		int status = responseJson.read("$.status");
 		return ResponsePayload.builder()
 				.message(message)
 				.status(status)
 				.build();
+	}
+
+	private String getStringFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
+		DocumentContext responseJson = JsonPath.parse(result.getResponse().getContentAsString());
+
+		String string = responseJson.read("$.string");
+
+		return string;
 	}
 
 	private UserPrivatePayload getPrivateUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {

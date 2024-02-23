@@ -47,10 +47,10 @@ export class UserService {
       );
   }
 
-  getProfilePicture(username: string): Observable<StringInJson> {
+  getProfilePictureLink(username: string): Observable<StringInJson> {
     const params = new HttpParams().set('username', username);
 
-    return this.http.get<StringInJson>(`${this.apiUrl}/getProfilePicture`, { params })
+    return this.http.get<StringInJson>(`${this.apiUrl}/getProfilePictureLink`, { params })
       .pipe(
         catchError(this.handleError)
       );
