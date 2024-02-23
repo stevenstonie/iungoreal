@@ -155,7 +155,7 @@ public class UserServiceImpl implements UserService {
 
 			return ResponsePayload.builder()
 					.status(200)
-					.message("File uploaded to S3 bucket successfully")
+					.message("Profile picture uploaded successfully.")
 					.build();
 		} catch (IOException e) {
 			System.err.println("Unable to convert MultipartFile to InputStream: " + e.getMessage());

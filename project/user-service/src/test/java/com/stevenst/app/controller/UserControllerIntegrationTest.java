@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -22,10 +25,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.payload.UserPrivatePayload;
@@ -33,6 +39,7 @@ import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.lib.model.Role;
 import com.stevenst.lib.model.User;
+import com.stevenst.lib.payload.ResponsePayload;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -68,7 +75,7 @@ class UserControllerIntegrationTest {
 
 	@Test
 	void getUserPublicByUsername() throws Exception {
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				get("/api/user/getPublicByUsername?username=" + testUser.getUsername()))
 				.andExpect(status().isOk())
 				.andReturn();
@@ -83,7 +90,7 @@ class UserControllerIntegrationTest {
 
 	@Test
 	void getUserPrivateByUsername() throws Exception {
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				get("/api/user/getPrivateByUsername?username=" + testUser.getUsername()))
 				.andExpect(status().isOk())
 				.andReturn();
@@ -102,7 +109,7 @@ class UserControllerIntegrationTest {
 
 	@Test
 	void getUserByEmail() throws Exception {
-		var result = mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				get("/api/user/getByEmail?email=" + testUser.getEmail()))
 				.andExpect(status().isOk())
 				.andReturn();
@@ -117,6 +124,26 @@ class UserControllerIntegrationTest {
 		assertEquals(testUser.getEmail(), user.getEmail());
 		assertEquals(Role.USER, user.getRole());
 		assertTrue(Duration.between(user.getCreatedAt(), LocalDateTime.now()).toDays() < 1);
+	}
+
+	@Test
+	void saveProfilePicture() throws Exception {
+		MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg",
+				"file content".getBytes(StandardCharsets.UTF_8));
+
+		MvcResult result = mockMvc.perform(
+				multipart("/api/user/saveProfilePicture")
+						.file(file)
+						.param("username", testUser.getUsername())
+						.with(request -> {
+							request.setMethod("PUT");
+							return request;
+						}))
+				.andExpect(status().isOk()).andReturn();
+
+		ResponsePayload response = getResponsePayloadFromMvcResult(result);
+		assertEquals(200, response.getStatus());
+		assertEquals("Profile picture uploaded successfully.", response.getMessage());
 	}
 
 	@ParameterizedTest
@@ -146,8 +173,18 @@ class UserControllerIntegrationTest {
 		userRepository.deleteAll();
 	}
 
-	private UserPrivatePayload getPrivateUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
+	private ResponsePayload getResponsePayloadFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
 		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
+		String message = responseJson.read("$.message");
+		int status = responseJson.read("$.status");
+		return ResponsePayload.builder()
+				.message(message)
+				.status(status)
+				.build();
+	}
+
+	private UserPrivatePayload getPrivateUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
+		DocumentContext responseJson = JsonPath.parse(result.getResponse().getContentAsString());
 		String username = responseJson.read("$.username");
 		String email = responseJson.read("$.email");
 		Role role = Role.valueOf(responseJson.read("$.role"));
@@ -163,7 +200,7 @@ class UserControllerIntegrationTest {
 	}
 
 	private UserPublicPayload getPublicUserFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
-		var responseJson = JsonPath.parse(result.getResponse().getContentAsString());
+		DocumentContext responseJson = JsonPath.parse(result.getResponse().getContentAsString());
 		String username = responseJson.read("$.username");
 		String createdAtString = responseJson.read("$.createdAt");
 		LocalDateTime createdAt = LocalDateTime.parse(createdAtString, DateTimeFormatter.ISO_DATE_TIME);
