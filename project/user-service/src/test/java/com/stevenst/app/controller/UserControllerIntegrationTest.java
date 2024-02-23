@@ -54,6 +54,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.http.AbortableInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -196,6 +197,25 @@ class UserControllerIntegrationTest {
 		assertTrue(false);
 	}
 
+	@Test
+	void removeProfilePicture() throws Exception {
+		// Mockito.doNothing().when(s3Client).deleteObject(any(DeleteObjectRequest.class));
+
+		// MvcResult result = mockMvc.perform(
+		// 		multipart("/api/user/removeProfilePicture")
+		// 				.param("username", testUser.getUsername())
+		// 				.with(request -> {
+		// 					request.setMethod("DELETE");
+		// 					return request;
+		// 				}))
+		// 		.andExpect(status().isOk()).andReturn();
+
+		// ResponsePayload response = getResponsePayloadFromMvcResult(result);
+		// assertEquals(200, response.getStatus());
+		// assertEquals("Removed profile picture for user: " + testUser.getUsername(), response.getMessage());
+		assertTrue(false);
+	}
+
 	@ParameterizedTest
 	@CsvSource({
 			"/getPublicByUsername, username, nonexistenttestusername",
@@ -227,6 +247,7 @@ class UserControllerIntegrationTest {
 		DocumentContext responseJson = JsonPath.parse(result.getResponse().getContentAsString());
 		String message = responseJson.read("$.message");
 		int status = responseJson.read("$.status");
+
 		return ResponsePayload.builder()
 				.message(message)
 				.status(status)
@@ -235,7 +256,6 @@ class UserControllerIntegrationTest {
 
 	private String getStringFromMvcResult(MvcResult result) throws UnsupportedEncodingException {
 		DocumentContext responseJson = JsonPath.parse(result.getResponse().getContentAsString());
-
 		String string = responseJson.read("$.string");
 
 		return string;
