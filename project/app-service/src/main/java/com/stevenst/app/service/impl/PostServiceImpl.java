@@ -209,7 +209,7 @@ public class PostServiceImpl implements PostService {
 			String filename = filenames.get(i);
 			String key = keyPath + "/" + filename;
 
-			saveFileInCloud(file, filename, key);
+			saveFileInCloud(file, key);
 		}
 	}
 
@@ -237,7 +237,7 @@ public class PostServiceImpl implements PostService {
 		return uniqueFilenames;
 	}
 
-	private void saveFileInCloud(MultipartFile file, String filename, String key) {
+	private void saveFileInCloud(MultipartFile file, String key) {
 		try {
 			Map<String, String> metadata = new HashMap<>();
 			String contentType = file.getContentType();

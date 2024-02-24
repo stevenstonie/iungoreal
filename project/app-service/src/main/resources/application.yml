@@ -28,6 +28,7 @@ spring:
     exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   servlet:
     multipart:
+      # set these to something for the s3 configuration
       max-file-size: _
       max-request-size: _
       resolve-lazily: true

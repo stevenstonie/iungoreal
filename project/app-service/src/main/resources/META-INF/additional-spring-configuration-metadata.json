@@ -1,9 +1,9 @@
 {
 	"properties": [
 		{
-			"name": "app.media-path",
+			"name": "aws.bucket-name",
 			"type": "java.lang.String",
-			"description": "Path to the directory where uploaded media is stored."
+			"description": "The name of the bucket to use for cloud storage of objects."
 		}
 	]
 }
