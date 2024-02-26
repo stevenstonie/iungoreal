@@ -8,15 +8,16 @@
 	- (recurring) do tests for everything
 	------------------
 	- [ ] (fr, bk) notifications
+	- [ ] (fr, bk) make users be able to select which notifications have what priority (default: friend requests -> high, messages -> medium, posts -> low)
 	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
-	- [ ] (fr) add upload size cap for the file size on frontend (and update the existing ones from backend)
-	- [ ] (fr) add verification through email when registering
+	- [ ] (fr, bk) implement the chat microservice and chat rooms -> (3 types: dms, regional and custom)
 	- [ ] (fr, bk) add functionality for the main page (fetching friends posts)
+	- [ ] (fr) add verification through email when registering
+	- [ ] (fr) add upload size cap for the file size on frontend (and update the existing ones from backend)
 	- [ ] (bk) add logging instead of console prints
 	- [ ] (fr) user settings
 	- [ ] (bk) archive notifications (when the user clicks 'x' on frontend or when the notification is older than 30 days)
 	- [ ] (fr, bk) implement search functionality
-	- [ ] (fr, bk) implement the chat microservice and chat rooms -> (3 types: dms, regional and custom)
 	- [ ] (fr, bk) add more functionalities to the map
 	- [ ] (fr, bk) calendar
 	- [ ] (fr) news section
