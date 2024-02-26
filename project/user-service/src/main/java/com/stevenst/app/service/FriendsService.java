@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.stevenst.app.payload.ResponsePayload;
+import com.stevenst.lib.payload.ResponsePayload;
 
 public interface FriendsService {
 	ResponseEntity<ResponsePayload> sendFriendRequest(String senderUsername, String receiverUsername);

@@ -2,6 +2,10 @@ server:
   port: 8080
   error:
     include-message: always
+    include-stacktrace: never
+  tomcat:
+    # set it to something (like 50MB) to not let tomcat cancel the requests
+    max-swallow-size: _
 spring:
   profiles:
     include: dev
@@ -22,6 +26,19 @@ spring:
     database: mysql
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  servlet:
+    multipart:
+      # set these to something for the s3 configuration
+      max-file-size: _
+      max-request-size: _
+      resolve-lazily: true
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+aws:
+  bucketName: _

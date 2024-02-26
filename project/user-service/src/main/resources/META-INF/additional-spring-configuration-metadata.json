@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "aws.access-key-id",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.access-key-id'"
+  },
+  {
+    "name": "aws.secretKey",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.secretKey'"
+  },
+  {
+    "name": "aws.bucketName",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.bucketName'"
+  }
+]}

@@ -1,9 +1,3 @@
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
-
 #title {
 	margin-left: 20%;
 	margin-top: 50px;
@@ -16,103 +10,61 @@
 	margin-top: 20px;
 }
 
-#body {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-evenly;
-	margin-top: 30px;
-
-	#section {
-		&-left {
-			#section {
-				&-sort {
-					border-bottom: 1px solid #000;
-					padding: 5px;
-
-					button {
-						margin-left: 5px;
-					}
-				}
-			}
-
-			.section-post {
-				border-bottom: 1px solid #000;
-				padding: 5px;
-				margin-left: 10px;
-
-				&:hover {
-					background-color: rgba(144, 197, 255, 0.2);
-					cursor: pointer;
-				}
-
-				&:last-child {
-					border-bottom: none;
-				}
-			}
-
-			padding: 5px;
-			width: 700px;
-			min-height: 200px;
-			height: auto;
-			border: 1px solid #000;
-		}
-
-		&-right {
-			width: 450px;
-			height: 200px;
-			border: 1px solid #000;
-
-			#image {
-				&-cover {
-					background-color: aqua;
-					width: 100%;
-					height: 70%;
-					border-bottom: 1px solid #000;
-				}
-
-				&-profile {
-					background-color: aquamarine;
-					width: 100px;
-					height: 100px;
-					margin: auto auto 10px 10px;
-					border-radius: 50px;
-					border: 1px solid #000;
-				}
-			}
-
-			#send-friend-request-button, #cancel-friend-request-button, #accept-friend-request-button, #unfriend-button, #edit-profile-button {
-				position: absolute;
-				margin-top: -45px;
-				margin-left: 120px;
-			}
-
-			#decline-friend-request-button {
-				position: absolute;
-				margin-top: -45px;
-				margin-left: 280px;
-			}
-		}
+#section {
+	&-left {
+		margin-left: 50px;
+		margin-top: 30px;
+		width: 46%;
+		height: auto;
 	}
-}
 
-button {
-	background: transparent;
-	border: none;
-	outline: none;
-	margin-right: 30px;
-	cursor: pointer;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	border-radius: 2rem;
-	padding: 5px 10px;
-	transition-duration: 0.3s;
-	list-style: none;
+	&-right {
+		position: fixed;
+		right: 50px;
+		top: 80px;
+		width: 400px;
 
-	&:hover {
-		background-color: rgb(144, 197, 255);
-		box-shadow: 4px 3px 8px 0px rgb(144, 197, 255);
-		border-radius: 0.2rem;
-		cursor: pointer;
-		transition-duration: 0.3s;
-		color: rgb(247, 250, 151);
+		#profile {
+			&-cover {
+				position: absolute;
+				background-color: aqua;
+				top: 0;
+				width: 100%;
+				height: 200px;
+			}
+
+			&-picture {
+				position: absolute;
+				background-color: aquamarine;
+				top: 150px;
+				width: 100px;
+				height: 100px;
+				margin: auto auto 10px 10px;
+				border-radius: 50px;
+
+			}
+		}
+
+		#send-friend-request-button,
+		#edit-profile-button,
+		#cancel-friend-request-button,
+		#accept-friend-request-button,
+		#unfriend-button,
+		#change-profile-picture-button {
+			position: absolute;
+			top: 210px;
+			left: 120px;
+		}
+
+		#decline-friend-request-button {
+			position: absolute;
+			top: 240px;
+			left: 120px;
+		}
+
+		#add-pfp-button {
+			position: absolute;
+			margin-top: 260px;
+		}
 	}
 }

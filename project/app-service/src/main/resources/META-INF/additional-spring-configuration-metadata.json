@@ -1,0 +1,9 @@
+{
+	"properties": [
+		{
+			"name": "aws.bucket-name",
+			"type": "java.lang.String",
+			"description": "The name of the bucket to use for cloud storage of objects."
+		}
+	]
+}

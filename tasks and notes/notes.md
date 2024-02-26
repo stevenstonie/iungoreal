@@ -4,30 +4,33 @@
 
 
 - tasks:
-	- (recurring) show window dialogs on errors for users, catch exceptions, etc.
+	- (recurring) show window dialogs on errors / restrictions for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
-	- [ ] (fr, bk) implement friend requests
-	- [ ] (fr, bk) implement search functionality
 	- [ ] (fr, bk) notifications
-	- [ ] (fr, bk) create posts
-	- [ ] (fr, bk) functionality for the main page (fetching friends posts)
 	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
+	- [ ] (fr) add upload size cap for the file size on frontend (and update the existing ones from backend)
 	- [ ] (fr) add verification through email when registering
+	- [ ] (fr, bk) add functionality for the main page (fetching friends posts)
+	- [ ] (bk) add logging instead of console prints
 	- [ ] (fr) user settings
-	- [ ] (fr) user profile
 	- [ ] (bk) archive notifications (when the user clicks 'x' on frontend or when the notification is older than 30 days)
-	- [ ] (fr, bk) chat rooms -> (3 types: dms, regional and custom)
+	- [ ] (fr, bk) implement search functionality
+	- [ ] (fr, bk) implement the chat microservice and chat rooms -> (3 types: dms, regional and custom)
 	- [ ] (fr, bk) add more functionalities to the map
 	- [ ] (fr, bk) calendar
 	- [ ] (fr) news section
 	- [ ] (fr, bk) reset email / password
+	- [ ] (bk) implement docker
 	- [ ] (bk) remove pins from bk when expiration date is reached
 	- [ ] (fr) do not store the token in the local storage. store it in an httpOnly cookie instead. (--> https://blog.logrocket.com/jwt-authentication-best-practices/)
 	- [ ] (bk) change the return type of each controller to ResponseEntity<> to "handle" edge cases that cannot be handled through exceptions 
 
 	_________________________________
 	---------------------------------
+	- [x] (fr, bk) create posts and display them on the profile
+	- [x] (bk) integrate s3 as object storage service
+	- [x] (fr, bk) implement friend requests
 	- [x] (fr) if the user doesnt exist when accessing a profile, redirect to 404
 	- [x] (bk) add a shared library
 	- [x] (fr) change the register to add an unique username + password reentering
@@ -36,10 +39,12 @@
 	- [x] (fr, bk) add a button for a window where the map should be, create the map microservice and connect it to the app (make db queries for saved data like markers)
 	- [x] (fr) save the token locally and check for its availability when accessing the site
 	- [x] (fr) redirect to main page on successful authentication
-	- [x] frontend login / register
-	- [x] backend login / register by token
+	- [x] (fr) login / register
+	- [x] (bk) login / register
 	- [x] add a frontend and connect it to the backend
 
+- to add in the project documentation: 
+	- create a file "credentials" in %USERPROFILE%\.aws
 
 - task ideas:
 	- app time restriction
@@ -59,9 +64,6 @@
 
 
 - todos:
-	- docker & kubernetes
-	- logs
-	- tests
 	- security
 	- documentation
 	- caching

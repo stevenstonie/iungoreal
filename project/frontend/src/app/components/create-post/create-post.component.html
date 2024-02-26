@@ -5,16 +5,15 @@
 </div>
 
 <div id="body">
-	<input type="text" name="title" placeholder="Title">
-	<div id="post-type">
-		<button>Text</button>
-		<button>Image</button>
-		<button>Video</button>
-		<button>Poll</button>
+	<input [(ngModel)]="title" type="text" name="title" placeholder="Title" required>
+	<textarea [(ngModel)]="description" name="description" placeholder="Description"></textarea>
+	<input type="file" (change)="onFileSelected($event)" accept="image/*, video/*" multiple>
+	<div id="preview" *ngFor="let previewUrl of previewUrls; let i = index">
+		<img *ngIf="isImage(files[i])" [src]="previewUrl" alt="Image preview">
+		<video *ngIf="isVideo(files[i])" [src]="previewUrl" controls></video>
 	</div>
-	<textarea placeholder="Body"></textarea>
 </div>
 
 <div id="footer">
-	<button>Submit</button>
+	<button (click)="createPost()">Submit</button>
 </div>

@@ -1,0 +1,44 @@
+server:
+  port: 8083
+  error:
+    include-message: always
+    include-stacktrace: never
+  tomcat:
+    # set this to something (for ex 100MB) to not let tomcat cancel the requests
+    max-swallow-size: _
+spring:
+  profiles:
+    include: dev
+  application:
+    name: _
+  datasource:
+    url: _
+    username: _
+    password: _
+    driver-class-name: _
+  jpa:
+    hibernate:
+      ddl-auto: _
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: _
+    database: mysql
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  servlet:
+    multipart:
+      # set these to something for the s3 configuration
+      max-file-size: _
+      max-request-size: _
+      resolve-lazily: true
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+aws:
+  bucketName: _

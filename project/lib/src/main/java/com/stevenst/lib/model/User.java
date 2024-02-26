@@ -52,6 +52,8 @@ public class User implements UserDetails {
 	@Column(nullable = false)
 	private final LocalDateTime createdAt = LocalDateTime.now();
 
+	private String profilePictureName;
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return List.of(new SimpleGrantedAuthority(role.name()));

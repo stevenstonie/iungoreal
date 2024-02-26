@@ -3,6 +3,10 @@ import { User } from 'src/app/models/user';
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FriendsService } from 'src/app/services/friends.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
+import { StringInJson } from 'src/app/models/app';
+import { ResponsePayload } from 'src/app/models/payloads';
 
 @Component({
   selector: 'app-profile',
@@ -17,8 +21,12 @@ export class ProfileComponent {
   isFriends: boolean = false;
   usernameOfLoggedUser = localStorage.getItem('username') ?? '';
   usernameOfUserOnScreen = this.route.snapshot.paramMap.get('username') ?? '';
+  file: File | null = null;
+  previewUrl: SafeUrl | null = null;
+  profilePictureUrl: string = 'assets/default-images/default-profile-picture.jpg';
+  profileCoverUrl: string = 'assets/default-images/default-cover-photo.jpg';
 
-  constructor(private userService: UserService, private friendsService: FriendsService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private userService: UserService, private friendsService: FriendsService, private route: ActivatedRoute, private router: Router, private sanitizer: DomSanitizer, private http: HttpClient) { }
 
   ngOnInit() {
     this.getUserFromService();
@@ -34,17 +42,60 @@ export class ProfileComponent {
         this.isUserOnScreenTheLoggedOne = true;
       }
 
-      this.userService.getUserByUsername(this.usernameOfUserOnScreen, this.isUserOnScreenTheLoggedOne).subscribe({
-        next: (user: User) => {
-          console.log('user: ', user);
-          this.userOnScreen = user;
-        },
-        error: (error) => {
-          console.error('Error getting user.', error);
-          this.router.navigate(['/404']);
-        }
-      });
+      this.getUserObjectFromService();
+
+      this.getPfpFromService();
     }
+  }
+
+  getPfpFromService(): void {
+    // this.userService.getProfilePictureLink(this.usernameOfUserOnScreen).subscribe({
+    //   next: (pfp: StringInJson) => {
+    //     if (pfp.string === '' || pfp.string === null) {
+    //       return;
+    //     }
+    //     this.profilePictureUrl = pfp.string;
+    //   },
+    //   error: (error) => {
+    //     console.error(error);
+    //   }
+    // });
+  }
+
+  savePfpInService() {
+    // if (this.file) {
+    //   this.userService.saveProfilePicture(this.file).subscribe({
+    //     next: (response: ResponsePayload) => {
+    //       this.getPfpFromService();
+    //       console.log(response);
+    //     },
+    //     error: (error) => {
+    //       console.error(error);
+    //     }
+    //   });
+    // }
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.file = input.files[0];
+    }
+
+    this.savePfpInService();
+  }
+
+  getUserObjectFromService() {
+    this.userService.getUserByUsername(this.usernameOfUserOnScreen, this.isUserOnScreenTheLoggedOne).subscribe({
+      next: (user: User) => {
+        this.userOnScreen = user;
+        console.log('user: ', user);
+      },
+      error: (error) => {
+        console.error('Error getting user.', error);
+        this.router.navigate(['/404']);
+      }
+    });
   }
 
   /*
@@ -55,12 +106,13 @@ export class ProfileComponent {
     the one who unfriends is the unfriender
     the one who is supposed to do all the actions is the logged user (so careful with the parameters)
   */
-
   getFriendshipStatusFromService() {
     this.friendsService.checkRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
         console.log(response.message);
-        this.loggedUserSentFriendRequest = response.success;
+        if (response.status === 200) {
+          this.loggedUserSentFriendRequest = true;
+        }
       },
       error: (error) => {
         console.error(error);
@@ -70,7 +122,9 @@ export class ProfileComponent {
     this.friendsService.checkRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
       next: (response) => {
         console.log(response.message);
-        this.userSentFriendRequest = response.success;
+        if (response.status === 200) {
+          this.userSentFriendRequest = true;
+        }
       },
       error: (error) => {
         console.error(error);
@@ -80,7 +134,9 @@ export class ProfileComponent {
     this.friendsService.checkFriendship(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
         console.log(response.message);
-        this.isFriends = response.success;
+        if (response.status === 200) {
+          this.isFriends = true;
+        }
       },
       error: (error) => {
         console.error(error);
