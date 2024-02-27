@@ -48,6 +48,7 @@ public class User implements UserDetails {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private final Role role = Role.USER;
+	// dont make this static because you'll get: java.lang.NoSuchMethodError: 'com.stevenst.lib.model.Role com.stevenst.lib.model.User.getRole()
 
 	@Column(nullable = false)
 	private final LocalDateTime createdAt = LocalDateTime.now();
