@@ -8,9 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './test-message.component.scss'
 })
 export class TestMessageComponent {
-  private url: string = "ws://localhost:8083/notification-endpoint";
-  private topic: string = "/topic/greetings";
-
-  constructor() { }
-
+  
 }
