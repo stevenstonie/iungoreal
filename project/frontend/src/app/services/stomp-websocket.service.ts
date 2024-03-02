@@ -36,4 +36,8 @@ export class StompWebsocketService {
   disconnect() {
     this.stompClient.deactivate();
   }
+
+  isConnected(): boolean {
+    return this.stompClient?.connected || false;
+  }
 }
