@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.HtmlUtils;
 
 import com.stevenst.app.model.test.Greeting;
-import com.stevenst.app.model.test.HelloMessage;
+import com.stevenst.app.model.test.Message;
 
 @RestController
 public class GreetingController {
 	@MessageMapping("/hello")
 	@SendTo("/topic/greetings")
-	public Greeting greeting(HelloMessage message) throws Exception {
-		return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
+	public Greeting greeting(Message message) throws Exception {
+		return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.name()) + "!");
 	}
 }

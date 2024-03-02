@@ -13,8 +13,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/notification-endpoint");
-        registry.addEndpoint("/notification-endpoint").withSockJS();
+        registry.addEndpoint("/notification-endpoint").setAllowedOrigins("*");
+        registry.addEndpoint("/notification-endpoint").setAllowedOrigins("*").withSockJS();
     }
 
     @Override
