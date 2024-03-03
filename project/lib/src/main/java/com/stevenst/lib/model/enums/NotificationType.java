@@ -1,7 +1,10 @@
-package com.stevenst.app.model;
+package com.stevenst.lib.model.enums;
 
 public enum NotificationType {
 	FRIEND_REQUEST,
+	FRIEND_REQUEST_ACCEPT,
+	FRIEND_REQUEST_DECLINE,
+	UNFRIEND,
 	PRIVATE_MESSAGE,
 	GROUP_MESSAGE,
 	POST,

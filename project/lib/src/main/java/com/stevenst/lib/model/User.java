@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.stevenst.lib.model.enums.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

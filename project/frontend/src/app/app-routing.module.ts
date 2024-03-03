@@ -16,7 +16,7 @@ const routes: Routes = [
       { path: 'user/:username', component: ProfileComponent },
       { path: 'settings', component: UserSettingsComponent },
       { path: 'createPost', component: CreatePostComponent },
-      {path: 'websockettest', component: TestMessageComponent},
+      { path: 'websockettest', component: TestMessageComponent },
       { path: '404', component: NotFoundPageComponent }
     ]
   },

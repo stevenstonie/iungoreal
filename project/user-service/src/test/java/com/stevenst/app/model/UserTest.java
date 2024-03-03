@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import com.stevenst.lib.model.Role;
+import com.stevenst.lib.model.enums.Role;
 import com.stevenst.lib.model.User;
 
 class UserTest {

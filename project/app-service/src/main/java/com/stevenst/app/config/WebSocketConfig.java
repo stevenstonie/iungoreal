@@ -11,10 +11,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    private static final String ORIGIN = "http://localhost:4200";
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/notification-endpoint").setAllowedOrigins("*");
-        registry.addEndpoint("/notification-endpoint").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/notification-endpoint").setAllowedOrigins(ORIGIN);
     }
 
     @Override

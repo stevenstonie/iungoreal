@@ -39,7 +39,7 @@ import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.UserRepository;
-import com.stevenst.lib.model.Role;
+import com.stevenst.lib.model.enums.Role;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
 
