@@ -40,7 +40,7 @@ public class Notification {
 	private User emitter;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "\"type\"",nullable = false)
+	@Column(name = "\"type\"", nullable = false)
 	private NotificationType type;
 
 	@Enumerated(EnumType.STRING)
