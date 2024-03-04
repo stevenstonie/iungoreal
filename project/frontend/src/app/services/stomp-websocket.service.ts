@@ -9,7 +9,7 @@ export class StompWebsocketService {
 
   constructor() { 
     this.stompClient = new Client({
-      brokerURL: 'ws://localhost:8083/notification-endpoint',
+      brokerURL: 'ws://localhost:8080/notification-endpoint',
       debug: function (str) {
         console.log(str);
       },

@@ -11,14 +11,14 @@ import { StompWebsocketService } from 'src/app/services/stomp-websocket.service'
   styleUrl: './test-message.component.scss'
 })
 export class TestMessageComponent implements OnInit, OnDestroy {
-  topic = '/topic/greetings';
+  topic = '/topic/notification';
+  topicToBack = '/app/notification'
   receivedMessages: string[] = [];
 
   constructor(private stompWebsocketService: StompWebsocketService) {
   }
 
   ngOnInit(): void {
-    console.log('TestMessageComponent ngOnInit() called');
     this.stompWebsocketService.subscribeToTopic(this.topic, (message: Message) => {
       this.handleReceivedMessage(message);
     })
@@ -39,7 +39,7 @@ export class TestMessageComponent implements OnInit, OnDestroy {
   }
 
   sendMessage(message: string): void {
-    this.stompWebsocketService.sendMessage(this.topic, message);
+    this.stompWebsocketService.sendMessage(this.topicToBack, message);
   }
 
   ngOnDestroy(): void {
