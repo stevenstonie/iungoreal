@@ -13,9 +13,13 @@ import com.stevenst.app.model.Friendships;
 import com.stevenst.lib.payload.ResponsePayload;
 import com.stevenst.app.repository.FriendRequestsRepository;
 import com.stevenst.app.repository.FriendshipsRepository;
+import com.stevenst.app.repository.NotificationRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.FriendsService;
+import com.stevenst.lib.model.Notification;
 import com.stevenst.lib.model.User;
+import com.stevenst.lib.model.enums.NotificationType;
+import com.stevenst.lib.model.enums.Priority;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,13 +29,16 @@ public class FriendsServiceImpl implements FriendsService {
 	private final UserRepository userRepository;
 	private final FriendRequestsRepository friendRequestsRepository;
 	private final FriendshipsRepository friendshipsRepository;
+	private final NotificationRepository notificationRepository;
 
 	@Override
 	public ResponseEntity<ResponsePayload> sendFriendRequest(String senderUsername, String receiverUsername) {
 		User sender = userRepository.findByUsername(senderUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + senderUsername + " not found"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + senderUsername + " not found"));
 		User receiver = userRepository.findByUsername(receiverUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + receiverUsername + " not found"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + receiverUsername + " not found"));
 
 		if (sender.equals(receiver)) {
 			throw new IgorFriendRequestException(
@@ -40,7 +47,8 @@ public class FriendsServiceImpl implements FriendsService {
 
 		if (friendshipsRepository.existsByUsers(sender, receiver)) {
 			throw new IgorFriendRequestException(
-					"Cannot send a friend request when already friends (from " + senderUsername + " to " + receiverUsername
+					"Cannot send a friend request when already friends (from " + senderUsername + " to "
+							+ receiverUsername
 							+ ")");
 		}
 
@@ -58,6 +66,15 @@ public class FriendsServiceImpl implements FriendsService {
 		friendRequestsRepository.save(FriendRequests.builder()
 				.sender(sender)
 				.receiver(receiver)
+				.build());	
+
+		notificationRepository.save(Notification.builder()
+				.receiver(receiver)
+				.emitter(sender)
+				.type(NotificationType.FRIEND_REQUEST)
+				.priority(Priority.LOW)
+				.description(senderUsername + " sent you a friend request")
+				.read(false)
 				.build());
 
 		return ResponseEntity.ok(ResponsePayload.builder().status(200)
@@ -68,9 +85,11 @@ public class FriendsServiceImpl implements FriendsService {
 	@Override
 	public ResponseEntity<ResponsePayload> checkFriendRequest(String senderUsername, String receiverUsername) {
 		User sender = userRepository.findByUsername(senderUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + senderUsername + " not found"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + senderUsername + " not found"));
 		User receiver = userRepository.findByUsername(receiverUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + receiverUsername + " not found"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + receiverUsername + " not found"));
 
 		if (friendRequestsRepository.existsBySenderAndReceiver(sender, receiver)) {
 			return ResponseEntity.ok(ResponsePayload.builder().status(200)
@@ -117,9 +136,11 @@ public class FriendsServiceImpl implements FriendsService {
 	@Override
 	public ResponseEntity<ResponsePayload> acceptFriendRequest(String senderUsername, String receiverUsername) {
 		User sender = userRepository.findByUsername(senderUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + senderUsername + " not found"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + senderUsername + " not found"));
 		User receiver = userRepository.findByUsername(receiverUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + receiverUsername + " not found"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + receiverUsername + " not found"));
 
 		if (friendRequestsRepository.existsBySenderAndReceiver(receiver, sender)) {
 			throw new IgorFriendRequestException(
@@ -137,6 +158,16 @@ public class FriendsServiceImpl implements FriendsService {
 				.user2(receiver)
 				.build());
 
+		notificationRepository.deleteByReceiverAndEmitterAndType(receiver, sender, NotificationType.FRIEND_REQUEST);
+		notificationRepository.save(Notification.builder()
+				.receiver(receiver)
+				.emitter(sender)
+				.type(NotificationType.FRIEND_REQUEST_ACCEPTED)
+				.priority(Priority.LOW)
+				.description(senderUsername + " accepted your friend request")
+				.read(false)
+				.build());
+
 		return ResponseEntity
 				.ok(ResponsePayload.builder().status(200).message("Friend request accepted successfully (from "
 						+ senderUsername + " accepted by " + receiverUsername + ")").build());
@@ -145,9 +176,11 @@ public class FriendsServiceImpl implements FriendsService {
 	@Override
 	public ResponseEntity<ResponsePayload> cancelFriendRequest(String senderUsername, String receiverUsername) {
 		User sender = userRepository.findByUsername(senderUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + senderUsername + " not found"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + senderUsername + " not found"));
 		User receiver = userRepository.findByUsername(receiverUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + receiverUsername + " not found"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + receiverUsername + " not found"));
 
 		if (friendRequestsRepository.existsBySenderAndReceiver(receiver, sender)) {
 			throw new IgorFriendRequestException("Cannot cancel someone else's friend request (from " + receiverUsername
@@ -169,9 +202,11 @@ public class FriendsServiceImpl implements FriendsService {
 	@Override
 	public ResponseEntity<ResponsePayload> declineFriendRequest(String senderUsername, String receiverUsername) {
 		User sender = userRepository.findByUsername(senderUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + senderUsername + " not found"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + senderUsername + " not found"));
 		User receiver = userRepository.findByUsername(receiverUsername)
-				.orElseThrow(() -> new IgorUserNotFoundException("User with username " + receiverUsername + " not found"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException("User with username " + receiverUsername + " not found"));
 
 		if (friendRequestsRepository.existsBySenderAndReceiver(receiver, sender)) {
 			throw new IgorFriendRequestException("Cannot decline one's own friend request (from " + receiverUsername

@@ -33,11 +33,11 @@ public class Notification {
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "\"receiver_id\"", nullable = false)
-	private User receiverId;
+	private User receiver;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "\"emitter_id\"", nullable = false)
-	private User emitterId;
+	private User emitter;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "\"type\"",nullable = false)
