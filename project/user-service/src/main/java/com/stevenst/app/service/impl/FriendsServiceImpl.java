@@ -66,8 +66,9 @@ public class FriendsServiceImpl implements FriendsService {
 		friendRequestsRepository.save(FriendRequests.builder()
 				.sender(sender)
 				.receiver(receiver)
-				.build());	
+				.build());
 
+		removeNotificationsOfFriends(sender, receiver);
 		notificationRepository.save(Notification.builder()
 				.receiver(receiver)
 				.emitter(sender)
@@ -158,13 +159,13 @@ public class FriendsServiceImpl implements FriendsService {
 				.user2(receiver)
 				.build());
 
-		notificationRepository.deleteByReceiverAndEmitterAndType(receiver, sender, NotificationType.FRIEND_REQUEST);
+		removeNotificationsOfFriends(sender, receiver);
 		notificationRepository.save(Notification.builder()
-				.receiver(receiver)
-				.emitter(sender)
+				.receiver(sender)
+				.emitter(receiver)
 				.type(NotificationType.FRIEND_REQUEST_ACCEPTED)
 				.priority(Priority.LOW)
-				.description(senderUsername + " accepted your friend request")
+				.description(receiverUsername + " accepted your friend request")
 				.read(false)
 				.build());
 
@@ -194,6 +195,8 @@ public class FriendsServiceImpl implements FriendsService {
 
 		friendRequestsRepository.deleteBySenderAndReceiver(sender, receiver);
 
+		removeNotificationsOfFriends(sender, receiver);
+
 		return ResponseEntity.ok(ResponsePayload.builder().status(200).message(
 				"Friend request canceled successfully (from " + senderUsername + " to " + receiverUsername + ")")
 				.build());
@@ -220,6 +223,16 @@ public class FriendsServiceImpl implements FriendsService {
 
 		friendRequestsRepository.deleteBySenderAndReceiver(sender, receiver);
 
+		removeNotificationsOfFriends(sender, receiver);
+		notificationRepository.save(Notification.builder()
+				.receiver(sender)
+				.emitter(receiver)
+				.type(NotificationType.FRIEND_REQUEST_DECLINED)
+				.priority(Priority.LOW)
+				.description(receiverUsername + " declined your friend request")
+				.read(false)
+				.build());
+
 		return ResponseEntity.ok(ResponsePayload.builder().status(200).message(
 				"Friend request declined successfully (from " + senderUsername + " to " + receiverUsername + ")")
 				.build());
@@ -242,9 +255,31 @@ public class FriendsServiceImpl implements FriendsService {
 
 		friendshipsRepository.deleteByUsers(unfriender, unfriended);
 
+		removeNotificationsOfFriends(unfriender, unfriended);
+		notificationRepository.save(Notification.builder()
+				.receiver(unfriended)
+				.emitter(unfriender)
+				.type(NotificationType.UNFRIEND)
+				.priority(Priority.LOW)
+				.description(unfrienderUsername + " unfriended you")
+				.read(false)
+				.build());
+
 		return ResponseEntity.ok(ResponsePayload.builder().status(200).message(
 				"Unfriend successfully done (" + unfrienderUsername + " unfriended " + unfriendedUsername + ")")
 				.build());
+	}
+
+	// ----------------------------------------------------------------------
+
+	private void removeNotificationsOfFriends(User sender, User receiver) {
+		notificationRepository.deleteByReceiverAndEmitterFriendship(receiver, sender,
+				List.of(NotificationType.FRIEND_REQUEST, NotificationType.FRIEND_REQUEST_ACCEPTED,
+						NotificationType.FRIEND_REQUEST_DECLINED, NotificationType.UNFRIEND));
+
+		notificationRepository.deleteByReceiverAndEmitterFriendship(sender, receiver,
+				List.of(NotificationType.FRIEND_REQUEST, NotificationType.FRIEND_REQUEST_ACCEPTED,
+						NotificationType.FRIEND_REQUEST_DECLINED, NotificationType.UNFRIEND));
 	}
 
 }
