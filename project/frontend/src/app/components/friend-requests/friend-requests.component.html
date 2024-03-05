@@ -1,7 +1,10 @@
 <div id="friend-requests-container">
 	
-	<button>friend request 1</button>
-	<button>friend request 2</button>
-	<button>friend request 3</button>
+	<ng-container *ngFor="let notificationF of last50NotificationsF">
+		<div class="notificationF">
+			<img [src]="notificationF.emitterPfpLink" alt="Profile picture">
+			<p>{{ notificationF.description }}</p>
+		</div>
+	</ng-container>
 	
 </div>
