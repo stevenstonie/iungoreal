@@ -24,4 +24,15 @@ export class FriendRequestsComponent implements OnInit {
       }
     });
   }
+
+  removeNotification(id: number) {
+    this.notificationService.removeNotification(id).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
 }

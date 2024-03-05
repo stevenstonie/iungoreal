@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { NotificationFPayload } from '../models/payloads';
+import { NotificationFPayload, ResponsePayload } from '../models/payloads';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +16,13 @@ export class NotificationService {
     const params = new HttpParams().set('username', username);
 
     return this.httpClient.get<NotificationFPayload[]>(`${this.apiUrl}/${this.FRIEND}/getLast50`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  removeNotification(id: number): Observable<ResponsePayload> { 
+    return this.httpClient.get<ResponsePayload>(`${this.apiUrl}/${this.FRIEND}/delete/${id}`)
       .pipe(
         catchError(this.handleError)
       );
