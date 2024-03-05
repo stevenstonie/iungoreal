@@ -3,7 +3,6 @@ package com.stevenst.lib.model;
 import java.time.LocalDateTime;
 
 import com.stevenst.lib.model.enums.NotificationType;
-import com.stevenst.lib.model.enums.Priority;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,10 +41,6 @@ public class Notification {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "\"type\"", nullable = false)
 	private NotificationType type;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "\"priority\"", nullable = false)
-	private Priority priority;
 
 	private String description;
 

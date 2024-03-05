@@ -19,7 +19,6 @@ import com.stevenst.app.service.FriendsService;
 import com.stevenst.lib.model.Notification;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.model.enums.NotificationType;
-import com.stevenst.lib.model.enums.Priority;
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,7 +72,6 @@ public class FriendsServiceImpl implements FriendsService {
 				.receiver(receiver)
 				.emitter(sender)
 				.type(NotificationType.FRIEND_REQUEST)
-				.priority(Priority.LOW)
 				.description(senderUsername + " sent you a friend request")
 				.read(false)
 				.build());
@@ -164,7 +162,6 @@ public class FriendsServiceImpl implements FriendsService {
 				.receiver(sender)
 				.emitter(receiver)
 				.type(NotificationType.FRIEND_REQUEST_ACCEPTED)
-				.priority(Priority.LOW)
 				.description(receiverUsername + " accepted your friend request")
 				.read(false)
 				.build());
@@ -228,7 +225,6 @@ public class FriendsServiceImpl implements FriendsService {
 				.receiver(sender)
 				.emitter(receiver)
 				.type(NotificationType.FRIEND_REQUEST_DECLINED)
-				.priority(Priority.LOW)
 				.description(receiverUsername + " declined your friend request")
 				.read(false)
 				.build());
@@ -260,7 +256,6 @@ public class FriendsServiceImpl implements FriendsService {
 				.receiver(unfriended)
 				.emitter(unfriender)
 				.type(NotificationType.UNFRIEND)
-				.priority(Priority.LOW)
 				.description(unfrienderUsername + " unfriended you")
 				.read(false)
 				.build());
