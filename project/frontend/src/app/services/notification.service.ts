@@ -1,12 +1,12 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { NotificationFPayload } from '../models/payloads';
 import { Observable, catchError, throwError } from 'rxjs';
+import { NotificationFPayload } from '../models/payloads';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NotificationsService {
+export class NotificationService {
   private apiUrl = 'http://localhost:8080/api/notification';
   private FRIEND = 'friend'
 

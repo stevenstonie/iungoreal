@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { User } from 'src/app/models/user';
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FriendsService } from 'src/app/services/friends.service';
+import { FriendService } from 'src/app/services/friend.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { StringInJson } from 'src/app/models/app';
@@ -26,7 +26,7 @@ export class ProfileComponent {
   profilePictureUrl: string = 'assets/default-images/default-profile-picture.jpg';
   profileCoverUrl: string = 'assets/default-images/default-cover-photo.jpg';
 
-  constructor(private userService: UserService, private friendsService: FriendsService, private route: ActivatedRoute, private router: Router, private sanitizer: DomSanitizer, private http: HttpClient) { }
+  constructor(private userService: UserService, private friendService: FriendService, private route: ActivatedRoute, private router: Router, private sanitizer: DomSanitizer, private http: HttpClient) { }
 
   ngOnInit() {
     this.getUserFromService();
@@ -107,7 +107,7 @@ export class ProfileComponent {
     the one who is supposed to do all the actions is the logged user (so careful with the parameters)
   */
   getFriendshipStatusFromService() {
-    this.friendsService.checkRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
+    this.friendService.checkRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
         console.log(response.message);
         if (response.status === 200) {
@@ -119,7 +119,7 @@ export class ProfileComponent {
       }
     });
 
-    this.friendsService.checkRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
+    this.friendService.checkRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
       next: (response) => {
         console.log(response.message);
         if (response.status === 200) {
@@ -131,7 +131,7 @@ export class ProfileComponent {
       }
     });
 
-    this.friendsService.checkFriendship(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
+    this.friendService.checkFriendship(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
         console.log(response.message);
         if (response.status === 200) {
@@ -145,7 +145,7 @@ export class ProfileComponent {
   }
 
   sendFriendRequest() {
-    this.friendsService.sendFriendRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
+    this.friendService.sendFriendRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
         console.log(response);
         this.loggedUserSentFriendRequest = true;
@@ -159,7 +159,7 @@ export class ProfileComponent {
   }
 
   cancelFriendRequest() {
-    this.friendsService.cancelFriendRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
+    this.friendService.cancelFriendRequest(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
         console.log(response);
         this.loggedUserSentFriendRequest = false;
@@ -173,7 +173,7 @@ export class ProfileComponent {
   }
 
   acceptFriendRequest() {
-    this.friendsService.acceptFriendRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
+    this.friendService.acceptFriendRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
       next: (response) => {
         console.log(response);
         this.loggedUserSentFriendRequest = false;
@@ -187,7 +187,7 @@ export class ProfileComponent {
   }
 
   declineFriendRequest() {
-    this.friendsService.declineFriendRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
+    this.friendService.declineFriendRequest(this.usernameOfUserOnScreen, this.usernameOfLoggedUser).subscribe({
       next: (response) => {
         console.log(response);
         this.loggedUserSentFriendRequest = false;
@@ -201,7 +201,7 @@ export class ProfileComponent {
   }
 
   unfriend() {
-    this.friendsService.unfriend(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
+    this.friendService.unfriend(this.usernameOfLoggedUser, this.usernameOfUserOnScreen).subscribe({
       next: (response) => {
         console.log(response);
         this.loggedUserSentFriendRequest = false;

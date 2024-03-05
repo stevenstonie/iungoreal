@@ -6,7 +6,7 @@ import { ResponsePayload } from '../models/payloads';
 @Injectable({
   providedIn: 'root'
 })
-export class FriendsService {
+export class FriendService {
   private apiUrl = 'http://localhost:8080/api/friend';
 
   constructor(private http: HttpClient) { }

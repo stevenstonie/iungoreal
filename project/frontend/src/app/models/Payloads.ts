@@ -1,3 +1,5 @@
+import { SafeUrl } from "@angular/platform-browser";
+
 export interface ResponsePayload {
 	status: number;
 	message: string;
@@ -17,7 +19,7 @@ export interface NotificationFPayload {
 	id: number,
 	receiverUsername: string,
 	emitterUsername: string,
-	emitterPfpLink: string,
+	emitterPfpLink: SafeUrl,
 	type: string,
 	description: string,
 	createdAt: Date
