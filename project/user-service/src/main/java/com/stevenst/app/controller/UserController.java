@@ -50,6 +50,6 @@ public class UserController implements UserApi {
 
 	@DeleteMapping("removeProfilePicture")
 	public ResponseEntity<ResponsePayload> removeProfilePicture(@RequestParam String username) {
-		return ResponseEntity.ok(userService.removePfp(username));
+		return ResponseEntity.ok(userService.removePfpFromDbAndCloud(username));
 	}
 }

@@ -3,6 +3,9 @@ package com.stevenst.app.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +39,9 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 	private static final String USER_NOT_FOUND = "User not found";
+	private static final String USERS_PATH = "users/";
+	private static final String DEFAULTS_PATH = "defaults/";
+	private static final String DEFAULT_PFP_NAME = "default-profile-picture.jpg";
 	private final UserRepository userRepository;
 	private final S3Client s3Client;
 	@Value("${aws.bucketName}")
@@ -85,11 +91,18 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByUsername(username).orElseThrow(
 				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 		String fileName = file.getOriginalFilename();
-
-		removePfp(username);
-
+		
+		removePfpFromDbAndCloud(username);
+		
 		setPfpNameInDb(user, fileName);
-		return uploadPfpToS3(username, file);
+		
+		Map<String, String> metadata = new HashMap<>();
+		metadata.put("Content-Type", file.getContentType());
+		metadata.put("Content-Length", String.valueOf(file.getSize()));
+		metadata.put("username", username);
+		metadata.put("pfp_name", file.getOriginalFilename());
+		String key = USERS_PATH + username + "/" + fileName;
+		return uploadPfpToS3(key, metadata, file);
 	}
 
 	@Override
@@ -98,26 +111,32 @@ public class UserServiceImpl implements UserService {
 				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 
 		String pfpNameFromDb = user.getProfilePictureName();
-		if (pfpNameFromDb == null || pfpNameFromDb == "") {
-			return JsonUtil.convertStringToJson("");
+		String key = USERS_PATH + username + "/" + pfpNameFromDb;
+		String MSG_FOR_EXCEPTION = "No profile picture was found stored in cloud for user: ";
+
+		if (pfpNameFromDb == null || pfpNameFromDb.equals("")) {
+			key = DEFAULTS_PATH + DEFAULT_PFP_NAME;
+			MSG_FOR_EXCEPTION = MSG_FOR_EXCEPTION.replace("No profile", "No default profile");
 		}
 
-		try{
-			checkIfPfpExistsInS3(username, pfpNameFromDb);
+		try {
+			checkIfPfpExistsInS3(key);
 		} catch (IgorImageNotFoundException e) {
-			throw new IgorImageNotFoundException("No stored profile picture found for user: " + username + ".");
+			throw new IgorImageNotFoundException(MSG_FOR_EXCEPTION + username + ".");
 		}
 
-		return JsonUtil.convertStringToJson(generatePresignedUrl(username, pfpNameFromDb));
+		return JsonUtil.convertStringToJson(generatePresignedUrl(key));
 	}
 
 	@Override
-	public ResponsePayload removePfp(String username) {
+	public ResponsePayload removePfpFromDbAndCloud(String username) {
 		User user = userRepository.findByUsername(username).orElseThrow(
 				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 
 		String pfpNameFromDb = user.getProfilePictureName();
-		if (pfpNameFromDb == null || pfpNameFromDb == "") {
+		String key = USERS_PATH + username + "/" + pfpNameFromDb;
+
+		if (pfpNameFromDb == null || pfpNameFromDb.equals("")) {
 			System.out.println("No profile picture found for user: " + username);
 			return ResponsePayload.builder()
 					.status(404)
@@ -126,7 +145,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		setPfpNameInDb(user, null);
-		return removePfpFromS3(username, pfpNameFromDb);
+		return removePfpFromCloud(key, username);
 	}
 
 	// ----------------------------------------------------------------------------------------------------------
@@ -136,8 +155,8 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(user);
 	}
 
-	private ResponsePayload removePfpFromS3(String username, String pfpNameFromDb) {
-		DeleteObjectRequest deleteObjectRequest = createDeleteObjectRequest(username, pfpNameFromDb);
+	private ResponsePayload removePfpFromCloud(String key, String username) {
+		DeleteObjectRequest deleteObjectRequest = createDeleteObjectRequest(key);
 		s3Client.deleteObject(deleteObjectRequest);
 
 		System.out.println("Removed profile picture for user: " + username);
@@ -147,9 +166,8 @@ public class UserServiceImpl implements UserService {
 				.build();
 	}
 
-	private ResponsePayload uploadPfpToS3(String username, MultipartFile file) {
-		PutObjectRequest putObjectRequest = createPutObjectRequest(username, file.getOriginalFilename());
-
+	private ResponsePayload uploadPfpToS3(String key, Map<String, String> metadata, MultipartFile file) {
+		PutObjectRequest putObjectRequest = createPutObjectRequest(key, metadata);
 		try (InputStream inputStream = file.getInputStream()) {
 			s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
 
@@ -163,8 +181,8 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	private String generatePresignedUrl(String username, String pfpNameFromDb) {
-		GetObjectRequest getObjectRequest = createGetObjectRequest(username, pfpNameFromDb);
+	private String generatePresignedUrl(String key) {
+		GetObjectRequest getObjectRequest = createGetObjectRequest(key);
 		Duration expiration = Duration.ofHours(1);
 
 		try (S3Presigner presigner = S3Presigner.builder().region(Region.EU_CENTRAL_1).build()) {
@@ -182,8 +200,7 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	private void checkIfPfpExistsInS3(String username, String pfpNameFromDb) {
-		String key = username + "/profile_picture/" + pfpNameFromDb;
+	private void checkIfPfpExistsInS3(String key) {
 		HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key)
@@ -198,27 +215,22 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	private PutObjectRequest createPutObjectRequest(String username, String fileName) {
-		String key = username + "/profile_picture/" + fileName;
-		// TODO: add metadata
+	private PutObjectRequest createPutObjectRequest(String key, Map<String, String> metadata) {
 		return PutObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key)
+				.metadata(metadata)
 				.build();
 	}
 
-	private GetObjectRequest createGetObjectRequest(String username, String fileName) {
-		String key = username + "/profile_picture/" + fileName;
-
+	private GetObjectRequest createGetObjectRequest(String key) {
 		return GetObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key)
 				.build();
 	}
 
-	private DeleteObjectRequest createDeleteObjectRequest(String username, String fileName) {
-		String key = username + "/profile_picture/" + fileName;
-
+	private DeleteObjectRequest createDeleteObjectRequest(String key) {
 		return DeleteObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key)

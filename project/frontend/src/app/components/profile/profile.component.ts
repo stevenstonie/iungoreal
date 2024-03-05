@@ -24,7 +24,7 @@ export class ProfileComponent {
   file: File | null = null;
   previewUrl: SafeUrl | null = null;
   profilePictureUrl: string = 'assets/default-images/default-profile-picture.jpg';
-  profileCoverUrl: string = 'assets/default-images/default-cover-photo.jpg';
+  profileCoverUrl: string = '';
 
   constructor(private userService: UserService, private friendService: FriendService, private route: ActivatedRoute, private router: Router, private sanitizer: DomSanitizer, private http: HttpClient) { }
 
@@ -51,9 +51,6 @@ export class ProfileComponent {
   getPfpFromService(): void {
     // this.userService.getProfilePictureLink(this.usernameOfUserOnScreen).subscribe({
     //   next: (pfp: StringInJson) => {
-    //     if (pfp.string === '' || pfp.string === null) {
-    //       return;
-    //     }
     //     this.profilePictureUrl = pfp.string;
     //   },
     //   error: (error) => {

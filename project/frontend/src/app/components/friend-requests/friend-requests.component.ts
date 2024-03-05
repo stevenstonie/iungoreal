@@ -11,7 +11,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class FriendRequestsComponent implements OnInit {
   last50NotificationsF: NotificationFPayload[] = [];
   loggedUserUsername = localStorage.getItem('username') ?? '';
-  profilePictureUrl: string = 'assets/default-images/default-profile-picture.jpg';
 
   constructor(private notificationService: NotificationService, private sanitizer: DomSanitizer) { }
 

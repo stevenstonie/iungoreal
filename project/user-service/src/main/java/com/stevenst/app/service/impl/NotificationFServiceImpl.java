@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class NotificationFServiceImpl implements NotificationFService {
 	private final NotificationRepository notificationRepository;
 	private final UserRepository userRepository;
-	private final UserService userService;
+	// private final UserService userService;		// (1)
 
 	public List<NotificationFPayload> getLast50NotificationsOfFriends(String username) {
 		User user = userRepository.findByUsername(username).orElseThrow(
@@ -42,9 +42,9 @@ public class NotificationFServiceImpl implements NotificationFService {
 							.id(notification.getId())
 							.receiverUsername(notification.getReceiver().getUsername())
 							.emitterUsername(notification.getEmitter().getUsername())
-							.emitterPfpLink(
-									JsonUtil.getStringFromJson(userService
-											.getPfpPreSignedLinkFromS3(notification.getEmitter().getUsername())))
+							// .emitterPfpLink(		(1)
+							// 		JsonUtil.getStringFromJson(userService
+							// 				.getPfpPreSignedLinkFromS3(notification.getEmitter().getUsername())))
 							.type(notification.getType())
 							.description(notification.getDescription())
 							.createdAt(notification.getCreatedAt())
@@ -55,3 +55,4 @@ public class NotificationFServiceImpl implements NotificationFService {
 		return notifications;
 	}
 }
+// (1) -> only uncomment when you want to access the cloud storage
