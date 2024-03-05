@@ -13,6 +13,7 @@ import com.stevenst.app.repository.NotificationRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.NotificationFService;
 import com.stevenst.app.service.UserService;
+import com.stevenst.app.util.JsonUtil;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.model.enums.NotificationType;
@@ -42,7 +43,8 @@ public class NotificationFServiceImpl implements NotificationFService {
 							.receiverUsername(notification.getReceiver().getUsername())
 							.emitterUsername(notification.getEmitter().getUsername())
 							.emitterPfpLink(
-									userService.getPfpPreSignedLinkFromS3(notification.getEmitter().getUsername()))
+									JsonUtil.getStringFromJson(userService
+											.getPfpPreSignedLinkFromS3(notification.getEmitter().getUsername())))
 							.type(notification.getType())
 							.description(notification.getDescription())
 							.createdAt(notification.getCreatedAt())
