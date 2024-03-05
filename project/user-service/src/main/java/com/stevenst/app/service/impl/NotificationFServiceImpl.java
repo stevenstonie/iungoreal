@@ -14,9 +14,13 @@ import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.NotificationFService;
 import com.stevenst.app.service.UserService;
 import com.stevenst.app.util.JsonUtil;
+import com.stevenst.lib.exception.IgorEntityNotFoundException;
+import com.stevenst.lib.exception.IgorNullValueException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
+import com.stevenst.lib.model.Notification;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.model.enums.NotificationType;
+import com.stevenst.lib.payload.ResponsePayload;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +46,7 @@ public class NotificationFServiceImpl implements NotificationFService {
 							.id(notification.getId())
 							.receiverUsername(notification.getReceiver().getUsername())
 							.emitterUsername(notification.getEmitter().getUsername())
-							// .emitterPfpLink(		(1)
+							// .emitterPfpLink(			// (1)
 							// 		JsonUtil.getStringFromJson(userService
 							// 				.getPfpPreSignedLinkFromS3(notification.getEmitter().getUsername())))
 							.type(notification.getType())
@@ -53,6 +57,17 @@ public class NotificationFServiceImpl implements NotificationFService {
 				});
 
 		return notifications;
+	}
+
+	public ResponsePayload removeNotificationF(Long id) {
+		if (id == null) {
+			throw new IgorNullValueException("Cannot remove notification as the value of id is null.");
+		}
+		Notification notification = notificationRepository.findById(id)
+				.orElseThrow(() -> new IgorEntityNotFoundException("Notification not found (of id: " + id + ")."));
+	
+		notificationRepository.delete(notification);
+		return ResponsePayload.builder().status(200).message("Notification successfully removed.").build();
 	}
 }
 // (1) -> only uncomment when you want to access the cloud storage

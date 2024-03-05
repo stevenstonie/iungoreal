@@ -49,7 +49,7 @@ public class UserController implements UserApi {
 	}
 
 	@DeleteMapping("removeProfilePicture")
-	public ResponseEntity<ResponsePayload> removeProfilePicture(@RequestParam String username) {
+	public ResponseEntity<ResponsePayload> removePfpFromDbAndCloud(@RequestParam String username) {
 		return ResponseEntity.ok(userService.removePfpFromDbAndCloud(username));
 	}
 }

@@ -58,5 +58,5 @@ public interface UserApi {
 			@ApiResponse(responseCode = "200", description = "Successful", content = {
 					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ResponsePayload.class)) }),
 			@ApiResponse(responseCode = "404", description = "User not found", content = @Content) })
-	public ResponseEntity<ResponsePayload> removeProfilePicture(String username);
+	public ResponseEntity<ResponsePayload> removePfpFromDbAndCloud(String username);
 }
