@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { AppService } from '../../services/app.service';
-import { PostPayload } from 'src/app/models/app';
+import { PostPayload } from 'src/app/models/payloads';
 
 @Component({
   selector: 'app-posts',

@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { ResponsePayload } from '../models/payloads';
-import { PostPayload } from '../models/app';
+import { PostPayload, ResponsePayload } from '../models/payloads';
+
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +27,8 @@ export class AppService {
         catchError(this.handleError)
       );
   }
+
+  // ---------------
 
   private handleError(error: HttpErrorResponse) {
     console.error(error);
