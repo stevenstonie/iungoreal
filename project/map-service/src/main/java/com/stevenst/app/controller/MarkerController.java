@@ -19,17 +19,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-@RequestMapping("/api/markers")
+@RequestMapping("/api/marker")
 @RequiredArgsConstructor
 public class MarkerController {
 	private final MarkerService markerService;
 
-	@GetMapping("/")
-	public List<Marker> getAllMarkers() {
+	@GetMapping("/getAll")
+	public List<Marker> getAll() {
 		return markerService.getAllMarkers();
 	}
 
-	@PostMapping("/addMarker")
+	@PostMapping("/add")
 	public Marker addMarker(@RequestBody Marker marker) {
 		try {
 			return markerService.addMarker(marker);
@@ -38,7 +38,7 @@ public class MarkerController {
 		}
 	}
 
-	@GetMapping("/getMarker")
+	@GetMapping("/get")
 	public Marker getMarker(@RequestParam Long id) {
 		return markerService.getMarker(id);
 	}
