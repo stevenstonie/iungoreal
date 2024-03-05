@@ -1,10 +1,12 @@
 <div id="friend-requests-container">
-	
+
 	<ng-container *ngFor="let notificationF of last50NotificationsF">
 		<div class="notificationF">
-			<img [src]="notificationF.emitterPfpLink" alt="Profile picture">
-			<p>{{ notificationF.description }}</p>
+			<a href="/user/{{ notificationF.emitterUsername }}">
+				<img [src]="notificationF.emitterPfpLink" alt="Profile picture">
+				<p>{{ notificationF.description }}</p>
+			</a>
 		</div>
 	</ng-container>
-	
+
 </div>
