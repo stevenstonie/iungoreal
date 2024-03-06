@@ -23,7 +23,7 @@ export class ProfileComponent {
   usernameOfUserOnScreen = this.route.snapshot.paramMap.get('username') ?? '';
   file: File | null = null;
   previewUrl: SafeUrl | null = null;
-  profilePictureUrl: string = 'assets/default-images/default-profile-picture.jpg';
+  profilePictureUrl: string = '';
   profileCoverUrl: string = '';
 
   constructor(private userService: UserService, private friendService: FriendService, private route: ActivatedRoute, private router: Router, private sanitizer: DomSanitizer, private http: HttpClient) { }

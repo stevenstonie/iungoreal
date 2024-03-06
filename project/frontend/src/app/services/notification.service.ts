@@ -21,8 +21,10 @@ export class NotificationService {
       );
   }
 
-  removeNotification(id: number): Observable<ResponsePayload> { 
-    return this.httpClient.get<ResponsePayload>(`${this.apiUrl}/${this.FRIEND}/delete/${id}`)
+  removeNotification(id: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('id', id);
+
+    return this.httpClient.delete<ResponsePayload>(`${this.apiUrl}/${this.FRIEND}/remove`, { params })
       .pipe(
         catchError(this.handleError)
       );

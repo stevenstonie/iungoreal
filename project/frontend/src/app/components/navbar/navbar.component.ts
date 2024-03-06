@@ -21,6 +21,12 @@ export class NavbarComponent implements OnInit {
 
   // TODO: test this thoroughly (also make it so that this only happens once and not every time the page reloads or smth)
   async ngOnInit() {
+    this.getUserAuth();
+
+    this.getNbOfNotificationsF();
+  }
+
+  async getUserAuth() {
     const email = localStorage.getItem('email') ?? '';
 
     try {
@@ -54,6 +60,10 @@ export class NavbarComponent implements OnInit {
         window.location.href = '/auth';
       }
     }
+  }
+
+  async getNbOfNotificationsF() {
+    
   }
 
   search(): void {
