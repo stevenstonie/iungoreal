@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NotificationFPayload } from 'src/app/models/payloads';
 import { NotificationService } from 'src/app/services/notification.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -11,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class FriendRequestsComponent implements OnInit {
   last50NotificationsF: NotificationFPayload[] = [];
   loggedUserUsername = localStorage.getItem('username') ?? '';
+  @Output() notificationRemoved = new EventEmitter<number>();
 
   constructor(private notificationService: NotificationService, private sanitizer: DomSanitizer) { }
 
@@ -29,7 +30,12 @@ export class FriendRequestsComponent implements OnInit {
     this.notificationService.removeNotificationF(notificationFId).subscribe({
       next: (response) => {
         console.log(response);
-        window.location.href = '/user/' + emitterUsername;
+        if (emitterUsername == '' || emitterUsername == null) {
+          this.last50NotificationsF = this.last50NotificationsF.filter(notificationF => notificationF.id != notificationFId);
+          this.notificationRemoved.emit();
+        } else {
+          window.location.href = '/user/' + emitterUsername;
+        }
       },
       error: (error) => {
         console.error(error);

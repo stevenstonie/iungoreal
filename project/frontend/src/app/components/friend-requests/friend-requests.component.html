@@ -2,10 +2,14 @@
 
 	<ng-container *ngFor="let notificationF of last50NotificationsF">
 		<div class="notificationF">
-			<a (click)="removeNotificationFAndRedirectToProfile(notificationF.id, notificationF.emitterUsername)">
-				<img [src]="notificationF.emitterPfpLink" alt="pfp">
-				<p>{{ notificationF.description }}</p>
-			</a>
+			<div class="info">
+				<a (click)="removeNotificationFAndRedirectToProfile(notificationF.id, notificationF.emitterUsername)">
+					<img class="pfp" [src]="notificationF.emitterPfpLink" alt="pfp">
+					<p class="description">{{ notificationF.description }}</p>
+				</a>
+			</div>
+			<i class="close-button material-icons"
+				(click)="removeNotificationFAndRedirectToProfile(notificationF.id, '')">close</i>
 		</div>
 	</ng-container>
 
