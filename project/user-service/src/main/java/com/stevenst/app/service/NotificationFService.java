@@ -9,4 +9,6 @@ public interface NotificationFService {
 	public List<NotificationFPayload> getLast50NotificationsOfFriends(String username);
 
 	public ResponsePayload removeNotificationF(Long id);
+
+	public Integer countLast51NotificationsOfFriends(String username);
 }

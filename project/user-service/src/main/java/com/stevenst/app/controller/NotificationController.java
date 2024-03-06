@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.stevenst.app.payload.NotificationFPayload;
 import com.stevenst.app.service.NotificationFService;
-import com.stevenst.lib.model.Notification;
 import com.stevenst.lib.payload.ResponsePayload;
 
 import lombok.RequiredArgsConstructor;
@@ -31,5 +30,10 @@ public class NotificationController {
 	@DeleteMapping("remove")
 	public ResponseEntity<ResponsePayload> removeNotificationF(@RequestParam Long id) {
 		return ResponseEntity.ok(notificationFService.removeNotificationF(id));
+	}
+
+	@GetMapping("/countLast51")
+	public ResponseEntity<Integer> countLast51NotificationsOfFriends(@RequestParam String username) {
+		return ResponseEntity.ok(notificationFService.countLast51NotificationsOfFriends(username));
 	}
 }

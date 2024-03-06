@@ -511,7 +511,9 @@ class FriendsControllerIntegrationTest {
 	// ---------------------------------------------------------------
 
 	private void insertUserIntoDB(User user) {
-		userRepository.save(user);
+		if (user != null) {
+			userRepository.save(user);
+		}
 	}
 
 	private void addFriendRequest(User sender, User receiver) {

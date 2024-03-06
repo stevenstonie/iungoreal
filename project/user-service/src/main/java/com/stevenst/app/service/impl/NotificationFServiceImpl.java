@@ -65,9 +65,23 @@ public class NotificationFServiceImpl implements NotificationFService {
 		}
 		Notification notification = notificationRepository.findById(id)
 				.orElseThrow(() -> new IgorEntityNotFoundException("Notification not found (of id: " + id + ")."));
-	
+
 		notificationRepository.delete(notification);
 		return ResponsePayload.builder().status(200).message("Notification successfully removed.").build();
+	}
+
+	public Integer countLast51NotificationsOfFriends(String username) {
+		User user = userRepository.findByUsername(username).orElseThrow(
+				() -> new IgorUserNotFoundException("User not found (with username: " + username + ")"));
+
+		Integer countOfNotificationsF = notificationRepository.countLast51NotificationsF(user,
+		List.of(NotificationType.FRIEND_REQUEST, NotificationType.FRIEND_REQUEST_ACCEPTED,
+						NotificationType.FRIEND_REQUEST_DECLINED, NotificationType.UNFRIEND));
+		if(countOfNotificationsF == null) {
+			return 0;
+		}
+
+		return countOfNotificationsF;
 	}
 }
 // (1) -> only uncomment when you want to access the cloud storage
