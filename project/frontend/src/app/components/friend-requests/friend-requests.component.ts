@@ -25,10 +25,11 @@ export class FriendRequestsComponent implements OnInit {
     });
   }
 
-  removeNotificationF(id: number) {
-    this.notificationService.removeNotificationF(id).subscribe({
+  removeNotificationFAndRedirectToProfile(notificationFId: number, emitterUsername: string) {
+    this.notificationService.removeNotificationF(notificationFId).subscribe({
       next: (response) => {
         console.log(response);
+        window.location.href = '/user/' + emitterUsername;
       },
       error: (error) => {
         console.error(error);

@@ -2,7 +2,7 @@
 
 	<ng-container *ngFor="let notificationF of last50NotificationsF">
 		<div class="notificationF">
-			<a href="/user/{{ notificationF.emitterUsername }}" (click)="removeNotificationF(notificationF.id)">
+			<a (click)="removeNotificationFAndRedirectToProfile(notificationF.id, notificationF.emitterUsername)">
 				<img [src]="notificationF.emitterPfpLink" alt="pfp">
 				<p>{{ notificationF.description }}</p>
 			</a>
