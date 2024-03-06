@@ -25,8 +25,8 @@ export class FriendRequestsComponent implements OnInit {
     });
   }
 
-  removeNotification(id: number) {
-    this.notificationService.removeNotification(id).subscribe({
+  removeNotificationF(id: number) {
+    this.notificationService.removeNotificationF(id).subscribe({
       next: (response) => {
         console.log(response);
       },

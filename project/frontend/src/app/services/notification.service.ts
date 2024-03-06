@@ -21,10 +21,19 @@ export class NotificationService {
       );
   }
 
-  removeNotification(id: number): Observable<ResponsePayload> {
+  removeNotificationF(id: number): Observable<ResponsePayload> {
     const params = new HttpParams().set('id', id);
 
     return this.httpClient.delete<ResponsePayload>(`${this.apiUrl}/${this.FRIEND}/remove`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getNbOfLast51NotificationsF(username: string): Observable<number> {
+    const params = new HttpParams().set('username', username);
+
+    return this.httpClient.get<number>(`${this.apiUrl}/${this.FRIEND}/countLast51`, { params })
       .pipe(
         catchError(this.handleError)
       );
