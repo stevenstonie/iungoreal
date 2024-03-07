@@ -31,7 +31,7 @@ public class NotificationFServiceImpl implements NotificationFService {
 	private final UserRepository userRepository;
 	// private final UserService userService;		// (1)
 
-	public List<NotificationFPayload> getLast50NotificationsOfFriends(String username) {
+	public List<NotificationFPayload> getLast50NotificationsF(String username) {
 		User user = userRepository.findByUsername(username).orElseThrow(
 				() -> new IgorUserNotFoundException("User not found (with username: " + username + ")"));
 
@@ -70,7 +70,7 @@ public class NotificationFServiceImpl implements NotificationFService {
 		return ResponsePayload.builder().status(200).message("Notification successfully removed.").build();
 	}
 
-	public Integer countLast51NotificationsOfFriends(String username) {
+	public Integer countLast51NotificationsF(String username) {
 		User user = userRepository.findByUsername(username).orElseThrow(
 				() -> new IgorUserNotFoundException("User not found (with username: " + username + ")"));
 

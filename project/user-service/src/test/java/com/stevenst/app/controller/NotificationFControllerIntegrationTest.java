@@ -1,6 +1,7 @@
 package com.stevenst.app.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -86,7 +87,6 @@ class NotificationFControllerIntegrationTest {
 				userBobby.getUsername() + " sent you a friend request.");
 		insertNotificationFIntoDB(userAndrew, userDoug, NotificationType.FRIEND_REQUEST_ACCEPTED,
 				userDoug.getUsername() + " accepted your friend request.");
-
 		insertNotificationFIntoDB(userBobby, userDoug, NotificationType.UNFRIEND,
 				userDoug.getUsername() + " unfriended you.");
 	}
@@ -97,7 +97,7 @@ class NotificationFControllerIntegrationTest {
 	}
 
 	@Test
-	void getLast50NotificationsOfFriends() throws Exception {
+	void getLast50NotificationsF() throws Exception {
 		MvcResult result = mockMvc.perform(get("/api/notification/friend/getLast50")
 				.param("username", userAndrew.getUsername()))
 				.andExpect(status().isOk())
@@ -106,8 +106,33 @@ class NotificationFControllerIntegrationTest {
 		List<NotificationFPayload> notificationsF = getListOfNotificationFPayloadFromMvcResult(result);
 
 		assertEquals(2, notificationsF.size());
-		assertEquals(userAndrew.getUsername(), notificationsF.get(0).getReceiverUsername());
+		assertEquals(userDoug.getUsername(), notificationsF.get(0).getEmitterUsername());
 		assertEquals(userBobby.getUsername(), notificationsF.get(1).getEmitterUsername());
+	}
+
+	@Test
+	void removeNotificationF() throws Exception {
+		Long notificationFId = insertNotificationFIntoDB(userBobby, userAndrew,
+				NotificationType.FRIEND_REQUEST_DECLINED, "test description. not really important here tbh").getId();
+
+		mockMvc.perform(delete("/api/notification/friend/remove")
+				.param("id", notificationFId.toString()))
+				.andExpect(status().isOk());
+
+		Integer nbOfNotificationsF = countLast51NotificationsFOfAnUser(userAndrew);
+
+		assertEquals(2, nbOfNotificationsF);
+	}
+
+	@Test
+	void countLast51NotificationsF() throws Exception {
+		MvcResult result = mockMvc.perform(get("/api/notification/friend/countLast51")
+				.param("username", userAndrew.getUsername()))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		Integer nbOfNotificationsF = JsonPath.read(result.getResponse().getContentAsString(), "$");
+		assertEquals(2, nbOfNotificationsF);
 	}
 
 	// ------------------------------------------------
@@ -118,8 +143,15 @@ class NotificationFControllerIntegrationTest {
 		}
 	}
 
-	private void insertNotificationFIntoDB(User receiver, User emitter, NotificationType type, String description) {
-		notificationRepository.save(
+	private Integer countLast51NotificationsFOfAnUser(User user) {
+		return notificationRepository.countLast51NotificationsF(user,
+				List.of(NotificationType.FRIEND_REQUEST, NotificationType.FRIEND_REQUEST_ACCEPTED,
+						NotificationType.FRIEND_REQUEST_DECLINED, NotificationType.UNFRIEND));
+	}
+
+	private Notification insertNotificationFIntoDB(User receiver, User emitter, NotificationType type,
+			String description) {
+		return notificationRepository.save(
 				Objects.requireNonNull(Notification.builder()
 						.receiver(receiver)
 						.emitter(emitter)

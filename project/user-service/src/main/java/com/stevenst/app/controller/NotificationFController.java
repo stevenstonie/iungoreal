@@ -23,8 +23,8 @@ public class NotificationFController {
 	private final NotificationFService notificationFService;
 
 	@GetMapping("/getLast50")
-	public ResponseEntity<List<NotificationFPayload>> getLast50NotificationsOfFriends(@RequestParam String username) {
-		return ResponseEntity.ok(notificationFService.getLast50NotificationsOfFriends(username));
+	public ResponseEntity<List<NotificationFPayload>> getLast50NotificationsF(@RequestParam String username) {
+		return ResponseEntity.ok(notificationFService.getLast50NotificationsF(username));
 	}
 
 	@DeleteMapping("remove")
@@ -33,7 +33,7 @@ public class NotificationFController {
 	}
 
 	@GetMapping("/countLast51")
-	public ResponseEntity<Integer> countLast51NotificationsOfFriends(@RequestParam String username) {
-		return ResponseEntity.ok(notificationFService.countLast51NotificationsOfFriends(username));
+	public ResponseEntity<Integer> countLast51NotificationsF(@RequestParam String username) {
+		return ResponseEntity.ok(notificationFService.countLast51NotificationsF(username));
 	}
 }
