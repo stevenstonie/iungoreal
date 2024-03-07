@@ -22,6 +22,7 @@
 		<lombok.version>1.18.30</lombok.version>
 		<h2.version>2.2.224</h2.version>
 		<mockito-core.version>5.8.0</mockito-core.version>
+		<jackson.version>2.16.1</jackson.version>
 	</properties>
 
 	<dependencies>
@@ -87,6 +88,20 @@
 			<artifactId>json</artifactId>
 			<version>20240205</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+
 
 		<!-- devtools-->
 		<dependency>

@@ -1,5 +1,6 @@
 package com.stevenst.app.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,6 +23,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.stevenst.app.model.FriendRequests;
@@ -98,6 +104,10 @@ class NotificationFControllerIntegrationTest {
 				.andReturn();
 
 		List<NotificationFPayload> notificationsF = getListOfNotificationFPayloadFromMvcResult(result);
+
+		assertEquals(2, notificationsF.size());
+		assertEquals(userAndrew.getUsername(), notificationsF.get(0).getReceiverUsername());
+		assertEquals(userBobby.getUsername(), notificationsF.get(1).getEmitterUsername());
 	}
 
 	// ------------------------------------------------
@@ -120,10 +130,13 @@ class NotificationFControllerIntegrationTest {
 	}
 
 	private List<NotificationFPayload> getListOfNotificationFPayloadFromMvcResult(MvcResult result)
-			throws UnsupportedEncodingException {
-		DocumentContext responseJson = JsonPath.parse(result.getResponse().getContentAsString());
-		List<NotificationFPayload> notificationsF = responseJson.read("$");
-		return notificationsF;
+			throws JsonMappingException, JsonProcessingException, UnsupportedEncodingException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+
+		var result_string = result.getResponse().getContentAsString();
+		return mapper.readValue(result_string, new TypeReference<List<NotificationFPayload>>() {
+		});
 	}
 
 	private void cleanDB() {
