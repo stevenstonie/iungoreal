@@ -35,6 +35,7 @@ import com.stevenst.app.model.Friendships;
 import com.stevenst.lib.payload.ResponsePayload;
 import com.stevenst.app.repository.FriendRequestsRepository;
 import com.stevenst.app.repository.FriendshipsRepository;
+import com.stevenst.app.repository.NotificationRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.lib.model.User;
 
@@ -59,6 +60,8 @@ class FriendsControllerIntegrationTest {
 	private FriendshipsRepository friendshipsRepository;
 	@Autowired
 	private FriendRequestsRepository friendRequestsRepository;
+	@Autowired
+	private NotificationRepository notificationRepository;
 	@Autowired
 	private UserRepository userRepository;
 
@@ -497,7 +500,8 @@ class FriendsControllerIntegrationTest {
 	@Test
 	void unfriend_friendshipDoesntExist() throws Exception {
 		MvcResult result = mockMvc.perform(
-				delete("/api/friend/unfriend?unfriender=" + userAndrew.getUsername() + "&unfriended=" + userBobby.getUsername()))
+				delete("/api/friend/unfriend?unfriender=" + userAndrew.getUsername() + "&unfriended="
+						+ userBobby.getUsername()))
 				.andExpect(status().isBadRequest())
 				.andReturn();
 
@@ -533,6 +537,7 @@ class FriendsControllerIntegrationTest {
 	private void cleanDB() {
 		friendRequestsRepository.deleteAll();
 		friendshipsRepository.deleteAll();
+		notificationRepository.deleteAll();
 		userRepository.deleteAll();
 	}
 

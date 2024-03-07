@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping("/api/notification/friend")
 @RequiredArgsConstructor
-public class NotificationController {
+public class NotificationFController {
 	private final NotificationFService notificationFService;
 
 	@GetMapping("/getLast50")
