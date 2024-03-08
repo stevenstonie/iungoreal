@@ -29,10 +29,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import com.stevenst.app.model.FriendRequests;
-import com.stevenst.app.model.Friendships;
 import com.stevenst.app.payload.NotificationFPayload;
 import com.stevenst.app.repository.NotificationRepository;
 import com.stevenst.app.repository.UserRepository;
@@ -134,6 +131,8 @@ class NotificationFControllerIntegrationTest {
 		Integer nbOfNotificationsF = JsonPath.read(result.getResponse().getContentAsString(), "$");
 		assertEquals(2, nbOfNotificationsF);
 	}
+
+	// TODO: when adding edge cases dont forget to test if notificationsF are removed automatically for a receiver if the same sender does another request
 
 	// ------------------------------------------------
 

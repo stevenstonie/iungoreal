@@ -2,6 +2,7 @@ package com.stevenst.app.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,8 +13,6 @@ import com.stevenst.app.payload.NotificationFPayload;
 import com.stevenst.app.repository.NotificationRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.NotificationFService;
-import com.stevenst.app.service.UserService;
-import com.stevenst.app.util.JsonUtil;
 import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorNullValueException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
@@ -66,7 +65,7 @@ public class NotificationFServiceImpl implements NotificationFService {
 		Notification notification = notificationRepository.findById(id)
 				.orElseThrow(() -> new IgorEntityNotFoundException("Notification not found (of id: " + id + ")."));
 
-		notificationRepository.delete(notification);
+		notificationRepository.delete(Objects.requireNonNull(notification));
 		return ResponsePayload.builder().status(200).message("Notification successfully removed.").build();
 	}
 
@@ -75,9 +74,9 @@ public class NotificationFServiceImpl implements NotificationFService {
 				() -> new IgorUserNotFoundException("User not found (with username: " + username + ")"));
 
 		Integer countOfNotificationsF = notificationRepository.countLast51NotificationsF(user,
-		List.of(NotificationType.FRIEND_REQUEST, NotificationType.FRIEND_REQUEST_ACCEPTED,
+				List.of(NotificationType.FRIEND_REQUEST, NotificationType.FRIEND_REQUEST_ACCEPTED,
 						NotificationType.FRIEND_REQUEST_DECLINED, NotificationType.UNFRIEND));
-		if(countOfNotificationsF == null) {
+		if (countOfNotificationsF == null) {
 			return 0;
 		}
 

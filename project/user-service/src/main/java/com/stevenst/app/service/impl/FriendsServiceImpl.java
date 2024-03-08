@@ -1,6 +1,7 @@
 package com.stevenst.app.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
@@ -62,19 +63,21 @@ public class FriendsServiceImpl implements FriendsService {
 					"Cannot send a friend request twice (from " + senderUsername + " to " + receiverUsername + ")");
 		}
 
-		friendRequestsRepository.save(FriendRequests.builder()
-				.sender(sender)
-				.receiver(receiver)
-				.build());
+		friendRequestsRepository.save(Objects.requireNonNull(
+				FriendRequests.builder()
+						.sender(sender)
+						.receiver(receiver)
+						.build()));
 
 		removeNotificationsOfFriends(sender, receiver);
-		notificationRepository.save(Notification.builder()
-				.receiver(receiver)
-				.emitter(sender)
-				.type(NotificationType.FRIEND_REQUEST)
-				.description(senderUsername + " sent you a friend request")
-				.read(false)
-				.build());
+		notificationRepository.save(Objects.requireNonNull(
+				Notification.builder()
+						.receiver(receiver)
+						.emitter(sender)
+						.type(NotificationType.FRIEND_REQUEST)
+						.description(senderUsername + " sent you a friend request")
+						.read(false)
+						.build()));
 
 		return ResponseEntity.ok(ResponsePayload.builder().status(200)
 				.message("Friend request sent successfully (from " + senderUsername + " to " + receiverUsername + ")")
@@ -152,19 +155,21 @@ public class FriendsServiceImpl implements FriendsService {
 		}
 
 		friendRequestsRepository.deleteBySenderAndReceiver(sender, receiver);
-		friendshipsRepository.save(Friendships.builder()
-				.user1(sender)
-				.user2(receiver)
-				.build());
+		friendshipsRepository.save(Objects.requireNonNull(
+				Friendships.builder()
+						.user1(sender)
+						.user2(receiver)
+						.build()));
 
 		removeNotificationsOfFriends(sender, receiver);
-		notificationRepository.save(Notification.builder()
-				.receiver(sender)
-				.emitter(receiver)
-				.type(NotificationType.FRIEND_REQUEST_ACCEPTED)
-				.description(receiverUsername + " accepted your friend request")
-				.read(false)
-				.build());
+		notificationRepository.save(Objects.requireNonNull(
+				Notification.builder()
+						.receiver(sender)
+						.emitter(receiver)
+						.type(NotificationType.FRIEND_REQUEST_ACCEPTED)
+						.description(receiverUsername + " accepted your friend request")
+						.read(false)
+						.build()));
 
 		return ResponseEntity
 				.ok(ResponsePayload.builder().status(200).message("Friend request accepted successfully (from "
@@ -221,13 +226,14 @@ public class FriendsServiceImpl implements FriendsService {
 		friendRequestsRepository.deleteBySenderAndReceiver(sender, receiver);
 
 		removeNotificationsOfFriends(sender, receiver);
-		notificationRepository.save(Notification.builder()
-				.receiver(sender)
-				.emitter(receiver)
-				.type(NotificationType.FRIEND_REQUEST_DECLINED)
-				.description(receiverUsername + " declined your friend request")
-				.read(false)
-				.build());
+		notificationRepository.save(Objects.requireNonNull(
+				Notification.builder()
+						.receiver(sender)
+						.emitter(receiver)
+						.type(NotificationType.FRIEND_REQUEST_DECLINED)
+						.description(receiverUsername + " declined your friend request")
+						.read(false)
+						.build()));
 
 		return ResponseEntity.ok(ResponsePayload.builder().status(200).message(
 				"Friend request declined successfully (from " + senderUsername + " to " + receiverUsername + ")")
@@ -252,13 +258,14 @@ public class FriendsServiceImpl implements FriendsService {
 		friendshipsRepository.deleteByUsers(unfriender, unfriended);
 
 		removeNotificationsOfFriends(unfriender, unfriended);
-		notificationRepository.save(Notification.builder()
-				.receiver(unfriended)
-				.emitter(unfriender)
-				.type(NotificationType.UNFRIEND)
-				.description(unfrienderUsername + " unfriended you")
-				.read(false)
-				.build());
+		notificationRepository.save(Objects.requireNonNull(
+				Notification.builder()
+						.receiver(unfriended)
+						.emitter(unfriender)
+						.type(NotificationType.UNFRIEND)
+						.description(unfrienderUsername + " unfriended you")
+						.read(false)
+						.build()));
 
 		return ResponseEntity.ok(ResponsePayload.builder().status(200).message(
 				"Unfriend successfully done (" + unfrienderUsername + " unfriended " + unfriendedUsername + ")")

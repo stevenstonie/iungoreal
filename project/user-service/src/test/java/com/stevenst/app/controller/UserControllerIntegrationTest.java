@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
@@ -224,7 +225,7 @@ class UserControllerIntegrationTest {
 	// --------------------------------------------
 
 	private void insertUserIntoDB(User user) {
-		userRepository.save(user);
+		userRepository.save(Objects.requireNonNull(user));
 	}
 
 	private void cleanDB() {

@@ -3,6 +3,7 @@ package com.stevenst.app.controller;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
@@ -521,17 +522,19 @@ class FriendsControllerIntegrationTest {
 	}
 
 	private void addFriendRequest(User sender, User receiver) {
-		friendRequestsRepository.save(FriendRequests.builder()
-				.sender(sender)
-				.receiver(receiver)
-				.build());
+		friendRequestsRepository.save(Objects.requireNonNull(
+				FriendRequests.builder()
+						.sender(sender)
+						.receiver(receiver)
+						.build()));
 	}
 
 	private void addFriendship(User user1, User user2) {
-		friendshipsRepository.save(Friendships.builder()
-				.user1(user1)
-				.user2(user2)
-				.build());
+		friendshipsRepository.save(Objects.requireNonNull(
+				Friendships.builder()
+						.user1(user1)
+						.user2(user2)
+						.build()));
 	}
 
 	private void cleanDB() {
