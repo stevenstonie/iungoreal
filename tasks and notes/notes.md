@@ -7,10 +7,9 @@
 	- (recurring) show window dialogs on errors / restrictions for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
-	- [ ] (fr, bk) notifications
+	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
 	- [ ] (fr, bk) set up the websocket code to implement the chat component
 	- [ ] (fr, bk) add the chat functionality -> (3 types: dms, regional and custom)
-	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
 	- [ ] (fr, bk) implement search functionality
 	- [ ] (fr, bk) add functionality for the main page (fetching friends posts)
 	- [ ] (fr) add verification through email when registering
@@ -30,6 +29,7 @@
 
 	_________________________________
 	---------------------------------
+	- [x] (fr, bk) notificationsF
 	- [x] (fr, bk) create posts and display them on the profile
 	- [x] (bk) integrate s3 as object storage service
 	- [x] (fr, bk) implement friend requests
