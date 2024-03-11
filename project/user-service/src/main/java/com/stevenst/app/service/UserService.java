@@ -17,5 +17,5 @@ public interface UserService {
 
 	String getPfpPreSignedLinkFromS3(String username);
 
-	ResponsePayload removePfp(String username);
+	ResponsePayload removePfpFromDbAndCloud(String username);
 }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.stevenst.lib.model.Role;
+import com.stevenst.lib.model.enums.Role;
 import com.stevenst.lib.model.User;
 import com.stevenst.app.repository.AuthRepository;
 

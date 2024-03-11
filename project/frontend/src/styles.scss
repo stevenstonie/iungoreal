@@ -28,10 +28,15 @@ button {
 
 	&:hover {
 		background-color: rgb(144, 197, 255);
+		color: rgb(247, 250, 151);
 		box-shadow: 4px 3px 8px 0px rgb(144, 197, 255);
 		border-radius: 0.2rem;
 		cursor: pointer;
 		transition-duration: 0.3s;
+	}
+
+	&:focus {
+		background-color: rgb(144, 197, 255);
 		color: rgb(247, 250, 151);
 	}
 }

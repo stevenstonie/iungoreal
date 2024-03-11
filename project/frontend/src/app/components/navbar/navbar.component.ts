@@ -3,6 +3,7 @@ import { AuthService } from '../../services/auth.service';
 import { User } from 'src/app/models/user';
 import { catchError, delayWhen, firstValueFrom, retry, throwError, timeout, timer } from 'rxjs';
 import { UserService } from '../../services/user.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-navbar',
@@ -16,11 +17,18 @@ export class NavbarComponent implements OnInit {
   showUserMenu: boolean = false;
   showNotifications: boolean = false;
   showFriendRequests: boolean = false;
+  nbOfNotificationsF: number = 0;
 
-  constructor(private userService: UserService, private authService: AuthService) { }
+  constructor(private userService: UserService, private authService: AuthService, private notificationService: NotificationService) { }
 
   // TODO: test this thoroughly (also make it so that this only happens once and not every time the page reloads or smth)
   async ngOnInit() {
+    await this.getUserAuth();
+
+    this.getNbOfNotificationsF();
+  }
+
+  async getUserAuth() {
     const email = localStorage.getItem('email') ?? '';
 
     try {
@@ -54,6 +62,17 @@ export class NavbarComponent implements OnInit {
         window.location.href = '/auth';
       }
     }
+  }
+
+  getNbOfNotificationsF() {
+    this.notificationService.getNbOfLast51NotificationsF(this.loggedUser!.username).subscribe({
+      next: (response) => {
+        this.nbOfNotificationsF = response;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   search(): void {
@@ -99,4 +118,8 @@ export class NavbarComponent implements OnInit {
   logout() {
     this.authService.logout();
   }
+
+  updateNbOfNotificationsF() {
+    --this.nbOfNotificationsF;
+ }
 }

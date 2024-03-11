@@ -2,8 +2,8 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { User } from '../models/user';
-import { ResponsePayload } from '../models/payloads';
 import { StringInJson } from '../models/app';
+import { ResponsePayload } from '../models/payloads';
 
 @Injectable({
   providedIn: 'root'

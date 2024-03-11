@@ -3,6 +3,7 @@ package com.stevenst.app.controller;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
@@ -35,6 +36,7 @@ import com.stevenst.app.model.Friendships;
 import com.stevenst.lib.payload.ResponsePayload;
 import com.stevenst.app.repository.FriendRequestsRepository;
 import com.stevenst.app.repository.FriendshipsRepository;
+import com.stevenst.app.repository.NotificationRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.lib.model.User;
 
@@ -59,6 +61,8 @@ class FriendsControllerIntegrationTest {
 	private FriendshipsRepository friendshipsRepository;
 	@Autowired
 	private FriendRequestsRepository friendRequestsRepository;
+	@Autowired
+	private NotificationRepository notificationRepository;
 	@Autowired
 	private UserRepository userRepository;
 
@@ -497,7 +501,8 @@ class FriendsControllerIntegrationTest {
 	@Test
 	void unfriend_friendshipDoesntExist() throws Exception {
 		MvcResult result = mockMvc.perform(
-				delete("/api/friend/unfriend?unfriender=" + userAndrew.getUsername() + "&unfriended=" + userBobby.getUsername()))
+				delete("/api/friend/unfriend?unfriender=" + userAndrew.getUsername() + "&unfriended="
+						+ userBobby.getUsername()))
 				.andExpect(status().isBadRequest())
 				.andReturn();
 
@@ -511,26 +516,31 @@ class FriendsControllerIntegrationTest {
 	// ---------------------------------------------------------------
 
 	private void insertUserIntoDB(User user) {
-		userRepository.save(user);
+		if (user != null) {
+			userRepository.save(user);
+		}
 	}
 
 	private void addFriendRequest(User sender, User receiver) {
-		friendRequestsRepository.save(FriendRequests.builder()
-				.sender(sender)
-				.receiver(receiver)
-				.build());
+		friendRequestsRepository.save(Objects.requireNonNull(
+				FriendRequests.builder()
+						.sender(sender)
+						.receiver(receiver)
+						.build()));
 	}
 
 	private void addFriendship(User user1, User user2) {
-		friendshipsRepository.save(Friendships.builder()
-				.user1(user1)
-				.user2(user2)
-				.build());
+		friendshipsRepository.save(Objects.requireNonNull(
+				Friendships.builder()
+						.user1(user1)
+						.user2(user2)
+						.build()));
 	}
 
 	private void cleanDB() {
 		friendRequestsRepository.deleteAll();
 		friendshipsRepository.deleteAll();
+		notificationRepository.deleteAll();
 		userRepository.deleteAll();
 	}
 

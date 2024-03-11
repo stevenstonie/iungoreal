@@ -4,7 +4,7 @@ server:
     include-message: always
     include-stacktrace: never
   tomcat:
-    # set this to something (for ex 100MB) to not let tomcat cancel the requests
+    # set this to something (for ex 10MB) to not let tomcat cancel the requests
     max-swallow-size: _
 spring:
   profiles:
@@ -18,7 +18,7 @@ spring:
     driver-class-name: _
   jpa:
     hibernate:
-      ddl-auto: _
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:

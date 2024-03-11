@@ -17,7 +17,8 @@
 		<h4>friends</h4>
 
 		<ng-container *ngIf="friendsUsernames.length > 0; else noFriends">
-			<button *ngFor="let friendUsername of friendsUsernames" type="button" [routerLink]="['/user', friendUsername]">
+			<button *ngFor="let friendUsername of friendsUsernames" type="button"
+				[routerLink]="['/user', friendUsername]">
 				{{ friendUsername }}
 			</button>
 		</ng-container>

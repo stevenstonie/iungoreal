@@ -1,7 +1,8 @@
 <app-navbar></app-navbar>
 
 <div id="title">
-	<h2>{{userOnScreen.username}}'s profile</h2>
+	<h2 *ngIf="isUserOnScreenTheLoggedOne">your profile</h2>
+	<h2 *ngIf="!isUserOnScreenTheLoggedOne">{{userOnScreen.username}}'s profile</h2>
 </div>
 
 <section id="section-left">

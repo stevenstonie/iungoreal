@@ -7,23 +7,23 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class MapService {
-  private apiUrl = 'http://localhost:8082/api/markers';
+  private apiUrl = 'http://localhost:8082/api/marker';
 
   constructor(private httpClient: HttpClient) { }
 
   getMarkers(): Observable<Marker[]> {
-    return this.httpClient.get<Marker[]>(`${this.apiUrl}/`);
+    return this.httpClient.get<Marker[]>(`${this.apiUrl}/getAll`);
   }
 
   addMarker(marker: Marker) {
-    return this.httpClient.post(`${this.apiUrl}/addMarker`, marker);
+    return this.httpClient.post(`${this.apiUrl}/add`, marker);
   }
 
   updateMarker(marker: Marker) {
-    return this.httpClient.put(`${this.apiUrl}/updateMarker`, marker);
+    return this.httpClient.put(`${this.apiUrl}/update`, marker);
   }
 
   deleteMarker(id: number) {
-    return this.httpClient.delete(`${this.apiUrl}/deleteMarker/${id}`);
+    return this.httpClient.delete(`${this.apiUrl}/delete/${id}`);
   }
 }

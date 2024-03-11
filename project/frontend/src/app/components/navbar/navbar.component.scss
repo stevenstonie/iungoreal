@@ -33,28 +33,6 @@
 		justify-content: end;
 	}
 
-	.highlighted {
-		background: transparent;
-		border: none;
-		outline: none;
-		margin: 0 auto;
-		cursor: pointer;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-		border-radius: 2rem;
-		padding: 5px 10px;
-		transition-duration: 0.3s;
-		list-style: none;
-
-		&:hover {
-			background-color: rgb(144, 197, 255);
-			box-shadow: 4px 3px 8px 0px rgb(144, 197, 255);
-			border-radius: 0.2rem;
-			cursor: pointer;
-			transition-duration: 0.3s;
-			color: rgb(247, 250, 151);
-		}
-	}
-
 	img {
 		height: 100%;
 	}

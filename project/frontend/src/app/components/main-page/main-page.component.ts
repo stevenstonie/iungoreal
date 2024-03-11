@@ -1,7 +1,7 @@
 import { Component} from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
-import { FriendsService } from '../../services/friends.service';
+import { FriendService } from '../../services/friend.service';
 
 @Component({
   selector: 'app-main-page',
@@ -14,7 +14,7 @@ export class MainPageComponent {
   friendsUsernames: string[] = [];
   usernameOfLoggedUser = localStorage.getItem('username') ?? '';
 
-  constructor(private userService: UserService, private authService: AuthService, private friendsService: FriendsService) {
+  constructor(private userService: UserService, private authService: AuthService, private friendService: FriendService) {
   }
 
   ngOnInit(): void {
@@ -22,7 +22,7 @@ export class MainPageComponent {
   }
 
   getAllFriendsFromService(username: string) {
-    this.friendsService.getAllUsernamesOfFriends(username).subscribe({
+    this.friendService.getAllUsernamesOfFriends(username).subscribe({
       next: (usernames: string[]) => {
         this.friendsUsernames = usernames;
       },

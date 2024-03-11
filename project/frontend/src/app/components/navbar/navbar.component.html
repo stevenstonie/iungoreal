@@ -7,35 +7,35 @@
 	<app-map *ngIf="showMap" [loggedUser]="loggedUser"></app-map>
 	<app-chat *ngIf="showChat"></app-chat>
 	<app-notifications *ngIf="showNotifications"></app-notifications>
-	<app-friend-requests *ngIf="showFriendRequests"></app-friend-requests>
+	<app-friend-requests (notificationRemoved)="updateNbOfNotificationsF()" *ngIf="showFriendRequests"></app-friend-requests>
 
 	<div id="navbar">
 		<div class="left-section">
-			<button class="highlighted" (click)="mainPage()">Main Page</button>
+			<button (click)="mainPage()">Main Page</button>
 		</div>
 
 		<div class="middle-section">
-			<input class="highlighted" id="search-bar" type="text" placeholder="Search..." (input)="search()">
+			<input id="search-bar" type="text" placeholder="Search..." (input)="search()">
 		</div>
 
 		<div class="right-section">
-			<button class="highlighted" (click)="createPost()">Create Post</button>
+			<button (click)="createPost()">Create Post</button>
 
-			<button class="highlighted" (click)="toggleMap()">Map</button>
+			<button (click)="toggleMap()">Map</button>
 
-			<button class="highlighted" (click)="toggleChat()">Chat</button>
+			<button (click)="toggleChat()">Chat</button>
 
-			<button class="highlighted" (click)="toggleFriendRequests()">Friend Requests</button>
+			<button (click)="toggleFriendRequests()">Friend Requests ({{ nbOfNotificationsF > 50 ? '50+' : nbOfNotificationsF }})</button>
 
-			<button class="highlighted" (click)="toggleNotifications()">Notifications</button>
+			<button (click)="toggleNotifications()">Notifications</button>
 
-			<button class="highlighted" (click)="toggleUserMenu()">{{loggedUser.username}} ({{loggedUser.role}})</button>
+			<button (click)="toggleUserMenu()">{{loggedUser.username}} ({{loggedUser.role}})</button>
 			<div *ngIf="showUserMenu">
 				<div class="profile-drop-down-menu">
-					<button class="highlighted" (click)="profile()">Profile</button>
-					<button class="highlighted" (click)="settings()">User Settings</button>
+					<button (click)="profile()">Profile</button>
+					<button (click)="settings()">User Settings</button>
 					<button class="highlighted">About</button>
-					<button class="highlighted" (click)="logout()">Logout</button>
+					<button (click)="logout()">Logout</button>
 				</div>
 			</div>
 		</div>
