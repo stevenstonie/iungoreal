@@ -11,6 +11,7 @@
 	- [ ] (fr, bk) set up the websocket code to implement the chat component
 	- [ ] (fr, bk) add the chat functionality -> (3 types: dms, regional and custom)
 	- [ ] (fr, bk) implement search functionality
+	- [ ] (fr) add a "loading" cue to the screen when a request is in the making
 	- [ ] (fr, bk) add functionality for the main page (fetching friends posts)
 	- [ ] (fr) add verification through email when registering
 	- [ ] (fr) add upload size cap for the file size on frontend (and update the existing ones from backend)
