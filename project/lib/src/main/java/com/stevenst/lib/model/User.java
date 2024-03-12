@@ -48,7 +48,7 @@ public class User implements UserDetails {
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private final transient Role role = Role.USER;
+	private final Role role = Role.USER;
 	// dont make this static because you'll get: java.lang.NoSuchMethodError: 'com.stevenst.lib.model.Role com.stevenst.lib.model.User.getRole()
 
 	@Column(nullable = false)
@@ -56,7 +56,7 @@ public class User implements UserDetails {
 
 	private String profilePictureName;
 
-	private transient Region primaryRegion;
+	private Region primaryRegion;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -15,7 +15,7 @@ public class JsonUtil {
 	private JsonUtil() {
 	}
 
-	public static List<Region> loadEntriesFromClasspath(String path) throws IOException {
+	public static List<Region> loadRegionsFromJsonClasspath(String path) throws IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		Resource resource = new ClassPathResource(path);
 		InputStream inputStream = resource.getInputStream();
