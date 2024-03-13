@@ -24,6 +24,9 @@ public class Region implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false, unique = true)
+	private Long regionId;
+
 	@Column(nullable = false)
 	private String name;
 
@@ -33,7 +36,7 @@ public class Region implements Serializable {
 
 	private String countryName;
 
-	private String stateCode;
+	private String regionCode;
 
 	private String type;
 

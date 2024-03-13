@@ -72,7 +72,6 @@ e2e/*.map
 *.ear
 *.zip
 *.tar.gz
-*.rar
 
 ### NetBeans ###
 /nbproject/private/
