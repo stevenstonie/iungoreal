@@ -1,7 +1,5 @@
 package com.stevenst.lib.model;
 
-import java.io.Serializable;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,29 +12,40 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "\"region\"")
+@Table(name = "\"country\"")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Region implements Serializable {
+public class Country {
 	@Id
-	@Column(nullable = false, unique = true)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
-	private String countryName;
-
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String name;
 
-	private String code;
+	@Column(nullable = false, unique = true)
+	private String iso3;
+
+	@Column(nullable = false, unique = true)
+	private String iso2;
+
+	private String numericCode;
+
+	private String phoneCode;
+
+	private String capital;
+
+	private String currency;
+
+	private String currencyCode;
+
+	private String nationality;
 
 	@Column(nullable = false)
 	private Double latitude;
-	
+
 	@Column(nullable = false)
 	private Double longitude;
-	
-	private String type;
 }
