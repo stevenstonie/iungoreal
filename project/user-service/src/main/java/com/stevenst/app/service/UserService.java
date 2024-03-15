@@ -18,4 +18,6 @@ public interface UserService {
 	String getPfpPreSignedLinkFromS3(String username);
 
 	ResponsePayload removePfpFromDbAndCloud(String username);
+
+	ResponsePayload setPrimaryRegionOfUser(String username, Long regionId);
 }

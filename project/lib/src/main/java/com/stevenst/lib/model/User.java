@@ -56,7 +56,7 @@ public class User implements UserDetails {
 
 	private String profilePictureName;
 
-	private Region primaryRegion;
+	private Long primaryRegionId;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

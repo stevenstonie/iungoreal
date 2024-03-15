@@ -39,7 +39,8 @@ public class UserController implements UserApi {
 	}
 
 	@PutMapping("/saveProfilePicture")
-	public ResponseEntity<ResponsePayload> saveProfilePicture(@RequestParam String username, @RequestParam MultipartFile file) {
+	public ResponseEntity<ResponsePayload> saveProfilePicture(@RequestParam String username,
+			@RequestParam MultipartFile file) {
 		return ResponseEntity.ok(userService.savePfp(username, file));
 	}
 
@@ -52,4 +53,18 @@ public class UserController implements UserApi {
 	public ResponseEntity<ResponsePayload> removePfpFromDbAndCloud(@RequestParam String username) {
 		return ResponseEntity.ok(userService.removePfpFromDbAndCloud(username));
 	}
+
+	// get secondary regions of user
+
+	@PutMapping("/setPrimaryRegion")
+	public ResponseEntity<ResponsePayload> setPrimaryRegionOfUser(@RequestParam String username,
+			@RequestParam Long regionId) {
+		return ResponseEntity.ok(userService.setPrimaryRegionOfUser(username, regionId));
+	}
+
+	// set secondary region for user
+
+	// remove primary region of user
+
+	// remove secondary region of user
 }

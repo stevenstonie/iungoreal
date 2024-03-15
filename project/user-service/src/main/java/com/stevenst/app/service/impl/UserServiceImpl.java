@@ -10,20 +10,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
+import com.stevenst.lib.model.Region;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
+import com.stevenst.app.repository.RegionRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.UserService;
 import com.stevenst.app.util.JsonUtil;
 
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -43,6 +45,7 @@ public class UserServiceImpl implements UserService {
 	private static final String DEFAULTS_PATH = "defaults/";
 	private static final String DEFAULT_PFP_NAME = "default-profile-picture.jpg";
 	private final UserRepository userRepository;
+	private final RegionRepository regionRepository;
 	private final S3Client s3Client;
 	@Value("${aws.bucketName}")
 	private String bucketName;
@@ -88,14 +91,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResponsePayload savePfp(String username, MultipartFile file) {
-		User user = userRepository.findByUsername(username).orElseThrow(
-				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+		User user = getUserFromDb(username);
 		String fileName = file.getOriginalFilename();
-		
+
 		removePfpFromDbAndCloud(username);
-		
+
 		setPfpNameInDb(user, fileName);
-		
+
 		Map<String, String> metadata = new HashMap<>();
 		metadata.put("Content-Type", file.getContentType());
 		metadata.put("Content-Length", String.valueOf(file.getSize()));
@@ -107,8 +109,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String getPfpPreSignedLinkFromS3(String username) {
-		User user = userRepository.findByUsername(username).orElseThrow(
-				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+		User user = getUserFromDb(username);
 
 		String pfpNameFromDb = user.getProfilePictureName();
 		String key = USERS_PATH + username + "/" + pfpNameFromDb;
@@ -130,8 +131,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResponsePayload removePfpFromDbAndCloud(String username) {
-		User user = userRepository.findByUsername(username).orElseThrow(
-				() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+		User user = getUserFromDb(username);
 
 		String pfpNameFromDb = user.getProfilePictureName();
 		String key = USERS_PATH + username + "/" + pfpNameFromDb;
@@ -148,7 +148,28 @@ public class UserServiceImpl implements UserService {
 		return removePfpFromCloud(key, username);
 	}
 
+	@Override
+	public ResponsePayload setPrimaryRegionOfUser(String username, Long regionId) {
+		User user = getUserFromDb(username);
+
+		Region region = regionRepository.findById(regionId)
+				.orElseThrow(() -> new IgorEntityNotFoundException("Region not found (with id: " + regionId + ")"));
+
+		user.setPrimaryRegionId(region.getId());
+		userRepository.save(user);
+
+		return ResponsePayload.builder()
+				.status(200)
+				.message("Successfully set primary region for user: " + username)
+				.build();
+	}
+
 	// ----------------------------------------------------------------------------------------------------------
+
+	private User getUserFromDb(String username) {
+		return userRepository.findByUsername(username)
+				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+	}
 
 	private void setPfpNameInDb(User user, String fileName) {
 		user.setProfilePictureName(fileName);
@@ -185,7 +206,7 @@ public class UserServiceImpl implements UserService {
 		GetObjectRequest getObjectRequest = createGetObjectRequest(key);
 		Duration expiration = Duration.ofHours(1);
 
-		try (S3Presigner presigner = S3Presigner.builder().region(Region.EU_CENTRAL_1).build()) {
+		try (S3Presigner presigner = S3Presigner.builder().region(software.amazon.awssdk.regions.Region.EU_CENTRAL_1).build()) {
 			GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
 					.getObjectRequest(getObjectRequest)
 					.signatureDuration(expiration)
