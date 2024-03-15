@@ -6,11 +6,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.stevenst.app.payload.RegionPayload;
 import com.stevenst.app.repository.CountryRepository;
 import com.stevenst.app.repository.RegionRepository;
 import com.stevenst.app.service.CountryAndRegionService;
 import com.stevenst.app.util.CountryFromJson;
 import com.stevenst.app.util.JsonUtil;
+import com.stevenst.lib.exception.IgorEntityAlreadyExistsException;
 import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.model.Country;
@@ -28,20 +30,34 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 	private final CountryRepository countryRepository;
 
 	@Override
-	public List<Region> getAllRegionsByCountry(String countryName) {
+	public List<RegionPayload> getAllRegionsByCountry(String countryName) {
 		Country country = countryRepository.findByName(countryName);
 		if (country == null) {
 			throw new IgorEntityNotFoundException("Country not found.");
 		}
 
-		return regionRepository.findAllByCountry(country);
+		List<Region> regions = regionRepository.findAllByCountry(country);
+
+		List<RegionPayload> regionPayloads = new ArrayList<>();
+		for (Region region : regions) {
+			regionPayloads.add(RegionPayload.builder()
+					.id(region.getId())
+					.countryId(region.getCountry().getId())
+					.name(region.getName())
+					.code(region.getCode())
+					.latitude(region.getLatitude())
+					.longitude(region.getLongitude())
+					.build());
+		}
+
+		return regionPayloads;
 	}
 
 	@Override
 	public ResponsePayload insertCountryAndRegionsIntoDb(String countryName) {
 		Country country = countryRepository.findByName(countryName);
 		if (country != null) {
-			return ResponsePayload.builder().status(200).message("Country already exists.").build();
+			throw new IgorEntityAlreadyExistsException("Country with name: " + countryName + " already exists.");
 		}
 
 		long count = regionRepository.countByCountry(country);
@@ -51,7 +67,7 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 				CountryFromJson countryFromJson = JsonUtil.loadCountryAndRegionsFromJsonClasspath(countryName,
 						COUNTRIES_AND_REGIONS_FILENAME);
 				if (countryFromJson == null) {
-					return ResponsePayload.builder().status(404).message("Country not found.").build();
+					throw new IgorEntityNotFoundException("Country with name: " + countryName + " has not been found.");
 				}
 				
 				Country countryToInsertIntoDb = countryFromJson.convertToCountry();

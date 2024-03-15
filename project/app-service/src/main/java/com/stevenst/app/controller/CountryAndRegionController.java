@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stevenst.app.payload.RegionPayload;
 import com.stevenst.app.service.CountryAndRegionService;
 import com.stevenst.lib.model.Region;
 import com.stevenst.lib.payload.ResponsePayload;
@@ -22,7 +23,7 @@ public class CountryAndRegionController {
 	private final CountryAndRegionService countryAndRegionService;
 
 	@GetMapping("/getAllRegions/byCountryName")
-	public ResponseEntity<List<Region>> getAllRegionsByCountry(@RequestParam String countryName) {
+	public ResponseEntity<List<RegionPayload>> getAllRegionsByCountry(@RequestParam String countryName) {
 		return ResponseEntity.ok(countryAndRegionService.getAllRegionsByCountry(countryName));
 	}
 
