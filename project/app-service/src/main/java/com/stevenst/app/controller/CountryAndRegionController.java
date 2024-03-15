@@ -22,10 +22,20 @@ import lombok.RequiredArgsConstructor;
 public class CountryAndRegionController {
 	private final CountryAndRegionService countryAndRegionService;
 
-	@GetMapping("/getAllRegions/byCountryName")
-	public ResponseEntity<List<RegionPayload>> getAllRegionsByCountry(@RequestParam String countryName) {
-		return ResponseEntity.ok(countryAndRegionService.getAllRegionsByCountry(countryName));
+	@GetMapping("/getAllRegions/byCountryId")
+	public ResponseEntity<List<RegionPayload>> getAllRegionsByCountry(@RequestParam Long countryId) {
+		return ResponseEntity.ok(countryAndRegionService.getAllRegionsByCountry(countryId));
 	}
+
+	// get all countries
+
+	// get secondary regions of user
+
+	// set primary region for user
+	
+	// set secondary region for user
+	
+	// remove secondary region of user
 
 	@PostMapping("/insertAllRegions/byCountryName")
 	public ResponseEntity<ResponsePayload> insertAllRegionsOfACountryIntoDb(@RequestParam String countryName) {

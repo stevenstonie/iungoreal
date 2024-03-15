@@ -6,7 +6,7 @@ import com.stevenst.app.payload.RegionPayload;
 import com.stevenst.lib.payload.ResponsePayload;
 
 public interface CountryAndRegionService {
-	public List<RegionPayload> getAllRegionsByCountry(String country);
+	public List<RegionPayload> getAllRegionsByCountry(Long countryId);
 
 	public ResponsePayload insertCountryAndRegionsIntoDb(String country);
 }
