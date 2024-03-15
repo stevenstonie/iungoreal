@@ -21,20 +21,15 @@ public class JsonUtil {
 		Resource resource = new ClassPathResource(jsonFileName);
 		InputStream inputStream = resource.getInputStream();
 
-		List<CountryFromJson> countries = objectMapper.readValue(inputStream,
+		List<CountryFromJson> countriesFromJson = objectMapper.readValue(inputStream,
 				new TypeReference<List<CountryFromJson>>() {
 				});
 
-		CountryFromJson countryFromJson = countries.stream()
+		CountryFromJson countryFromJson = countriesFromJson.stream()
 				.filter(country -> countryName.equals(country.getName()))
 				.findFirst()
 				.orElse(null);
 
-		if (countryFromJson != null) {
-			for (Region region : countryFromJson.getRegions()) {
-				region.setCountryName(countryFromJson.getName());
-			}
-		}
 		return countryFromJson;
 
 		// try (JsonParser parser = objectMapper.getFactory().createParser(inputStream)) {

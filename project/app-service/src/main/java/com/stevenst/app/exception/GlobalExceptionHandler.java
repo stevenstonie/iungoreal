@@ -7,12 +7,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.payload.ResponsePayload;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+	@ResponseBody
+	@ExceptionHandler(IgorEntityNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ResponsePayload handleIgorUserNotFoundException(IgorEntityNotFoundException ex) {
+		return ResponsePayload.builder()
+				.status(HttpStatus.NOT_FOUND.value())
+				.message(ex.getMessage())
+				.build();
+	}
+
 	@ResponseBody
 	@ExceptionHandler(IgorPostException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

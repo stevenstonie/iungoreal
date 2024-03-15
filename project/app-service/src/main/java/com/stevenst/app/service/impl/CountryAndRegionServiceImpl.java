@@ -11,6 +11,7 @@ import com.stevenst.app.repository.RegionRepository;
 import com.stevenst.app.service.CountryAndRegionService;
 import com.stevenst.app.util.CountryFromJson;
 import com.stevenst.app.util.JsonUtil;
+import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.model.Country;
 import com.stevenst.lib.model.Region;
@@ -28,19 +29,22 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 
 	@Override
 	public List<Region> getAllRegionsByCountry(String countryName) {
-		List<Region> regions = regionRepository.findAllByCountryName(countryName);
+		Country country = countryRepository.findByName(countryName);
+		if (country == null) {
+			throw new IgorEntityNotFoundException("Country not found.");
+		}
 
-		return regions;
+		return regionRepository.findAllByCountry(country);
 	}
 
 	@Override
 	public ResponsePayload insertCountryAndRegionsIntoDb(String countryName) {
-		boolean exists = countryRepository.existsByName(countryName);
-		if (exists) {
-			return ResponsePayload.builder().status(200).message("Country already exists.").build(); // TODO: status code for something that already exists (conflict??)
+		Country country = countryRepository.findByName(countryName);
+		if (country != null) {
+			return ResponsePayload.builder().status(200).message("Country already exists.").build();
 		}
 
-		long count = regionRepository.countByCountryName(countryName);
+		long count = regionRepository.countByCountry(country);
 
 		if (count < 1) {
 			try {
@@ -50,13 +54,14 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 					return ResponsePayload.builder().status(404).message("Country not found.").build();
 				}
 				
-				Country country = countryFromJson.convertToCountry();
+				Country countryToInsertIntoDb = countryFromJson.convertToCountry();
 				List<Region> regions = countryFromJson.getRegions();
+				for (Region region : regions) {
+					region.setCountry(countryToInsertIntoDb);
+				}
 
-				countryRepository.save(country);
+				countryRepository.save(countryToInsertIntoDb);
 				regionRepository.saveAll(regions);
-
-				// TODO: make the queries faster by introducing a new intermediary table with the country name and id (for quering for regions)
 
 				return ResponsePayload.builder().status(200).message("Country and regions inserted successfully.")
 						.build();

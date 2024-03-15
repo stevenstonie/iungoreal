@@ -7,6 +7,6 @@ import com.stevenst.lib.model.Country;
 
 @Repository
 public interface CountryRepository extends JpaRepository<Country, Long> {
-	Boolean existsByName(String countryName);
+	Country findByName(String name);
 	
 }
