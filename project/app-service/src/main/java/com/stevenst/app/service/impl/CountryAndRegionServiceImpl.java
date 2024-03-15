@@ -32,7 +32,12 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 	private final CountryRepository countryRepository;
 
 	@Override
-	public List<RegionPayload> getAllRegionsByCountry(Long countryId) {
+	public List<Country> getAllCountries() {
+		return countryRepository.findAll();
+	}
+
+	@Override
+	public List<RegionPayload> getAllRegionsByCountryId(Long countryId) {
 		Optional<Country> country = countryRepository.findById(countryId);
 		if (!country.isPresent()) {
 			throw new IgorEntityNotFoundException("Country not found.");

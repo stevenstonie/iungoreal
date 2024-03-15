@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.stevenst.app.payload.RegionPayload;
 import com.stevenst.app.service.CountryAndRegionService;
-import com.stevenst.lib.model.Region;
+import com.stevenst.lib.model.Country;
 import com.stevenst.lib.payload.ResponsePayload;
 
 import lombok.RequiredArgsConstructor;
@@ -22,22 +21,12 @@ import lombok.RequiredArgsConstructor;
 public class CountryAndRegionController {
 	private final CountryAndRegionService countryAndRegionService;
 
-	@GetMapping("/getAllRegions/byCountryId")
-	public ResponseEntity<List<RegionPayload>> getAllRegionsByCountry(@RequestParam Long countryId) {
-		return ResponseEntity.ok(countryAndRegionService.getAllRegionsByCountry(countryId));
+	@GetMapping("/getAll")
+	public ResponseEntity<List<Country>> getAllCountries() {
+		return ResponseEntity.ok(countryAndRegionService.getAllCountries());
 	}
 
-	// get all countries
-
-	// get secondary regions of user
-
-	// set primary region for user
-	
-	// set secondary region for user
-	
-	// remove secondary region of user
-
-	@PostMapping("/insertAllRegions/byCountryName")
+	@PostMapping("/insertCountryAndRegions/byCountryName")
 	public ResponseEntity<ResponsePayload> insertAllRegionsOfACountryIntoDb(@RequestParam String countryName) {
 		return ResponseEntity.ok(countryAndRegionService.insertCountryAndRegionsIntoDb(countryName));
 	}
