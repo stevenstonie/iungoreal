@@ -20,6 +20,7 @@ public class CountryFromJson extends Country {
 
 	public Country convertToCountry() {
 		return Country.builder()
+				.id(this.getId())
 				.name(this.getName())
 				.iso3(this.getIso3())
 				.iso2(this.getIso2())

@@ -1,6 +1,7 @@
 package com.stevenst.app.service.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,23 +28,16 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 
 	@Override
 	public List<Region> getAllRegionsByCountry(String countryName) {
+		List<Region> regions = regionRepository.findAllByCountryName(countryName);
 
-		try {
-			CountryFromJson country = JsonUtil.loadCountryAndRegionsFromJsonClasspath(countryName,
-					COUNTRIES_AND_REGIONS_FILENAME);
-
-			return country.getRegions();
-		} catch (IOException e) {
-			throw new IgorIoException(e.getMessage());
-		}
-
+		return regions;
 	}
 
 	@Override
 	public ResponsePayload insertCountryAndRegionsIntoDb(String countryName) {
 		boolean exists = countryRepository.existsByName(countryName);
 		if (exists) {
-			return ResponsePayload.builder().status(200).message("Country already exists.").build();	// TODO: status code for something that already exists (conflict??)
+			return ResponsePayload.builder().status(200).message("Country already exists.").build(); // TODO: status code for something that already exists (conflict??)
 		}
 
 		long count = regionRepository.countByCountryName(countryName);
@@ -52,7 +46,10 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 			try {
 				CountryFromJson countryFromJson = JsonUtil.loadCountryAndRegionsFromJsonClasspath(countryName,
 						COUNTRIES_AND_REGIONS_FILENAME);
-
+				if (countryFromJson == null) {
+					return ResponsePayload.builder().status(404).message("Country not found.").build();
+				}
+				
 				Country country = countryFromJson.convertToCountry();
 				List<Region> regions = countryFromJson.getRegions();
 
@@ -61,7 +58,8 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 
 				// TODO: make the queries faster by introducing a new intermediary table with the country name and id (for quering for regions)
 
-				return ResponsePayload.builder().status(200).message("Country and regions inserted successfully.").build();
+				return ResponsePayload.builder().status(200).message("Country and regions inserted successfully.")
+						.build();
 			} catch (IOException e) {
 				throw new IgorIoException(e.getMessage());
 			}
