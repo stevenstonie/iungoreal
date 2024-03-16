@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -69,8 +68,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserPrivatePayload getUserPrivateByUsername(String username) {
 		User user = getUserFromDb(username);
-		Country countryOfUser = countryRepository.findById(user.getCountryId()).orElse(null);
-		Region primaryRegionOfUser = regionRepository.findById(user.getPrimaryRegionId()).orElse(null);
+		Country countryOfUser = Optional.ofNullable(user.getCountryId())
+				.map(id -> countryRepository.findById(id).orElse(null))
+				.orElse(null);
+		Region primaryRegionOfUser = Optional.ofNullable(user.getPrimaryRegionId())
+				.map(id -> regionRepository.findById(id).orElse(null))
+				.orElse(null);
 
 		return UserPrivatePayload.builder()
 				.id(user.getId())
@@ -78,9 +81,9 @@ public class UserServiceImpl implements UserService {
 				.username(user.getUsername())
 				.role(user.getRole())
 				.countryId(user.getCountryId())
-				.countryName(countryOfUser.getName())
+				.countryName(countryOfUser == null ? null : countryOfUser.getName())
 				.primaryRegionId(user.getPrimaryRegionId())
-				.primaryRegionName(primaryRegionOfUser.getName())
+				.primaryRegionName(primaryRegionOfUser == null ? null : primaryRegionOfUser.getName())
 				.createdAt(user.getCreatedAt())
 				.build();
 	}
@@ -187,6 +190,42 @@ public class UserServiceImpl implements UserService {
 		return ResponsePayload.builder()
 				.status(200)
 				.message("Successfully set primary region:" + region.getName() + "for user \"" + username + "\".")
+				.build();
+	}
+
+	@Override
+	public ResponsePayload removeCountryForUser(String username) {
+		User user = getUserFromDb(username);
+		if (user.getCountryId() == null) {
+			return ResponsePayload.builder()
+					.status(204)
+					.message("No country found for user: " + username)
+					.build();
+		}
+
+		user.setCountryId(null);
+		userRepository.save(user);
+		return ResponsePayload.builder()
+				.status(200)
+				.message("Removed country for user: " + username)
+				.build();
+	}
+
+	@Override
+	public ResponsePayload removePrimaryRegionForUser(String username) {
+		User user = getUserFromDb(username);
+		if (user.getPrimaryRegionId() == null) {
+			return ResponsePayload.builder()
+					.status(204)
+					.message("No primary region found for user: " + username)
+					.build();
+		}
+
+		user.setPrimaryRegionId(null);
+		userRepository.save(user);
+		return ResponsePayload.builder()
+				.status(200)
+				.message("Removed primary region for user: " + username)
 				.build();
 	}
 
