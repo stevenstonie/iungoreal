@@ -19,6 +19,9 @@ public class UserPrivatePayload {
 	private String email;
 	private String username;
 	private Role role;
+	private Long countryId;
+	private String countryName;
 	private Long primaryRegionId;
+	private String primaryRegionName;
 	private LocalDateTime createdAt;
 }

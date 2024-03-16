@@ -1,5 +1,7 @@
 package com.stevenst.lib.model;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Country {
+public class Country implements Serializable{
 	@Id
 	@Column(nullable = false, unique = true)
 	private Long id;

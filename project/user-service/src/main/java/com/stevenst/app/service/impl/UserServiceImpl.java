@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,11 +16,13 @@ import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
+import com.stevenst.lib.model.Country;
 import com.stevenst.lib.model.Region;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
+import com.stevenst.app.repository.CountryRepository;
 import com.stevenst.app.repository.RegionRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.UserService;
@@ -46,6 +50,7 @@ public class UserServiceImpl implements UserService {
 	private static final String DEFAULT_PFP_NAME = "default-profile-picture.jpg";
 	private final UserRepository userRepository;
 	private final RegionRepository regionRepository;
+	private final CountryRepository countryRepository;
 	private final S3Client s3Client;
 	@Value("${aws.bucketName}")
 	private String bucketName;
@@ -63,16 +68,21 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserPrivatePayload getUserPrivateByUsername(String username) {
-		return userRepository.findByUsername(username)
-				.map(user -> UserPrivatePayload.builder()
-						.id(user.getId())
-						.email(user.getEmail())
-						.username(user.getUsername())
-						.role(user.getRole())
-						.createdAt(user.getCreatedAt())
-						.build())
-				.orElseThrow(
-						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+		User user = getUserFromDb(username);
+		Country countryOfUser = countryRepository.findById(user.getCountryId()).orElse(null);
+		Region primaryRegionOfUser = regionRepository.findById(user.getPrimaryRegionId()).orElse(null);
+
+		return UserPrivatePayload.builder()
+				.id(user.getId())
+				.email(user.getEmail())
+				.username(user.getUsername())
+				.role(user.getRole())
+				.countryId(user.getCountryId())
+				.countryName(countryOfUser.getName())
+				.primaryRegionId(user.getPrimaryRegionId())
+				.primaryRegionName(primaryRegionOfUser.getName())
+				.createdAt(user.getCreatedAt())
+				.build();
 	}
 	// TODO: users dont need to know their role is of a USER so update the code on front and back to return the role only to admins
 
@@ -149,6 +159,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public ResponsePayload setCountryForUser(String username, Long countryId) {
+		User user = getUserFromDb(username);
+
+		Country country = countryRepository.findById(countryId)
+				.orElseThrow(() -> new IgorEntityNotFoundException("Country not found (with id: " + countryId + ")"));
+
+		user.setCountryId(country.getId());
+		userRepository.save(user);
+
+		return ResponsePayload.builder()
+				.status(200)
+				.message("Successfully set country: " + country.getName() + " for user \"" + username + "\".")
+				.build();
+	}
+
+	@Override
 	public ResponsePayload setPrimaryRegionOfUser(String username, Long regionId) {
 		User user = getUserFromDb(username);
 
@@ -160,7 +186,7 @@ public class UserServiceImpl implements UserService {
 
 		return ResponsePayload.builder()
 				.status(200)
-				.message("Successfully set primary region for user: " + username)
+				.message("Successfully set primary region:" + region.getName() + "for user \"" + username + "\".")
 				.build();
 	}
 
@@ -168,7 +194,8 @@ public class UserServiceImpl implements UserService {
 
 	private User getUserFromDb(String username) {
 		return userRepository.findByUsername(username)
-				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+				.orElseThrow(
+						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
 	}
 
 	private void setPfpNameInDb(User user, String fileName) {
@@ -206,7 +233,8 @@ public class UserServiceImpl implements UserService {
 		GetObjectRequest getObjectRequest = createGetObjectRequest(key);
 		Duration expiration = Duration.ofHours(1);
 
-		try (S3Presigner presigner = S3Presigner.builder().region(software.amazon.awssdk.regions.Region.EU_CENTRAL_1).build()) {
+		try (S3Presigner presigner = S3Presigner.builder().region(software.amazon.awssdk.regions.Region.EU_CENTRAL_1)
+				.build()) {
 			GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
 					.getObjectRequest(getObjectRequest)
 					.signatureDuration(expiration)

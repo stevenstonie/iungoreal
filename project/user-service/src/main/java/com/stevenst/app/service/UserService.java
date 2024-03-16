@@ -19,5 +19,7 @@ public interface UserService {
 
 	ResponsePayload removePfpFromDbAndCloud(String username);
 
+	ResponsePayload setCountryForUser(String username, Long countryId);
+
 	ResponsePayload setPrimaryRegionOfUser(String username, Long regionId);
 }

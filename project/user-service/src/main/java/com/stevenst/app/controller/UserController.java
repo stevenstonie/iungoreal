@@ -54,6 +54,12 @@ public class UserController implements UserApi {
 		return ResponseEntity.ok(userService.removePfpFromDbAndCloud(username));
 	}
 
+	@PutMapping("/setCountry")
+	public ResponseEntity<ResponsePayload> setCountryForUser(@RequestParam String username,
+			@RequestParam Long countryId) {
+		return ResponseEntity.ok(userService.setCountryForUser(username, countryId));
+	}
+
 	// get secondary regions of user
 
 	@PutMapping("/setPrimaryRegion")
@@ -63,6 +69,8 @@ public class UserController implements UserApi {
 	}
 
 	// set secondary region for user
+
+	// remove country of user
 
 	// remove primary region of user
 

@@ -56,6 +56,8 @@ public class User implements UserDetails {
 
 	private String profilePictureName;
 
+	private Long countryId;
+
 	private Long primaryRegionId;
 
 	@Override
