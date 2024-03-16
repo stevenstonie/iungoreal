@@ -211,7 +211,7 @@ class UserControllerIntegrationTest {
 			"/getPrivateByUsername, username, nonexistenttestusername",
 			"/getByEmail, email, nonexistenttestemail"
 	})
-	void allGetEndpoints_notFound(String endpoint, String paramType, String nameOrEmail) throws Exception {
+	void allGetUserEndpoints_notFound(String endpoint, String paramType, String nameOrEmail) throws Exception {
 		MvcResult result = mockMvc.perform(get("/api/user" + endpoint + "?" + paramType + "=" + nameOrEmail))
 				.andExpect(status().isNotFound())
 				.andReturn();
@@ -219,7 +219,7 @@ class UserControllerIntegrationTest {
 
 		assertNotNull(resolvedException);
 		assertTrue(resolvedException instanceof IgorUserNotFoundException);
-		assertEquals("User not found (with " + paramType + ": " + nameOrEmail + ")", resolvedException.getMessage());
+		assertEquals("User not found (with " + paramType + ": " + nameOrEmail + ").", resolvedException.getMessage());
 	}
 
 	// --------------------------------------------

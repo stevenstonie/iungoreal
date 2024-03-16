@@ -3,6 +3,7 @@ package com.stevenst.app.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,7 +69,11 @@ public class UserController implements UserApi {
 		return ResponseEntity.ok(userService.setPrimaryRegionOfUser(username, regionId));
 	}
 
-	// set secondary region for user
+	@PostMapping("/addSecondaryRegion")
+	public ResponseEntity<ResponsePayload> addSecondaryRegionForUser(@RequestParam String username,
+			@RequestParam Long regionId) {
+		return ResponseEntity.ok(userService.addSecondaryRegionForUser(username, regionId));
+	}
 
 	@DeleteMapping("/removeCountry")
 	public ResponseEntity<ResponsePayload> removeCountryForUser(@RequestParam String username) {

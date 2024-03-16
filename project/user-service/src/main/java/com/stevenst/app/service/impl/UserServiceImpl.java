@@ -5,24 +5,29 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.stevenst.lib.exception.IgorCountryAndRegionException;
 import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
+import com.stevenst.lib.exception.IgorNullValueException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.model.Country;
 import com.stevenst.lib.model.Region;
+import com.stevenst.lib.model.SecondaryRegionsUsers;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.CountryRepository;
 import com.stevenst.app.repository.RegionRepository;
+import com.stevenst.app.repository.SecondaryRegionsUsersRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.UserService;
 import com.stevenst.app.util.JsonUtil;
@@ -50,30 +55,33 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final RegionRepository regionRepository;
 	private final CountryRepository countryRepository;
+	private final SecondaryRegionsUsersRepository secondaryRegionsUsersRepository;
 	private final S3Client s3Client;
 	@Value("${aws.bucketName}")
 	private String bucketName;
 
 	@Override
 	public UserPublicPayload getUserPublicByUsername(String username) {
-		return userRepository.findByUsername(username)
-				.map(user -> UserPublicPayload.builder()
-						.username(user.getUsername())
-						.createdAt(user.getCreatedAt())
-						.build())
-				.orElseThrow(
-						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+		User user = getUserFromDbByUsername(username);
+
+		return UserPublicPayload.builder()
+				.username(user.getUsername())
+				.createdAt(user.getCreatedAt())
+				.build();
 	}
 
 	@Override
 	public UserPrivatePayload getUserPrivateByUsername(String username) {
-		User user = getUserFromDb(username);
-		Country countryOfUser = Optional.ofNullable(user.getCountryId())
-				.map(id -> countryRepository.findById(id).orElse(null))
-				.orElse(null);
-		Region primaryRegionOfUser = Optional.ofNullable(user.getPrimaryRegionId())
-				.map(id -> regionRepository.findById(id).orElse(null))
-				.orElse(null);
+		User user = getUserFromDbByUsername(username);
+
+		Country countryOfUser = null;
+		Region primaryRegionOfUser = null;
+		if (user.getCountryId() != null) {
+			countryOfUser = getCountryFromDb(user.getCountryId());
+		}
+		if (user.getPrimaryRegionId() != null) {
+			primaryRegionOfUser = getRegionFromDb(user.getPrimaryRegionId());
+		}
 
 		return UserPrivatePayload.builder()
 				.id(user.getId())
@@ -91,20 +99,20 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserPrivatePayload getUserByEmail(String email) {
-		return userRepository.findByEmail(email)
-				.map(user -> UserPrivatePayload.builder()
-						.id(user.getId())
-						.email(user.getEmail())
-						.username(user.getUsername())
-						.role(user.getRole())
-						.createdAt(user.getCreatedAt())
-						.build())
-				.orElseThrow(() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with email: " + email + ")"));
+		User user = getUserFromDbByEmail(email);
+
+		return UserPrivatePayload.builder()
+				.id(user.getId())
+				.email(user.getEmail())
+				.username(user.getUsername())
+				.role(user.getRole())
+				.createdAt(user.getCreatedAt())
+				.build();
 	}
 
 	@Override
 	public ResponsePayload savePfp(String username, MultipartFile file) {
-		User user = getUserFromDb(username);
+		User user = getUserFromDbByUsername(username);
 		String fileName = file.getOriginalFilename();
 
 		removePfpFromDbAndCloud(username);
@@ -122,7 +130,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String getPfpPreSignedLinkFromS3(String username) {
-		User user = getUserFromDb(username);
+		User user = getUserFromDbByUsername(username);
 
 		String pfpNameFromDb = user.getProfilePictureName();
 		String key = USERS_PATH + username + "/" + pfpNameFromDb;
@@ -144,7 +152,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResponsePayload removePfpFromDbAndCloud(String username) {
-		User user = getUserFromDb(username);
+		User user = getUserFromDbByUsername(username);
 
 		String pfpNameFromDb = user.getProfilePictureName();
 		String key = USERS_PATH + username + "/" + pfpNameFromDb;
@@ -163,7 +171,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResponsePayload setCountryForUser(String username, Long countryId) {
-		User user = getUserFromDb(username);
+		User user = getUserFromDbByUsername(username);
 
 		Country country = countryRepository.findById(countryId)
 				.orElseThrow(() -> new IgorEntityNotFoundException("Country not found (with id: " + countryId + ")"));
@@ -179,45 +187,81 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResponsePayload setPrimaryRegionOfUser(String username, Long regionId) {
-		User user = getUserFromDb(username);
+		User user = getUserFromDbByUsername(username);
 
-		Region region = regionRepository.findById(regionId)
-				.orElseThrow(() -> new IgorEntityNotFoundException("Region not found (with id: " + regionId + ")"));
+		checkIfUserHasACountryAssingedForRegion(user);
+
+		Region region = getRegionFromDb(regionId);
+
+		checkIfRegionIsPartOfUsersCountry(user, region);
+
+		// TODO: check if the user already has this region as secondary
 
 		user.setPrimaryRegionId(region.getId());
 		userRepository.save(user);
 
 		return ResponsePayload.builder()
 				.status(200)
-				.message("Successfully set primary region:" + region.getName() + "for user \"" + username + "\".")
+				.message("Successfully set primary region: " + region.getName() + " for user \"" + username + "\".")
+				.build();
+	}
+
+	@Override
+	public ResponsePayload addSecondaryRegionForUser(String username, Long regionId) {
+		User user = getUserFromDbByUsername(username);
+
+		checkIfUserHasACountryAssingedForRegion(user);
+
+		Region region = getRegionFromDb(regionId);
+
+		checkIfRegionIsPartOfUsersCountry(user, region);
+
+		// TODO: countSecondaryRegions of this user and throw a 403 code if the limit of regions is exceeded.
+
+		// TODO: check if the user already has this region as primary / secondary
+
+		secondaryRegionsUsersRepository.save(
+				Objects.requireNonNull(SecondaryRegionsUsers.builder()
+						.user(user)
+						.secondaryRegion(region)
+						.build()));
+
+		return ResponsePayload.builder()
+				.status(200)
+				.message("Successfully added a secondary region: " + region.getName() + " for user: " + username + ".")
 				.build();
 	}
 
 	@Override
 	public ResponsePayload removeCountryForUser(String username) {
-		User user = getUserFromDb(username);
+		User user = getUserFromDbByUsername(username);
+
 		if (user.getCountryId() == null) {
 			return ResponsePayload.builder()
 					.status(204)
-					.message("No country found for user: " + username)
+					.message("No country found for user: " + username + ".")
 					.build();
 		}
 
 		user.setCountryId(null);
+		user.setPrimaryRegionId(null);
 		userRepository.save(user);
+
+		// TODO: remove all secondary regions for this user
+
 		return ResponsePayload.builder()
 				.status(200)
-				.message("Removed country for user: " + username)
+				.message("Removed country for user: " + username + ".")
 				.build();
 	}
 
 	@Override
 	public ResponsePayload removePrimaryRegionForUser(String username) {
-		User user = getUserFromDb(username);
+		User user = getUserFromDbByUsername(username);
 		if (user.getPrimaryRegionId() == null) {
 			return ResponsePayload.builder()
 					.status(204)
-					.message("No primary region found for user: " + username)
+					.message("No primary region found for user: " + username + ".")
 					.build();
 		}
 
@@ -225,16 +269,63 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(user);
 		return ResponsePayload.builder()
 				.status(200)
-				.message("Removed primary region for user: " + username)
+				.message("Removed primary region for user: " + username + ".")
 				.build();
 	}
 
 	// ----------------------------------------------------------------------------------------------------------
 
-	private User getUserFromDb(String username) {
+	private User getUserFromDbByUsername(String username) {
+		if (username == null || username.equals("")) {
+			throw new IgorNullValueException("Username cannot be null or empty.");
+		}
+
 		return userRepository.findByUsername(username)
 				.orElseThrow(
-						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")"));
+						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with username: " + username + ")."));
+	}
+
+	private User getUserFromDbByEmail(String email) {
+		if (email == null || email.equals("")) {
+			throw new IgorNullValueException("Email cannot be null or empty.");
+		}
+
+		return userRepository.findByEmail(email)
+				.orElseThrow(
+						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with email: " + email + ")."));
+	}
+
+	private Region getRegionFromDb(Long regionId) {
+		if (regionId == null) {
+			throw new IgorNullValueException("Region id cannot be null.");
+		}
+
+		return regionRepository.findById(regionId)
+				.orElseThrow(() -> new IgorEntityNotFoundException("Region not found (with id: " + regionId + ")."));
+	}
+
+	private Country getCountryFromDb(Long countryId) {
+		if (countryId == null) {
+			throw new IgorNullValueException("Country id cannot be null.");
+		}
+
+		return countryRepository.findById(countryId)
+				.orElseThrow(() -> new IgorEntityNotFoundException("Country not found (with id: " + countryId + ")."));
+	}
+
+	private void checkIfUserHasACountryAssingedForRegion(User user) {
+		if (user.getCountryId() == null) {
+			throw new IgorCountryAndRegionException(
+					"Cannot assign a region if country is not set (for user: " + user.getUsername() + ").");
+		}
+	}
+
+	private void checkIfRegionIsPartOfUsersCountry(User user, Region region) {
+		if (!region.getCountry().getId().equals(user.getCountryId())) {
+			throw new IgorCountryAndRegionException(
+					"Cannot assign a region of a country that is not the user's country (for user: "
+							+ user.getUsername() + ").");
+		}
 	}
 
 	private void setPfpNameInDb(User user, String fileName) {

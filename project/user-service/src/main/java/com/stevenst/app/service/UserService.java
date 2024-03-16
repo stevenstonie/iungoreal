@@ -23,6 +23,8 @@ public interface UserService {
 
 	ResponsePayload setPrimaryRegionOfUser(String username, Long regionId);
 
+	ResponsePayload addSecondaryRegionForUser(String username, Long regionId);
+
 	ResponsePayload removeCountryForUser(String username);
 
 	ResponsePayload removePrimaryRegionForUser(String username);
