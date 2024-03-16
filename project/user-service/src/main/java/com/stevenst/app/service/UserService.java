@@ -1,7 +1,10 @@
 package com.stevenst.app.service;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
+import com.stevenst.app.payload.RegionPayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.lib.payload.ResponsePayload;
@@ -18,6 +21,8 @@ public interface UserService {
 	String getPfpPreSignedLinkFromS3(String username);
 
 	ResponsePayload removePfpFromDbAndCloud(String username);
+
+	List<RegionPayload> getSecondaryRegionsOfUser(String username);
 
 	ResponsePayload setCountryForUser(String username, Long countryId);
 

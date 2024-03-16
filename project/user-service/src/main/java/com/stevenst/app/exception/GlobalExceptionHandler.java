@@ -12,6 +12,7 @@ import com.stevenst.lib.exception.IgorEmptyFileNameException;
 import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
+import com.stevenst.lib.exception.IgorMaxCapExceededException;
 import com.stevenst.lib.exception.IgorNullValueException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.payload.ResponsePayload;
@@ -64,6 +65,16 @@ public class GlobalExceptionHandler {
     public ResponsePayload handleIgorCountryAndRegionException(IgorCountryAndRegionException ex) {
         return ResponsePayload.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .build();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(IgorMaxCapExceededException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponsePayload handleIgorMaxCapExceededException(IgorMaxCapExceededException ex) {
+        return ResponsePayload.builder()
+                .status(HttpStatus.FORBIDDEN.value())
                 .message(ex.getMessage())
                 .build();
     }

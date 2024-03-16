@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import com.stevenst.lib.exception.IgorCountryAndRegionException;
 import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
+import com.stevenst.lib.exception.IgorMaxCapExceededException;
 import com.stevenst.lib.exception.IgorNullValueException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.model.Country;
@@ -23,6 +26,7 @@ import com.stevenst.lib.model.Region;
 import com.stevenst.lib.model.SecondaryRegionsUsers;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
+import com.stevenst.app.payload.RegionPayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.CountryRepository;
@@ -52,6 +56,7 @@ public class UserServiceImpl implements UserService {
 	private static final String USERS_PATH = "users/";
 	private static final String DEFAULTS_PATH = "defaults/";
 	private static final String DEFAULT_PFP_NAME = "default-profile-picture.jpg";
+	private static final int SECONDARY_REGIONS_CAP = 3;
 	private final UserRepository userRepository;
 	private final RegionRepository regionRepository;
 	private final CountryRepository countryRepository;
@@ -170,6 +175,24 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public List<RegionPayload> getSecondaryRegionsOfUser(String username) {
+		User user = getUserFromDbByUsername(username);
+
+		List<SecondaryRegionsUsers> secondaryRegionsOfUser = secondaryRegionsUsersRepository.findByUserId(user.getId());
+
+		List<RegionPayload> secondaryRegions = new java.util.ArrayList<>();
+
+		for (SecondaryRegionsUsers secondaryRegionOfUser : secondaryRegionsOfUser) {
+			secondaryRegions.add(RegionPayload.builder()
+					.id(secondaryRegionOfUser.getSecondaryRegion().getId())
+					.name(secondaryRegionOfUser.getSecondaryRegion().getName())
+					.build());
+		}
+
+		return secondaryRegions;
+	}
+
+	@Override
 	public ResponsePayload setCountryForUser(String username, Long countryId) {
 		User user = getUserFromDbByUsername(username);
 
@@ -195,7 +218,7 @@ public class UserServiceImpl implements UserService {
 
 		checkIfRegionIsPartOfUsersCountry(user, region);
 
-		// TODO: check if the user already has this region as secondary
+		checkIfRegionAlreadyExistsAsSecondary(user, region);
 
 		user.setPrimaryRegionId(region.getId());
 		userRepository.save(user);
@@ -209,26 +232,34 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponsePayload addSecondaryRegionForUser(String username, Long regionId) {
 		User user = getUserFromDbByUsername(username);
-
 		checkIfUserHasACountryAssingedForRegion(user);
 
-		Region region = getRegionFromDb(regionId);
+		Region regionToAddAsSecondaryInDb = getRegionFromDb(regionId);
+		checkIfRegionIsPartOfUsersCountry(user, regionToAddAsSecondaryInDb);
 
-		checkIfRegionIsPartOfUsersCountry(user, region);
+		if (secondaryRegionsUsersRepository.countByUserId(user.getId()) >= SECONDARY_REGIONS_CAP) {
+			throw new IgorMaxCapExceededException(
+					"Max cap of " + SECONDARY_REGIONS_CAP + " secondary regions exceeded (for user: "
+							+ user.getUsername() + ").");
+		}
 
-		// TODO: countSecondaryRegions of this user and throw a 403 code if the limit of regions is exceeded.
+		checkIfRegionAlreadyExistsAsSecondary(user, regionToAddAsSecondaryInDb);
 
-		// TODO: check if the user already has this region as primary / secondary
+		if (Objects.equals(regionToAddAsSecondaryInDb.getId(), user.getPrimaryRegionId())) {
+			throw new IgorCountryAndRegionException(
+					"Cannot assign this region because it is already primary (for user: " + user.getUsername() + ").");
+		}
 
 		secondaryRegionsUsersRepository.save(
 				Objects.requireNonNull(SecondaryRegionsUsers.builder()
 						.user(user)
-						.secondaryRegion(region)
+						.secondaryRegion(regionToAddAsSecondaryInDb)
 						.build()));
 
 		return ResponsePayload.builder()
 				.status(200)
-				.message("Successfully added a secondary region: " + region.getName() + " for user: " + username + ".")
+				.message("Successfully added a secondary region: " + regionToAddAsSecondaryInDb.getName()
+						+ " for user: " + username + ".")
 				.build();
 	}
 
@@ -325,6 +356,16 @@ public class UserServiceImpl implements UserService {
 			throw new IgorCountryAndRegionException(
 					"Cannot assign a region of a country that is not the user's country (for user: "
 							+ user.getUsername() + ").");
+		}
+	}
+
+	private void checkIfRegionAlreadyExistsAsSecondary(User user, Region region) {
+		List<RegionPayload> secondaryRegions = getSecondaryRegionsOfUser(user.getUsername());
+
+		if (secondaryRegions.stream().anyMatch(r -> r.getId().equals(region.getId()))) {
+			throw new IgorCountryAndRegionException(
+					"Cannot assign a region that is already a secondary region (for user: " + user.getUsername()
+							+ ").");
 		}
 	}
 

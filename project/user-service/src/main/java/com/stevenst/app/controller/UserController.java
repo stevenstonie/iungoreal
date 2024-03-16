@@ -1,5 +1,7 @@
 package com.stevenst.app.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stevenst.app.controller.api.UserApi;
+import com.stevenst.app.payload.RegionPayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.service.UserService;
@@ -39,6 +42,8 @@ public class UserController implements UserApi {
 		return ResponseEntity.ok(userService.getUserByEmail(email));
 	}
 
+	// ---------------------- profile picture and cover image
+
 	@PutMapping("/saveProfilePicture")
 	public ResponseEntity<ResponsePayload> saveProfilePicture(@RequestParam String username,
 			@RequestParam MultipartFile file) {
@@ -55,13 +60,19 @@ public class UserController implements UserApi {
 		return ResponseEntity.ok(userService.removePfpFromDbAndCloud(username));
 	}
 
+	// ---------------------- countries and regions
+
+	@GetMapping("/getSecondaryRegions")
+	public ResponseEntity<List<RegionPayload>> getSecondaryRegionsOfUser(@RequestParam String username) {
+		return ResponseEntity.ok(userService.getSecondaryRegionsOfUser(username));
+	}
+	
+
 	@PutMapping("/setCountry")
 	public ResponseEntity<ResponsePayload> setCountryForUser(@RequestParam String username,
 			@RequestParam Long countryId) {
 		return ResponseEntity.ok(userService.setCountryForUser(username, countryId));
 	}
-
-	// get secondary regions of user
 
 	@PutMapping("/setPrimaryRegion")
 	public ResponseEntity<ResponsePayload> setPrimaryRegionOfUser(@RequestParam String username,
