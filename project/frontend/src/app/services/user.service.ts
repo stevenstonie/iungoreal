@@ -65,7 +65,7 @@ export class UserService {
       );
   }
 
-  getCountry(username: string): Observable<CountryOrRegionPayload> {
+  getCountryOfUser(username: string): Observable<CountryOrRegionPayload> {
     const params = new HttpParams().set('username', username);
 
     return this.http.get<CountryOrRegionPayload>(`${this.apiUrl}/getCountry`, { params })
@@ -74,7 +74,7 @@ export class UserService {
       );
   }
 
-  getPrimaryRegion(username: string): Observable<CountryOrRegionPayload> {
+  getPrimaryRegionOfUser(username: string): Observable<CountryOrRegionPayload> {
     const params = new HttpParams().set('username', username);
 
     return this.http.get<CountryOrRegionPayload>(`${this.apiUrl}/getPrimaryRegion`, { params })
@@ -83,7 +83,7 @@ export class UserService {
       );
   }
 
-  getSecondaryRegions(username: string): Observable<CountryOrRegionPayload[]> {
+  getSecondaryRegionsOfUser(username: string): Observable<CountryOrRegionPayload[]> {
     const params = new HttpParams().set('username', username);
 
     return this.http.get<CountryOrRegionPayload[]>(`${this.apiUrl}/getSecondaryRegions`, { params })
@@ -92,7 +92,7 @@ export class UserService {
       );
   }
 
-  setCountry(username: string, countryId: number): Observable<ResponsePayload> {
+  setCountryForUser(username: string, countryId: number): Observable<ResponsePayload> {
     const params = new HttpParams().set('username', username).set('countryId', countryId.toString());
 
     return this.http.put<ResponsePayload>(`${this.apiUrl}/setCountry`, null, { params })
@@ -101,7 +101,7 @@ export class UserService {
       );
   }
 
-  setPrimaryRegion(username: string, regionId: number): Observable<ResponsePayload> {
+  setPrimaryRegionForUser(username: string, regionId: number): Observable<ResponsePayload> {
     const params = new HttpParams().set('username', username).set('regionId', regionId.toString());
 
     return this.http.put<ResponsePayload>(`${this.apiUrl}/setPrimaryRegion`, null, { params })
@@ -110,10 +110,19 @@ export class UserService {
       );
   }
 
-  setSecondaryRegion(username: string, regionId: number): Observable<ResponsePayload> {
+  setSecondaryRegionForUser(username: string, regionId: number): Observable<ResponsePayload> {
     const params = new HttpParams().set('username', username).set('regionId', regionId.toString());
 
     return this.http.post<ResponsePayload>(`${this.apiUrl}/addSecondaryRegion`, null, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  removeCountryOfUser(username: string): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.delete<ResponsePayload>(`${this.apiUrl}/removeCountry`, { params })
       .pipe(
         catchError(this.handleError)
       );

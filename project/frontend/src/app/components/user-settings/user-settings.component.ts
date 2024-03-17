@@ -35,6 +35,8 @@ export class UserSettingsComponent {
     this.getAllCountries();
   }
 
+  // countries and regions -------------------------------------------------------------------------------------
+
   getAllCountries() {
     this.countryAndRegionService.getAllCountries().subscribe({
       next: (countries: CountryOrRegionPayload[]) => {
@@ -47,7 +49,7 @@ export class UserSettingsComponent {
   }
 
   getCountryFromDb(username: string) {
-    this.userService.getCountry(username).subscribe({
+    this.userService.getCountryOfUser(username).subscribe({
       next: (country: CountryOrRegionPayload) => {
         this.currentCountry = country;
       },
@@ -58,7 +60,7 @@ export class UserSettingsComponent {
   }
 
   getPrimaryRegionFromDb(username: string) {
-    this.userService.getPrimaryRegion(username).subscribe({
+    this.userService.getPrimaryRegionOfUser(username).subscribe({
       next: (region: CountryOrRegionPayload) => {
         this.currentPrimaryRegion = region;
       },
@@ -69,7 +71,7 @@ export class UserSettingsComponent {
   }
 
   getSecondaryRegionsFromDb(username: string) {
-    this.userService.getSecondaryRegions(username).subscribe({
+    this.userService.getSecondaryRegionsOfUser(username).subscribe({
       next: (regions: CountryOrRegionPayload[]) => {
         this.currentSecondaryRegions = regions;
       },
@@ -91,7 +93,7 @@ export class UserSettingsComponent {
   }
 
   selectCountry(country: CountryOrRegionPayload) {
-    this.userService.setCountry(this.loggedUserUsername, country.id).subscribe({
+    this.userService.setCountryForUser(this.loggedUserUsername, country.id).subscribe({
       next: () => {
         this.getCountryFromDb(this.loggedUserUsername);
 
@@ -106,7 +108,7 @@ export class UserSettingsComponent {
   }
 
   selectPrimaryRegion(region: CountryOrRegionPayload) {
-    this.userService.setPrimaryRegion(this.loggedUserUsername, region.id).subscribe({
+    this.userService.setPrimaryRegionForUser(this.loggedUserUsername, region.id).subscribe({
       next: () => {
         this.getPrimaryRegionFromDb(this.loggedUserUsername);
 
@@ -121,7 +123,7 @@ export class UserSettingsComponent {
   }
 
   selectSecondaryRegion(region: CountryOrRegionPayload) {
-    this.userService.setSecondaryRegion(this.loggedUserUsername, region.id).subscribe({
+    this.userService.setSecondaryRegionForUser(this.loggedUserUsername, region.id).subscribe({
       next: () => {
         this.getSecondaryRegionsFromDb(this.loggedUserUsername);
 
@@ -134,6 +136,21 @@ export class UserSettingsComponent {
 
     this.showSecondaryRegionOptions = false;
   }
+
+  removeCurrentCountry() {
+    this.userService.removeCountryOfUser(this.loggedUserUsername).subscribe({
+      next: () => {
+        this.getCountryFromDb(this.loggedUserUsername);
+
+        this.ngOnInit();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  //  -----------------------------------------------------------------------------------------------
 
   selectSection(section: string) {
     this.selectedSection = section;
