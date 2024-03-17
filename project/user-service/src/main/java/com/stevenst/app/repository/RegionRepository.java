@@ -12,4 +12,6 @@ import com.stevenst.lib.model.Region;
 @Repository
 public interface RegionRepository extends JpaRepository<Region, Long> {
 	List<Region> findAllByCountryAndIdNotIn(@Param("country") Country country, @Param("ids") List<Long> ids);
+
+	List<Region> findAllByCountry(Country country);
 }

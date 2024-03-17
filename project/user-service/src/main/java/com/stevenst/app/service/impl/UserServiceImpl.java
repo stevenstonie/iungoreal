@@ -173,7 +173,12 @@ public class UserServiceImpl implements UserService {
 
 		List<Long> regionIdsToExclude = getRegionIdsToExclude(user);
 
-		List<Region> regions = regionRepository.findAllByCountryAndIdNotIn(country, regionIdsToExclude);
+		List<Region> regions = new ArrayList<>();
+		if (regionIdsToExclude.isEmpty()) {
+			regions = regionRepository.findAllByCountry(country);
+		} else {
+			regions = regionRepository.findAllByCountryAndIdNotIn(country, regionIdsToExclude);
+		}
 
 		regions.sort(Comparator.comparing(Region::getName));
 
@@ -184,7 +189,6 @@ public class UserServiceImpl implements UserService {
 						.build())
 				.collect(Collectors.toList());
 	}
-
 
 	@Override
 	public CountryOrRegionPayload getCountryOfUser(String username) {

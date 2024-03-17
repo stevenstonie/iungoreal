@@ -101,6 +101,15 @@ export class UserService {
       );
   }
 
+  setCountry(username: string, countryId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('countryId', countryId.toString());
+
+    return this.http.put<ResponsePayload>(`${this.apiUrl}/setCountry`, null, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   // -------------------------------------------------------
 
   private handleError(error: HttpErrorResponse) {

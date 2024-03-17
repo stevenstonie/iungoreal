@@ -24,11 +24,12 @@
 			<p class="left">current country: <strong>{{currentCountry?.name || 'none'}}</strong></p>
 			<button>remove current</button>
 			<button (click)="showCountryOptions = !showCountryOptions">see options</button>
-			<!-- <div *ngIf="showCountryOptions">
+			<div *ngIf="showCountryOptions">
+				<p>(careful! changing the country will remove all your regions. you will need to add them again)</p>
 				<ul>
-					<li *ngFor="let country of ">{{ country }}</li>
+					<li *ngFor="let country of allCountries" (click)="selectCountry(country)">{{ country.name }}</li>
 				</ul>
-			</div> -->
+			</div>
 
 			<p class="left">current primary region: <strong>{{currentPrimaryRegion?.name || 'none'}}</strong></p>
 			<button>remove current</button>
