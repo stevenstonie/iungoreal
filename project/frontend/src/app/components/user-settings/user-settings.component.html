@@ -12,40 +12,60 @@
 	<button (click)="selectSection('feed')">Feed</button>
 </div>
 
-<div id="body">
+<div id="body" class="section">
 	<div *ngIf="selectedSection === 'account'">
 		<h3>you are in the account section</h3>
 	</div>
+
 	<!------------------------------------------------------------------------>
+
 	<div *ngIf="selectedSection === 'regions'">
-		<h3>you are in the regions section</h3>
-		
-		<h4>set country</h4>
-		<p>current country: ___</p>
-		
-		<h4>set primary region</h4>
-		<p>current primary region: ___</p>
-		
-		<h4>add a secondary region</h4>
-		<p>current secondary regions: ___</p>
+		<p class="left">current country: <strong>{{currentCountry?.name || 'none'}}</strong></p>
+		<button>remove current</button>
+		<button>see options</button>
+
+		<p class="left">current primary region: <strong>{{currentPrimaryRegion?.name || 'none'}}</strong></p>
+		<button>remove current</button>
+		<button>see options</button>
+
+		<p class="left">current secondary regions:
+			<span *ngIf="currentSecondaryRegions.length > 0; else displayNone">
+				<ng-container *ngFor="let region of currentSecondaryRegions; let i = index">
+					<strong>{{ region.name }}{{ i !== currentSecondaryRegions.length - 1 ? ', ' : '' }}</strong>
+				</ng-container>
+			</span>
+			<ng-template #displayNone>
+				<strong>none</strong>
+			</ng-template>
+		</p>
+		<button>remove one</button>
+		<button>see options</button>
 	</div>
+
 	<!------------------------------------------------------------------------>
+
 	<div *ngIf="selectedSection === 'notifications'">
 		<h3>you are in the notifications section</h3>
 	</div>
+
 	<!------------------------------------------------------------------------>
+
 	<div *ngIf="selectedSection === 'profile'">
 		<h3>you are in the profile section</h3>
 	</div>
+
 	<!------------------------------------------------------------------------>
+
 	<div *ngIf="selectedSection === 'privacy'">
 		<h3>you are in the privacy section</h3>
 	</div>
+
 	<!------------------------------------------------------------------------>
+
 	<div *ngIf="selectedSection === 'feed'">
 		<h3>you are in the feed section</h3>
 	</div>
-	
+
 	<div class="section">
 		<div class="left">
 			<h4>Setting1 name</h4>
@@ -55,7 +75,7 @@
 			<button>Edit</button>
 		</div>
 	</div>
-	
+
 	<div class="section">
 		<div class="left">
 			<h4>Setting2 name</h4>

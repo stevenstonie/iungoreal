@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { NotificationFPayload } from 'src/app/models/payloads';
+import { NotificationFPayload } from 'src/app/models/Payloads';
 import { NotificationService } from 'src/app/services/notification.service';
 import { DomSanitizer } from '@angular/platform-browser';
 

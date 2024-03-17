@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { User } from '../models/user';
 import { StringInJson } from '../models/app';
-import { ResponsePayload } from '../models/payloads';
+import { CountryOrRegionPayload, ResponsePayload } from '../models/Payloads';
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +51,33 @@ export class UserService {
     const params = new HttpParams().set('username', username);
 
     return this.http.get<StringInJson>(`${this.apiUrl}/getProfilePictureLink`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getCountry(username: string): Observable<CountryOrRegionPayload> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<CountryOrRegionPayload>(`${this.apiUrl}/getCountry`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getPrimaryRegion(username: string): Observable<CountryOrRegionPayload> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<CountryOrRegionPayload>(`${this.apiUrl}/getPrimaryRegion`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getSecondaryRegions(username: string): Observable<CountryOrRegionPayload[]> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<CountryOrRegionPayload[]>(`${this.apiUrl}/getSecondaryRegions`, { params })
       .pipe(
         catchError(this.handleError)
       );

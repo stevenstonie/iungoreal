@@ -24,3 +24,8 @@ export interface NotificationFPayload {
 	description: string,
 	createdAt: Date
 }
+
+export interface CountryOrRegionPayload {
+	id: number,
+	name: string
+}
