@@ -96,5 +96,9 @@ public class UserController implements UserApi {
 		return ResponseEntity.ok(userService.removePrimaryRegionForUser(username));
 	}
 
-	// remove secondary region of user
+	@DeleteMapping("/removeSecondaryRegion")
+	public ResponseEntity<ResponsePayload> removeSecondaryRegionForUser(@RequestParam String username,
+			@RequestParam Long regionId) {
+		return ResponseEntity.ok(userService.removeSecondaryRegionForUser(username, regionId));
+	}
 }

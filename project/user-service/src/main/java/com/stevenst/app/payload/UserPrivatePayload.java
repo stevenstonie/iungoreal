@@ -2,7 +2,6 @@ package com.stevenst.app.payload;
 
 import java.time.LocalDateTime;
 
-import com.stevenst.lib.model.Region;
 import com.stevenst.lib.model.enums.Role;
 
 import lombok.AllArgsConstructor;

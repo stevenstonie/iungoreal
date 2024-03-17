@@ -33,4 +33,6 @@ public interface UserService {
 	ResponsePayload removeCountryForUser(String username);
 
 	ResponsePayload removePrimaryRegionForUser(String username);
+
+	ResponsePayload removeSecondaryRegionForUser(String username, Long regionId);
 }

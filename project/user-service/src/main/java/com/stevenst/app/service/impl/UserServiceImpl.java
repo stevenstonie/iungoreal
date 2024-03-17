@@ -7,9 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +16,7 @@ import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorMaxCapExceededException;
+import com.stevenst.lib.exception.IgorNoContentToRemoveException;
 import com.stevenst.lib.exception.IgorNullValueException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.model.Country;
@@ -204,7 +202,7 @@ public class UserServiceImpl implements UserService {
 
 		return ResponsePayload.builder()
 				.status(200)
-				.message("Successfully set country: " + country.getName() + " for user \"" + username + "\".")
+				.message("Successfully set country: " + country.getName() + " for user:  " + username + ".")
 				.build();
 	}
 
@@ -225,7 +223,7 @@ public class UserServiceImpl implements UserService {
 
 		return ResponsePayload.builder()
 				.status(200)
-				.message("Successfully set primary region: " + region.getName() + " for user \"" + username + "\".")
+				.message("Successfully set primary region: " + region.getName() + " for user: " + username + ".")
 				.build();
 	}
 
@@ -268,21 +266,18 @@ public class UserServiceImpl implements UserService {
 		User user = getUserFromDbByUsername(username);
 
 		if (user.getCountryId() == null) {
-			return ResponsePayload.builder()
-					.status(204)
-					.message("No country found for user: " + username + ".")
-					.build();
+			throw new IgorNoContentToRemoveException("No country to remove was found (for user: " + username + ").");
 		}
 
 		user.setCountryId(null);
 		user.setPrimaryRegionId(null);
 		userRepository.save(user);
 
-		// TODO: remove all secondary regions for this user
+		secondaryRegionsUsersRepository.removeAllByUserId(user.getId());
 
 		return ResponsePayload.builder()
 				.status(200)
-				.message("Removed country for user: " + username + ".")
+				.message("Successfully removed country and regions for user: " + username + ".")
 				.build();
 	}
 
@@ -290,10 +285,8 @@ public class UserServiceImpl implements UserService {
 	public ResponsePayload removePrimaryRegionForUser(String username) {
 		User user = getUserFromDbByUsername(username);
 		if (user.getPrimaryRegionId() == null) {
-			return ResponsePayload.builder()
-					.status(204)
-					.message("No primary region found for user: " + username + ".")
-					.build();
+			throw new IgorNoContentToRemoveException(
+					"No primary region to remove was found (for user: " + username + ").");
 		}
 
 		user.setPrimaryRegionId(null);
@@ -301,6 +294,24 @@ public class UserServiceImpl implements UserService {
 		return ResponsePayload.builder()
 				.status(200)
 				.message("Removed primary region for user: " + username + ".")
+				.build();
+	}
+
+	@Override
+	public ResponsePayload removeSecondaryRegionForUser(String username, Long regionId) {
+		User user = getUserFromDbByUsername(username);
+
+		SecondaryRegionsUsers secondaryRegion = secondaryRegionsUsersRepository
+				.findByUserIdAndSecondaryRegionId(user.getId(), regionId);
+		if (secondaryRegion == null) {
+			throw new IgorNoContentToRemoveException(
+					"Secondary region to remove was not found (for user: " + username + ").");
+		}
+
+		secondaryRegionsUsersRepository.delete(secondaryRegion);
+		return ResponsePayload.builder()
+				.status(200)
+				.message("Removed secondary region for user: " + username + ".")
 				.build();
 	}
 
