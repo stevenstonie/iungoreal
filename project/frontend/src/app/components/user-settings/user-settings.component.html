@@ -4,13 +4,48 @@
 	<h2>Settings</h2>
 </div>
 <div id="header">
-	<button>Account</button>
-	<button>Profile</button>
-	<button>Privacy</button>
-	<button>Feed</button>
+	<button (click)="selectSection('account')">Account</button>
+	<button (click)="selectSection('regions')">Regions</button>
+	<button (click)="selectSection('notifications')">Notifications</button>
+	<button (click)="selectSection('profile')">Profile</button>
+	<button (click)="selectSection('privacy')">Privacy</button>
+	<button (click)="selectSection('feed')">Feed</button>
 </div>
 
 <div id="body">
+	<div *ngIf="selectedSection === 'account'">
+		<h3>you are in the account section</h3>
+	</div>
+	<!------------------------------------------------------------------------>
+	<div *ngIf="selectedSection === 'regions'">
+		<h3>you are in the regions section</h3>
+		
+		<h4>set country</h4>
+		<p>current country: ___</p>
+		
+		<h4>set primary region</h4>
+		<p>current primary region: ___</p>
+		
+		<h4>add a secondary region</h4>
+		<p>current secondary regions: ___</p>
+	</div>
+	<!------------------------------------------------------------------------>
+	<div *ngIf="selectedSection === 'notifications'">
+		<h3>you are in the notifications section</h3>
+	</div>
+	<!------------------------------------------------------------------------>
+	<div *ngIf="selectedSection === 'profile'">
+		<h3>you are in the profile section</h3>
+	</div>
+	<!------------------------------------------------------------------------>
+	<div *ngIf="selectedSection === 'privacy'">
+		<h3>you are in the privacy section</h3>
+	</div>
+	<!------------------------------------------------------------------------>
+	<div *ngIf="selectedSection === 'feed'">
+		<h3>you are in the feed section</h3>
+	</div>
+	
 	<div class="section">
 		<div class="left">
 			<h4>Setting1 name</h4>
@@ -20,7 +55,7 @@
 			<button>Edit</button>
 		</div>
 	</div>
-
+	
 	<div class="section">
 		<div class="left">
 			<h4>Setting2 name</h4>

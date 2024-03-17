@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./user-settings.component.scss']
 })
 export class UserSettingsComponent {
+  selectedSection: string = '';
 
+  selectSection(section: string) {
+    this.selectedSection = section;
+  }
 }
