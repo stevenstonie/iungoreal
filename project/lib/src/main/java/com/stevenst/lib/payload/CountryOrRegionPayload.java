@@ -1,4 +1,4 @@
-package com.stevenst.app.payload;
+package com.stevenst.lib.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

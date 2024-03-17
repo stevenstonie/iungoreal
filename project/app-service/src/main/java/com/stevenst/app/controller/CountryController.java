@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/country")
 @RequiredArgsConstructor
-public class CountryAndRegionController {
+public class CountryController {
 	private final CountryAndRegionService countryAndRegionService;
 
 	@GetMapping("/getAll")

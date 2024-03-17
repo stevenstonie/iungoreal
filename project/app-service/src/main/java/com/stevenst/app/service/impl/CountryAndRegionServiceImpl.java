@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.stevenst.app.payload.RegionPayload;
 import com.stevenst.app.repository.CountryRepository;
 import com.stevenst.app.repository.RegionRepository;
 import com.stevenst.app.service.CountryAndRegionService;
@@ -19,6 +18,7 @@ import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.model.Country;
 import com.stevenst.lib.model.Region;
+import com.stevenst.lib.payload.CountryOrRegionPayload;
 import com.stevenst.lib.payload.ResponsePayload;
 
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 	}
 
 	@Override
-	public List<RegionPayload> getAllRegionsByCountryId(Long countryId) {
+	public List<CountryOrRegionPayload> getAllRegionPayloadsByCountryId(Long countryId) {
 		Optional<Country> country = countryRepository.findById(countryId);
 		if (!country.isPresent()) {
 			throw new IgorEntityNotFoundException("Country not found.");
@@ -45,15 +45,11 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 
 		List<Region> regions = regionRepository.findAllByCountry(country.get());
 
-		List<RegionPayload> regionPayloads = new ArrayList<>();
+		List<CountryOrRegionPayload> regionPayloads = new ArrayList<>();
 		for (Region region : regions) {
-			regionPayloads.add(RegionPayload.builder()
+			regionPayloads.add(CountryOrRegionPayload.builder()
 					.id(region.getId())
-					.countryId(region.getCountry().getId())
 					.name(region.getName())
-					.code(region.getCode())
-					.latitude(region.getLatitude())
-					.longitude(region.getLongitude())
 					.build());
 		}
 
@@ -76,7 +72,7 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 				if (countryFromJson == null) {
 					throw new IgorEntityNotFoundException("Country with name: " + countryName + " has not been found.");
 				}
-				
+
 				Country countryToInsertIntoDb = countryFromJson.convertToCountry();
 				List<Region> regions = countryFromJson.getRegions();
 				for (Region region : regions) {

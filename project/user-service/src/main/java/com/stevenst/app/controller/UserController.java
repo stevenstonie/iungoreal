@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stevenst.app.controller.api.UserApi;
-import com.stevenst.app.payload.CountryOrRegionPayload;
+import com.stevenst.lib.payload.CountryOrRegionPayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.service.UserService;
@@ -61,6 +61,11 @@ public class UserController implements UserApi {
 	}
 
 	// ---------------------- countries and regions
+
+	@GetMapping("/getAvailableRegions")
+	public ResponseEntity<List<CountryOrRegionPayload>> getAvailableRegionsForUser(@RequestParam String username) {
+		return ResponseEntity.ok(userService.getAvailableRegionsForUser(username));
+	}
 
 	@GetMapping("/getCountry")
 	public ResponseEntity<CountryOrRegionPayload> getCountryOfUser(@RequestParam String username) {

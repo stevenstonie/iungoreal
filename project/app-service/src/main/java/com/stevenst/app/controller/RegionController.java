@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.stevenst.app.payload.RegionPayload;
 import com.stevenst.app.service.CountryAndRegionService;
+import com.stevenst.lib.payload.CountryOrRegionPayload;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,8 +20,7 @@ public class RegionController {
 	private final CountryAndRegionService countryAndRegionService;
 	
 	@GetMapping("/getAll/byCountryId")
-	public ResponseEntity<List<RegionPayload>> getAllRegionsByCountryId(@RequestParam Long countryId) {
-		return ResponseEntity.ok(countryAndRegionService.getAllRegionsByCountryId(countryId));
+	public ResponseEntity<List<CountryOrRegionPayload>> getAllRegionPayloadsByCountryId(@RequestParam Long countryId) {
+		return ResponseEntity.ok(countryAndRegionService.getAllRegionPayloadsByCountryId(countryId));
 	}
-	
 }

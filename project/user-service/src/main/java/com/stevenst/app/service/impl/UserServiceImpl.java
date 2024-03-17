@@ -3,10 +3,13 @@ package com.stevenst.app.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +27,7 @@ import com.stevenst.lib.model.Region;
 import com.stevenst.lib.model.SecondaryRegionsUsers;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
-import com.stevenst.app.payload.CountryOrRegionPayload;
+import com.stevenst.lib.payload.CountryOrRegionPayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.CountryRepository;
@@ -157,6 +160,26 @@ public class UserServiceImpl implements UserService {
 
 		setPfpNameInDb(user, null);
 		return removePfpFromCloud(key, username);
+	}
+
+	@Override
+	public List<CountryOrRegionPayload> getAvailableRegionsForUser(String username) {
+		User user = getUserFromDbByUsername(username);
+		if (user.getCountryId() == null) {
+			return new ArrayList<>();
+		}
+		Country country = getCountryFromDb(user.getCountryId());
+
+		List<Long> regionIdsToExclude = getRegionIdsToExclude(user);
+
+		List<Region> regions = regionRepository.findAllByCountryAndIdNotIn(country, regionIdsToExclude);
+
+		return regions.stream()
+				.map(region -> CountryOrRegionPayload.builder()
+						.id(region.getId())
+						.name(region.getName())
+						.build())
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -397,6 +420,17 @@ public class UserServiceImpl implements UserService {
 					"Cannot assign a region that is already a secondary region (for user: " + user.getUsername()
 							+ ").");
 		}
+	}
+
+	private List<Long> getRegionIdsToExclude(User user) {
+		List<CountryOrRegionPayload> regionsToExclude = getSecondaryRegionsOfUser(user.getUsername());
+		if (user.getPrimaryRegionId() != null) {
+			regionsToExclude.add(getPrimaryRegionOfUser(user.getUsername()));
+		}
+
+		return regionsToExclude.stream()
+				.map(CountryOrRegionPayload::getId)
+				.collect(Collectors.toList());
 	}
 
 	private void setPfpNameInDb(User user, String fileName) {

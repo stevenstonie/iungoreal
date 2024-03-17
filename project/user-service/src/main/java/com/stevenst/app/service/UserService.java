@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.stevenst.app.payload.CountryOrRegionPayload;
+import com.stevenst.lib.payload.CountryOrRegionPayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.lib.payload.ResponsePayload;
@@ -22,6 +22,8 @@ public interface UserService {
 
 	ResponsePayload removePfpFromDbAndCloud(String username);
 
+	List<CountryOrRegionPayload> getAvailableRegionsForUser(String username);
+	
 	CountryOrRegionPayload getCountryOfUser(String username);
 
 	CountryOrRegionPayload getPrimaryRegionOfUser(String username);
