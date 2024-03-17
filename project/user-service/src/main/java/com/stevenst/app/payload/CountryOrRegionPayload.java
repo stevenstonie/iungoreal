@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegionPayload {
+public class CountryOrRegionPayload {
 	private Long id;
 	private String name;
 }

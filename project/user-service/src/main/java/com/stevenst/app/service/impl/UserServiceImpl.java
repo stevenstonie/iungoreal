@@ -24,7 +24,7 @@ import com.stevenst.lib.model.Region;
 import com.stevenst.lib.model.SecondaryRegionsUsers;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
-import com.stevenst.app.payload.RegionPayload;
+import com.stevenst.app.payload.CountryOrRegionPayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.repository.CountryRepository;
@@ -77,24 +77,11 @@ public class UserServiceImpl implements UserService {
 	public UserPrivatePayload getUserPrivateByUsername(String username) {
 		User user = getUserFromDbByUsername(username);
 
-		Country countryOfUser = null;
-		Region primaryRegionOfUser = null;
-		if (user.getCountryId() != null) {
-			countryOfUser = getCountryFromDb(user.getCountryId());
-		}
-		if (user.getPrimaryRegionId() != null) {
-			primaryRegionOfUser = getRegionFromDb(user.getPrimaryRegionId());
-		}
-
 		return UserPrivatePayload.builder()
 				.id(user.getId())
 				.email(user.getEmail())
 				.username(user.getUsername())
 				.role(user.getRole())
-				.countryId(user.getCountryId())
-				.countryName(countryOfUser == null ? null : countryOfUser.getName())
-				.primaryRegionId(user.getPrimaryRegionId())
-				.primaryRegionName(primaryRegionOfUser == null ? null : primaryRegionOfUser.getName())
 				.createdAt(user.getCreatedAt())
 				.build();
 	}
@@ -173,15 +160,47 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<RegionPayload> getSecondaryRegionsOfUser(String username) {
+	public CountryOrRegionPayload getCountryOfUser(String username) {
+		User user = getUserFromDbByUsername(username);
+
+		if (user.getCountryId() == null) {
+			return new CountryOrRegionPayload(null, null);
+		}
+
+		Country country = getCountryFromDb(user.getCountryId());
+
+		return CountryOrRegionPayload.builder()
+				.id(country.getId())
+				.name(country.getName())
+				.build();
+	}
+
+	@Override
+	public CountryOrRegionPayload getPrimaryRegionOfUser(String username) {
+		User user = getUserFromDbByUsername(username);
+
+		if (user.getPrimaryRegionId() == null) {
+			return new CountryOrRegionPayload(null, null);
+		}
+
+		Region region = getRegionFromDb(user.getPrimaryRegionId());
+
+		return CountryOrRegionPayload.builder()
+				.id(region.getId())
+				.name(region.getName())
+				.build();
+	}
+
+	@Override
+	public List<CountryOrRegionPayload> getSecondaryRegionsOfUser(String username) {
 		User user = getUserFromDbByUsername(username);
 
 		List<SecondaryRegionsUsers> secondaryRegionsOfUser = secondaryRegionsUsersRepository.findByUserId(user.getId());
 
-		List<RegionPayload> secondaryRegions = new java.util.ArrayList<>();
+		List<CountryOrRegionPayload> secondaryRegions = new java.util.ArrayList<>();
 
 		for (SecondaryRegionsUsers secondaryRegionOfUser : secondaryRegionsOfUser) {
-			secondaryRegions.add(RegionPayload.builder()
+			secondaryRegions.add(CountryOrRegionPayload.builder()
 					.id(secondaryRegionOfUser.getSecondaryRegion().getId())
 					.name(secondaryRegionOfUser.getSecondaryRegion().getName())
 					.build());
@@ -371,7 +390,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void checkIfRegionAlreadyExistsAsSecondary(User user, Region region) {
-		List<RegionPayload> secondaryRegions = getSecondaryRegionsOfUser(user.getUsername());
+		List<CountryOrRegionPayload> secondaryRegions = getSecondaryRegionsOfUser(user.getUsername());
 
 		if (secondaryRegions.stream().anyMatch(r -> r.getId().equals(region.getId()))) {
 			throw new IgorCountryAndRegionException(
