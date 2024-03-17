@@ -20,26 +20,38 @@
 	<!------------------------------------------------------------------------>
 
 	<div *ngIf="selectedSection === 'regions'">
-		<p class="left">current country: <strong>{{currentCountry?.name || 'none'}}</strong></p>
-		<button>remove current</button>
-		<button>see options</button>
+		<div class="section-left">
+			<p class="left">current country: <strong>{{currentCountry?.name || 'none'}}</strong></p>
+			<button>remove current</button>
+			<button (click)="showCountryOptions = !showCountryOptions">see options</button>
+			<!-- <div *ngIf="showCountryOptions">
+				<ul>
+					<li *ngFor="let country of ">{{ country }}</li>
+				</ul>
+			</div> -->
 
-		<p class="left">current primary region: <strong>{{currentPrimaryRegion?.name || 'none'}}</strong></p>
-		<button>remove current</button>
-		<button>see options</button>
+			<p class="left">current primary region: <strong>{{currentPrimaryRegion?.name || 'none'}}</strong></p>
+			<button>remove current</button>
+			<button (click)="showPrimaryRegionOptions = !showPrimaryRegionOptions">see options</button>
+			<div *ngIf="showPrimaryRegionOptions">
+				<ul>
+					<li *ngFor="let region of availableRegions" (click)="selectPrimaryRegion(region)">{{ region.name }}</li>
+				</ul>
+			</div>
 
-		<p class="left">current secondary regions:
-			<span *ngIf="currentSecondaryRegions.length > 0; else displayNone">
-				<ng-container *ngFor="let region of currentSecondaryRegions; let i = index">
-					<strong>{{ region.name }}{{ i !== currentSecondaryRegions.length - 1 ? ', ' : '' }}</strong>
-				</ng-container>
-			</span>
-			<ng-template #displayNone>
-				<strong>none</strong>
-			</ng-template>
-		</p>
-		<button>remove one</button>
-		<button>see options</button>
+			<p class="left">current secondary regions:
+				<span *ngIf="currentSecondaryRegions.length > 0; else displayNone">
+					<ng-container *ngFor="let region of currentSecondaryRegions; let i = index">
+						<strong>{{ region.name }}{{ i !== currentSecondaryRegions.length - 1 ? ', ' : '' }}</strong>
+					</ng-container>
+				</span>
+				<ng-template #displayNone>
+					<strong>none</strong>
+				</ng-template>
+			</p>
+			<button>remove one</button>
+			<button>see options</button>
+		</div>
 	</div>
 
 	<!------------------------------------------------------------------------>

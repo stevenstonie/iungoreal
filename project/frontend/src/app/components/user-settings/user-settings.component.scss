@@ -37,3 +37,12 @@
 	}
 	width: 600px;
 }
+
+li {
+	cursor: pointer;
+	list-style: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}

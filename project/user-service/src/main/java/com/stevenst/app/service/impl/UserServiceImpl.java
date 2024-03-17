@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,6 +175,8 @@ public class UserServiceImpl implements UserService {
 
 		List<Region> regions = regionRepository.findAllByCountryAndIdNotIn(country, regionIdsToExclude);
 
+		regions.sort(Comparator.comparing(Region::getName));
+
 		return regions.stream()
 				.map(region -> CountryOrRegionPayload.builder()
 						.id(region.getId())
@@ -181,6 +184,7 @@ public class UserServiceImpl implements UserService {
 						.build())
 				.collect(Collectors.toList());
 	}
+
 
 	@Override
 	public CountryOrRegionPayload getCountryOfUser(String username) {
@@ -236,8 +240,12 @@ public class UserServiceImpl implements UserService {
 	public ResponsePayload setCountryForUser(String username, Long countryId) {
 		User user = getUserFromDbByUsername(username);
 
-		Country country = countryRepository.findById(countryId)
-				.orElseThrow(() -> new IgorEntityNotFoundException("Country not found (with id: " + countryId + ")"));
+		Country country = getCountryFromDb(countryId);
+
+		if (!Objects.equals(country.getId(), user.getCountryId())) {
+			user.setPrimaryRegionId(null);
+			secondaryRegionsUsersRepository.removeAllByUserId(user.getId());
+		}
 
 		user.setCountryId(country.getId());
 		userRepository.save(user);
@@ -252,7 +260,7 @@ public class UserServiceImpl implements UserService {
 	public ResponsePayload setPrimaryRegionOfUser(String username, Long regionId) {
 		User user = getUserFromDbByUsername(username);
 
-		checkIfUserHasACountryAssingedForRegion(user);
+		checkIfUserHasACountryAssigned(user);
 
 		Region region = getRegionFromDb(regionId);
 
@@ -272,7 +280,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponsePayload addSecondaryRegionForUser(String username, Long regionId) {
 		User user = getUserFromDbByUsername(username);
-		checkIfUserHasACountryAssingedForRegion(user);
+		checkIfUserHasACountryAssigned(user);
 
 		Region regionToAddAsSecondaryInDb = getRegionFromDb(regionId);
 		checkIfRegionIsPartOfUsersCountry(user, regionToAddAsSecondaryInDb);
@@ -311,11 +319,10 @@ public class UserServiceImpl implements UserService {
 			throw new IgorNoContentToRemoveException("No country to remove was found (for user: " + username + ").");
 		}
 
+		secondaryRegionsUsersRepository.removeAllByUserId(user.getId());
 		user.setCountryId(null);
 		user.setPrimaryRegionId(null);
 		userRepository.save(user);
-
-		secondaryRegionsUsersRepository.removeAllByUserId(user.getId());
 
 		return ResponsePayload.builder()
 				.status(200)
@@ -343,12 +350,7 @@ public class UserServiceImpl implements UserService {
 	public ResponsePayload removeSecondaryRegionForUser(String username, Long regionId) {
 		User user = getUserFromDbByUsername(username);
 
-		SecondaryRegionsUsers secondaryRegion = secondaryRegionsUsersRepository
-				.findByUserIdAndSecondaryRegionId(user.getId(), regionId);
-		if (secondaryRegion == null) {
-			throw new IgorNoContentToRemoveException(
-					"Secondary region to remove was not found (for user: " + username + ").");
-		}
+		SecondaryRegionsUsers secondaryRegion = getSecondaryRegionFromDb(user, regionId);
 
 		secondaryRegionsUsersRepository.delete(secondaryRegion);
 		return ResponsePayload.builder()
@@ -379,15 +381,6 @@ public class UserServiceImpl implements UserService {
 						() -> new IgorUserNotFoundException(USER_NOT_FOUND + " (with email: " + email + ")."));
 	}
 
-	private Region getRegionFromDb(Long regionId) {
-		if (regionId == null) {
-			throw new IgorNullValueException("Region id cannot be null.");
-		}
-
-		return regionRepository.findById(regionId)
-				.orElseThrow(() -> new IgorEntityNotFoundException("Region not found (with id: " + regionId + ")."));
-	}
-
 	private Country getCountryFromDb(Long countryId) {
 		if (countryId == null) {
 			throw new IgorNullValueException("Country id cannot be null.");
@@ -397,7 +390,30 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new IgorEntityNotFoundException("Country not found (with id: " + countryId + ")."));
 	}
 
-	private void checkIfUserHasACountryAssingedForRegion(User user) {
+	private Region getRegionFromDb(Long regionId) {
+		if (regionId == null) {
+			throw new IgorNullValueException("Region id cannot be null.");
+		}
+
+		return regionRepository.findById(regionId)
+				.orElseThrow(() -> new IgorEntityNotFoundException("Region not found (with id: " + regionId + ")."));
+	}
+
+	private SecondaryRegionsUsers getSecondaryRegionFromDb(User user, Long regionId) {
+		if (regionId == null) {
+			throw new IgorNullValueException("Region id cannot be null.");
+		}
+
+		SecondaryRegionsUsers secondaryRegion = secondaryRegionsUsersRepository
+				.findByUserIdAndSecondaryRegionId(user.getId(), regionId);
+		if (secondaryRegion == null) {
+			throw new IgorEntityNotFoundException("Region not found (with id: " + regionId + ") associated with user: " + user.getUsername() + ".");
+		}
+
+		return secondaryRegion;
+	}
+
+	private void checkIfUserHasACountryAssigned(User user) {
 		if (user.getCountryId() == null) {
 			throw new IgorCountryAndRegionException(
 					"Cannot assign a region if country is not set (for user: " + user.getUsername() + ").");

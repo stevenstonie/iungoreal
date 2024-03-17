@@ -56,6 +56,15 @@ export class UserService {
       );
   }
 
+  getAvailableRegions(username: string): Observable<CountryOrRegionPayload[]> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<CountryOrRegionPayload[]>(`${this.apiUrl}/getAvailableRegions`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   getCountry(username: string): Observable<CountryOrRegionPayload> {
     const params = new HttpParams().set('username', username);
 
@@ -78,6 +87,15 @@ export class UserService {
     const params = new HttpParams().set('username', username);
 
     return this.http.get<CountryOrRegionPayload[]>(`${this.apiUrl}/getSecondaryRegions`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  setPrimaryRegion(username: string, regionId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('regionId', regionId.toString());
+
+    return this.http.put<ResponsePayload>(`${this.apiUrl}/setPrimaryRegion`, null, { params })
       .pipe(
         catchError(this.handleError)
       );
