@@ -90,6 +90,21 @@ export class UserSettingsComponent {
     });
   }
 
+  selectCountry(country: CountryOrRegionPayload) {
+    this.userService.setCountry(this.loggedUserUsername, country.id).subscribe({
+      next: () => {
+        this.getCountryFromDb(this.loggedUserUsername);
+
+        this.ngOnInit();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+
+    this.showCountryOptions = false;
+  }
+
   selectPrimaryRegion(region: CountryOrRegionPayload) {
     this.userService.setPrimaryRegion(this.loggedUserUsername, region.id).subscribe({
       next: () => {
@@ -105,19 +120,19 @@ export class UserSettingsComponent {
     this.showPrimaryRegionOptions = false;
   }
 
-  selectCountry(country: CountryOrRegionPayload) {
-    this.userService.setCountry(this.loggedUserUsername, country.id).subscribe({
+  selectSecondaryRegion(region: CountryOrRegionPayload) {
+    this.userService.setSecondaryRegion(this.loggedUserUsername, region.id).subscribe({
       next: () => {
-        this.getCountryFromDb(this.loggedUserUsername);
+        this.getSecondaryRegionsFromDb(this.loggedUserUsername);
 
-        this.ngOnInit();
+        this.getAvailableRegions(this.loggedUserUsername);
       },
       error: (error) => {
         console.error(error);
       }
     });
 
-    this.showCountryOptions = false;
+    this.showSecondaryRegionOptions = false;
   }
 
   selectSection(section: string) {

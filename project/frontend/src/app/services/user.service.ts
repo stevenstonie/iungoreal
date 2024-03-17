@@ -92,6 +92,15 @@ export class UserService {
       );
   }
 
+  setCountry(username: string, countryId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('countryId', countryId.toString());
+
+    return this.http.put<ResponsePayload>(`${this.apiUrl}/setCountry`, null, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   setPrimaryRegion(username: string, regionId: number): Observable<ResponsePayload> {
     const params = new HttpParams().set('username', username).set('regionId', regionId.toString());
 
@@ -101,10 +110,10 @@ export class UserService {
       );
   }
 
-  setCountry(username: string, countryId: number): Observable<ResponsePayload> {
-    const params = new HttpParams().set('username', username).set('countryId', countryId.toString());
+  setSecondaryRegion(username: string, regionId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('regionId', regionId.toString());
 
-    return this.http.put<ResponsePayload>(`${this.apiUrl}/setCountry`, null, { params })
+    return this.http.post<ResponsePayload>(`${this.apiUrl}/addSecondaryRegion`, null, { params })
       .pipe(
         catchError(this.handleError)
       );

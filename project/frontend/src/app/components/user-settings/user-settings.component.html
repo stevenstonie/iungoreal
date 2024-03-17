@@ -23,7 +23,7 @@
 		<div class="section-left">
 			<p class="left">current country: <strong>{{currentCountry?.name || 'none'}}</strong></p>
 			<button>remove current</button>
-			<button (click)="showCountryOptions = !showCountryOptions">see options</button>
+			<button (click)="showCountryOptions = !showCountryOptions">show options</button>
 			<div *ngIf="showCountryOptions">
 				<p>(careful! changing the country will remove all your regions. you will need to add them again)</p>
 				<ul>
@@ -33,7 +33,7 @@
 
 			<p class="left">current primary region: <strong>{{currentPrimaryRegion?.name || 'none'}}</strong></p>
 			<button>remove current</button>
-			<button (click)="showPrimaryRegionOptions = !showPrimaryRegionOptions">see options</button>
+			<button (click)="showPrimaryRegionOptions = !showPrimaryRegionOptions">show options</button>
 			<div *ngIf="showPrimaryRegionOptions">
 				<ul>
 					<li *ngFor="let region of availableRegions" (click)="selectPrimaryRegion(region)">{{ region.name }}</li>
@@ -51,7 +51,12 @@
 				</ng-template>
 			</p>
 			<button>remove one</button>
-			<button>see options</button>
+			<button (click)="showSecondaryRegionOptions = !showSecondaryRegionOptions">show options</button>
+			<div *ngIf="showSecondaryRegionOptions">
+				<ul>
+					<li *ngFor="let region of availableRegions" (click)="selectSecondaryRegion(region)">{{ region.name }}</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 
