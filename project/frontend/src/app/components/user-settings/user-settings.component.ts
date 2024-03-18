@@ -16,6 +16,7 @@ export class UserSettingsComponent {
   showCountryOptions: boolean = false;
   showPrimaryRegionOptions: boolean = false;
   showSecondaryRegionOptions: boolean = false;
+  showSecondaryRegionOptionsToRemove: boolean = false;
 
   countryOfUser: CountryOrRegionPayload | null = null;
   primaryRegionOfUser: CountryOrRegionPayload | null = null;
@@ -160,11 +161,28 @@ export class UserSettingsComponent {
     this.userService.removePrimaryRegionOfUser(this.loggedUserUsername).subscribe({
       next: () => {
         this.getPrimaryRegionOfUser(this.loggedUserUsername);
+
+        this.getAvailableRegionsForUser(this.loggedUserUsername);
       },
       error: (error) => {
         console.error(error);
       }
     });
+  }
+
+  removeSecondaryRegionOfUser(region: CountryOrRegionPayload) {
+    this.userService.removeSecondaryRegionOfUser(this.loggedUserUsername, region.id).subscribe({
+      next: () => {
+        this.getSecondaryRegionsOfUser(this.loggedUserUsername);
+
+        this.getAvailableRegionsForUser(this.loggedUserUsername);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+
+    this.showSecondaryRegionOptionsToRemove = false;
   }
 
   //  -----------------------------------------------------------------------------------------------

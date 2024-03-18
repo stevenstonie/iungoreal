@@ -139,6 +139,15 @@ export class UserService {
       );
   }
 
+  removeSecondaryRegionOfUser(username: string, regionId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('regionId', regionId.toString());
+
+    return this.http.delete<ResponsePayload>(`${this.apiUrl}/removeSecondaryRegion`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   // -------------------------------------------------------
 
   private handleError(error: HttpErrorResponse) {

@@ -66,7 +66,16 @@
 						region.name }}</li>
 				</ul>
 			</div>
-			<button>remove one</button>
+			<button (click)="showSecondaryRegionOptionsToRemove = !showSecondaryRegionOptionsToRemove">remove one</button>
+			<div *ngIf="showSecondaryRegionOptionsToRemove">
+				<ng-container *ngIf="!secondaryRegionsOfUser.length">
+					<p>you have no secondary region to remove</p>
+				</ng-container>
+				<ul>
+					<li *ngFor="let region of secondaryRegionsOfUser" (click)="removeSecondaryRegionOfUser(region)">{{
+						region.name }}</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 
