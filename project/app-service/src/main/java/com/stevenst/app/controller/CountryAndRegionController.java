@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.stevenst.app.service.CountryAndRegionService;
 import com.stevenst.lib.model.Country;
+import com.stevenst.lib.payload.CountryOrRegionPayload;
 import com.stevenst.lib.payload.ResponsePayload;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/country")
 @RequiredArgsConstructor
-public class CountryController {
+public class CountryAndRegionController {
 	private final CountryAndRegionService countryAndRegionService;
 
 	@GetMapping("/getAll")
@@ -26,6 +27,13 @@ public class CountryController {
 		return ResponseEntity.ok(countryAndRegionService.getAllCountries());
 	}
 
+	@GetMapping("/getAllRegions/byCountryName")
+	public ResponseEntity<List<CountryOrRegionPayload>> getAllRegionPayloadsByCountryName(
+			@RequestParam String countryName) {
+		return ResponseEntity.ok(countryAndRegionService.getAllRegionPayloadsByCountryName(countryName));
+	}
+
+	// only used by ADMIN
 	@PostMapping("/insertCountryAndRegions/byCountryName")
 	public ResponseEntity<ResponsePayload> insertAllRegionsOfACountryIntoDb(@RequestParam String countryName) {
 		return ResponseEntity.ok(countryAndRegionService.insertCountryAndRegionsIntoDb(countryName));

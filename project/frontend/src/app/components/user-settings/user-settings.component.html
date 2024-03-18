@@ -21,29 +21,35 @@
 
 	<div *ngIf="selectedSection === 'regions'">
 		<div class="section-left">
-			<p class="left">current country: <strong>{{currentCountry?.name || 'none'}}</strong></p>
+			<p class="left">current country: <strong>{{countryOfUser?.name || 'none'}}</strong></p>
 			<button (click)="showCountryOptions = !showCountryOptions">show options</button>
 			<div *ngIf="showCountryOptions">
 				<ul>
-					<li *ngFor="let country of allCountries" (click)="selectCountry(country)">{{ country.name }}</li>
+					<li *ngFor="let country of allCountries" (click)="setCountryForUser(country)">{{ country.name }}
+					</li>
 				</ul>
 			</div>
-			<button (click)="removeCurrentCountry()">remove current</button>
-			<p>(careful! changing or removing the country will remove all your regions. you will need to add them again)</p>
+			<button (click)="removeCountryOfUser()">remove current</button>
+			<p>(careful! changing or removing the country will remove all your regions. you will need to add them again)
+			</p>
 
-			<p class="left">current primary region: <strong>{{currentPrimaryRegion?.name || 'none'}}</strong></p>
+			<p class="left">current primary region: <strong>{{primaryRegionOfUser?.name || 'none'}}</strong></p>
 			<button (click)="showPrimaryRegionOptions = !showPrimaryRegionOptions">show options</button>
 			<div *ngIf="showPrimaryRegionOptions">
+				<ng-container *ngIf="!countryOfUser?.id">
+					<p>you need to select a country first</p>
+				</ng-container>
 				<ul>
-					<li *ngFor="let region of availableRegions" (click)="selectPrimaryRegion(region)">{{ region.name }}</li>
+					<li *ngFor="let region of availableRegions" (click)="setPrimaryRegionForUser(region)">
+						{{region.name}}</li>
 				</ul>
 			</div>
-			<button>remove current</button>
+			<button (click)="removePrimaryRegionOfUser()">remove current</button>
 
-			<p class="left">current secondary regions:
-				<span *ngIf="currentSecondaryRegions.length > 0; else displayNone">
-					<ng-container *ngFor="let region of currentSecondaryRegions; let i = index">
-						<strong>{{ region.name }}{{ i !== currentSecondaryRegions.length - 1 ? ', ' : '' }}</strong>
+			<p class="left">current secondary regions (max 3):
+				<span *ngIf="secondaryRegionsOfUser.length > 0; else displayNone">
+					<ng-container *ngFor="let region of secondaryRegionsOfUser; let i = index">
+						<strong>{{ region.name }}{{ i !== secondaryRegionsOfUser.length - 1 ? ', ' : '' }}</strong>
 					</ng-container>
 				</span>
 				<ng-template #displayNone>
@@ -52,8 +58,12 @@
 			</p>
 			<button (click)="showSecondaryRegionOptions = !showSecondaryRegionOptions">show options</button>
 			<div *ngIf="showSecondaryRegionOptions">
+				<ng-container *ngIf="!countryOfUser?.id">
+					<p>you need to select a country first</p>
+				</ng-container>
 				<ul>
-					<li *ngFor="let region of availableRegions" (click)="selectSecondaryRegion(region)">{{ region.name }}</li>
+					<li *ngFor="let region of availableRegions" (click)="addSecondaryRegionForUser(region)">{{
+						region.name }}</li>
 				</ul>
 			</div>
 			<button>remove one</button>

@@ -9,7 +9,7 @@ import com.stevenst.lib.payload.ResponsePayload;
 public interface CountryAndRegionService {
 	public List<Country> getAllCountries();
 
-	public List<CountryOrRegionPayload> getAllRegionPayloadsByCountryId(Long countryId);
+	public List<CountryOrRegionPayload> getAllRegionPayloadsByCountryName(String countryName);
 
 	public ResponsePayload insertCountryAndRegionsIntoDb(String countryName);
 }

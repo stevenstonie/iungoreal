@@ -35,6 +35,15 @@ export class UserService {
       );
   }
 
+  getProfilePictureLink(username: string): Observable<StringInJson> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<StringInJson>(`${this.apiUrl}/getProfilePictureLink`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   saveProfilePicture(file: File): Observable<ResponsePayload> {
     const formData = new FormData();
 
@@ -47,16 +56,9 @@ export class UserService {
       );
   }
 
-  getProfilePictureLink(username: string): Observable<StringInJson> {
-    const params = new HttpParams().set('username', username);
+  // countries and regions --------------------------------------------------
 
-    return this.http.get<StringInJson>(`${this.apiUrl}/getProfilePictureLink`, { params })
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
-  getAvailableRegions(username: string): Observable<CountryOrRegionPayload[]> {
+  getAvailableRegionsForUser(username: string): Observable<CountryOrRegionPayload[]> {
     const params = new HttpParams().set('username', username);
 
     return this.http.get<CountryOrRegionPayload[]>(`${this.apiUrl}/getAvailableRegions`, { params })
@@ -110,7 +112,7 @@ export class UserService {
       );
   }
 
-  setSecondaryRegionForUser(username: string, regionId: number): Observable<ResponsePayload> {
+  addSecondaryRegionForUser(username: string, regionId: number): Observable<ResponsePayload> {
     const params = new HttpParams().set('username', username).set('regionId', regionId.toString());
 
     return this.http.post<ResponsePayload>(`${this.apiUrl}/addSecondaryRegion`, null, { params })
@@ -123,6 +125,15 @@ export class UserService {
     const params = new HttpParams().set('username', username);
 
     return this.http.delete<ResponsePayload>(`${this.apiUrl}/removeCountry`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  removePrimaryRegionOfUser(username: string): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.delete<ResponsePayload>(`${this.apiUrl}/removePrimaryRegion`, { params })
       .pipe(
         catchError(this.handleError)
       );

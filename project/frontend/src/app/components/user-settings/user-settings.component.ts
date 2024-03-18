@@ -13,13 +13,13 @@ export class UserSettingsComponent {
   selectedSection: string = '';
   loggedUserUsername = localStorage.getItem('username') ?? '';
 
-  currentCountry: CountryOrRegionPayload | null = null;
-  currentPrimaryRegion: CountryOrRegionPayload | null = null;
-  currentSecondaryRegions: CountryOrRegionPayload[] = [];
-
   showCountryOptions: boolean = false;
   showPrimaryRegionOptions: boolean = false;
   showSecondaryRegionOptions: boolean = false;
+
+  countryOfUser: CountryOrRegionPayload | null = null;
+  primaryRegionOfUser: CountryOrRegionPayload | null = null;
+  secondaryRegionsOfUser: CountryOrRegionPayload[] = [];
 
   availableRegions: CountryOrRegionPayload[] = [];
   allCountries: CountryOrRegionPayload[] = [];
@@ -27,15 +27,19 @@ export class UserSettingsComponent {
   constructor(private userService: UserService, private countryAndRegionService: CountryAndRegionService) { }
 
   ngOnInit(): void {
-    this.getCountryFromDb(this.loggedUserUsername);
-    this.getPrimaryRegionFromDb(this.loggedUserUsername);
-    this.getSecondaryRegionsFromDb(this.loggedUserUsername);
-
-    this.getAvailableRegions(this.loggedUserUsername);
-    this.getAllCountries();
+    this.ngOnInitCountriesAndRegions(this.loggedUserUsername);
   }
 
   // countries and regions -------------------------------------------------------------------------------------
+
+  ngOnInitCountriesAndRegions(username: string) {
+    this.getCountryOfUser(username);
+    this.getPrimaryRegionOfUser(username);
+    this.getSecondaryRegionsOfUser(username);
+
+    this.getAvailableRegionsForUser(username);
+    this.getAllCountries();
+  }
 
   getAllCountries() {
     this.countryAndRegionService.getAllCountries().subscribe({
@@ -48,41 +52,8 @@ export class UserSettingsComponent {
     });
   }
 
-  getCountryFromDb(username: string) {
-    this.userService.getCountryOfUser(username).subscribe({
-      next: (country: CountryOrRegionPayload) => {
-        this.currentCountry = country;
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  getPrimaryRegionFromDb(username: string) {
-    this.userService.getPrimaryRegionOfUser(username).subscribe({
-      next: (region: CountryOrRegionPayload) => {
-        this.currentPrimaryRegion = region;
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  getSecondaryRegionsFromDb(username: string) {
-    this.userService.getSecondaryRegionsOfUser(username).subscribe({
-      next: (regions: CountryOrRegionPayload[]) => {
-        this.currentSecondaryRegions = regions;
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  getAvailableRegions(username: string) {
-    this.userService.getAvailableRegions(username).subscribe({
+  getAvailableRegionsForUser(username: string) {
+    this.userService.getAvailableRegionsForUser(username).subscribe({
       next: (regions: CountryOrRegionPayload[]) => {
         this.availableRegions = regions;
       },
@@ -92,12 +63,47 @@ export class UserSettingsComponent {
     });
   }
 
-  selectCountry(country: CountryOrRegionPayload) {
+  getCountryOfUser(username: string) {
+    this.userService.getCountryOfUser(username).subscribe({
+      next: (country: CountryOrRegionPayload) => {
+        this.countryOfUser = country;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  getPrimaryRegionOfUser(username: string) {
+    this.userService.getPrimaryRegionOfUser(username).subscribe({
+      next: (region: CountryOrRegionPayload) => {
+        this.primaryRegionOfUser = region;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  getSecondaryRegionsOfUser(username: string) {
+    this.userService.getSecondaryRegionsOfUser(username).subscribe({
+      next: (regions: CountryOrRegionPayload[]) => {
+        this.secondaryRegionsOfUser = regions;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  setCountryForUser(country: CountryOrRegionPayload) {
     this.userService.setCountryForUser(this.loggedUserUsername, country.id).subscribe({
       next: () => {
-        this.getCountryFromDb(this.loggedUserUsername);
+        if (this.countryOfUser !== country) {
+          this.getCountryOfUser(this.loggedUserUsername);
 
-        this.ngOnInit();
+          this.ngOnInit();
+        }
       },
       error: (error) => {
         console.error(error);
@@ -107,12 +113,12 @@ export class UserSettingsComponent {
     this.showCountryOptions = false;
   }
 
-  selectPrimaryRegion(region: CountryOrRegionPayload) {
+  setPrimaryRegionForUser(region: CountryOrRegionPayload) {
     this.userService.setPrimaryRegionForUser(this.loggedUserUsername, region.id).subscribe({
       next: () => {
-        this.getPrimaryRegionFromDb(this.loggedUserUsername);
+        this.getPrimaryRegionOfUser(this.loggedUserUsername);
 
-        this.getAvailableRegions(this.loggedUserUsername);
+        this.getAvailableRegionsForUser(this.loggedUserUsername);
       },
       error: (error) => {
         console.error(error);
@@ -122,12 +128,12 @@ export class UserSettingsComponent {
     this.showPrimaryRegionOptions = false;
   }
 
-  selectSecondaryRegion(region: CountryOrRegionPayload) {
-    this.userService.setSecondaryRegionForUser(this.loggedUserUsername, region.id).subscribe({
+  addSecondaryRegionForUser(region: CountryOrRegionPayload) {
+    this.userService.addSecondaryRegionForUser(this.loggedUserUsername, region.id).subscribe({
       next: () => {
-        this.getSecondaryRegionsFromDb(this.loggedUserUsername);
+        this.getSecondaryRegionsOfUser(this.loggedUserUsername);
 
-        this.getAvailableRegions(this.loggedUserUsername);
+        this.getAvailableRegionsForUser(this.loggedUserUsername);
       },
       error: (error) => {
         console.error(error);
@@ -137,12 +143,23 @@ export class UserSettingsComponent {
     this.showSecondaryRegionOptions = false;
   }
 
-  removeCurrentCountry() {
+  removeCountryOfUser() {
     this.userService.removeCountryOfUser(this.loggedUserUsername).subscribe({
       next: () => {
-        this.getCountryFromDb(this.loggedUserUsername);
+        this.getCountryOfUser(this.loggedUserUsername);
 
         this.ngOnInit();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  removePrimaryRegionOfUser() {
+    this.userService.removePrimaryRegionOfUser(this.loggedUserUsername).subscribe({
+      next: () => {
+        this.getPrimaryRegionOfUser(this.loggedUserUsername);
       },
       error: (error) => {
         console.error(error);

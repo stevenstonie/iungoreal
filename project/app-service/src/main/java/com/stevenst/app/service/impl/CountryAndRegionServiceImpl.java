@@ -3,8 +3,6 @@ package com.stevenst.app.service.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -37,14 +35,14 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 	}
 
 	@Override
-	public List<CountryOrRegionPayload> getAllRegionPayloadsByCountryId(Long countryId) {
-		Optional<Country> country = countryRepository.findById(countryId);
-		if (!country.isPresent()) {
+	public List<CountryOrRegionPayload> getAllRegionPayloadsByCountryName(String countryName) {
+		Country country = countryRepository.findByName(countryName);
+		if (country == null) {
 			throw new IgorEntityNotFoundException("Country not found.");
 		}
-
-		List<Region> regions = regionRepository.findAllByCountry(country.get());
-
+	
+		List<Region> regions = regionRepository.findAllByCountry(country);
+	
 		List<CountryOrRegionPayload> regionPayloads = new ArrayList<>();
 		for (Region region : regions) {
 			regionPayloads.add(CountryOrRegionPayload.builder()
@@ -52,7 +50,7 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 					.name(region.getName())
 					.build());
 		}
-
+	
 		return regionPayloads;
 	}
 

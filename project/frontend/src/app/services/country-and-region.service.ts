@@ -8,7 +8,6 @@ import { CountryOrRegionPayload } from '../models/Payloads';
 })
 export class CountryAndRegionService {
   private apiUrlCountry = 'http://localhost:8083/api/country';
-  private apiUrlRegion = 'http://localhost:8083/api/region';
 
   constructor(private http: HttpClient){}
 
