@@ -1,9 +1,6 @@
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
 	--margin-left: 20%;
-	--margin-right: 20%;
+	--margin-right: 15%;
 	--widthOnLeftSide: 600px;
 	--widthOnRightSide: 250px;
 }
@@ -38,8 +35,6 @@ section {
     flex-direction: column;
     margin: 10px;
     padding: 10px;
-    border: 1px solid black;
-	border-radius: 10px;
 	max-height: 400px;
     overflow-y: auto;
 }
@@ -51,14 +46,20 @@ section {
 
 .right {
 	flex: 4;
+	max-width: var(--widthOnRightSide);
+	
 }
 
 .container {
     display: flex;
 	flex-direction: row;
-	justify-content: flex-start;
     align-items: center;
+	justify-content: space-between;
+	margin-bottom: 10px;
+	padding: 15px;
     width: 100%;
+	border: 1px solid black;
+	border-radius: 15px;
 }
 
 .details, .buttons {
@@ -73,9 +74,19 @@ section {
 
 li {
 	cursor: pointer;
+	margin-bottom: 3px;
 	list-style: none;
+	padding: 10px;
 
 	&:hover {
-		text-decoration: underline;
+		background-color: rgb(202, 202, 202);
+		border-radius: 20px;
+		cursor: pointer;
+		transition-duration: 0.3s;
+	}
+
+	&:focus {
+		background-color: rgb(144, 197, 255);
+		color: rgb(247, 250, 151);
 	}
 }
