@@ -28,7 +28,7 @@ export class UserSettingsComponent {
   constructor(private userService: UserService, private countryAndRegionService: CountryAndRegionService) { }
 
   ngOnInit(): void {
-    this.selectedSection = 'account';
+    this.selectedSection = 'regions';
 
     this.ngOnInitCountriesAndRegions(this.loggedUserUsername);
   }

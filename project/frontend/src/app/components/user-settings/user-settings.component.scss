@@ -26,13 +26,11 @@
 section {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
     flex-wrap: wrap;
     margin-bottom: 20px;
     margin-top: 30px;
     margin-left: var(--margin-left);
     margin-right: var(--margin-right);
-    background-color: aquamarine;
 }
 
 .left, .right {
@@ -41,32 +39,36 @@ section {
     margin: 10px;
     padding: 10px;
     border: 1px solid black;
+	border-radius: 10px;
 	max-height: 400px;
     overflow-y: auto;
 }
 
 .left{
-	flex: 2;
+	flex: 7;
+	max-width: var(--widthOnLeftSide);
 }
 
 .right {
-	flex: 1;
+	flex: 4;
 }
 
 .container {
     display: flex;
-    justify-content: space-between;
+	flex-direction: row;
+	justify-content: flex-start;
     align-items: center;
     width: 100%;
-    padding: 10px;
-    border: 1px solid black;
-    margin-bottom: 10px; /* Add space between containers */
 }
 
-.container p {
-    margin-right: auto; /* Push the button to the right */
+.details, .buttons {
+	display: flex;
+	flex-direction: column;
 }
 
+.details {
+	max-width: 300px;
+}
 
 
 li {
