@@ -14,6 +14,7 @@
 
 
 <div>
+	<p class="section-title">you are in the {{selectedSection}} section</p>
 	<!-- 
 		<section>
 			<div class="left">
@@ -49,7 +50,7 @@
 		</section>
 	-->
 	<div *ngIf="selectedSection === 'account'">
-		<h3>you are in the account section</h3>
+
 	</div>
 
 	<!------------------------------------------------------------------------>
@@ -58,7 +59,12 @@
 		<div class="left">
 			<div class="container">
 				<div class="details">
-					<p>current country: {{countryOfUser?.name || 'none'}}</p>
+					<p>current country:
+						<strong *ngIf="countryOfUser?.name; else displayNone">{{countryOfUser?.name}}</strong>
+						<ng-template #displayNone>
+							<strong>none</strong>
+						</ng-template>
+					</p>
 					<p style="font-style: italic; font-size: 0.7em">(careful! changing or removing the country will
 						remove
 						all your regions. you will need to add
@@ -72,7 +78,13 @@
 
 			<div class="container">
 				<div class="details">
-					<p class="left">current primary region: {{primaryRegionOfUser?.name || 'none'}}</p>
+					<p>current primary region:
+						<strong
+							*ngIf="primaryRegionOfUser?.name; else displayNone">{{primaryRegionOfUser?.name}}</strong>
+						<ng-template #displayNone>
+							<strong>none</strong>
+						</ng-template>
+					</p>
 				</div>
 				<div class="buttons">
 					<button (click)="showPrimaryRegionOptions = !showPrimaryRegionOptions">show options</button>
@@ -104,11 +116,9 @@
 
 		<div class="right">
 			<div *ngIf="showCountryOptions">
-				<ng-container>
-					<h4>set a country</h4>
-				</ng-container>
 				<div class="container">
 					<ul>
+						<p class="subsection-title">set a country</p>
 						<li *ngFor="let country of allCountries" (click)="setCountryForUser(country)">{{ country.name }}
 						</li>
 					</ul>
@@ -116,14 +126,14 @@
 			</div>
 
 			<div *ngIf="showPrimaryRegionOptions">
-				<ng-container *ngIf="!countryOfUser?.id">
-					<p>you need to set a country first</p>
-				</ng-container>
-				<ng-container *ngIf="countryOfUser?.id">
-					<h4>set a primary region</h4>
-				</ng-container>
 				<div class="container">
+					<ng-container *ngIf="!countryOfUser?.id">
+						<p>you need to set a country first</p>
+					</ng-container>
 					<ul>
+						<ng-container *ngIf="countryOfUser?.id">
+							<p class="subsection-title">set a primary region</p>
+						</ng-container>
 						<li *ngFor="let region of availableRegions" (click)="setPrimaryRegionForUser(region)">
 							{{region.name}}</li>
 					</ul>
@@ -131,14 +141,14 @@
 			</div>
 
 			<div *ngIf="showSecondaryRegionOptions">
-				<ng-container *ngIf="!countryOfUser?.id">
-					<p>you need to set a country first</p>
-				</ng-container>
-				<ng-container *ngIf="countryOfUser?.id">
-					<h4>add a secondary region</h4>
-				</ng-container>
 				<div class="container">
+					<ng-container *ngIf="!countryOfUser?.id">
+						<p>you need to set a country first</p>
+					</ng-container>
 					<ul>
+						<ng-container *ngIf="countryOfUser?.id">
+							<p class="subsection-title">add a secondary region</p>
+						</ng-container>
 						<li *ngFor="let region of availableRegions" (click)="addSecondaryRegionForUser(region)">{{
 							region.name }}</li>
 					</ul>
@@ -146,14 +156,14 @@
 			</div>
 
 			<div *ngIf="showSecondaryRegionOptionsToRemove">
-				<ng-container *ngIf="!secondaryRegionsOfUser.length">
-					<p>you have no secondary region to remove</p>
-				</ng-container>
-				<ng-container *ngIf="countryOfUser?.id">
-					<h4>remove a secondary region</h4>
-				</ng-container>
 				<div class="container">
 					<ul>
+						<ng-container *ngIf="countryOfUser?.id">
+							<p class="subsection-title">remove a secondary region</p>
+						</ng-container>
+						<ng-container *ngIf="!secondaryRegionsOfUser.length">
+							<p>you have no secondary region to remove</p>
+						</ng-container>
 						<li *ngFor="let region of secondaryRegionsOfUser" (click)="removeSecondaryRegionOfUser(region)">
 							{{ region.name }}</li>
 					</ul>
@@ -165,24 +175,24 @@
 	<!------------------------------------------------------------------------>
 
 	<div class="left" *ngIf="selectedSection === 'notifications'">
-		<h3>you are in the notifications section</h3>
+
 	</div>
 
 	<!------------------------------------------------------------------------>
 
 	<div class="left" *ngIf="selectedSection === 'profile'">
-		<h3>you are in the profile section</h3>
+
 	</div>
 
 	<!------------------------------------------------------------------------>
 
 	<div class="left" *ngIf="selectedSection === 'privacy'">
-		<h3>you are in the privacy section</h3>
+
 	</div>
 
 	<!------------------------------------------------------------------------>
 
 	<div class="left" *ngIf="selectedSection === 'feed'">
-		<h3>you are in the feed section</h3>
+
 	</div>
 </div>

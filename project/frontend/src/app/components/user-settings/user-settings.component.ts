@@ -10,7 +10,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./user-settings.component.scss']
 })
 export class UserSettingsComponent {
-  selectedSection: string = '';
+  selectedSection: string = 'account';
   loggedUserUsername = localStorage.getItem('username') ?? '';
 
   showCountryOptions: boolean = false;
@@ -28,12 +28,10 @@ export class UserSettingsComponent {
   constructor(private userService: UserService, private countryAndRegionService: CountryAndRegionService) { }
 
   ngOnInit(): void {
-    this.selectedSection = 'regions';
-
     this.ngOnInitCountriesAndRegions(this.loggedUserUsername);
   }
 
-  // countries and regions -------------------------------------------------------------------------------------
+  // countries and regions section -------------------------------------------------------------------------------------
 
   ngOnInitCountriesAndRegions(username: string) {
     this.getCountryOfUser(username);
@@ -105,7 +103,7 @@ export class UserSettingsComponent {
         if (this.countryOfUser !== country) {
           this.getCountryOfUser(this.loggedUserUsername);
 
-          this.ngOnInit();
+          this.ngOnInitCountriesAndRegions(this.loggedUserUsername);
         }
       },
       error: (error) => {
@@ -151,7 +149,7 @@ export class UserSettingsComponent {
       next: () => {
         this.getCountryOfUser(this.loggedUserUsername);
 
-        this.ngOnInit();
+        this.ngOnInitCountriesAndRegions(this.loggedUserUsername);
       },
       error: (error) => {
         console.error(error);
@@ -192,4 +190,5 @@ export class UserSettingsComponent {
   selectSection(section: string) {
     this.selectedSection = section;
   }
+
 }

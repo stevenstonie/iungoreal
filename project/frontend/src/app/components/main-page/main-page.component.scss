@@ -1,7 +1,4 @@
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
 	--left-right-menus-width: 200px;
 }
 
@@ -28,14 +25,11 @@
 
 #left-section {
 	left: 0;
-
-	justify-content: flex-start;
 }
 
 #right-section {
 	right: 0;
-
-	justify-content: flex-start;
+	text-align: center;
 }
 
 #middle-section {
