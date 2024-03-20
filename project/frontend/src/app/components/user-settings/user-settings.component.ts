@@ -12,7 +12,7 @@ import { UserService } from 'src/app/services/user.service';
 export class UserSettingsComponent {
   selectedSection: string = 'account';
   loggedUserUsername = localStorage.getItem('username') ?? '';
-
+  
   showCountryOptions: boolean = false;
   showPrimaryRegionOptions: boolean = false;
   showSecondaryRegionOptions: boolean = false;
