@@ -4,30 +4,195 @@
 	<h2>Settings</h2>
 </div>
 <div id="header">
-	<button>Account</button>
-	<button>Profile</button>
-	<button>Privacy</button>
-	<button>Feed</button>
+	<button (click)="selectSection('account')">Account</button>
+	<button (click)="selectSection('regions')">Regions</button>
+	<button (click)="selectSection('notifications')">Notifications</button>
+	<button (click)="selectSection('profile')">Profile</button>
+	<button (click)="selectSection('privacy')">Privacy</button>
+	<button (click)="selectSection('feed')">Feed</button>
 </div>
 
-<div id="body">
-	<div class="section">
-		<div class="left">
-			<h4>Setting1 name</h4>
-			<p>setting1 description</p>
-		</div>
-		<div class="right">
-			<button>Edit</button>
-		</div>
+
+<div>
+	<p class="section-title">you are in the {{selectedSection}} section</p>
+	<!-- 
+		<section>
+			<div class="left">
+				<div class="container">
+					<div class="details"></div>
+					<div class="buttons"></div>
+				</div>
+
+				<div class="container">
+					<div class="details"></div>
+					<div class="buttons"></div>
+				</div>
+
+				<div class="container">
+					<div class="details"></div>
+					<div class="buttons"></div>
+				</div>
+			</div>
+
+			<div class="right">
+				<div ngif="selectedOption">
+					<ul>
+						<li>...</li>
+					</ul>
+				</div>
+
+				<div ngif="selectedOption">
+					<ul>
+						<li>...</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+	-->
+	<div *ngIf="selectedSection === 'account'">
+
 	</div>
 
-	<div class="section">
+	<!------------------------------------------------------------------------>
+
+	<section *ngIf="selectedSection === 'regions'">
 		<div class="left">
-			<h4>Setting2 name</h4>
-			<p>setting2 description</p>
+			<div class="container">
+				<div class="details">
+					<p>current country:
+						<strong *ngIf="countryOfUser?.name; else displayNone">{{countryOfUser?.name}}</strong>
+						<ng-template #displayNone>
+							<strong>none</strong>
+						</ng-template>
+					</p>
+					<p style="font-style: italic; font-size: 0.7em">(careful! changing or removing the country will
+						remove
+						all your regions. you will need to add
+						them again)</p>
+				</div>
+				<div class="buttons">
+					<button (click)="showCountryOptions = !showCountryOptions">show options</button>
+					<button (click)="removeCountryOfUser()">remove current</button>
+				</div>
+			</div>
+
+			<div class="container">
+				<div class="details">
+					<p>current primary region:
+						<strong
+							*ngIf="primaryRegionOfUser?.name; else displayNone">{{primaryRegionOfUser?.name}}</strong>
+						<ng-template #displayNone>
+							<strong>none</strong>
+						</ng-template>
+					</p>
+				</div>
+				<div class="buttons">
+					<button (click)="showPrimaryRegionOptions = !showPrimaryRegionOptions">show options</button>
+					<button (click)="removePrimaryRegionOfUser()">remove current</button>
+				</div>
+			</div>
+
+			<div class="container">
+				<div class="details">
+					<p>current secondary regions (max 3):
+						<span *ngIf="secondaryRegionsOfUser.length > 0; else displayNone">
+							<ng-container *ngFor="let region of secondaryRegionsOfUser; let i = index">
+								<strong>{{ region.name }}{{ i !== secondaryRegionsOfUser.length - 1 ? ', ' : ''
+									}}</strong>
+							</ng-container>
+						</span>
+						<ng-template #displayNone>
+							<strong>none</strong>
+						</ng-template>
+					</p>
+				</div>
+				<div class="buttons">
+					<button (click)="showSecondaryRegionOptions = !showSecondaryRegionOptions">show options</button>
+					<button (click)="showSecondaryRegionOptionsToRemove = !showSecondaryRegionOptionsToRemove">remove
+						one</button>
+				</div>
+			</div>
 		</div>
+
 		<div class="right">
-			<button>Edit</button>
+			<div *ngIf="showCountryOptions">
+				<div class="container">
+					<ul>
+						<p class="subsection-title">set a country</p>
+						<li *ngFor="let country of allCountries" (click)="setCountryForUser(country)">{{ country.name }}
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div *ngIf="showPrimaryRegionOptions">
+				<div class="container">
+					<ng-container *ngIf="!countryOfUser?.id">
+						<p>you need to set a country first</p>
+					</ng-container>
+					<ul>
+						<ng-container *ngIf="countryOfUser?.id">
+							<p class="subsection-title">set a primary region</p>
+						</ng-container>
+						<li *ngFor="let region of availableRegions" (click)="setPrimaryRegionForUser(region)">
+							{{region.name}}</li>
+					</ul>
+				</div>
+			</div>
+
+			<div *ngIf="showSecondaryRegionOptions">
+				<div class="container">
+					<ng-container *ngIf="!countryOfUser?.id">
+						<p>you need to set a country first</p>
+					</ng-container>
+					<ul>
+						<ng-container *ngIf="countryOfUser?.id">
+							<p class="subsection-title">add a secondary region</p>
+						</ng-container>
+						<li *ngFor="let region of availableRegions" (click)="addSecondaryRegionForUser(region)">{{
+							region.name }}</li>
+					</ul>
+				</div>
+			</div>
+
+			<div *ngIf="showSecondaryRegionOptionsToRemove">
+				<div class="container">
+					<ul>
+						<ng-container *ngIf="countryOfUser?.id">
+							<p class="subsection-title">remove a secondary region</p>
+						</ng-container>
+						<ng-container *ngIf="!secondaryRegionsOfUser.length">
+							<p>you have no secondary region to remove</p>
+						</ng-container>
+						<li *ngFor="let region of secondaryRegionsOfUser" (click)="removeSecondaryRegionOfUser(region)">
+							{{ region.name }}</li>
+					</ul>
+				</div>
+			</div>
 		</div>
+	</section>
+
+	<!------------------------------------------------------------------------>
+
+	<div class="left" *ngIf="selectedSection === 'notifications'">
+
+	</div>
+
+	<!------------------------------------------------------------------------>
+
+	<div class="left" *ngIf="selectedSection === 'profile'">
+
+	</div>
+
+	<!------------------------------------------------------------------------>
+
+	<div class="left" *ngIf="selectedSection === 'privacy'">
+
+	</div>
+
+	<!------------------------------------------------------------------------>
+
+	<div class="left" *ngIf="selectedSection === 'feed'">
+
 	</div>
 </div>

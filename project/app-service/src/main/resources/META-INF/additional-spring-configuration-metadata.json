@@ -1,9 +1,12 @@
-{
-	"properties": [
-		{
-			"name": "aws.bucket-name",
-			"type": "java.lang.String",
-			"description": "The name of the bucket to use for cloud storage of objects."
-		}
-	]
-}
+{"properties": [
+  {
+    "name": "aws.bucket-name",
+    "type": "java.lang.String",
+    "description": "The name of the bucket to use for cloud storage of objects."
+  },
+  {
+    "name": "app.countries-and-regions-filename",
+    "type": "java.lang.String",
+    "description": "The name of the file in classpath that contains data for countries and their respective regions."
+  }
+]}

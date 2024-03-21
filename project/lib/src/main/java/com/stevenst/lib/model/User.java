@@ -56,6 +56,10 @@ public class User implements UserDetails {
 
 	private String profilePictureName;
 
+	private Long countryId;
+
+	private Long primaryRegionId;
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return List.of(new SimpleGrantedAuthority(role.name()));

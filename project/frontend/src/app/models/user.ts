@@ -1,3 +1,5 @@
+import { CountryOrRegionPayload } from "./Payloads";
+
 export interface User {
 	id: number;
 	email: string;
@@ -5,7 +7,6 @@ export interface User {
 	username: string;
 	role: Role;
 	createdAt: Date;
-	profilePictureUrl: string;
 }
 
 export enum Role {

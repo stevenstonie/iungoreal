@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import com.stevenst.lib.exception.IgorCountryAndRegionException;
 import com.stevenst.lib.exception.IgorEmptyFileNameException;
 import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
+import com.stevenst.lib.exception.IgorMaxCapExceededException;
 import com.stevenst.lib.exception.IgorNullValueException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.payload.ResponsePayload;
@@ -20,7 +22,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(IgorUserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponsePayload handleIgorNotFoundException(IgorUserNotFoundException ex) {
+    public ResponsePayload handleIgorUserNotFoundException(IgorUserNotFoundException ex) {
         return ResponsePayload.builder()
                 .status(HttpStatus.NOT_FOUND.value())
                 .message(ex.getMessage())
@@ -40,7 +42,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(IgorNullValueException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponsePayload handleIgorNullPointerException(IgorNullValueException ex) {
+    public ResponsePayload handleIgorNullValueException(IgorNullValueException ex) {
         return ResponsePayload.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(ex.getMessage())
@@ -53,6 +55,26 @@ public class GlobalExceptionHandler {
     public ResponsePayload handleIgorFriendRequestException(IgorFriendRequestException ex) {
         return ResponsePayload.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .build();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(IgorCountryAndRegionException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponsePayload handleIgorCountryAndRegionException(IgorCountryAndRegionException ex) {
+        return ResponsePayload.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .build();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(IgorMaxCapExceededException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponsePayload handleIgorMaxCapExceededException(IgorMaxCapExceededException ex) {
+        return ResponsePayload.builder()
+                .status(HttpStatus.FORBIDDEN.value())
                 .message(ex.getMessage())
                 .build();
     }

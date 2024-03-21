@@ -121,5 +121,5 @@ export class NavbarComponent implements OnInit {
 
   updateNbOfNotificationsF() {
     --this.nbOfNotificationsF;
- }
+  }
 }

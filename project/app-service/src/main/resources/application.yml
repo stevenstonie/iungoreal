@@ -42,3 +42,5 @@ springdoc:
     path: /swagger-ui.html
 aws:
   bucketName: _
+app:
+  countries-and-regions-filename: _

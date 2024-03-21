@@ -9,6 +9,7 @@ public enum NotificationType {
 	GROUP_MESSAGE,
 	POST,
 	COMMENT,
+	LIKE,
 	REPLY,
 	MENTION,
 	APP

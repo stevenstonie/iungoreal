@@ -7,7 +7,7 @@
 	- (recurring) show window dialogs on errors / restrictions for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
-	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. only show for selected regions
+	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. will only be shown for selected regions
 	- [ ] (fr, bk) set up the websocket code to implement the chat component
 	- [ ] (fr, bk) add the chat functionality -> (3 types: dms, regional and custom)
 	- [ ] (fr, bk) implement search functionality
@@ -32,7 +32,7 @@
 	---------------------------------
 	- [x] (fr, bk) notificationsF
 	- [x] (fr, bk) create posts and display them on the profile
-	- [x] (bk) integrate s3 as object storage service
+	- [x] (bk) integrate s3 as object storage service -> tested by uploading and displaying the profile picture
 	- [x] (fr, bk) implement friend requests
 	- [x] (fr) if the user doesnt exist when accessing a profile, redirect to 404
 	- [x] (bk) add a shared library
@@ -40,7 +40,7 @@
 	- [x] (fr) add some general layout to the frontend pages
 	- [x] (bk) rewrite the backend with new exceptions and tests
 	- [x] (fr, bk) add a button for a window where the map should be, create the map microservice and connect it to the app (make db queries for saved data like markers)
-	- [x] (fr) save the token locally and check for its availability when accessing the site
+	- [x] (fr) save the token locally and logic to check for its availability when accessing the site
 	- [x] (fr) redirect to main page on successful authentication
 	- [x] (fr) login / register
 	- [x] (bk) login / register
@@ -48,6 +48,8 @@
 
 - to add in the project documentation: 
 	- create a file "credentials" in %USERPROFILE%\.aws
+	- the settings for the properties-dev.yml
+	- necessary plugins / applications
 
 - task ideas:
 	- app time restriction
@@ -56,15 +58,6 @@
 	- news section
 	- friend requests older than 1 year should be removed
 	- check what would happen with entries in tables such as friendships if users would be banned or accounts would be removed
-
-
-- microservices: 
-	- front
-	- app
-	- security
-	- map -> openstreetmap api
-	- live chat -> kafka
-
 
 - todos:
 	- security
