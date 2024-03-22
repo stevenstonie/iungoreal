@@ -11,8 +11,8 @@ import { StompWebsocketService } from 'src/app/services/stomp-websocket.service'
   styleUrl: './test-message.component.scss'
 })
 export class TestMessageComponent implements OnInit, OnDestroy {
-  topic = '/topic/notification';
-  topicToBack = '/app/notification'
+  topic = '/topic/greetings';
+  topicToBack = '/app/hello'
   receivedMessages: string[] = [];
 
   constructor(private stompWebsocketService: StompWebsocketService) {
