@@ -5,10 +5,11 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class GreetingController {
+public class ChatController {
 	@MessageMapping("/hello")
 	@SendTo("/topic/greetings")
-	public String greeting(String message) throws Exception {
-		return "Hello, " + message + "!";
+	public ChatMessage greeting(ChatMessage chatMessage) {
+		System.out.println("got this message: " + chatMessage);
+		return chatMessage;
 	}
 }

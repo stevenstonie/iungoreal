@@ -7,15 +7,14 @@
 				[disabled]="!isWebsocketConnected()">disconnect</button>
 		</div>
 		<div>
-			<label>wats your name</label>
+			<label>say something:</label>
 			<input #name type="text" id="name" placeholder="djohn djonson">
 			<button (click)="sendMessage(name.value)" type="submit">send</button>
 		</div>
 	</div>
 	<div *ngIf="isWebsocketConnected()">
-		<h3>Greetings:</h3>
 		<div *ngFor="let message of receivedMessages">
-			<p>{{ message }}</p>
+			<p> <span style="font-weight: bold">{{ message.username }}</span>: {{ message.message }} <span style="font-size: 0.7em; font-style: italic"> at {{ message.createdAt }}</span></p>
 		</div>
 	</div>
 </div>

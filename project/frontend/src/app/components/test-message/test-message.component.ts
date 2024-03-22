@@ -2,6 +2,7 @@ import { NgFor, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Message } from '@stomp/stompjs';
 import { StompWebsocketService } from 'src/app/services/stomp-websocket.service';
+import { ChatMessage } from '../../models/app';
 
 @Component({
   selector: 'app-test-message',
@@ -13,14 +14,14 @@ import { StompWebsocketService } from 'src/app/services/stomp-websocket.service'
 export class TestMessageComponent implements OnInit, OnDestroy {
   topic = '/topic/greetings';
   topicToBack = '/app/hello'
-  receivedMessages: string[] = [];
+  receivedMessages: ChatMessage[] = [];
 
   constructor(private stompWebsocketService: StompWebsocketService) {
   }
 
   ngOnInit(): void {
-    this.stompWebsocketService.subscribeToTopic(this.topic, (message: Message) => {
-      this.handleReceivedMessage(message);
+    this.stompWebsocketService.subscribeToTopic(this.topic, (chatMessage: ChatMessage) => {
+      this.handleReceivedMessage(chatMessage);
     })
   }
 
@@ -33,13 +34,17 @@ export class TestMessageComponent implements OnInit, OnDestroy {
     this.stompWebsocketService.disconnect();
   }
 
-  handleReceivedMessage(message: Message): void {
-    console.log("Received message: " + message.body);
-    this.receivedMessages.push(message.body);
+  handleReceivedMessage(chatMessage: ChatMessage): void {
+    this.receivedMessages.push(chatMessage);
   }
 
   sendMessage(message: string): void {
-    this.stompWebsocketService.sendMessage(this.topicToBack, message);
+    const chatMessage: ChatMessage = {
+      username: localStorage.getItem('username') ?? 'nousername',
+      createdAt: new Date(),
+      message: message
+    }
+    this.stompWebsocketService.sendMessage(this.topicToBack, chatMessage);
   }
 
   ngOnDestroy(): void {
