@@ -7,7 +7,7 @@
 				[disabled]="!isWebsocketConnected()">disconnect</button>
 		</div>
 		<div>
-			<label>say something:</label>
+			<p>say something:</p>
 			<input #name type="text" id="name" placeholder="djohn djonson">
 			<button (click)="sendMessage(name.value)" type="submit">send</button>
 		</div>
