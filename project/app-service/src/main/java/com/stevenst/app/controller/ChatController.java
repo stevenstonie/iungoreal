@@ -9,7 +9,7 @@ import com.stevenst.app.model.ChatMessage;
 @RestController
 public class ChatController {
 	@MessageMapping("/chat.sendToChatroom")
-	@SendTo("/topic/chatroom/{chatroomId}")
+	@SendTo("/topic/chatroom")
 	public ChatMessage greeting(ChatMessage chatMessage) {
 		return chatMessage;
 	}

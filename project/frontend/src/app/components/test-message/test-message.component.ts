@@ -12,22 +12,23 @@ import { ChatMessage } from '../../models/app';
   styleUrl: './test-message.component.scss'
 })
 export class TestMessageComponent implements OnInit, OnDestroy {
-  topic = '/topic/greetings';
-  topicToBack = '/app/hello'
+  topic = '/topic/chatroom';
+  topicToBack = '/app/chat.sendToChatroom'
   receivedMessages: ChatMessage[] = [];
 
   constructor(private stompWebsocketService: StompWebsocketService) {
   }
 
   ngOnInit(): void {
-    this.stompWebsocketService.subscribeToTopic(this.topic, (chatMessage: ChatMessage) => {
-      this.handleReceivedMessage(chatMessage);
-    })
+    
   }
 
   connectToWebsocket(): void {
     this.stompWebsocketService = new StompWebsocketService();
-    this.ngOnInit();
+    
+    this.stompWebsocketService.subscribeToTopic(this.topic, (chatMessage: ChatMessage) => {
+      this.handleReceivedMessage(chatMessage);
+    })
   }
 
   disconnectFromWebsocket(): void {
