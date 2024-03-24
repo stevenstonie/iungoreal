@@ -9,7 +9,6 @@ public class ChatController {
 	@MessageMapping("/hello")
 	@SendTo("/topic/greetings")
 	public ChatMessage greeting(ChatMessage chatMessage) {
-		System.out.println("got this message: " + chatMessage);
 		return chatMessage;
 	}
 }
