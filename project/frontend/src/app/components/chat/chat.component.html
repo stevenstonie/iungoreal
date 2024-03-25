@@ -2,7 +2,14 @@
 	<div id="left-section">
 		<div id="left-section-header">
 			<p>Chat Rooms</p>
-			<button class="right-sided" (click)="addNewChatroom()">add new chatroom</button>
+			<button class="right-sided" (click)="toggleAddNewChatroom()">add new chatroom</button>
+			<div class="right-sided" *ngIf="addingNewChatroom">
+				<button>create group</button>
+				<!-- <ng-container *ngFor="let chatroom of creatingChatrooms">
+					<button>{{ chatroom.name }}</button>
+				</ng-container> -->
+			</div>
+
 		</div>
 		<div id="left-section-body">
 			<!-- have three menus (dm, group, regional) and when one is opened fetch the conversations in order of Chatroom.lastMessageTime -->

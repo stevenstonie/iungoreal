@@ -10,6 +10,7 @@ import { StompWebsocketService } from 'src/app/services/stomp-websocket.service'
 })
 export class ChatComponent {
   @Input() loggedUser: User | null = null;
+  addingNewChatroom: boolean = false;
 
   topic = '/topic/chatroom';
   topicToBack = '/app/chat.sendToChatroom'
@@ -55,8 +56,15 @@ export class ChatComponent {
     return this.stompWebsocketService.isConnected();
   }
 
-  addNewChatroom(): void {
-    console.log('add new chatroom');
+  getAllFriendsWithNoChats(): string[] {
+    // TODO:
+    return [];
+  }
+
+  toggleAddNewChatroom(): void {
+    this.addingNewChatroom = !this.addingNewChatroom;
+    // fetch users that dont have a chatroom with the loggedUser
+    
   }
 }
 
