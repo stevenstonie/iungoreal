@@ -21,9 +21,18 @@ export class ChatService {
   }
 
   createChatroom(friendUsername: string, username: string): Observable<ResponsePayload> {
-    const params = new HttpParams().set('friendUsername', friendUsername).set('username', username);
+    const params = new HttpParams().set('username', username).set('friendUsername', friendUsername);
 
     return this.http.post<ResponsePayload>(`${this.apiUrl}/createChatroom`, null, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getAllFriendsWithChatrooms(username: string): Observable<string[]> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<string[]>(`${this.apiUrl}/getAllFriendsWithChatrooms`, { params })
       .pipe(
         catchError(this.handleError)
       );

@@ -11,8 +11,13 @@
 			</div>
 
 		</div>
-		<div id="left-section-body">
-			<!-- have three menus (dm, group, regional) and when one is opened fetch the conversations in order of Chatroom.lastMessageTime -->
+		<div id="left-section-body" class="vertical-list">
+			<!-- TODO: have three menus (dm, group, regional) and when one is opened fetch the conversations in order of Chatroom.lastMessageTime -->
+			<ng-container *ngFor="let dmChatroom of dmChatrooms">
+				<!-- <button (click)="openChatroom(dmChatroom)">{{ dmChatroom.name }}</button> -->
+				<button>{{ dmChatroom }}</button>
+			</ng-container>
+			
 		</div>
 	</div>
 	<div id="right-section">

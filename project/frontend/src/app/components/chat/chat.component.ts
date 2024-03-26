@@ -14,6 +14,7 @@ export class ChatComponent {
   addingNewChatroom: boolean = false;
 
   friendsUsernamesWithNoChats: string[] = [];
+  dmChatrooms: string[] = [];
 
   topic = '/topic/chatroom';
   topicToBack = '/app/chat.sendToChatroom'
@@ -23,8 +24,11 @@ export class ChatComponent {
   }
 
   ngOnInit(): void {
-
+    this.connectToWebsocket();
+    this.getAllFriendsUsernamesWithChatrooms();
   }
+
+  // websocket ---------------------------
 
   connectToWebsocket(): void {
     this.stompWebsocketService = new StompWebsocketService();
@@ -59,6 +63,8 @@ export class ChatComponent {
     return this.stompWebsocketService.isConnected();
   }
 
+  // ^^^ --------------------------------
+
   toggleAddNewChatroom(): void {
     this.addingNewChatroom = !this.addingNewChatroom;
 
@@ -78,6 +84,18 @@ export class ChatComponent {
       next: (chatroom) => {
         console.log(chatroom);
         this.addingNewChatroom = false;
+        this.getAllFriendsUsernamesWithChatrooms();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  getAllFriendsUsernamesWithChatrooms(): void {
+    this.chatService.getAllFriendsWithChatrooms(localStorage.getItem('username') ?? '').subscribe({
+      next: (chatrooms) => {
+        this.dmChatrooms = chatrooms;
       },
       error: (error) => {
         console.error(error);
