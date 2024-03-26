@@ -3,11 +3,11 @@
 		<div id="left-section-header">
 			<p>Chat Rooms</p>
 			<button class="right-sided" (click)="toggleAddNewChatroom()">add new chatroom</button>
-			<div class="right-sided" *ngIf="addingNewChatroom">
+			<div class="right-sided" class="vertical-list" *ngIf="addingNewChatroom">
 				<button>create group</button>
-				<!-- <ng-container *ngFor="let chatroom of creatingChatrooms">
-					<button>{{ chatroom.name }}</button>
-				</ng-container> -->
+				<ng-container *ngFor="let friendUsername of friendsUsernamesWithNoChats">
+					<button (click)="createNewChatroom(friendUsername)">{{ friendUsername }}</button>
+				</ng-container>
 			</div>
 
 		</div>

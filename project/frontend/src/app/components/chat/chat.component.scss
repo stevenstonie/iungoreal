@@ -62,6 +62,11 @@
 	}
 }
 
+.vertical-list {
+	display: flex;
+	flex-direction: column;
+}
+
 .right-sided {
 	float: right;
 }

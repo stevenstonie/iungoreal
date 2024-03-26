@@ -83,6 +83,8 @@ export class FriendService {
       );
   }
 
+  // ----------------------------------------------------------------------------
+
   private handleError(error: HttpErrorResponse) {
     console.error(error);
     return throwError(() => new Error('An error occurred in friends service.'));
