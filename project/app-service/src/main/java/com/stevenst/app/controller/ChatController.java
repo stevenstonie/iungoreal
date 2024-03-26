@@ -1,16 +1,24 @@
 package com.stevenst.app.controller;
 
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.stevenst.app.model.ChatMessage;
+import com.stevenst.app.service.ChatService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/chat")
 public class ChatController {
-	@MessageMapping("/chat.sendToChatroom")
-	@SendTo("/topic/chatroom")
-	public ChatMessage greeting(ChatMessage chatMessage) {
-		return chatMessage;
+	private final ChatService chatService;
+
+	@GetMapping("/getFriendsWithNoChats")
+	public List<String> getFriendsWithoutChatrooms(@RequestParam("username") String username) {
+		return chatService.getFriendsWithoutChatrooms(username);
 	}
 }
