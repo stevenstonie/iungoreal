@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { throwError, Observable, catchError } from 'rxjs';
-import { ResponsePayload } from '../models/Payloads';
+import { ChatroomPayload, ResponsePayload } from '../models/Payloads';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +11,10 @@ export class ChatService {
 
   constructor(private http: HttpClient) { }
 
-  getAllFriendsWithNoChats(username: string): Observable<string[]> {
+  getAllFriendsWithNoDmChats(username: string): Observable<string[]> {
     const params = new HttpParams().set('username', username);
 
-    return this.http.get<string[]>(`${this.apiUrl}/getFriendsWithNoChats`, { params })
+    return this.http.get<string[]>(`${this.apiUrl}/getFriendsWithNoDmChats`, { params })
       .pipe(
         catchError(this.handleError)
       );
@@ -29,10 +29,10 @@ export class ChatService {
       );
   }
 
-  getAllFriendsWithChatrooms(username: string): Observable<string[]> {
+  getAllChatroomsOfUser(username: string): Observable<ChatroomPayload[]> {
     const params = new HttpParams().set('username', username);
 
-    return this.http.get<string[]>(`${this.apiUrl}/getAllFriendsWithChatrooms`, { params })
+    return this.http.get<ChatroomPayload[]>(`${this.apiUrl}/getAllChatroomsOfUser`, { params })
       .pipe(
         catchError(this.handleError)
       );

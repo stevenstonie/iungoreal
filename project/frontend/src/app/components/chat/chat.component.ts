@@ -1,4 +1,5 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
+import { ChatroomPayload } from 'src/app/models/Payloads';
 import { ChatMessage } from 'src/app/models/app';
 import { User } from 'src/app/models/user';
 import { ChatService } from 'src/app/services/chat.service';
@@ -16,7 +17,7 @@ export class ChatComponent {
   chatroomName: string = '';
 
   friendsUsernamesWithNoChats: string[] = [];
-  dmChatrooms: string[] = [];
+  chatrooms: ChatroomPayload[] = [];
   messageToSend: string = '';
 
   topic = '/topic/chatroom';
@@ -72,7 +73,7 @@ export class ChatComponent {
     this.addingNewChatroom = !this.addingNewChatroom;
 
     // fetch users that dont have a chatroom with the loggedUser
-    this.chatService.getAllFriendsWithNoChats(localStorage.getItem('username') ?? '').subscribe({
+    this.chatService.getAllFriendsWithNoDmChats(localStorage.getItem('username') ?? '').subscribe({
       next: (usernames) => {
         this.friendsUsernamesWithNoChats = usernames;
       },
@@ -96,9 +97,9 @@ export class ChatComponent {
   }
 
   getAllFriendsUsernamesWithChatrooms(): void {
-    this.chatService.getAllFriendsWithChatrooms(localStorage.getItem('username') ?? '').subscribe({
+    this.chatService.getAllChatroomsOfUser(localStorage.getItem('username') ?? '').subscribe({
       next: (chatrooms) => {
-        this.dmChatrooms = chatrooms;
+        this.chatrooms = chatrooms;
       },
       error: (error) => {
         console.error(error);
@@ -106,7 +107,7 @@ export class ChatComponent {
     });
   }
 
-  openChatroom(chatroom: string): void {
+  openChatroom(chatroomId: number): void {
     this.chatroomOpened = true;
   }
 
