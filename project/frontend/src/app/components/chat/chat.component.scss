@@ -1,7 +1,5 @@
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+	box-sizing: border-box;	
 }
 
 #chat-container {
@@ -47,7 +45,6 @@
 			border-bottom: 1px solid #ccc;
 			display: flex;
 			flex-direction: row;
-			justify-content: space-around;
 
 			button {
 				cursor: pointer;
@@ -58,6 +55,22 @@
 			height: auto;
 			overflow-y: auto;
 			padding: 5px;
+			display: flex;
+			flex-direction: column;
+
+
+			.messages {
+				margin-bottom: 30px;
+			}
+
+			.input {
+				position: fixed;
+				bottom: 10px;
+			}
+
+			.close-button {
+				cursor: pointer;
+			}
 		}
 	}
 }

@@ -14,28 +14,32 @@
 		<div id="left-section-body" class="vertical-list">
 			<!-- TODO: have three menus (dm, group, regional) and when one is opened fetch the conversations in order of Chatroom.lastMessageTime -->
 			<ng-container *ngFor="let dmChatroom of dmChatrooms">
-				<!-- <button (click)="openChatroom(dmChatroom)">{{ dmChatroom.name }}</button> -->
-				<button>{{ dmChatroom }}</button>
+				<button (click)="openChatroom(dmChatroom)">{{ dmChatroom }}</button>
 			</ng-container>
-			
+
 		</div>
 	</div>
 	<div id="right-section">
-		<div id="right-section-header">
-			<p>Chat room name</p>
-			<button id="settings">Settings</button>
-			<button id="close">Close</button>
-		</div>
-		<div id="right-section-body">
-			<p>say something:</p>
-			<input #name type="text" id="name" placeholder="djohn djonson">
-			<button (click)="sendMessage(name.value)" type="submit">send</button>
-			<div *ngIf="isWebsocketConnected()">
+		<div *ngIf="chatroomOpened">
+			<div id="right-section-header">
+				<p>{{ chatroomName }}</p>
+				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
+			</div>
+			<div id="right-section-body">
+				<div class="messages">
+
+				</div>
+				<div class="input">
+					<input type="text" [(ngModel)]="messageToSend" (keyup.enter)="sendMessage()" />
+					<button (click)="sendMessage()">Send</button>
+				</div>
+			</div>
+			<!-- <div *ngIf="isWebsocketConnected()">
 				<div *ngFor="let message of receivedMessages">
 					<p> <span style="font-weight: bold">{{ message.username }}</span>: {{ message.message }} <span
 							style="font-size: 0.7em; font-style: italic"> at {{ message.createdAt }}</span></p>
 				</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </div>

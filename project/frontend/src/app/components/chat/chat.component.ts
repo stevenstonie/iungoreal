@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewContainerRef } from '@angular/core';
 import { ChatMessage } from 'src/app/models/app';
 import { User } from 'src/app/models/user';
 import { ChatService } from 'src/app/services/chat.service';
@@ -12,9 +12,12 @@ import { StompWebsocketService } from 'src/app/services/stomp-websocket.service'
 export class ChatComponent {
   @Input() loggedUser: User | null = null;
   addingNewChatroom: boolean = false;
+  chatroomOpened: boolean = false;
+  chatroomName: string = '';
 
   friendsUsernamesWithNoChats: string[] = [];
   dmChatrooms: string[] = [];
+  messageToSend: string = '';
 
   topic = '/topic/chatroom';
   topicToBack = '/app/chat.sendToChatroom'
@@ -46,11 +49,11 @@ export class ChatComponent {
     this.receivedMessages.push(chatMessage);
   }
 
-  sendMessage(message: string): void {
+  sendMessage(): void {
     const chatMessage: ChatMessage = {
       username: localStorage.getItem('username') ?? 'nousername',
       createdAt: new Date(),
-      message: message
+      message: this.messageToSend
     }
     this.stompWebsocketService.sendMessage(this.topicToBack, chatMessage);
   }
@@ -101,6 +104,14 @@ export class ChatComponent {
         console.error(error);
       }
     });
+  }
+
+  openChatroom(chatroom: string): void {
+    this.chatroomOpened = true;
+  }
+
+  closeChatroom(): void {
+    this.chatroomOpened = false;
   }
 }
 
