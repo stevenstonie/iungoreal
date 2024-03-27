@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stevenst.app.payload.ChatroomPayload;
 import com.stevenst.app.service.ChatService;
 import com.stevenst.lib.payload.ResponsePayload;
 
@@ -20,9 +21,9 @@ import lombok.RequiredArgsConstructor;
 public class ChatController {
 	private final ChatService chatService;
 
-	@GetMapping("/getFriendsWithNoChats")
-	public ResponseEntity<List<String>> getFriendsWithoutChatrooms(@RequestParam("username") String username) {
-		return ResponseEntity.ok(chatService.getFriendsWithoutChatrooms(username));
+	@GetMapping("/getFriendsWithNoDmChats")
+	public ResponseEntity<List<String>> getFriendsWithoutDmChatrooms(@RequestParam("username") String username) {
+		return ResponseEntity.ok(chatService.getFriendsWithoutDmChatrooms(username));
 	}
 
 	@PostMapping("/createChatroom")
@@ -31,8 +32,8 @@ public class ChatController {
 		return ResponseEntity.ok(chatService.createChatroom(username, friendUsername));
 	}
 
-	@GetMapping("/getAllFriendsWithChatrooms")
-	public ResponseEntity<List<String>> getAllFriendsWithChatrooms(@RequestParam("username") String username) {
-		return ResponseEntity.ok(chatService.getDmChatroomsOfFriends(username));
+	@GetMapping("/getAllChatroomsOfUser")
+	public ResponseEntity<List<ChatroomPayload>> getAllChatroomsOfUser(@RequestParam("username") String username) {
+		return ResponseEntity.ok(chatService.getAllChatroomsOfUser(username));
 	}
 }

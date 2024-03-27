@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.stevenst.app.model.Chatroom;
 import com.stevenst.app.model.ChatroomParticipant;
 import com.stevenst.app.model.ChatroomType;
+import com.stevenst.app.payload.ChatroomPayload;
 import com.stevenst.app.repository.ChatroomParticipantRepository;
 import com.stevenst.app.repository.ChatroomRepository;
 import com.stevenst.app.repository.UserRepository;
@@ -30,11 +31,12 @@ public class ChatServiceImpl implements ChatService {
 	private final WebClient webClient;
 	private static final String USER_NOT_FOUND = "User not found";
 
-	public List<String> getFriendsWithoutChatrooms(String username) {
+	public List<String> getFriendsWithoutDmChatrooms(String username) {
 		User user = getUserFromDbByUsername(username);
 
 		// get all participants in chatrooms of type dm where the user is in
-		List<ChatroomParticipant> friendsWithChatrooms = getFriendsUsernamesWithChatrooms(user);
+		List<ChatroomParticipant> friendsWithChatrooms = getParticipantsWithCommonChatrooms(user,
+				List.of(ChatroomType.DM));
 
 		// get all friends
 		Mono<List<String>> friendsMono = webClient.get()
@@ -59,7 +61,7 @@ public class ChatServiceImpl implements ChatService {
 		User user = getUserFromDbByUsername(username);
 		User friend = getUserFromDbByUsername(friendUsername);
 
-		// create chatroom 
+		// save chatroom 
 		Chatroom chatroom = chatroomRepository
 				.save(Chatroom.builder().name(user.getUsername() + " and " + friend.getUsername() + "'s chatroom")
 						.type(ChatroomType.DM).build());
@@ -74,26 +76,34 @@ public class ChatServiceImpl implements ChatService {
 				.message("Chatroom created for " + username + " and " + friendUsername + ".").build();
 	}
 
-	public List<String> getDmChatroomsOfFriends(String username) {
+	public List<ChatroomPayload> getAllChatroomsOfUser(String username) {
 		User user = getUserFromDbByUsername(username);
 
-		List<ChatroomParticipant> friendsWithChatrooms = getFriendsUsernamesWithChatrooms(user);
-		System.out.println(friendsWithChatrooms.stream()
-				.map(participant -> participant.getUser().getUsername())
-				.toList());
+		List<ChatroomParticipant> friendsWithChatrooms = getParticipantsWithCommonChatrooms(user,
+				List.of(ChatroomType.DM, ChatroomType.GROUP, ChatroomType.REGIONAL));
 
-		// get friends in chatrooms that the user is in
-		return friendsWithChatrooms.stream()
-				.filter(participant -> !participant.getUser().getUsername().equals(username))
-				.map(participant -> participant.getUser().getUsername())
-				.toList();
+		List<ChatroomPayload> chatroomsOfUser = new java.util.ArrayList<>();
+
+		friendsWithChatrooms.forEach(participant -> {
+			ChatroomPayload payload = ChatroomPayload.builder()
+					.id(participant.getChatroom().getId())
+					.name(participant.getChatroom().getName())
+					.type(participant.getChatroom().getType())
+					.lastMessageTime(participant.getChatroom().getLastMessageTime())
+					.participantsUsernames(List.of(participant.getUser().getUsername()))
+					.build();
+			chatroomsOfUser.add(payload);
+			// TODO: only adds that one participant for now.
+		});
+
+		return chatroomsOfUser;
 	}
 
 	// --------------------------------------------------------
 
-	private List<ChatroomParticipant> getFriendsUsernamesWithChatrooms(User user) {
+	private List<ChatroomParticipant> getParticipantsWithCommonChatrooms(User user, List<ChatroomType> types) {
 		return chatroomRepository
-				.findParticipantsWithCommonChatrooms(ChatroomType.DM, user);
+				.findParticipantsWithCommonChatrooms(user, types);
 	}
 
 	private User getUserFromDbByUsername(String username) {
