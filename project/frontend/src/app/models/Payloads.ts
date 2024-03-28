@@ -37,6 +37,7 @@ export interface ChatroomPayload {
 	lastMessageTime: Date,
 	participantsUsernames: string[]
 }
+
 export enum ChatroomType {
 	DM = 'DM',
 	GROUP = 'GROUP',

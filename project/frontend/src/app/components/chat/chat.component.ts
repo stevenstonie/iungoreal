@@ -12,12 +12,19 @@ import { StompWebsocketService } from 'src/app/services/stomp-websocket.service'
 })
 export class ChatComponent {
   @Input() loggedUser: User | null = null;
-  addingNewChatroom: boolean = false;
+  isAddingNewChatroomOpen: boolean = false;
+  areDmChatroomsOpen: boolean = false;
+  areGroupChatroomsOpen: boolean = false;
+  areRegionalChatroomsOpen: boolean = false;
+
   chatroomOpened: boolean = false;
   chatroomName: string = '';
 
   friendsUsernamesWithNoChats: string[] = [];
-  chatrooms: ChatroomPayload[] = [];
+  dmChatrooms: ChatroomPayload[] = [];
+  groupChatrooms: ChatroomPayload[] = [];
+  regionalChatrooms: ChatroomPayload[] = [];
+
   messageToSend: string = '';
 
   topic = '/topic/chatroom';
@@ -29,7 +36,64 @@ export class ChatComponent {
 
   ngOnInit(): void {
     this.connectToWebsocket();
-    this.getAllFriendsUsernamesWithChatrooms();
+  }
+
+  toggleAddNewChatroom(): void {
+    this.isAddingNewChatroomOpen = !this.isAddingNewChatroomOpen;
+
+    // fetch users that dont have a chatroom with the loggedUser
+    this.chatService.getAllFriendsWithNoDmChats(localStorage.getItem('username') ?? '').subscribe({
+      next: (usernames) => {
+        this.friendsUsernamesWithNoChats = usernames;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  createNewChatroom(friendUsername: string): void {
+    this.chatService.createChatroom(friendUsername, localStorage.getItem('username') ?? '').subscribe({
+      next: (chatroom) => {
+        console.log(chatroom);
+        this.isAddingNewChatroomOpen = false;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  toggleDmChatrooms() {
+    this.areDmChatroomsOpen = !this.areDmChatroomsOpen;
+
+    if (this.areDmChatroomsOpen) {
+      this.chatService.getAllDmChatroomsOfUser(localStorage.getItem('username') ?? '').subscribe({
+        next: (dmChatrooms) => {
+          this.dmChatrooms = dmChatrooms;
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
+
+  toggleGroupChatrooms() {
+
+  }
+
+  toggleRegionalChatrooms() {
+
+  }
+
+  openChatroom(chatroom: ChatroomPayload): void {
+    this.chatroomOpened = true;
+    this.chatroomName = chatroom.name;
+  }
+
+  closeChatroom(): void {
+    this.chatroomOpened = false;
   }
 
   // websocket ---------------------------
@@ -52,7 +116,7 @@ export class ChatComponent {
 
   sendMessage(): void {
     const chatMessage: ChatMessage = {
-      username: localStorage.getItem('username') ?? 'nousername',
+      senderUsername: localStorage.getItem('username') ?? 'nousername',
       createdAt: new Date(),
       message: this.messageToSend
     }
@@ -68,52 +132,6 @@ export class ChatComponent {
   }
 
   // ^^^ --------------------------------
-
-  toggleAddNewChatroom(): void {
-    this.addingNewChatroom = !this.addingNewChatroom;
-
-    // fetch users that dont have a chatroom with the loggedUser
-    this.chatService.getAllFriendsWithNoDmChats(localStorage.getItem('username') ?? '').subscribe({
-      next: (usernames) => {
-        this.friendsUsernamesWithNoChats = usernames;
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  createNewChatroom(friendUsername: string): void {
-    this.chatService.createChatroom(friendUsername, localStorage.getItem('username') ?? '').subscribe({
-      next: (chatroom) => {
-        console.log(chatroom);
-        this.addingNewChatroom = false;
-        this.getAllFriendsUsernamesWithChatrooms();
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  getAllFriendsUsernamesWithChatrooms(): void {
-    this.chatService.getAllChatroomsOfUser(localStorage.getItem('username') ?? '').subscribe({
-      next: (chatrooms) => {
-        this.chatrooms = chatrooms;
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  openChatroom(chatroomId: number): void {
-    this.chatroomOpened = true;
-  }
-
-  closeChatroom(): void {
-    this.chatroomOpened = false;
-  }
 }
 
 // TODO: make sure its ok for all instances of 'loggedUser' to be null 

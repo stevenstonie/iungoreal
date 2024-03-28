@@ -3,7 +3,7 @@
 		<div id="left-section-header">
 			<p>Chat Rooms</p>
 			<button class="right-sided" (click)="toggleAddNewChatroom()">add new chatroom</button>
-			<div class="right-sided" class="vertical-list" *ngIf="addingNewChatroom">
+			<div class="right-sided" class="vertical-list" *ngIf="isAddingNewChatroomOpen">
 				<button>create group</button>
 				<ng-container *ngFor="let friendUsername of friendsUsernamesWithNoChats">
 					<button (click)="createNewChatroom(friendUsername)">{{ friendUsername }}</button>
@@ -12,10 +12,16 @@
 
 		</div>
 		<div id="left-section-body" class="vertical-list">
-			<!-- TODO: have three menus (dm, group, regional) and when one is opened fetch the conversations in order of Chatroom.lastMessageTime -->
-			<ng-container *ngFor="let chatroom of chatrooms">
-				<button (click)="openChatroom(chatroom.id)">{{ chatroom.participantsUsernames[0] }}</button>
+			<button (click)="toggleDmChatrooms()">dms</button>
+			<ng-container *ngIf="areDmChatroomsOpen">
+				<ng-container *ngFor="let dmChatroom of dmChatrooms">
+					<button (click)="openChatroom(dmChatroom)">{{ dmChatroom.name }}</button>
+				</ng-container>
 			</ng-container>
+
+			<button>groups</button>
+			
+			<button>regionals</button>
 
 		</div>
 	</div>

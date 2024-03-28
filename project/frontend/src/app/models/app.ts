@@ -3,7 +3,7 @@ export interface StringInJson {
 }
 
 export interface ChatMessage {
-	username: string
+	senderUsername: string
 	message: string;
 	createdAt: Date;
 }
