@@ -32,8 +32,8 @@ public class ChatController {
 		return ResponseEntity.ok(chatService.createChatroom(username, friendUsername));
 	}
 
-	@GetMapping("/getAllChatroomsOfUser")
-	public ResponseEntity<List<ChatroomPayload>> getAllChatroomsOfUser(@RequestParam("username") String username) {
-		return ResponseEntity.ok(chatService.getAllChatroomsOfUser(username));
+	@GetMapping("/getAllDmChatroomsOfUser")
+	public ResponseEntity<List<ChatroomPayload>> getAllDmChatroomsOfUser(@RequestParam("username") String username) {
+		return ResponseEntity.ok(chatService.getAllDmChatroomsOfUser(username));
 	}
 }

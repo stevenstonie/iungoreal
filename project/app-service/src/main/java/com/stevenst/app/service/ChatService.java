@@ -10,5 +10,5 @@ public interface ChatService {
 
 	public ResponsePayload createChatroom(String username, String friendUsername);
 
-	public List<ChatroomPayload> getAllChatroomsOfUser(String username);
+	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username);
 }

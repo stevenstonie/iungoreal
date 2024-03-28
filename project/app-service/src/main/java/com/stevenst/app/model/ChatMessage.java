@@ -25,7 +25,7 @@ public class ChatMessage {
 	private Long id;
 
 	@Column(nullable = false)
-	private String username;
+	private String senderUsername;
 
 	@Column(nullable = false)
 	private String message;

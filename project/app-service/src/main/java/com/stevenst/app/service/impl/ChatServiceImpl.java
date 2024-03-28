@@ -35,10 +35,10 @@ public class ChatServiceImpl implements ChatService {
 		User user = getUserFromDbByUsername(username);
 
 		// get all participants in chatrooms of type dm where the user is in
-		List<ChatroomParticipant> friendsWithChatrooms = getParticipantsWithCommonChatrooms(user,
+		List<ChatroomParticipant> friendsWithDmChatrooms = getParticipantsWithCommonChatrooms(user,
 				List.of(ChatroomType.DM));
 
-		// get all friends
+		// get all friends of user
 		Mono<List<String>> friendsMono = webClient.get()
 				.uri(uriBuilder -> uriBuilder.path("/api/friend/getAllFriendsUsernames")
 						.queryParam("username", username)
@@ -50,8 +50,8 @@ public class ChatServiceImpl implements ChatService {
 		// Convert the Mono to a List
 		List<String> allFriends = friendsMono.block();
 
-		// return all friends - friends that have chatrooms
-		return allFriends.stream().filter(friend -> !friendsWithChatrooms.stream()
+		// return the friend list filtering those who have dm chatrooms
+		return allFriends.stream().filter(friend -> !friendsWithDmChatrooms.stream()
 				.anyMatch(participant -> participant.getUser().getUsername().equals(friend)))
 				.toList();
 	}
@@ -76,27 +76,32 @@ public class ChatServiceImpl implements ChatService {
 				.message("Chatroom created for " + username + " and " + friendUsername + ".").build();
 	}
 
-	public List<ChatroomPayload> getAllChatroomsOfUser(String username) {
+	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username) {
 		User user = getUserFromDbByUsername(username);
 
-		List<ChatroomParticipant> friendsWithChatrooms = getParticipantsWithCommonChatrooms(user,
-				List.of(ChatroomType.DM, ChatroomType.GROUP, ChatroomType.REGIONAL));
+		List<Chatroom> dmChatroomsOfUser = chatroomParticipantRepository.findChatroomsOfUserAndType(user,
+				ChatroomType.DM);
 
-		List<ChatroomPayload> chatroomsOfUser = new java.util.ArrayList<>();
+		List<ChatroomParticipant> participantsInCommonChatrooms = getParticipantsWithCommonChatrooms(user,
+				List.of(ChatroomType.DM));
 
-		friendsWithChatrooms.forEach(participant -> {
+		List<ChatroomPayload> chatrooms = new java.util.ArrayList<>();
+
+		for (Chatroom chatroomOfUser : dmChatroomsOfUser) {
 			ChatroomPayload payload = ChatroomPayload.builder()
-					.id(participant.getChatroom().getId())
-					.name(participant.getChatroom().getName())
-					.type(participant.getChatroom().getType())
-					.lastMessageTime(participant.getChatroom().getLastMessageTime())
-					.participantsUsernames(List.of(participant.getUser().getUsername()))
+					.id(chatroomOfUser.getId())
+					.name(chatroomOfUser.getName())
+					.type(chatroomOfUser.getType())
+					.lastMessageTime(chatroomOfUser.getLastMessageTime())
+					.participantsUsernames(participantsInCommonChatrooms.stream()
+							.filter(participant -> participant.getChatroom().getId().equals(chatroomOfUser.getId()))
+							.map(participant -> participant.getUser().getUsername())
+							.toList())
 					.build();
-			chatroomsOfUser.add(payload);
-			// TODO: only adds that one participant for now.
-		});
+			chatrooms.add(payload);
+		}
 
-		return chatroomsOfUser;
+		return chatrooms;
 	}
 
 	// --------------------------------------------------------
