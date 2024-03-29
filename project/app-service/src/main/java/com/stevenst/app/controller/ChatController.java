@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stevenst.app.model.ChatMessage;
 import com.stevenst.app.payload.ChatroomPayload;
 import com.stevenst.app.service.ChatService;
 import com.stevenst.lib.payload.ResponsePayload;
@@ -35,5 +36,12 @@ public class ChatController {
 	@GetMapping("/getAllDmChatroomsOfUser")
 	public ResponseEntity<List<ChatroomPayload>> getAllDmChatroomsOfUser(@RequestParam("username") String username) {
 		return ResponseEntity.ok(chatService.getAllDmChatroomsOfUser(username));
+	}
+
+	@GetMapping("/get20MessagesByChatroomId")
+	public ResponseEntity<List<ChatMessage>> get20MessagesByChatroomId(@RequestParam Long chatroomId,
+			@RequestParam(required = false) Long cursor,
+			@RequestParam(defaultValue = "20") int limit) {
+		return ResponseEntity.ok(chatService.getMessagesBeforeCursorByChatroomId(chatroomId, cursor, limit));
 	}
 }

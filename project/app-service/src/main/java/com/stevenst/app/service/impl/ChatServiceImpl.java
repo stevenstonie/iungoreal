@@ -3,6 +3,8 @@ package com.stevenst.app.service.impl;
 import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -53,7 +55,7 @@ public class ChatServiceImpl implements ChatService {
 		// Convert the Mono to a List
 		List<String> allFriends = friendsMono.block();
 
-		// return the friend list filtering those who have dm chatrooms
+		// return the friend list filtering out those who have dm chatrooms
 		return allFriends.stream().filter(friend -> !friendsWithDmChatrooms.stream()
 				.anyMatch(participant -> participant.getUser().getUsername().equals(friend)))
 				.toList();
@@ -64,12 +66,10 @@ public class ChatServiceImpl implements ChatService {
 		User user = getUserFromDbByUsername(username);
 		User friend = getUserFromDbByUsername(friendUsername);
 
-		// save chatroom 
 		Chatroom chatroom = chatroomRepository
 				.save(Chatroom.builder().name(user.getUsername() + " and " + friend.getUsername() + "'s chatroom")
 						.type(ChatroomType.DM).build());
 
-		// add these two as participants
 		chatroomParticipantRepository.save(
 				ChatroomParticipant.builder().user(user).chatroom(chatroom).build());
 		chatroomParticipantRepository.save(
@@ -98,6 +98,11 @@ public class ChatServiceImpl implements ChatService {
 		chatMessageRepository.save(chatMessage);
 
 		return ResponsePayload.builder().status(201).message("Message inserted successfully.").build();
+	}
+
+	public List<ChatMessage> getMessagesBeforeCursorByChatroomId(Long chatroomId, Long cursor, int limit) {
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("id").descending());
+		return chatMessageRepository.findMessagesBeforeCursorByChatroomId(chatroomId, cursor, pageRequest);
 	}
 
 	// --------------------------------------------------------

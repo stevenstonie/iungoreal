@@ -20,6 +20,7 @@ public class ChattingController {
 	@SendTo("/topic/chatroom/{chatroomId}")
 	public ChatMessage sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable("chatroomId") Long chatroomId) {
 		chatService.insertMessageIntoDb(chatMessage);
+		// TODO: find out how saving in batch works and maybe implement it
 		return chatMessage;
 	}
 }
