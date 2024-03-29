@@ -79,11 +79,26 @@ public class ChatServiceImpl implements ChatService {
 	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username) {
 		User user = getUserFromDbByUsername(username);
 
+		List<ChatroomPayload> dmChatrooms = returnChatroomOfUserByType(user, ChatroomType.DM);
+
+		for (int i = 0; i < dmChatrooms.size(); i++) {
+			dmChatrooms.get(i).setParticipantsUsernames(dmChatrooms.get(i)
+					.getParticipantsUsernames().stream()
+					.filter(participant -> !participant.equals(user.getUsername()))
+					.toList());
+		}
+
+		return dmChatrooms;
+	}
+
+	// --------------------------------------------------------
+
+	private List<ChatroomPayload> returnChatroomOfUserByType(User user, ChatroomType type) {
 		List<Chatroom> dmChatroomsOfUser = chatroomParticipantRepository.findChatroomsOfUserAndType(user,
-				ChatroomType.DM);
+				type);
 
 		List<ChatroomParticipant> participantsInCommonChatrooms = getParticipantsWithCommonChatrooms(user,
-				List.of(ChatroomType.DM));
+				List.of(type));
 
 		List<ChatroomPayload> chatrooms = new java.util.ArrayList<>();
 
@@ -104,12 +119,11 @@ public class ChatServiceImpl implements ChatService {
 		return chatrooms;
 	}
 
-	// --------------------------------------------------------
-
 	private List<ChatroomParticipant> getParticipantsWithCommonChatrooms(User user, List<ChatroomType> types) {
 		return chatroomRepository
 				.findParticipantsWithCommonChatrooms(user, types);
 	}
+	// TODO: look into this
 
 	private User getUserFromDbByUsername(String username) {
 		if (username == null || username.equals("")) {
