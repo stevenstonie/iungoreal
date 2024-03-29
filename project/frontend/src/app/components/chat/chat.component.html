@@ -37,6 +37,7 @@
 						[ngClass]="{'text-right': message.senderUsername === loggedUserUsername, 'text-left': message.senderUsername !== loggedUserUsername}">
 						<p class="sender-username">{{message.senderUsername}}</p>
 						<p class="message" [innerHTML]="messageWithParsedLinks(message.message)">{{message.message}}</p>
+						<div class="message-time">{{ message.createdAt | date: 'HH:mm' }}</div>
 					</div>
 				</div>
 				<div class="input">

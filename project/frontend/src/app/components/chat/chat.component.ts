@@ -134,7 +134,7 @@ export class ChatComponent {
       console.error("chatroom is undefined!!!!!!!!!!!!");
       return;
     }
-    if(this.messageToSend === '') {
+    if (this.messageToSend === '') {
       return;
     }
 
@@ -159,9 +159,11 @@ export class ChatComponent {
   }
 
   messageWithParsedLinks(message: string): string {
-    const customUrlRegex = /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?/g;
+    const customUrlRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
     return message.replace(customUrlRegex, (url) => `<a href="${url}" target="_blank">${url}</a>`);
   }
+
+  // TODO: shift+enter should add a new line
 }
 
 // TODO: make sure its ok for all instances of 'loggedUser' to be null 

@@ -62,9 +62,57 @@
 			flex-direction: column-reverse;
 			overflow-y: auto;
 
+			.text {
+
+				&-left,
+				&-right {
+					max-width: calc(var(--right-section-width) - 100px);
+					display: flex;
+					padding: 2px 0px;
+
+					.message, .sender-username, .message-time {
+						padding: 5px;
+					}
+
+					.message {
+						overflow-wrap: break-word;
+						overflow: hidden;
+						background-color: #dcdcdc;
+						border-radius: 10px;
+					}
+
+					.sender-username {
+						font-size: 0.9em;
+						font-style: italic;
+					}
+
+					.message-time {
+						font-size: 0.8em;
+						color: gray;
+					}
+				}
+
+				&-right {
+					flex-direction: row-reverse;
+					margin-left: auto;
+
+					.message {
+						background-color: #0084ff;
+						color: white;
+					}
+				}
+			}
+
 			.input {
 				position: fixed;
-				bottom: 10px;
+				bottom: 15px;
+			}
+
+			input {
+				width: calc(var(--right-section-width) - 100px);
+				padding: 3px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
 			}
 
 			.close-button {
@@ -81,38 +129,4 @@
 
 .right-sided {
 	float: right;
-}
-
-.text {
-
-	&-left,
-	&-right {
-		max-width: calc(var(--right-section-width) - 80px);
-		display: flex;
-		padding: 2px 0px;
-
-		.message {
-			overflow-wrap: break-word;
-			overflow: hidden;
-            padding: 5px;
-            background-color: #dcdcdc;
-            border-radius: 10px;
-		}
-
-		.sender-username {
-			font-size: 0.9em;
-			font-style: italic;
-			margin: 0 5px;
-		}
-	}
-
-	&-right {
-		flex-direction: row-reverse;
-		margin-left: auto;
-
-		.message {
-			background-color: #0084ff;
-			color: white;
-		}
-	}
 }
