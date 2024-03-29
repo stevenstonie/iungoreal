@@ -36,9 +36,4 @@ public class ChatController {
 	public ResponseEntity<List<ChatroomPayload>> getAllDmChatroomsOfUser(@RequestParam("username") String username) {
 		return ResponseEntity.ok(chatService.getAllDmChatroomsOfUser(username));
 	}
-
-	@PostMapping("/insertMessageIntoDb")
-	public ResponseEntity<ResponsePayload> insertMessageIntoDb(@RequestParam("message") ChatMessage chatMessage) {
-		
-	}
 }

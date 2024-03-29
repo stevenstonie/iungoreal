@@ -11,6 +11,7 @@ import com.stevenst.app.model.Chatroom;
 import com.stevenst.app.model.ChatroomParticipant;
 import com.stevenst.app.model.ChatroomType;
 import com.stevenst.app.payload.ChatroomPayload;
+import com.stevenst.app.repository.ChatMessageRepository;
 import com.stevenst.app.repository.ChatroomParticipantRepository;
 import com.stevenst.app.repository.ChatroomRepository;
 import com.stevenst.app.repository.UserRepository;
@@ -28,6 +29,7 @@ import reactor.core.publisher.Mono;
 public class ChatServiceImpl implements ChatService {
 	private final ChatroomRepository chatroomRepository;
 	private final ChatroomParticipantRepository chatroomParticipantRepository;
+	private final ChatMessageRepository chatMessageRepository;
 	private final UserRepository userRepository;
 	private final WebClient webClient;
 	private static final String USER_NOT_FOUND = "User not found";
@@ -93,7 +95,9 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage) {
-		return null;
+		chatMessageRepository.save(chatMessage);
+
+		return ResponsePayload.builder().status(201).message("Message inserted successfully.").build();
 	}
 
 	// --------------------------------------------------------
