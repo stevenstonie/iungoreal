@@ -12,7 +12,10 @@ import { StompWebsocketService } from 'src/app/services/stomp-websocket.service'
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent {
+  topic = '/topic/chatroom';
+  topicToBack = '/app/chat.sendToChatroom'
   loggedUserUsername: string = localStorage.getItem('username') ?? '';
+  
   isAddingNewChatroomOpen: boolean = false;
   areDmChatroomsOpen: boolean = false;
   areGroupChatroomsOpen: boolean = false;
@@ -25,12 +28,9 @@ export class ChatComponent {
   dmChatrooms: ChatroomPayload[] = [];
   groupChatrooms: ChatroomPayload[] = [];
   regionalChatrooms: ChatroomPayload[] = [];
+  receivedMessages: ChatMessage[] = [];
 
   messageToSend: string = '';
-
-  topic = '/topic/chatroom';
-  topicToBack = '/app/chat.sendToChatroom'
-  receivedMessages: ChatMessage[] = [];
 
   constructor(private stompWebsocketService: StompWebsocketService, private chatService: ChatService, private sanitizer: DomSanitizer) {
   }
@@ -139,6 +139,8 @@ export class ChatComponent {
     }
 
     const chatMessage: ChatMessage = {
+      id: 0,
+      chatroomId: chatroomId,
       senderUsername: this.loggedUserUsername !== '' ? this.loggedUserUsername : 'nousername',
       createdAt: new Date(),
       message: this.messageToSend

@@ -3,6 +3,8 @@ export interface StringInJson {
 }
 
 export interface ChatMessage {
+	id: number
+	chatroomId: number
 	senderUsername: string
 	message: string;
 	createdAt: Date;

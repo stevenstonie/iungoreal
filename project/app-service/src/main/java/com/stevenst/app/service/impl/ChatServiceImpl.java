@@ -6,6 +6,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.stevenst.app.model.ChatMessage;
 import com.stevenst.app.model.Chatroom;
 import com.stevenst.app.model.ChatroomParticipant;
 import com.stevenst.app.model.ChatroomType;
@@ -89,6 +90,10 @@ public class ChatServiceImpl implements ChatService {
 		}
 
 		return dmChatrooms;
+	}
+
+	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage) {
+		return null;
 	}
 
 	// --------------------------------------------------------
