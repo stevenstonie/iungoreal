@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core';
 import { throwError, Observable, catchError } from 'rxjs';
 import { ChatroomPayload, ResponsePayload } from '../models/Payloads';
+import { ChatMessage } from '../models/app';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +34,18 @@ export class ChatService {
     const params = new HttpParams().set('username', username);
 
     return this.http.get<ChatroomPayload[]>(`${this.apiUrl}/getAllDmChatroomsOfUser`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getNextMessagesByChatroomId(chatroomId: number, lastMessageId: number | null): Observable<ChatMessage[]> {
+    let params = new HttpParams().set('chatroomId', chatroomId.toString());
+    if(lastMessageId !== null) {
+      params = params.set('lastMessageId', lastMessageId.toString());
+    }
+
+    return this.http.get<ChatMessage[]>(`${this.apiUrl}/getNextMessagesByChatroomId`, { params })
       .pipe(
         catchError(this.handleError)
       );

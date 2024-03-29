@@ -15,7 +15,7 @@ export class ChatComponent {
   topic = '/topic/chatroom';
   topicToBack = '/app/chat.sendToChatroom'
   loggedUserUsername: string = localStorage.getItem('username') ?? '';
-  
+
   isAddingNewChatroomOpen: boolean = false;
   areDmChatroomsOpen: boolean = false;
   areGroupChatroomsOpen: boolean = false;
@@ -102,13 +102,14 @@ export class ChatComponent {
     this.connectToWebsocket(chatroom.id);
     this.isChatroomOpened = true;
     this.currentChatroom = chatroom;
-    this.receivedMessages = [];
+    this.loadMessagesOfChatroomId(chatroom.id, null);
   }
 
   closeChatroom(): void {
     this.isChatroomOpened = false;
     this.currentChatroom = null;
     this.disconnectFromWebsocket();
+    this.receivedMessages = [];
   }
 
   // websocket ---------------------------
@@ -155,6 +156,17 @@ export class ChatComponent {
   }
 
   // ^^^ --------------------------------
+
+  loadMessagesOfChatroomId(chatroomId: number, lastMessageId: number | null): void {
+    this.chatService.getNextMessagesByChatroomId(chatroomId, lastMessageId).subscribe({
+      next: (messages) => {
+        this.receivedMessages.push(...messages.reverse());
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
 
   sanitizeAndParseUrl(url: string): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(url);
