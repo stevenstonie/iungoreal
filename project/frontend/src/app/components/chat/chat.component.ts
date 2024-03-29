@@ -16,9 +16,9 @@ export class ChatComponent {
   areDmChatroomsOpen: boolean = false;
   areGroupChatroomsOpen: boolean = false;
   areRegionalChatroomsOpen: boolean = false;
+  isChatroomOpened: boolean = false;
 
-  chatroomOpened: boolean = false;
-  chatroomName: string = '';
+  currentChatroom: ChatroomPayload | null = null;
 
   friendsUsernamesWithNoChats: string[] = [];
   dmChatrooms: ChatroomPayload[] = [];
@@ -35,7 +35,11 @@ export class ChatComponent {
   }
 
   ngOnInit(): void {
-    this.connectToWebsocket();
+
+  }
+
+  ngOnDestroy(): void {
+    this.disconnectFromWebsocket();
   }
 
   toggleAddNewChatroom(): void {
@@ -88,20 +92,30 @@ export class ChatComponent {
   }
 
   openChatroom(chatroom: ChatroomPayload): void {
-    this.chatroomOpened = true;
-    this.chatroomName = chatroom.name;
+    if (this.currentChatroom?.id === chatroom.id) {
+      return;
+    }
+
+    this.closeChatroom();
+
+    this.connectToWebsocket(chatroom.id);
+    this.isChatroomOpened = true;
+    this.currentChatroom = chatroom;
+    this.receivedMessages = [];
   }
 
   closeChatroom(): void {
-    this.chatroomOpened = false;
+    this.isChatroomOpened = false;
+    this.currentChatroom = null;
+    this.disconnectFromWebsocket();
   }
 
   // websocket ---------------------------
 
-  connectToWebsocket(): void {
+  connectToWebsocket(chatroomId: number): void {
     this.stompWebsocketService = new StompWebsocketService();
 
-    this.stompWebsocketService.subscribeToTopic(this.topic, (chatMessage: ChatMessage) => {
+    this.stompWebsocketService.subscribeToTopic(this.topic + '/' + chatroomId, (chatMessage: ChatMessage) => {
       this.handleReceivedMessage(chatMessage);
     })
   }
@@ -114,17 +128,20 @@ export class ChatComponent {
     this.receivedMessages.push(chatMessage);
   }
 
-  sendMessage(): void {
+  sendMessage(chatroomId: number | undefined): void {
+    if (!chatroomId) {
+      console.error("chatroom is undefined!!!!!!!!!!!!");
+      return;
+    }
+
     const chatMessage: ChatMessage = {
       senderUsername: localStorage.getItem('username') ?? 'nousername',
       createdAt: new Date(),
       message: this.messageToSend
     }
-    this.stompWebsocketService.sendMessage(this.topicToBack, chatMessage);
-  }
-
-  ngOnDestroy(): void {
-    this.stompWebsocketService.disconnect();
+    this.stompWebsocketService.sendMessage(this.topicToBack + '/' + chatroomId, chatMessage);
+    
+    this.messageToSend = '';
   }
 
   isWebsocketConnected(): boolean {

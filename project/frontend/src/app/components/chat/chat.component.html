@@ -26,9 +26,9 @@
 		</div>
 	</div>
 	<div id="right-section">
-		<div *ngIf="chatroomOpened">
+		<div *ngIf="isChatroomOpened">
 			<div id="right-section-header">
-				<p>{{ chatroomName }}</p>
+				<p>{{ currentChatroom?.name }}</p>
 				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
 			</div>
 			<div id="right-section-body">
@@ -36,16 +36,16 @@
 
 				</div>
 				<div class="input">
-					<input type="text" [(ngModel)]="messageToSend" (keyup.enter)="sendMessage()" />
-					<button (click)="sendMessage()">Send</button>
+					<input type="text" [(ngModel)]="messageToSend" (keyup.enter)="sendMessage(currentChatroom?.id)" />
+					<button (click)="sendMessage(currentChatroom?.id)">Send</button>
 				</div>
 			</div>
-			<!-- <div *ngIf="isWebsocketConnected()">
+			<div *ngIf="isWebsocketConnected()">
 				<div *ngFor="let message of receivedMessages">
-					<p> <span style="font-weight: bold">{{ message.username }}</span>: {{ message.message }} <span
-							style="font-size: 0.7em; font-style: italic"> at {{ message.createdAt }}</span></p>
+					<p> <span style="font-weight: bold">{{ message.senderUsername }}</span>: {{ message.message }} <span
+							style="font-size: 0.7em; font-style: italic; margin-left: 15px;"> at {{ message.createdAt }}</span></p>
 				</div>
-			</div> -->
+			</div>
 		</div>
 	</div>
 </div>
