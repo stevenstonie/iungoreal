@@ -20,7 +20,7 @@
 			</ng-container>
 
 			<button>groups</button>
-			
+
 			<button>regionals</button>
 
 		</div>
@@ -32,12 +32,13 @@
 				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
 			</div>
 			<div id="right-section-body">
-				<div class="messages">
-					<div *ngIf="isWebsocketConnected()">
-						<div *ngFor="let message of receivedMessages">
-							<p> <span style="font-weight: bold">{{ message.senderUsername }}</span>: {{ message.message }} <span
-									style="font-size: 0.7em; font-style: italic; margin-left: 15px;"> at {{ message.createdAt }}</span></p>
-						</div>
+				<div class="messages" *ngIf="isWebsocketConnected()">
+					<div *ngFor="let message of receivedMessages"
+						[ngClass]="{'text-right': message.senderUsername === loggedUserUsername, 'text-left': message.senderUsername !== loggedUserUsername}">
+						<p class="sender-username">{{message.senderUsername}}</p>
+						<p class="message">{{message.message}}</p>
+						<!-- <p class="message"> <span style="font-weight: bold">{{ message.senderUsername }}</span>: {{ message.message }} <span
+									style="font-size: 0.7em; font-style: italic; margin-left: 15px;"> at {{ message.createdAt }}</span></p> -->
 					</div>
 				</div>
 				<div class="input">

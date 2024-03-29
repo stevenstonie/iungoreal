@@ -11,7 +11,7 @@ import { StompWebsocketService } from 'src/app/services/stomp-websocket.service'
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent {
-  @Input() loggedUser: User | null = null;
+  loggedUserUsername: string = localStorage.getItem('username') ?? '';
   isAddingNewChatroomOpen: boolean = false;
   areDmChatroomsOpen: boolean = false;
   areGroupChatroomsOpen: boolean = false;
@@ -46,7 +46,7 @@ export class ChatComponent {
     this.isAddingNewChatroomOpen = !this.isAddingNewChatroomOpen;
 
     // fetch users that dont have a chatroom with the loggedUser
-    this.chatService.getAllFriendsWithNoDmChats(localStorage.getItem('username') ?? '').subscribe({
+    this.chatService.getAllFriendsWithNoDmChats(this.loggedUserUsername).subscribe({
       next: (usernames) => {
         this.friendsUsernamesWithNoChats = usernames;
       },
@@ -57,7 +57,7 @@ export class ChatComponent {
   }
 
   createNewChatroom(friendUsername: string): void {
-    this.chatService.createChatroom(friendUsername, localStorage.getItem('username') ?? '').subscribe({
+    this.chatService.createChatroom(friendUsername, this.loggedUserUsername).subscribe({
       next: (chatroom) => {
         console.log(chatroom);
         this.isAddingNewChatroomOpen = false;
@@ -72,7 +72,7 @@ export class ChatComponent {
     this.areDmChatroomsOpen = !this.areDmChatroomsOpen;
 
     if (this.areDmChatroomsOpen) {
-      this.chatService.getAllDmChatroomsOfUser(localStorage.getItem('username') ?? '').subscribe({
+      this.chatService.getAllDmChatroomsOfUser(this.loggedUserUsername).subscribe({
         next: (dmChatrooms) => {
           this.dmChatrooms = dmChatrooms;
         },
@@ -135,12 +135,12 @@ export class ChatComponent {
     }
 
     const chatMessage: ChatMessage = {
-      senderUsername: localStorage.getItem('username') ?? 'nousername',
+      senderUsername: this.loggedUserUsername !== '' ? this.loggedUserUsername : 'nousername',
       createdAt: new Date(),
       message: this.messageToSend
     }
     this.stompWebsocketService.sendMessage(this.topicToBack + '/' + chatroomId, chatMessage);
-    
+
     this.messageToSend = '';
   }
 
