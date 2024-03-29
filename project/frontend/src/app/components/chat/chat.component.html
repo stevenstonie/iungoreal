@@ -33,17 +33,16 @@
 			</div>
 			<div id="right-section-body">
 				<div class="messages">
-
+					<div *ngIf="isWebsocketConnected()">
+						<div *ngFor="let message of receivedMessages">
+							<p> <span style="font-weight: bold">{{ message.senderUsername }}</span>: {{ message.message }} <span
+									style="font-size: 0.7em; font-style: italic; margin-left: 15px;"> at {{ message.createdAt }}</span></p>
+						</div>
+					</div>
 				</div>
 				<div class="input">
 					<input type="text" [(ngModel)]="messageToSend" (keyup.enter)="sendMessage(currentChatroom?.id)" />
 					<button (click)="sendMessage(currentChatroom?.id)">Send</button>
-				</div>
-			</div>
-			<div *ngIf="isWebsocketConnected()">
-				<div *ngFor="let message of receivedMessages">
-					<p> <span style="font-weight: bold">{{ message.senderUsername }}</span>: {{ message.message }} <span
-							style="font-size: 0.7em; font-style: italic; margin-left: 15px;"> at {{ message.createdAt }}</span></p>
 				</div>
 			</div>
 		</div>

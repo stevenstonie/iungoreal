@@ -1,14 +1,18 @@
 * {
-	box-sizing: border-box;	
+	box-sizing: border-box;
+	--chat-height: 500px;
+	--left-section-width: 150px;
+	--right-section-width: 550px;
+	--right-section-header-height: 30px;
 }
 
 #chat-container {
 	position: fixed;
 	z-index: 9;
-	width: 700px;
-	height: 500px;
+	height: var(--chat-height);
+	width: var(--chat-width);
 	right: 80px;
-	bottom: 0;
+	bottom: 5px;
 	background-color: azure;
 	border: 1px solid #ccc;
 	border-radius: 5px;
@@ -17,8 +21,7 @@
 	flex-direction: row;
 
 	#left-section {
-		flex: 1;
-		
+		width: var(--left-section-width);
 		display: flex;
 		flex-direction: column;
 		border-right: 1px solid #ccc;
@@ -29,22 +32,23 @@
 		}
 
 		#left-section-body {
-			height: auto;
+			height: 100%;
 			overflow-y: auto;
 		}
 	}
 
 	#right-section {
-		flex: 3;
+		width: var(--right-section-width);
 
 		display: flex;
 		flex-direction: column;
 
 		#right-section-header {
-			height: 30px;
+			height: var(--right-section-header-height);
 			border-bottom: 1px solid #ccc;
 			display: flex;
 			flex-direction: row;
+			margin: 2px;
 
 			button {
 				cursor: pointer;
@@ -52,16 +56,11 @@
 		}
 
 		#right-section-body {
-			height: auto;
-			overflow-y: auto;
+			height: calc(var(--chat-height) - var(--right-section-header-height) - 50px);
 			padding: 5px;
 			display: flex;
-			flex-direction: column;
-
-
-			.messages {
-				margin-bottom: 30px;
-			}
+			flex-direction: column-reverse;
+			overflow-y: auto;
 
 			.input {
 				position: fixed;
