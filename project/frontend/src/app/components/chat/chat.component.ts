@@ -1,4 +1,5 @@
 import { Component, Input, ViewContainerRef } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ChatroomPayload } from 'src/app/models/Payloads';
 import { ChatMessage } from 'src/app/models/app';
 import { User } from 'src/app/models/user';
@@ -31,7 +32,7 @@ export class ChatComponent {
   topicToBack = '/app/chat.sendToChatroom'
   receivedMessages: ChatMessage[] = [];
 
-  constructor(private stompWebsocketService: StompWebsocketService, private chatService: ChatService) {
+  constructor(private stompWebsocketService: StompWebsocketService, private chatService: ChatService, private sanitizer: DomSanitizer) {
   }
 
   ngOnInit(): void {
@@ -133,6 +134,9 @@ export class ChatComponent {
       console.error("chatroom is undefined!!!!!!!!!!!!");
       return;
     }
+    if(this.messageToSend === '') {
+      return;
+    }
 
     const chatMessage: ChatMessage = {
       senderUsername: this.loggedUserUsername !== '' ? this.loggedUserUsername : 'nousername',
@@ -149,6 +153,15 @@ export class ChatComponent {
   }
 
   // ^^^ --------------------------------
+
+  sanitizeAndParseUrl(url: string): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustUrl(url);
+  }
+
+  messageWithParsedLinks(message: string): string {
+    const customUrlRegex = /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?/g;
+    return message.replace(customUrlRegex, (url) => `<a href="${url}" target="_blank">${url}</a>`);
+  }
 }
 
 // TODO: make sure its ok for all instances of 'loggedUser' to be null 

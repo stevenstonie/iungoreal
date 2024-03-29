@@ -92,14 +92,16 @@
 		padding: 2px 0px;
 
 		.message {
-            word-break: break-all;
-            padding: 0 5px;
+			overflow-wrap: break-word;
+			overflow: hidden;
+            padding: 5px;
             background-color: #dcdcdc;
             border-radius: 10px;
 		}
 
 		.sender-username {
-			font-weight: bold;
+			font-size: 0.9em;
+			font-style: italic;
 			margin: 0 5px;
 		}
 	}
@@ -107,5 +109,10 @@
 	&-right {
 		flex-direction: row-reverse;
 		margin-left: auto;
+
+		.message {
+			background-color: #0084ff;
+			color: white;
+		}
 	}
 }
