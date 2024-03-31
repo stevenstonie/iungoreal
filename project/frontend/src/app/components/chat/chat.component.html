@@ -31,7 +31,7 @@
 				<p>{{ currentChatroom?.name }}</p>
 				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
 			</div>
-			<div id="right-section-body" #messageContainer>
+			<div id="right-section-body" #chatContainer (scroll)="onScroll()">
 				<div class="messages" *ngIf="isWebsocketConnected()">
 					<div *ngFor="let message of receivedMessages"
 						[ngClass]="{'text-right': message.senderUsername === loggedUserUsername, 'text-left': message.senderUsername !== loggedUserUsername}">

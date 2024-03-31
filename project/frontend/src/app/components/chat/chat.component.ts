@@ -2,7 +2,6 @@ import { Component, ElementRef, HostListener, Input, ViewChild, ViewContainerRef
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ChatroomPayload } from 'src/app/models/Payloads';
 import { ChatMessage } from 'src/app/models/app';
-import { User } from 'src/app/models/user';
 import { ChatService } from 'src/app/services/chat.service';
 import { StompWebsocketService } from 'src/app/services/stomp-websocket.service';
 
@@ -15,15 +14,16 @@ export class ChatComponent {
   topic = '/topic/chatroom';
   topicToBack = '/app/chat.sendToChatroom'
   loggedUserUsername: string = localStorage.getItem('username') ?? '';
+  @ViewChild('chatContainer') chatContainer!: ElementRef;
 
   isAddingNewChatroomOpen: boolean = false;
   areDmChatroomsOpen: boolean = false;
   areGroupChatroomsOpen: boolean = false;
   areRegionalChatroomsOpen: boolean = false;
   isChatroomOpened: boolean = false;
+  loadingMessages: boolean = false;
 
   currentChatroom: ChatroomPayload | null = null;
-
   friendsUsernamesWithNoChats: string[] = [];
   dmChatrooms: ChatroomPayload[] = [];
   groupChatrooms: ChatroomPayload[] = [];
@@ -157,13 +157,30 @@ export class ChatComponent {
 
   // ^^^ --------------------------------
 
+  onScroll(): void {
+    const chatContainerElement = this.chatContainer.nativeElement;
+    const scrolledToBottom = chatContainerElement.scrollHeight - chatContainerElement.clientHeight <= -chatContainerElement.scrollTop + 10;
+
+    if (scrolledToBottom && this.currentChatroom?.id) {
+      this.loadMessagesOfChatroomId(this.currentChatroom?.id, this.receivedMessages[0]?.id);
+    }
+  }
+
   loadMessagesOfChatroomId(chatroomId: number, lastMessageId: number | null): void {
+    if (this.loadingMessages) {
+      return;
+    }
+
+    this.loadingMessages = true;
     this.chatService.getNextMessagesByChatroomId(chatroomId, lastMessageId).subscribe({
       next: (messages) => {
-        this.receivedMessages.push(...messages.reverse());
+        this.receivedMessages.unshift(...messages.reverse());
       },
       error: (error) => {
         console.error(error);
+      },
+      complete: () => {
+        this.loadingMessages = false;
       }
     });
   }

@@ -42,7 +42,7 @@ export class ChatService {
   getNextMessagesByChatroomId(chatroomId: number, lastMessageId: number | null): Observable<ChatMessage[]> {
     let params = new HttpParams().set('chatroomId', chatroomId.toString());
     if(lastMessageId !== null) {
-      params = params.set('lastMessageId', lastMessageId.toString());
+      params = params.set('cursor', lastMessageId.toString());
     }
 
     return this.http.get<ChatMessage[]>(`${this.apiUrl}/getNextMessagesByChatroomId`, { params })
