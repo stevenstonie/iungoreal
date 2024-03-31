@@ -1,4 +1,4 @@
-import { Component, Input, ViewContainerRef } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, ViewChild, ViewContainerRef } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ChatroomPayload } from 'src/app/models/Payloads';
 import { ChatMessage } from 'src/app/models/app';

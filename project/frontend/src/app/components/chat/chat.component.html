@@ -31,8 +31,8 @@
 				<p>{{ currentChatroom?.name }}</p>
 				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
 			</div>
-			<div id="right-section-body">
-				<div class="messages" *ngIf="isWebsocketConnected()" #messageContainer>
+			<div id="right-section-body" #messageContainer>
+				<div class="messages" *ngIf="isWebsocketConnected()">
 					<div *ngFor="let message of receivedMessages"
 						[ngClass]="{'text-right': message.senderUsername === loggedUserUsername, 'text-left': message.senderUsername !== loggedUserUsername}">
 						<p class="sender-username">{{message.senderUsername}}</p>
