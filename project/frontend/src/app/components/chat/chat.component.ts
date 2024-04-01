@@ -159,7 +159,7 @@ export class ChatComponent {
 
   onScroll(): void {
     const chatContainerElement = this.chatContainer.nativeElement;
-    const scrolledToBottom = chatContainerElement.scrollHeight - chatContainerElement.clientHeight <= -chatContainerElement.scrollTop + 10;
+    const scrolledToBottom = chatContainerElement.scrollHeight - chatContainerElement.clientHeight <= -chatContainerElement.scrollTop + 100;
 
     if (scrolledToBottom && this.currentChatroom?.id) {
       this.loadMessagesOfChatroomId(this.currentChatroom?.id, this.receivedMessages[0]?.id);

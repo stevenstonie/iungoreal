@@ -41,7 +41,7 @@ public class ChatController {
 	@GetMapping("/getNextMessagesByChatroomId")
 	public ResponseEntity<List<ChatMessage>> getNextMessagesByChatroomId(@RequestParam Long chatroomId,
 			@RequestParam(required = false) Long cursor,
-			@RequestParam(defaultValue = "20") int limit) {
+			@RequestParam(defaultValue = "50") int limit) {
 		return ResponseEntity.ok(chatService.getMessagesBeforeCursorByChatroomId(chatroomId, cursor, limit));
 	}
 }

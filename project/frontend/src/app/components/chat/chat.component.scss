@@ -10,7 +10,7 @@
 	position: fixed;
 	z-index: 9;
 	height: var(--chat-height);
-	width: var(--chat-width);
+	// width: var(--left-section-width) + var(--right-section-width);
 	right: 80px;
 	bottom: 5px;
 	background-color: azure;
@@ -120,6 +120,15 @@
 			}
 		}
 	}
+}
+
+.left-sidebar {
+	width: var(--left-section-width);
+	height: var(--chat-height);
+	position: relative;
+	right: 160px;
+	overflow-y: auto;
+	background-color: rgba(63, 181, 27, 0.5);
 }
 
 .vertical-list {

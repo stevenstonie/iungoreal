@@ -2,6 +2,8 @@ package com.stevenst.app.model;
 
 import java.time.LocalDateTime;
 
+import com.stevenst.lib.model.User;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,6 +34,8 @@ public class Chatroom {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private ChatroomType type;
+
+	private User admin;
 
 	@Builder.Default
 	@Column(nullable = false)
