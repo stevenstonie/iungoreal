@@ -64,6 +64,7 @@ export class ChatComponent {
       next: (chatroom) => {
         console.log(chatroom);
         this.isAddingNewChatroomOpen = false;
+        this.areDmChatroomsOpen = false;
       },
       error: (error) => {
         console.error(error);

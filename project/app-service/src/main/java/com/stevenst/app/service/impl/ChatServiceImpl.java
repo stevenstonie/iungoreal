@@ -108,17 +108,31 @@ public class ChatServiceImpl implements ChatService {
 
 	@Override
 	public ResponsePayload leaveChatroom(String username, Long chatroomId) {
+		// for dms -> when users leave mark them as left
+		// for groups -> when users leave then remove them as participants
 		User user = getUserFromDbByUsername(username);
 		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
 
-		chatroomParticipantRepository.deleteByUserAndChatroom(user, chatroom);
-
-		long count = chatroomParticipantRepository.countByChatroom(chatroom);
-		if (count == 0) {
-			chatroomRepository.delete(chatroom);
+		if (chatroom.getType() == ChatroomType.DM) {
+			ChatroomParticipant participant = chatroomParticipantRepository.findByUserAndChatroom(user, chatroom);
+			participant.setHasLeft(true);
+			chatroomParticipantRepository.save(participant);
+		} else {
+			// TODO
 		}
 
-		return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.").build();
+		// for dms -> if both users have left then remove both as participants and the chatroom as well
+		// for groups -> if the group is empty then remove the group as well
+		Long count = chatroomParticipantRepository.countByChatroomAndHasLeftIsFalse(chatroom);
+		if (count == 0) {
+			chatroomParticipantRepository.deleteByChatroom(chatroom);
+			chatroomRepository.delete(chatroom);
+
+			return ResponsePayload.builder().status(200)
+					.message("User " + username + " left the chatroom and chatroom removed successfully.").build();
+		} else {
+			return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.").build();
+		}
 	}
 
 	// --------------------------------------------------------

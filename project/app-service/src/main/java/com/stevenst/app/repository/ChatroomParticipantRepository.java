@@ -26,7 +26,7 @@ public interface ChatroomParticipantRepository extends JpaRepository<ChatroomPar
 
 	@Modifying
 	@Transactional
-	Long deleteByUserAndChatroom(User user, Chatroom chatroom);
+	Long deleteByChatroom(Chatroom chatroom);
 
-	Long countByChatroom(Chatroom chatroom);
+	Long countByChatroomAndHasLeftIsFalse(Chatroom chatroom);
 }
