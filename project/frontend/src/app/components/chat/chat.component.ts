@@ -114,10 +114,16 @@ export class ChatComponent {
     this.receivedMessages = [];
   }
 
-  removeChatroom(chatroomId: number | undefined): void {
-    this.chatService.removeChatroom(this.loggedUserUsername, chatroomId).subscribe({
+  leaveChatroom(chatroomId: number | undefined): void {
+    if (!chatroomId) {
+      console.error("chatroom is undefined!!!!!!!!!!!!");
+      return;
+    }
+
+    this.chatService.leaveChatroom(this.loggedUserUsername, chatroomId).subscribe({
       next: () => {
         this.closeChatroom();
+        this.areDmChatroomsOpen = false;
       },
       error: (error) => {
         console.error(error);

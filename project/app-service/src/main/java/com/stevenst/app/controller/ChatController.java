@@ -3,6 +3,7 @@ package com.stevenst.app.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,5 +44,11 @@ public class ChatController {
 			@RequestParam(required = false) Long cursor,
 			@RequestParam(defaultValue = "50") int limit) {
 		return ResponseEntity.ok(chatService.getMessagesBeforeCursorByChatroomId(chatroomId, cursor, limit));
+	}
+
+	@DeleteMapping("/leaveChatroom")
+	public ResponseEntity<ResponsePayload> leaveChatroom(@RequestParam("username") String username,
+			@RequestParam("chatroomId") Long chatroomId) {
+		return ResponseEntity.ok(chatService.leaveChatroom(username, chatroomId));
 	}
 }

@@ -16,4 +16,6 @@ public interface ChatService {
 	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage);
 
 	public List<ChatMessage> getMessagesBeforeCursorByChatroomId(Long chatroomId, Long cursor, int limit);
+
+	public ResponsePayload leaveChatroom(String username, Long chatroomId);
 }

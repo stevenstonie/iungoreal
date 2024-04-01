@@ -51,11 +51,10 @@ export class ChatService {
       );
   }
 
-  removeChatroom(username: string, chatroomId: number | undefined): Observable<ResponsePayload> {
-    const params = new HttpParams().set('username', username);  
-    if (chatroomId !== null && chatroomId !== undefined) params.set('chatroomId', chatroomId.toString());
+  leaveChatroom(username: string, chatroomId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('chatroomId', chatroomId.toString());
 
-    return this.http.delete<ResponsePayload>(`${this.apiUrl}/removeChatroom`, { params })
+    return this.http.delete<ResponsePayload>(`${this.apiUrl}/leaveChatroom`, { params })
       .pipe(
         catchError(this.handleError)
       );

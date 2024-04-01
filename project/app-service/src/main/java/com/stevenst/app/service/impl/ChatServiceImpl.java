@@ -102,7 +102,23 @@ public class ChatServiceImpl implements ChatService {
 
 	public List<ChatMessage> getMessagesBeforeCursorByChatroomId(Long chatroomId, Long cursor, int limit) {
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("id").descending());
+
 		return chatMessageRepository.findMessagesBeforeCursorByChatroomId(chatroomId, cursor, pageRequest);
+	}
+
+	@Override
+	public ResponsePayload leaveChatroom(String username, Long chatroomId) {
+		User user = getUserFromDbByUsername(username);
+		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
+
+		chatroomParticipantRepository.deleteByUserAndChatroom(user, chatroom);
+
+		long count = chatroomParticipantRepository.countByChatroom(chatroom);
+		if (count == 0) {
+			chatroomRepository.delete(chatroom);
+		}
+
+		return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.").build();
 	}
 
 	// --------------------------------------------------------
