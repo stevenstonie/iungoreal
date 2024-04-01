@@ -43,6 +43,8 @@ export class ChatComponent {
     this.disconnectFromWebsocket();
   }
 
+  // chatroom --------------------------------------------------------------------
+
   toggleAddNewChatroom(): void {
     this.isAddingNewChatroomOpen = !this.isAddingNewChatroomOpen;
 
@@ -110,6 +112,17 @@ export class ChatComponent {
     this.currentChatroom = null;
     this.disconnectFromWebsocket();
     this.receivedMessages = [];
+  }
+
+  removeChatroom(chatroomId: number | undefined): void {
+    this.chatService.removeChatroom(this.loggedUserUsername, chatroomId).subscribe({
+      next: () => {
+        this.closeChatroom();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   // websocket ---------------------------

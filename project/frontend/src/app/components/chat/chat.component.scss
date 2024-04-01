@@ -128,7 +128,15 @@
 	position: relative;
 	right: 160px;
 	overflow-y: auto;
-	background-color: rgba(63, 181, 27, 0.5);
+	background-color: rgb(238, 255, 255);
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+
+	> button {
+		margin: 5px;
+	}
 }
 
 .vertical-list {

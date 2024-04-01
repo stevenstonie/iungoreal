@@ -41,11 +41,21 @@ export class ChatService {
 
   getNextMessagesByChatroomId(chatroomId: number, lastMessageId: number | null): Observable<ChatMessage[]> {
     let params = new HttpParams().set('chatroomId', chatroomId.toString());
-    if(lastMessageId !== null) {
+    if (lastMessageId !== null) {
       params = params.set('cursor', lastMessageId.toString());
     }
 
     return this.http.get<ChatMessage[]>(`${this.apiUrl}/getNextMessagesByChatroomId`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  removeChatroom(username: string, chatroomId: number | undefined): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username);  
+    if (chatroomId !== null && chatroomId !== undefined) params.set('chatroomId', chatroomId.toString());
+
+    return this.http.delete<ResponsePayload>(`${this.apiUrl}/removeChatroom`, { params })
       .pipe(
         catchError(this.handleError)
       );
