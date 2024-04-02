@@ -139,8 +139,7 @@ public class ChatServiceImpl implements ChatService {
 		// for groups -> if the group is empty then remove the group as well
 		Long count = chatroomParticipantRepository.countByChatroomAndHasLeftIsFalse(chatroom);
 		if (count == 0) {
-			chatroomParticipantRepository.deleteByChatroom(chatroom);
-			chatroomRepository.delete(chatroom);
+			removeChatroomAndParticipantsAndMessages(chatroom);
 
 			return ResponsePayload.builder().status(200)
 					.message("User " + username + " left the chatroom and chatroom removed successfully.").build();
@@ -150,6 +149,12 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	// --------------------------------------------------------
+
+	private void removeChatroomAndParticipantsAndMessages(Chatroom chatroom) {
+		chatroomParticipantRepository.deleteByChatroom(chatroom);
+		chatroomRepository.delete(chatroom);
+		chatMessageRepository.deleteByChatroomId(chatroom.getId());
+	}
 
 	private List<ChatroomPayload> getAllDmChatroomsOfUser(User user) {
 		// get all dms of user where user hasLeft = false

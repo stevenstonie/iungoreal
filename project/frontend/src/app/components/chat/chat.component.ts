@@ -122,7 +122,8 @@ export class ChatComponent {
     }
 
     this.chatService.leaveChatroom(this.loggedUserUsername, chatroomId).subscribe({
-      next: () => {
+      next: (response) => {
+        console.log(response);
         this.closeChatroom();
         this.areDmChatroomsOpen = false;
       },
@@ -131,6 +132,7 @@ export class ChatComponent {
       }
     });
   }
+  // TODO: find the bug where both users leave at the same time
 
   // websocket ---------------------------
 
