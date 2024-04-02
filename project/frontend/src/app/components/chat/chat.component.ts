@@ -134,11 +134,20 @@ export class ChatComponent {
     });
   }
 
-  updateName(name: string) {
+  updateChatroomName(name: string) {
     if (name.trim() !== '') {
       if (this.currentChatroom) this.currentChatroom.name = name;
     }
     this.isEditingChatroomName = false;
+
+    this.chatService.updateChatroomName(this.currentChatroom!.id, name).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   // websocket ---------------------------

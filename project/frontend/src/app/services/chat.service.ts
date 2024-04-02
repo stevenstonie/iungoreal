@@ -52,9 +52,18 @@ export class ChatService {
   }
 
   leaveChatroom(username: string, chatroomId: number): Observable<ResponsePayload> {
-    const params = new HttpParams().set('username', username).set('chatroomId', chatroomId.toString());
+    const params = new HttpParams().set('chatroomId', chatroomId.toString()).set('username', username);
 
     return this.http.delete<ResponsePayload>(`${this.apiUrl}/leaveChatroom`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  updateChatroomName(chatroomId: number, chatroomName: string): Observable<ResponsePayload> {
+    const params = new HttpParams().set('chatroomId', chatroomId.toString()).set('chatroomName', chatroomName);
+
+    return this.http.put<ResponsePayload>(`${this.apiUrl}/updateChatroomName`, params)
       .pipe(
         catchError(this.handleError)
       );

@@ -33,7 +33,7 @@
 						{{ currentChatroom?.name }}
 					</ng-container>
 					<ng-template #editMode>
-						<input type="text" [(ngModel)]="currentChatroom!.name" (blur)="updateName(currentChatroom!.name)" (keyup.enter)="updateName(currentChatroom!.name)" autofocus>
+						<input type="text" [(ngModel)]="currentChatroom!.name" (blur)="updateChatroomName(currentChatroom!.name)" (keyup.enter)="updateChatroomName(currentChatroom!.name)" autofocus>
 					  </ng-template>
 				</div>
 				<button (click)="leaveChatroom(currentChatroom?.id)">leave chatroom</button>
