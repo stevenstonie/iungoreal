@@ -2,9 +2,9 @@
 	<div id="left-section">
 		<div id="left-section-header">
 			<p>Chat Rooms</p>
-			<button class="right-sided" (click)="toggleAddNewChatroom()">add new chatroom</button>
-			<div class="left-sidebar" *ngIf="isAddingNewChatroomOpen">
-				<button>create group</button>
+			<button (click)="toggleAddNewDmChatroom()">add new dm</button>
+			<button>create group</button>
+			<div class="left-sidebar" *ngIf="isLeftSidebarOpen">
 				<ng-container *ngFor="let friendUsername of friendsUsernamesWithNoChats">
 					<button (click)="createNewChatroom(friendUsername)">{{ friendUsername }}</button>
 				</ng-container>
@@ -28,7 +28,14 @@
 	<div id="right-section">
 		<div *ngIf="isChatroomOpened">
 			<div id="right-section-header">
-				<p>{{ currentChatroom?.name }}</p>
+				<div (dblclick)="isEditingChatroomName = true">
+					<ng-container *ngIf="!isEditingChatroomName; else editMode">
+						{{ currentChatroom?.name }}
+					</ng-container>
+					<ng-template #editMode>
+						<input type="text" [(ngModel)]="currentChatroom!.name" (blur)="updateName(currentChatroom!.name)" (keyup.enter)="updateName(currentChatroom!.name)" autofocus>
+					  </ng-template>
+				</div>
 				<button (click)="leaveChatroom(currentChatroom?.id)">leave chatroom</button>
 				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
 			</div>

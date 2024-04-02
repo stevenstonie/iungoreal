@@ -16,12 +16,13 @@ export class ChatComponent {
   loggedUserUsername: string = localStorage.getItem('username') ?? '';
   @ViewChild('chatContainer') chatContainer!: ElementRef;
 
-  isAddingNewChatroomOpen: boolean = false;
+  isLeftSidebarOpen: boolean = false;
   areDmChatroomsOpen: boolean = false;
   areGroupChatroomsOpen: boolean = false;
   areRegionalChatroomsOpen: boolean = false;
   isChatroomOpened: boolean = false;
   loadingMessages: boolean = false;
+  isEditingChatroomName: boolean = false;
 
   currentChatroom: ChatroomPayload | null = null;
   friendsUsernamesWithNoChats: string[] = [];
@@ -45,8 +46,8 @@ export class ChatComponent {
 
   // chatroom --------------------------------------------------------------------
 
-  toggleAddNewChatroom(): void {
-    this.isAddingNewChatroomOpen = !this.isAddingNewChatroomOpen;
+  toggleAddNewDmChatroom(): void {
+    this.isLeftSidebarOpen = !this.isLeftSidebarOpen;
 
     // fetch users that dont have a chatroom with the loggedUser
     this.chatService.getAllFriendsWithNoDmChats(this.loggedUserUsername).subscribe({
@@ -63,7 +64,7 @@ export class ChatComponent {
     this.chatService.createChatroom(friendUsername, this.loggedUserUsername).subscribe({
       next: (chatroom) => {
         console.log(chatroom);
-        this.isAddingNewChatroomOpen = false;
+        this.isLeftSidebarOpen = false;
         this.areDmChatroomsOpen = false;
       },
       error: (error) => {
@@ -132,7 +133,13 @@ export class ChatComponent {
       }
     });
   }
-  // TODO: find the bug where both users leave at the same time
+
+  updateName(name: string) {
+    if (name.trim() !== '') {
+      if (this.currentChatroom) this.currentChatroom.name = name;
+    }
+    this.isEditingChatroomName = false;
+  }
 
   // websocket ---------------------------
 
