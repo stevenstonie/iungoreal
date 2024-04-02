@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,5 +51,11 @@ public class ChatController {
 	public ResponseEntity<ResponsePayload> leaveChatroom(@RequestParam("username") String username,
 			@RequestParam("chatroomId") Long chatroomId) {
 		return ResponseEntity.ok(chatService.leaveChatroom(username, chatroomId));
+	}
+
+	@PutMapping("/updateChatroomName")
+	public ResponseEntity<ResponsePayload> updateChatroomName(@RequestParam("chatroomId") Long chatroomId,
+			@RequestParam("chatroomName") String chatroomName) {
+		return ResponseEntity.ok(chatService.updateChatroomName(chatroomId, chatroomName));
 	}
 }

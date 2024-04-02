@@ -18,6 +18,7 @@ import com.stevenst.app.repository.ChatroomParticipantRepository;
 import com.stevenst.app.repository.ChatroomRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.ChatService;
+import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorNullValueException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.lib.model.User;
@@ -146,6 +147,19 @@ public class ChatServiceImpl implements ChatService {
 		} else {
 			return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.").build();
 		}
+	}
+
+	@Override
+	public ResponsePayload updateChatroomName(Long chatroomId, String chatroomName) {
+		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
+		if (chatroom == null) {
+			throw new IgorEntityNotFoundException("Chatroom with id " + chatroomId + " not found.");
+		}
+		
+		chatroom.setName(chatroomName);
+		chatroomRepository.save(chatroom);
+
+		return ResponsePayload.builder().status(200).message("Chatroom name updated successfully.").build();
 	}
 
 	// --------------------------------------------------------

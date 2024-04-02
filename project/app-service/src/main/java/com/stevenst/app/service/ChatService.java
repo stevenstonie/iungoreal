@@ -18,4 +18,6 @@ public interface ChatService {
 	public List<ChatMessage> getMessagesBeforeCursorByChatroomId(Long chatroomId, Long cursor, int limit);
 
 	public ResponsePayload leaveChatroom(String username, Long chatroomId);
+
+	public ResponsePayload updateChatroomName(Long chatroomId, String chatroomName);
 }
