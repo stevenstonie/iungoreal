@@ -35,6 +35,5 @@ public class ChatroomParticipant {
 	private User user;
 
 	@Column(nullable = false)
-	@Builder.Default
-	private boolean hasLeft = false;
+	private boolean hasLeft;
 }

@@ -9,16 +9,12 @@ import org.springframework.stereotype.Repository;
 
 import com.stevenst.app.model.Chatroom;
 import com.stevenst.app.model.ChatroomParticipant;
-import com.stevenst.app.model.ChatroomType;
 import com.stevenst.lib.model.User;
 
 import jakarta.transaction.Transactional;
 
 @Repository
 public interface ChatroomParticipantRepository extends JpaRepository<ChatroomParticipant, Long> {
-	@Query("SELECT participant.chatroom FROM ChatroomParticipant participant WHERE participant.user = :user AND participant.chatroom.type = :type")
-	List<Chatroom> findChatroomsOfUserAndType(User user, ChatroomType type);
-
 	@Query("SELECT participant FROM ChatroomParticipant participant WHERE participant.chatroom IN :chatrooms")
 	List<ChatroomParticipant> findParticipantsInChatrooms(List<Chatroom> chatrooms);
 
@@ -29,4 +25,22 @@ public interface ChatroomParticipantRepository extends JpaRepository<ChatroomPar
 	Long deleteByChatroom(Chatroom chatroom);
 
 	Long countByChatroomAndHasLeftIsFalse(Chatroom chatroom);
+
+	@Query("SELECT part.chatroom FROM ChatroomParticipant part " +
+			"WHERE part.user = :user " +
+			"AND part.hasLeft = false " +
+			"AND part.chatroom.type = 'DM'")
+	List<Chatroom> findDmChatroomsOfUserNotLeft(User user);
+
+	@Query("SELECT part FROM ChatroomParticipant part " +
+			"WHERE part.chatroom IN :chatrooms " +
+			"AND part.user <> :user")
+	List<ChatroomParticipant> findParticipantsInTheseChatroomsExcludingUser(List<Chatroom> chatrooms, User user);
+
+	@Query("SELECT part.chatroom FROM ChatroomParticipant part " +
+			"WHERE part.user = :user1 " +
+			"AND part.chatroom IN (SELECT part2.chatroom FROM ChatroomParticipant part2 " +
+			"WHERE part2.user = :user2 " +
+			"AND part2.chatroom.type = 'DM')")
+	Chatroom findCommonDmChatroomOfUsers(User user1, User user2);
 }

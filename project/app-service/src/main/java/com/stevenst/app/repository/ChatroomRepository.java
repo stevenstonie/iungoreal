@@ -14,11 +14,16 @@ import com.stevenst.lib.model.User;
 
 @Repository
 public interface ChatroomRepository extends JpaRepository<Chatroom, Long> {
-	@Query("SELECT distinct cp FROM ChatroomParticipant cp " +
-			"WHERE cp.chatroom.type IN :types AND cp.chatroom IN " +
+	@Query("SELECT distinct part FROM ChatroomParticipant part " +
+			"WHERE part.chatroom.type IN :types AND part.chatroom IN " +
 			"(SELECT c FROM ChatroomParticipant p " +
 			"JOIN p.chatroom c " +
 			"WHERE p.user = :user) " +
-			"AND cp.user <> :user")
-	List<ChatroomParticipant> findParticipantsWithCommonChatrooms(@Param("user") User user, @Param("types") List<ChatroomType> types);
+			"AND part.user <> :user AND part.hasLeft = false")
+	List<ChatroomParticipant> findParticipantsWithCommonChatrooms(@Param("user") User user,
+			@Param("types") List<ChatroomType> types);
+
+	@Query("SELECT participant.chatroom FROM ChatroomParticipant participant " +
+			"WHERE participant.user = :user AND participant.hasLeft = false")
+	List<Chatroom> findChatroomsOfUserNotLeft(User user);
 }

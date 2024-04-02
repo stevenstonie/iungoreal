@@ -29,7 +29,7 @@
 		<div *ngIf="isChatroomOpened">
 			<div id="right-section-header">
 				<p>{{ currentChatroom?.name }}</p>
-				<button (click)="leaveChatroom(currentChatroom?.id)">remove</button>
+				<button (click)="leaveChatroom(currentChatroom?.id)">leave chatroom</button>
 				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
 			</div>
 			<div id="right-section-body" #chatContainer (scroll)="onScroll()">

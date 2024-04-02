@@ -40,8 +40,7 @@ public class ChatServiceImpl implements ChatService {
 		User user = getUserFromDbByUsername(username);
 
 		// get all participants in chatrooms of type dm where the user is in
-		List<ChatroomParticipant> friendsWithDmChatrooms = getParticipantsWithCommonChatrooms(user,
-				List.of(ChatroomType.DM));
+		List<ChatroomParticipant> friendsWithDmChatrooms = getParticipantsInDmsOfUser(user);
 
 		// get all friends of user
 		Mono<List<String>> friendsMono = webClient.get()
@@ -66,14 +65,29 @@ public class ChatServiceImpl implements ChatService {
 		User user = getUserFromDbByUsername(username);
 		User friend = getUserFromDbByUsername(friendUsername);
 
+		// check if these two users are sharing a dm chatroom
+		Chatroom commonDmChatroom = chatroomParticipantRepository.findCommonDmChatroomOfUsers(user, friend);
+
+		// if yes then set the user participant's 'hasLeft' to false
+		if (commonDmChatroom != null) {
+			ChatroomParticipant participant = chatroomParticipantRepository
+					.findByUserAndChatroom(user, commonDmChatroom);
+			participant.setHasLeft(false);
+			chatroomParticipantRepository.save(participant);
+
+			return ResponsePayload.builder().status(200)
+					.message("User " + username + " rejoined the chatroom.").build();
+		}
+
+		// else create a new chatroom and add participants
 		Chatroom chatroom = chatroomRepository
 				.save(Chatroom.builder().name(user.getUsername() + " and " + friend.getUsername() + "'s chatroom")
 						.type(ChatroomType.DM).build());
 
 		chatroomParticipantRepository.save(
-				ChatroomParticipant.builder().user(user).chatroom(chatroom).build());
+				ChatroomParticipant.builder().user(user).chatroom(chatroom).hasLeft(false).build());
 		chatroomParticipantRepository.save(
-				ChatroomParticipant.builder().user(friend).chatroom(chatroom).build());
+				ChatroomParticipant.builder().user(friend).chatroom(chatroom).hasLeft(false).build());
 
 		return ResponsePayload.builder().status(201)
 				.message("Chatroom created for " + username + " and " + friendUsername + ".").build();
@@ -82,7 +96,7 @@ public class ChatServiceImpl implements ChatService {
 	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username) {
 		User user = getUserFromDbByUsername(username);
 
-		List<ChatroomPayload> dmChatrooms = returnChatroomOfUserByType(user, ChatroomType.DM);
+		List<ChatroomPayload> dmChatrooms = getAllDmChatroomsOfUser(user);
 
 		for (int i = 0; i < dmChatrooms.size(); i++) {
 			dmChatrooms.get(i).setParticipantsUsernames(dmChatrooms.get(i)
@@ -137,12 +151,12 @@ public class ChatServiceImpl implements ChatService {
 
 	// --------------------------------------------------------
 
-	private List<ChatroomPayload> returnChatroomOfUserByType(User user, ChatroomType type) {
-		List<Chatroom> dmChatroomsOfUser = chatroomParticipantRepository.findChatroomsOfUserAndType(user,
-				type);
+	private List<ChatroomPayload> getAllDmChatroomsOfUser(User user) {
+		// get all dms of user where user hasLeft = false
+		List<Chatroom> dmChatroomsOfUser = chatroomParticipantRepository.findDmChatroomsOfUserNotLeft(user);
 
-		List<ChatroomParticipant> participantsInCommonChatrooms = getParticipantsWithCommonChatrooms(user,
-				List.of(type));
+		// get all participants (excluding the user) that have a chatroom in common with the user
+		List<ChatroomParticipant> participantsInDms = getParticipantsInDmsOfUser(user);
 
 		List<ChatroomPayload> chatrooms = new java.util.ArrayList<>();
 
@@ -152,7 +166,7 @@ public class ChatServiceImpl implements ChatService {
 					.name(chatroomOfUser.getName())
 					.type(chatroomOfUser.getType())
 					.lastMessageTime(chatroomOfUser.getLastMessageTime())
-					.participantsUsernames(participantsInCommonChatrooms.stream()
+					.participantsUsernames(participantsInDms.stream()
 							.filter(participant -> participant.getChatroom().getId().equals(chatroomOfUser.getId()))
 							.map(participant -> participant.getUser().getUsername())
 							.toList())
@@ -163,9 +177,12 @@ public class ChatServiceImpl implements ChatService {
 		return chatrooms;
 	}
 
-	private List<ChatroomParticipant> getParticipantsWithCommonChatrooms(User user, List<ChatroomType> types) {
-		return chatroomRepository
-				.findParticipantsWithCommonChatrooms(user, types);
+	private List<ChatroomParticipant> getParticipantsInDmsOfUser(User user) {
+		// get all chatrooms of user where he hasnt left (is set to false)
+		List<Chatroom> dmsOfUserNotLeft = chatroomParticipantRepository.findDmChatroomsOfUserNotLeft(user);
+
+		// get all participants (excluding the user) that exist in those selected chatrooms
+		return chatroomParticipantRepository.findParticipantsInTheseChatroomsExcludingUser(dmsOfUserNotLeft, user);
 	}
 	// TODO: look into this
 
