@@ -1,4 +1,5 @@
 import { SafeUrl } from "@angular/platform-browser";
+import { User } from "./user";
 
 export interface ResponsePayload {
 	status: number;
@@ -34,6 +35,7 @@ export interface ChatroomPayload {
 	id: number,
 	name: string,
 	type: ChatroomType,
+	admin: User,
 	lastMessageTime: Date,
 	participantsUsernames: string[]
 }

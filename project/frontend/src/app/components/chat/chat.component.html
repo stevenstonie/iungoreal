@@ -3,10 +3,10 @@
 		<div id="left-section-header">
 			<p style="margin: 2px;">Chat Rooms</p>
 			<button (click)="toggleAddNewDmChatroom()">add new dm</button>
-			<button>create group</button>
+			<button (click)="createNewGroupChatroom()">create group</button>
 			<div class="left-sidebar" *ngIf="isLeftSidebarOpen">
 				<ng-container *ngFor="let friendUsername of friendsUsernamesWithNoChats">
-					<button (click)="createNewChatroom(friendUsername)">{{ friendUsername }}</button>
+					<button (click)="createNewDmChatroom(friendUsername)">{{ friendUsername }}</button>
 				</ng-container>
 			</div>
 		</div>

@@ -60,12 +60,26 @@ export class ChatComponent {
     });
   }
 
-  createNewChatroom(friendUsername: string): void {
-    this.chatService.createChatroom(friendUsername, this.loggedUserUsername).subscribe({
+  createNewDmChatroom(friendUsername: string): void {
+    this.chatService.createDmChatroom(friendUsername, this.loggedUserUsername).subscribe({
       next: (chatroom) => {
         console.log(chatroom);
         this.isLeftSidebarOpen = false;
         this.areDmChatroomsOpen = false;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  createNewGroupChatroom(): void {
+    this.chatService.createGroupChatroom(this.loggedUserUsername).subscribe({
+      next: (chatroom) => {
+        console.log(chatroom);
+        this.openChatroom(chatroom);
+        this.isLeftSidebarOpen = false;
+        this.areGroupChatroomsOpen = false;
       },
       error: (error) => {
         console.error(error);
