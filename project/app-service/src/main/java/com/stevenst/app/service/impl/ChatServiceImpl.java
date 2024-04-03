@@ -62,11 +62,11 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	@Override
-	public ResponsePayload createChatroom(String username, String friendUsername) {
+	public ResponsePayload createDmChatroom(String username, String friendUsername) {
 		User user = getUserFromDbByUsername(username);
 		User friend = getUserFromDbByUsername(friendUsername);
 
-		// check if these two users are sharing a dm chatroom
+		// check if these two users are already sharing a dm chatroom
 		Chatroom commonDmChatroom = chatroomParticipantRepository.findCommonDmChatroomOfUsers(user, friend);
 
 		// if yes then set the user participant's 'hasLeft' to false
@@ -92,6 +92,25 @@ public class ChatServiceImpl implements ChatService {
 
 		return ResponsePayload.builder().status(201)
 				.message("Chatroom created for " + username + " and " + friendUsername + ".").build();
+	}
+
+	public ChatroomPayload createGroupChatroom(String username) {
+		User user = getUserFromDbByUsername(username);
+
+		Chatroom chatroom = chatroomRepository
+				.save(Chatroom.builder().name(user.getUsername() + "'s group chatroom").type(ChatroomType.GROUP)
+						.adminUsername(user.getUsername()).build());
+
+		chatroomParticipantRepository.save(
+				ChatroomParticipant.builder().user(user).chatroom(chatroom).hasLeft(false).build());
+
+		return ChatroomPayload.builder()
+				.id(chatroom.getId())
+				.name(chatroom.getName())
+				.type(chatroom.getType())
+				.adminUsername(chatroom.getAdminUsername())
+				.participantsUsernames(List.of(user.getUsername()))
+				.build();
 	}
 
 	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username) {
@@ -155,7 +174,7 @@ public class ChatServiceImpl implements ChatService {
 		if (chatroom == null) {
 			throw new IgorEntityNotFoundException("Chatroom with id " + chatroomId + " not found.");
 		}
-		
+
 		chatroom.setName(chatroomName);
 		chatroomRepository.save(chatroom);
 

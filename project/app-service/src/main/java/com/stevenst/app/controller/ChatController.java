@@ -29,10 +29,15 @@ public class ChatController {
 		return ResponseEntity.ok(chatService.getFriendsWithoutDmChatrooms(username));
 	}
 
-	@PostMapping("/createChatroom")
-	public ResponseEntity<ResponsePayload> createChatroom(@RequestParam("username") String username,
+	@PostMapping("/createDmChatroom")
+	public ResponseEntity<ResponsePayload> createDmChatroom(@RequestParam("username") String username,
 			@RequestParam("friendUsername") String friendUsername) {
-		return ResponseEntity.ok(chatService.createChatroom(username, friendUsername));
+		return ResponseEntity.ok(chatService.createDmChatroom(username, friendUsername));
+	}
+
+	@PostMapping("/createGroupChatroom")
+	public ResponseEntity<ChatroomPayload> createGroupChatroom(@RequestParam("username") String username) {
+		return ResponseEntity.ok(chatService.createGroupChatroom(username));
 	}
 
 	@GetMapping("/getAllDmChatroomsOfUser")

@@ -18,6 +18,7 @@ public class ChatroomPayload {
 	private Long id;
 	private String name;
 	private ChatroomType type;
-	private LocalDateTime lastMessageTime;
+	private String adminUsername;
 	private List<String> participantsUsernames;
+	private LocalDateTime lastMessageTime;
 }

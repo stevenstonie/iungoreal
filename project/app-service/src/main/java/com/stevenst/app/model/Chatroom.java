@@ -35,7 +35,7 @@ public class Chatroom {
 	@Enumerated(EnumType.STRING)
 	private ChatroomType type;
 
-	private User admin;
+	private String adminUsername;
 
 	@Builder.Default
 	@Column(nullable = false)
