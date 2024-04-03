@@ -19,7 +19,12 @@
 				</ng-container>
 			</ng-container>
 
-			<button>groups</button>
+			<button (click)="toggleGroupChatrooms()">groups</button>
+			<ng-container *ngIf="areGroupChatroomsOpen">
+				<ng-container *ngFor="let groupChatroom of groupChatrooms">
+					<button (click)="openChatroom(groupChatroom)">{{ groupChatroom.name }}</button>
+				</ng-container>
+			</ng-container>
 
 			<button>regionals</button>
 

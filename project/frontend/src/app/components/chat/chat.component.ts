@@ -104,7 +104,18 @@ export class ChatComponent {
   }
 
   toggleGroupChatrooms() {
+    this.areGroupChatroomsOpen = !this.areGroupChatroomsOpen;
 
+    if (this.areGroupChatroomsOpen) {
+      this.chatService.getAllGroupChatroomsOfUser(this.loggedUserUsername).subscribe({
+        next: (groupChatrooms) => {
+          this.groupChatrooms = groupChatrooms;
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
   }
 
   toggleRegionalChatrooms() {
@@ -142,6 +153,8 @@ export class ChatComponent {
         console.log(response);
         this.closeChatroom();
         this.areDmChatroomsOpen = false;
+        this.areGroupChatroomsOpen = false;
+        this.areRegionalChatroomsOpen = false;
       },
       error: (error) => {
         console.error(error);
