@@ -90,7 +90,7 @@ public class ChatServiceImpl implements ChatService {
 		chatroomParticipantRepository.save(
 				ChatroomParticipant.builder().user(friend).chatroom(chatroom).hasLeft(false).build());
 
-		// same as above
+		// same as the return above
 		return createChatroomPayload(chatroom, List.of(friend.getUsername()));
 	}
 
@@ -137,20 +137,32 @@ public class ChatServiceImpl implements ChatService {
 
 	@Override
 	public ResponsePayload leaveChatroom(String username, Long chatroomId) {
-		// for dms -> when users leave mark them as left
-		// for groups -> when users leave then remove them as participants
 		User user = getUserFromDbByUsername(username);
 		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
 
 		if (chatroom.getType() == ChatroomType.DM) {
+			// for dms -> when users leave mark them as left
 			ChatroomParticipant participant = chatroomParticipantRepository.findByUserAndChatroom(user, chatroom);
 			participant.setHasLeft(true);
 			chatroomParticipantRepository.save(participant);
-		} else {
-			// TODO
+
+			// for dms -> if both users have left then remove both as participants and the chatroom as well
+			Long count = chatroomParticipantRepository.countByChatroomAndHasLeftIsFalse(chatroom);
+			if (count == 0) {
+				removeChatroomAndParticipantsAndMessages(chatroom);
+
+				return ResponsePayload.builder().status(200)
+						.message("User " + username + " left the chatroom and chatroom removed successfully.").build();
+			} else {
+				return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.")
+						.build();
+			}
 		}
 
-		// for dms -> if both users have left then remove both as participants and the chatroom as well
+		// for groups -> when users leave then remove them as participants
+		ChatroomParticipant participant = chatroomParticipantRepository.findByUserAndChatroom(user, chatroom);
+		chatroomParticipantRepository.delete(participant);
+
 		// for groups -> if the group is empty then remove the group as well
 		Long count = chatroomParticipantRepository.countByChatroomAndHasLeftIsFalse(chatroom);
 		if (count == 0) {
@@ -159,7 +171,8 @@ public class ChatServiceImpl implements ChatService {
 			return ResponsePayload.builder().status(200)
 					.message("User " + username + " left the chatroom and chatroom removed successfully.").build();
 		} else {
-			return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.").build();
+			return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.")
+					.build();
 		}
 	}
 
