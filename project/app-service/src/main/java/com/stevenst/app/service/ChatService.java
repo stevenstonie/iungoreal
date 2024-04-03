@@ -15,6 +15,8 @@ public interface ChatService {
 	
 	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username);
 
+	public List<ChatroomPayload> getAllGroupChatroomsOfUser(String username);
+
 	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage);
 
 	public List<ChatMessage> getMessagesBeforeCursorByChatroomId(Long chatroomId, Long cursor, int limit);

@@ -110,17 +110,13 @@ public class ChatServiceImpl implements ChatService {
 	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username) {
 		User user = getUserFromDbByUsername(username);
 
-		List<ChatroomPayload> dmChatrooms = getAllDmChatroomsOfUser(user);
+		return getAllDmChatroomsOfUser(user);
+	}
 
-		for (int i = 0; i < dmChatrooms.size(); i++) {
-			dmChatrooms.get(i).setParticipantsUsernames(dmChatrooms.get(i)
-					.getParticipantsUsernames().stream()
-					// exclude the user. its friend will be displayed when previewing the chat (participant[0] is used)
-					.filter(participant -> !participant.equals(user.getUsername()))
-					.toList());
-		}
+	public List<ChatroomPayload> getAllGroupChatroomsOfUser(String username) {
+		User user = getUserFromDbByUsername(username);
 
-		return dmChatrooms;
+		return getAllGroupChatroomsOfUser(user);
 	}
 
 	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage) {
@@ -234,6 +230,29 @@ public class ChatServiceImpl implements ChatService {
 		return chatrooms;
 	}
 
+	private List<ChatroomPayload> getAllGroupChatroomsOfUser(User user) {
+		List<Chatroom> groupChatroomsOfUser = chatroomParticipantRepository.findGroupChatroomsOfUser(user);
+
+		List<ChatroomPayload> chatrooms = new java.util.ArrayList<>();
+
+		for (Chatroom groupChatroomOfUser : groupChatroomsOfUser) {
+			// for each chatroom search for its participants and insert it into the payload
+			List<String> participantsUsernames = chatroomParticipantRepository.findByChatroom(groupChatroomOfUser)
+					.stream().map(participant -> participant.getUser().getUsername()).toList();
+
+			ChatroomPayload payload = ChatroomPayload.builder()
+					.id(groupChatroomOfUser.getId())
+					.name(groupChatroomOfUser.getName())
+					.type(groupChatroomOfUser.getType())
+					.lastMessageTime(groupChatroomOfUser.getLastMessageTime())
+					.participantsUsernames(participantsUsernames)
+					.build();
+			chatrooms.add(payload);
+		}
+
+		return chatrooms;
+	}
+
 	private List<ChatroomParticipant> getParticipantsInDmsOfUser(User user) {
 		// get all chatrooms of user where he hasnt left (is set to false)
 		List<Chatroom> dmsOfUserNotLeft = chatroomParticipantRepository.findDmChatroomsOfUserNotLeft(user);
@@ -241,7 +260,6 @@ public class ChatServiceImpl implements ChatService {
 		// get all participants (excluding the user) that exist in those selected chatrooms
 		return chatroomParticipantRepository.findParticipantsInTheseChatroomsExcludingUser(dmsOfUserNotLeft, user);
 	}
-	// TODO: look into this
 
 	private User getUserFromDbByUsername(String username) {
 		if (username == null || username.equals("")) {

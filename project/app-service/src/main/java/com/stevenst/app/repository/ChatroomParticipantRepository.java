@@ -20,6 +20,8 @@ public interface ChatroomParticipantRepository extends JpaRepository<ChatroomPar
 
 	ChatroomParticipant findByUserAndChatroom(User user, Chatroom chatroom);
 
+	List<ChatroomParticipant> findByChatroom(Chatroom chatroom);
+
 	@Modifying
 	@Transactional
 	Long deleteByChatroom(Chatroom chatroom);
@@ -31,6 +33,11 @@ public interface ChatroomParticipantRepository extends JpaRepository<ChatroomPar
 			"AND part.hasLeft = false " +
 			"AND part.chatroom.type = 'DM'")
 	List<Chatroom> findDmChatroomsOfUserNotLeft(User user);
+
+	@Query("SELECT part.chatroom FROM ChatroomParticipant part " +
+			"WHERE part.user = :user " +
+			"AND part.chatroom.type = 'GROUP'")
+	List<Chatroom> findGroupChatroomsOfUser(User user);
 
 	@Query("SELECT part FROM ChatroomParticipant part " +
 			"WHERE part.chatroom IN :chatrooms " +
