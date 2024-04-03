@@ -21,10 +21,10 @@ export class ChatService {
       );
   }
 
-  createDmChatroom(friendUsername: string, username: string): Observable<ResponsePayload> {
+  createDmChatroom(friendUsername: string, username: string): Observable<ChatroomPayload> {
     const params = new HttpParams().set('username', username).set('friendUsername', friendUsername);
 
-    return this.http.post<ResponsePayload>(`${this.apiUrl}/createDmChatroom`, null, { params })
+    return this.http.post<ChatroomPayload>(`${this.apiUrl}/createDmChatroom`, null, { params })
       .pipe(
         catchError(this.handleError)
       );

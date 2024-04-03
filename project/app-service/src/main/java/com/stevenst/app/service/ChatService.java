@@ -9,8 +9,10 @@ import com.stevenst.lib.payload.ResponsePayload;
 public interface ChatService {
 	public List<String> getFriendsWithoutDmChatrooms(String username);
 
-	public ResponsePayload createDmChatroom(String username, String friendUsername);
+	public ChatroomPayload createDmChatroom(String username, String friendUsername);
 
+	public ChatroomPayload createGroupChatroom(String username);
+	
 	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username);
 
 	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage);
@@ -20,6 +22,4 @@ public interface ChatService {
 	public ResponsePayload leaveChatroom(String username, Long chatroomId);
 
 	public ResponsePayload updateChatroomName(Long chatroomId, String chatroomName);
-
-	public ChatroomPayload createGroupChatroom(String username);
 }

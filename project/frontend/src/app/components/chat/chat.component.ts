@@ -64,6 +64,7 @@ export class ChatComponent {
     this.chatService.createDmChatroom(friendUsername, this.loggedUserUsername).subscribe({
       next: (chatroom) => {
         console.log(chatroom);
+        this.openChatroom(chatroom);
         this.isLeftSidebarOpen = false;
         this.areDmChatroomsOpen = false;
       },

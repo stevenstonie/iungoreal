@@ -30,7 +30,7 @@ public class ChatController {
 	}
 
 	@PostMapping("/createDmChatroom")
-	public ResponseEntity<ResponsePayload> createDmChatroom(@RequestParam("username") String username,
+	public ResponseEntity<ChatroomPayload> createDmChatroom(@RequestParam("username") String username,
 			@RequestParam("friendUsername") String friendUsername) {
 		return ResponseEntity.ok(chatService.createDmChatroom(username, friendUsername));
 	}

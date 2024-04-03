@@ -62,7 +62,7 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	@Override
-	public ResponsePayload createDmChatroom(String username, String friendUsername) {
+	public ChatroomPayload createDmChatroom(String username, String friendUsername) {
 		User user = getUserFromDbByUsername(username);
 		User friend = getUserFromDbByUsername(friendUsername);
 
@@ -76,8 +76,8 @@ public class ChatServiceImpl implements ChatService {
 			participant.setHasLeft(false);
 			chatroomParticipantRepository.save(participant);
 
-			return ResponsePayload.builder().status(200)
-					.message("User " + username + " rejoined the chatroom.").build();
+			// only return the friend as participant to use participants[0] when displaying the chatroom
+			return createChatroomPayload(commonDmChatroom, List.of(friendUsername));
 		}
 
 		// else create a new chatroom and add participants
@@ -90,8 +90,8 @@ public class ChatServiceImpl implements ChatService {
 		chatroomParticipantRepository.save(
 				ChatroomParticipant.builder().user(friend).chatroom(chatroom).hasLeft(false).build());
 
-		return ResponsePayload.builder().status(201)
-				.message("Chatroom created for " + username + " and " + friendUsername + ".").build();
+		// same as above
+		return createChatroomPayload(chatroom, List.of(friend.getUsername()));
 	}
 
 	public ChatroomPayload createGroupChatroom(String username) {
@@ -104,13 +104,7 @@ public class ChatServiceImpl implements ChatService {
 		chatroomParticipantRepository.save(
 				ChatroomParticipant.builder().user(user).chatroom(chatroom).hasLeft(false).build());
 
-		return ChatroomPayload.builder()
-				.id(chatroom.getId())
-				.name(chatroom.getName())
-				.type(chatroom.getType())
-				.adminUsername(chatroom.getAdminUsername())
-				.participantsUsernames(List.of(user.getUsername()))
-				.build();
+		return createChatroomPayload(chatroom, List.of(user.getUsername()));
 	}
 
 	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username) {
@@ -121,6 +115,7 @@ public class ChatServiceImpl implements ChatService {
 		for (int i = 0; i < dmChatrooms.size(); i++) {
 			dmChatrooms.get(i).setParticipantsUsernames(dmChatrooms.get(i)
 					.getParticipantsUsernames().stream()
+					// exclude the user. its friend will be displayed when previewing the chat (participant[0] is used)
 					.filter(participant -> !participant.equals(user.getUsername()))
 					.toList());
 		}
@@ -182,6 +177,17 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	// --------------------------------------------------------
+
+	private ChatroomPayload createChatroomPayload(Chatroom chatroom, List<String> participantsUsernames) {
+		return ChatroomPayload.builder()
+				.id(chatroom.getId())
+				.name(chatroom.getName())
+				.type(chatroom.getType())
+				.adminUsername(chatroom.getAdminUsername())
+				.lastMessageTime(chatroom.getLastMessageTime())
+				.participantsUsernames(participantsUsernames)
+				.build();
+	}
 
 	private void removeChatroomAndParticipantsAndMessages(Chatroom chatroom) {
 		chatroomParticipantRepository.deleteByChatroom(chatroom);
