@@ -33,7 +33,14 @@
 	<div id="right-section">
 		<div *ngIf="isChatroomOpened">
 			<div id="right-section-header">
-				<div (dblclick)="isEditingChatroomName = true">
+				<!-- if the chatroom is a group and the logged user is not the admin just display the chatoom name -->
+				<ng-container
+					*ngIf="(currentChatroom?.type !== 'DM') && (currentChatroom?.adminUsername !== loggedUserUsername)">
+					{{ currentChatroom?.name }}
+				</ng-container>
+				<!-- if the chatroom is either a dm or the logged user is the admin make the name editable (dm participants can both update the chatroom name) -->
+				<div *ngIf="(currentChatroom?.type === 'DM') || (currentChatroom?.adminUsername === loggedUserUsername)"
+					(dblclick)="isEditingChatroomName = true">
 					<ng-container *ngIf="!isEditingChatroomName; else editMode">
 						{{ currentChatroom?.name }}
 					</ng-container>

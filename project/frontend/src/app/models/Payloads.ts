@@ -35,7 +35,7 @@ export interface ChatroomPayload {
 	id: number,
 	name: string,
 	type: ChatroomType,
-	admin: User,
+	adminUsername: string,
 	lastMessageTime: Date,
 	participantsUsernames: string[]
 }
