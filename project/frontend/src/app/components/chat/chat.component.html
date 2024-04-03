@@ -1,7 +1,7 @@
 <div id="chat-container">
 	<div id="left-section">
 		<div id="left-section-header">
-			<p>Chat Rooms</p>
+			<p style="margin: 2px;">Chat Rooms</p>
 			<button (click)="toggleAddNewDmChatroom()">add new dm</button>
 			<button>create group</button>
 			<div class="left-sidebar" *ngIf="isLeftSidebarOpen">
@@ -9,8 +9,8 @@
 					<button (click)="createNewChatroom(friendUsername)">{{ friendUsername }}</button>
 				</ng-container>
 			</div>
-
 		</div>
+
 		<div id="left-section-body" class="vertical-list">
 			<button (click)="toggleDmChatrooms()">dms</button>
 			<ng-container *ngIf="areDmChatroomsOpen">
@@ -33,8 +33,10 @@
 						{{ currentChatroom?.name }}
 					</ng-container>
 					<ng-template #editMode>
-						<input type="text" [(ngModel)]="currentChatroom!.name" (blur)="updateChatroomName(currentChatroom!.name)" (keyup.enter)="updateChatroomName(currentChatroom!.name)" autofocus>
-					  </ng-template>
+						<input type="text" [(ngModel)]="currentChatroom!.name"
+							(blur)="updateChatroomName(currentChatroom!.name)"
+							(keyup.enter)="updateChatroomName(currentChatroom!.name)" autofocus>
+					</ng-template>
 				</div>
 				<button (click)="leaveChatroom(currentChatroom?.id)">leave chatroom</button>
 				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
