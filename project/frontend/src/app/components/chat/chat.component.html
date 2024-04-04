@@ -50,6 +50,10 @@
 							(keyup.enter)="updateChatroomName(currentChatroom!.name)" autofocus>
 					</ng-template>
 				</div>
+				<ng-container *ngIf="(currentChatroom?.type === 'GROUP') && (currentChatroom?.adminUsername === loggedUserUsername)">
+					<button (click)="toggleAddUserToGroupChatroom(currentChatroom?.id)">add user</button>
+					<button (click)="toggleRemoveUserFromGroupChatroom(currentChatroom?.id)">remove user</button>
+				</ng-container>
 				<button (click)="leaveChatroom(currentChatroom?.id)">leave chatroom</button>
 				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
 			</div>

@@ -26,6 +26,8 @@ export class ChatComponent {
 
   currentChatroom: ChatroomPayload | null = null;
   friendsUsernamesWithNoChats: string[] = [];
+  friendsUsernamesNotInChatroom: string[] = [];
+  usersInChatroom: string[] = [];
   dmChatrooms: ChatroomPayload[] = [];
   groupChatrooms: ChatroomPayload[] = [];
   regionalChatrooms: ChatroomPayload[] = [];
@@ -58,6 +60,26 @@ export class ChatComponent {
         console.error(error);
       }
     });
+  }
+
+  toggleAddUserToGroupChatroom(chatroomId: number | undefined): void {
+    this.isLeftSidebarOpen = !this.isLeftSidebarOpen;
+
+    // get all friends not in this group chatroom
+    this.chatService.getAllFriendsNotInChatroom(this.loggedUserUsername, chatroomId as number).subscribe({
+      next: (usernames) => {
+        this.friendsUsernamesNotInChatroom = usernames;
+        console.log(this.friendsUsernamesNotInChatroom);
+        
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  toggleRemoveUserFromGroupChatroom(chatroomId: number | undefined): void {
+    this.isLeftSidebarOpen = !this.isLeftSidebarOpen;
   }
 
   createNewDmChatroom(friendUsername: string): void {

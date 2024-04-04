@@ -21,6 +21,15 @@ export class ChatService {
       );
   }
 
+  getAllFriendsNotInChatroom(username: string, chatroomId: number): Observable<string[]> {
+    const params = new HttpParams().set('username', username).set('chatroomId', chatroomId.toString());
+
+    return this.http.get<string[]>(`${this.apiUrl}/getFriendsNotInChatroom`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   createDmChatroom(friendUsername: string, username: string): Observable<ChatroomPayload> {
     const params = new HttpParams().set('username', username).set('friendUsername', friendUsername);
 

@@ -187,6 +187,8 @@ public class ChatServiceImpl implements ChatService {
 
 	// --------------------------------------------------------
 
+	// TODO: refactor the code: separate the dm chatrooms code from the group and regional ones
+
 	private ChatroomPayload createChatroomPayload(Chatroom chatroom, List<String> participantsUsernames) {
 		return ChatroomPayload.builder()
 				.id(chatroom.getId())
@@ -200,8 +202,8 @@ public class ChatServiceImpl implements ChatService {
 
 	private void removeChatroomAndParticipantsAndMessages(Chatroom chatroom) {
 		chatroomParticipantRepository.deleteByChatroom(chatroom);
-		chatroomRepository.delete(chatroom);
 		chatMessageRepository.deleteByChatroomId(chatroom.getId());
+		chatroomRepository.delete(chatroom);
 	}
 
 	private List<ChatroomPayload> getAllDmChatroomsOfUser(User user) {
