@@ -44,19 +44,27 @@ public class ChatServiceImpl implements ChatService {
 		List<ChatroomParticipant> friendsWithDmChatrooms = getParticipantsInDmsOfUser(user);
 
 		// get all friends of user
-		Mono<List<String>> friendsMono = webClient.get()
-				.uri(uriBuilder -> uriBuilder.path("/api/friend/getAllFriendsUsernames")
-						.queryParam("username", username)
-						.build())
-				.retrieve()
-				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
-				});
-
-		// Convert the Mono to a List
-		List<String> allFriends = friendsMono.block();
+		List<String> allFriendsUsernames = getAllFriendsUsernamesOfUser(username);
 
 		// return the friend list filtering out those who have dm chatrooms
-		return allFriends.stream().filter(friend -> !friendsWithDmChatrooms.stream()
+		return allFriendsUsernames.stream().filter(friend -> !friendsWithDmChatrooms.stream()
+				.anyMatch(participant -> participant.getUser().getUsername().equals(friend)))
+				.toList();
+	}
+
+	@Override
+	public List<String> getFriendsNotInChatroom(String username, Long chatroomId) {
+		User user = getUserFromDbByUsername(username);
+		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
+
+		// get all friends usernames of user
+		List<String> allFriendsUsernames = getAllFriendsUsernamesOfUser(username);
+
+		// get all participants in chatroom
+		List<ChatroomParticipant> chatroomParticipants = chatroomParticipantRepository.findByChatroom(chatroom);
+
+		// return the friend list filtering out those who are in the chatroom
+		return allFriendsUsernames.stream().filter(friend -> !chatroomParticipants.stream()
 				.anyMatch(participant -> participant.getUser().getUsername().equals(friend)))
 				.toList();
 	}
@@ -187,6 +195,20 @@ public class ChatServiceImpl implements ChatService {
 
 	// --------------------------------------------------------
 
+	private List<String> getAllFriendsUsernamesOfUser(String username) {
+		// get all friends of user
+		Mono<List<String>> friendsUsernamesMono = webClient.get()
+				.uri(uriBuilder -> uriBuilder.path("/api/friend/getAllFriendsUsernames")
+						.queryParam("username", username)
+						.build())
+				.retrieve()
+				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
+				});
+
+		// Convert the Mono to a List and return it
+		return friendsUsernamesMono.block();
+	}
+
 	// TODO: refactor the code: separate the dm chatrooms code from the group and regional ones
 
 	private ChatroomPayload createChatroomPayload(Chatroom chatroom, List<String> participantsUsernames) {
@@ -246,6 +268,7 @@ public class ChatServiceImpl implements ChatService {
 					.id(groupChatroomOfUser.getId())
 					.name(groupChatroomOfUser.getName())
 					.type(groupChatroomOfUser.getType())
+					.adminUsername(groupChatroomOfUser.getAdminUsername())
 					.lastMessageTime(groupChatroomOfUser.getLastMessageTime())
 					.participantsUsernames(participantsUsernames)
 					.build();

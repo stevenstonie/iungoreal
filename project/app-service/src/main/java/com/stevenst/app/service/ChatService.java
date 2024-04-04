@@ -9,6 +9,8 @@ import com.stevenst.lib.payload.ResponsePayload;
 public interface ChatService {
 	public List<String> getFriendsWithoutDmChatrooms(String username);
 
+	public List<String> getFriendsNotInChatroom(String username, Long chatroomId);
+
 	public ChatroomPayload createDmChatroom(String username, String friendUsername);
 
 	public ChatroomPayload createGroupChatroom(String username);

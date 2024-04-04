@@ -29,6 +29,11 @@ public class ChatController {
 		return ResponseEntity.ok(chatService.getFriendsWithoutDmChatrooms(username));
 	}
 
+	@GetMapping("/getFriendsNotInChatroom")
+	public ResponseEntity<List<String>> getFriendsNotInChatroom(@RequestParam("username") String username, @RequestParam("chatroomId") Long chatroomId) {
+		return ResponseEntity.ok(chatService.getFriendsNotInChatroom(username, chatroomId));
+	}
+
 	@PostMapping("/createDmChatroom")
 	public ResponseEntity<ChatroomPayload> createDmChatroom(@RequestParam("username") String username,
 			@RequestParam("friendUsername") String friendUsername) {
