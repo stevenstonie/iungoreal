@@ -30,6 +30,15 @@ export class ChatService {
       );
   }
 
+  getAllUsersInChatroom(chatroomId: number): Observable<string[]> {
+    const params = new HttpParams().set('chatroomId', chatroomId.toString());
+
+    return this.http.get<string[]>(`${this.apiUrl}/getAllUsersUsernamesInChatroom`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   getAllDmChatroomsOfUser(username: string): Observable<ChatroomPayload[]> {
     const params = new HttpParams().set('username', username);
 

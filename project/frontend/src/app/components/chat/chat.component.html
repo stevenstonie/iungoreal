@@ -5,9 +5,14 @@
 			<button (click)="toggleAddNewDmChatroom()">add new dm</button>
 			<button (click)="createNewGroupChatroom()">create group</button>
 			<div class="left-sidebar" *ngIf="this.leftSidebarState.isLeftSidebarOpen">
+				<button (click)="this.leftSidebarState.isLeftSidebarOpen = false"><i
+						class="close-button material-icons">close</i></button>
 				<ng-container *ngFor="let username of usernamesAppearingInLeftSidebar">
-					<button *ngIf="this.leftSidebarState.addingDmChatroom" (click)="createNewDmChatroom(username)">{{ username }}</button>
-					<button *ngIf="this.leftSidebarState.addingUserToGroup" (click)="addUserToGroup(username)">{{ username }}</button>
+					<button *ngIf="this.leftSidebarState.addingDmChatroom" (click)="createNewDmChatroom(username)">{{
+						username }}</button>
+					<button *ngIf="this.leftSidebarState.addingUserToGroup" (click)="addUserToGroup(username)">{{
+						username }}</button>
+					<button *ngIf="this.leftSidebarState.displayingGroupMembers">{{username}}</button>
 				</ng-container>
 			</div>
 		</div>
@@ -51,9 +56,12 @@
 							(keyup.enter)="updateChatroomName(currentChatroom!.name)" autofocus>
 					</ng-template>
 				</div>
-				<ng-container *ngIf="(currentChatroom?.type === 'GROUP') && (currentChatroom?.adminUsername === loggedUserUsername)">
-					<button (click)="toggleAddUserToGroupChatroom(currentChatroom?.id)">add user</button>
-					<button (click)="toggleRemoveUserFromGroupChatroom(currentChatroom?.id)">remove user</button>
+				<ng-container *ngIf="(currentChatroom?.type === 'GROUP')">
+					<button (click)="toggleDisplayAllMembers()">members</button>
+					<ng-container *ngIf="currentChatroom?.adminUsername === loggedUserUsername">
+						<button (click)="toggleAddUserToGroupChatroom(currentChatroom?.id)">add user</button>
+						<button (click)="toggleRemoveUserFromGroupChatroom(currentChatroom?.id)">remove user</button>
+					</ng-container>
 				</ng-container>
 				<button (click)="leaveChatroom(currentChatroom?.id)">leave chatroom</button>
 				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>

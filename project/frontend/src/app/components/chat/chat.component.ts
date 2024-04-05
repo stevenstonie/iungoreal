@@ -26,6 +26,7 @@ export class ChatComponent {
     isLeftSidebarOpen: false,
     addingDmChatroom: false,
     addingUserToGroup: false,
+    displayingGroupMembers: false,
     removingUserFromGroup: false
   };
 
@@ -75,6 +76,22 @@ export class ChatComponent {
 
     // get all friends not in this group chatroom
     this.chatService.getAllFriendsNotInChatroom(this.loggedUserUsername, chatroomId as number).subscribe({
+      next: (usernames) => {
+        this.usernamesAppearingInLeftSidebar = usernames;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  toggleDisplayAllMembers(): void {
+    this.setStatesToFalseInLeftSidebar();
+    this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
+    this.leftSidebarState.displayingGroupMembers = true;
+
+    // get all users in this chatroom
+    this.chatService.getAllUsersInChatroom(this.currentChatroom?.id as number).subscribe({
       next: (usernames) => {
         this.usernamesAppearingInLeftSidebar = usernames;
       },
@@ -266,6 +283,7 @@ export class ChatComponent {
   setStatesToFalseInLeftSidebar(): void {
     this.leftSidebarState.addingDmChatroom = false;
     this.leftSidebarState.addingUserToGroup = false;
+    this.leftSidebarState.displayingGroupMembers = false;
     this.leftSidebarState.removingUserFromGroup = false;
   }
 
