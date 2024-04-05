@@ -91,6 +91,7 @@ public class ChatController {
 	public ResponseEntity<ResponsePayload> removeMemberFromChatroom(@RequestParam("username") String username,
 			@RequestParam("chatroomId") Long chatroomId, @RequestParam("usernameOfMemberToRemove") String usernameOfMemberToRemove) {
 		return ResponseEntity.ok(chatService.removeMemberFromChatroom(username, chatroomId, usernameOfMemberToRemove));
+		// TODO: make it for groups only
 	}
 
 }

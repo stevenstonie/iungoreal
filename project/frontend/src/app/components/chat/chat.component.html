@@ -12,7 +12,8 @@
 						username }}</button>
 					<button *ngIf="this.leftSidebarState.addingUserToGroup" (click)="addUserToGroup(username)">{{
 						username }}</button>
-					<button *ngIf="this.leftSidebarState.displayingGroupMembers">{{username}}</button>
+					<button *ngIf="this.leftSidebarState.displayingGroupMembers">{{ username }}</button>
+					<button *ngIf="this.leftSidebarState.removingUserFromGroup" (click)="removeMemberFromGroup(username)">{{ username }}</button>
 				</ng-container>
 			</div>
 		</div>

@@ -114,6 +114,15 @@ export class ChatService {
       );
   }
 
+  removeMemberFromGroupChatroom(username: string, chatroomId: number, usernameOfUserToRemove: string): Observable<ResponsePayload> {
+    const params = new HttpParams().set('chatroomId', chatroomId.toString()).set('username', username).set('usernameOfMemberToRemove', usernameOfUserToRemove);
+
+    return this.http.delete<ResponsePayload>(`${this.apiUrl}/removeMemberFromChatroom`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   // -----------------------------------------------------------------------------
 
   private handleError(error: HttpErrorResponse) {

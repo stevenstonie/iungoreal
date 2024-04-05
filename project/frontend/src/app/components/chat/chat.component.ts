@@ -102,7 +102,19 @@ export class ChatComponent {
   }
 
   toggleRemoveUserFromGroupChatroom(chatroomId: number | undefined): void {
-    //
+    this.setStatesToFalseInLeftSidebar();
+    this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
+    this.leftSidebarState.removingUserFromGroup = true;
+
+    // get all users in this chatroom to remove
+    this.chatService.getAllMembersUsernamesInChatroom(this.currentChatroom?.id as number).subscribe({
+      next: (usernames) => {
+        this.usernamesAppearingInLeftSidebar = usernames;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   createNewDmChatroom(friendUsername: string): void {
@@ -199,6 +211,22 @@ export class ChatComponent {
     this.receivedMessages = [];
   }
 
+  updateChatroomName(name: string) {
+    if (name.trim() !== '') {
+      if (this.currentChatroom) this.currentChatroom.name = name;
+    }
+    this.isEditingChatroomName = false;
+
+    this.chatService.updateChatroomName(this.currentChatroom!.id, name).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
   leaveChatroom(chatroomId: number | undefined): void {
     if (!chatroomId) {
       console.error("chatroom is undefined!!!!!!!!!!!!");
@@ -219,15 +247,11 @@ export class ChatComponent {
     });
   }
 
-  updateChatroomName(name: string) {
-    if (name.trim() !== '') {
-      if (this.currentChatroom) this.currentChatroom.name = name;
-    }
-    this.isEditingChatroomName = false;
-
-    this.chatService.updateChatroomName(this.currentChatroom!.id, name).subscribe({
+  removeMemberFromGroup(usernameOfUserToRemove: string): void {
+    this.chatService.removeMemberFromGroupChatroom(this.loggedUserUsername, this.currentChatroom?.id as number, usernameOfUserToRemove).subscribe({
       next: (response) => {
         console.log(response);
+        this.leftSidebarState.isLeftSidebarOpen = false;
       },
       error: (error) => {
         console.error(error);

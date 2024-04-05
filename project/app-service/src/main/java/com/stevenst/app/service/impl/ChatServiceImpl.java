@@ -246,6 +246,9 @@ public class ChatServiceImpl implements ChatService {
 			throw new RuntimeException(
 					"User " + username + " is not the admin of chatroom with id " + chatroomId + "."); // TODO: add a custom IgorUnauthorizedOperationException
 		}
+		if (username.equals(usernameOfMemberToRemove)) {
+			throw new RuntimeException("Cannot remove self from chatroom.");
+		}
 
 		ChatroomParticipant participant = chatroomParticipantRepository
 				.findByUserAndChatroom(userToRemove, chatroom);
