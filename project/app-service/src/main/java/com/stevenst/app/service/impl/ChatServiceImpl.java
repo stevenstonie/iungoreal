@@ -93,6 +93,15 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	@Override
+	public List<String> getAllUsersUsernamesInChatroom(Long chatroomId) {
+		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
+		
+		List<ChatroomParticipant> chatroomParticipants = chatroomParticipantRepository.findByChatroom(chatroom);
+		
+		return chatroomParticipants.stream().map(participant -> participant.getUser().getUsername()).toList();
+	}
+
+	@Override
 	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage) {
 		chatMessageRepository.save(chatMessage);
 
@@ -211,6 +220,8 @@ public class ChatServiceImpl implements ChatService {
 		// for groups -> when users leave then remove them as participants
 		ChatroomParticipant participant = chatroomParticipantRepository.findByUserAndChatroom(user, chatroom);
 		chatroomParticipantRepository.delete(participant);
+
+		// TODO: assign a new admin to the oldest member
 
 		// for groups -> if the group is empty then remove the group as well
 		Long count = chatroomParticipantRepository.countByChatroomAndHasLeftIsFalse(chatroom);

@@ -52,6 +52,11 @@ public class ChatController {
 		return ResponseEntity.ok(chatService.getMessagesBeforeCursorByChatroomId(chatroomId, cursor, limit));
 	}
 
+	@GetMapping("/getAllUsersUsernamesInChatroom")
+	public ResponseEntity<List<String>> getAllUsersUsernamesInChatroom(@RequestParam("chatroomId") Long chatroomId) {
+		return ResponseEntity.ok(chatService.getAllUsersUsernamesInChatroom(chatroomId));
+	}
+
 	@PostMapping("/createDmChatroom")
 	public ResponseEntity<ChatroomPayload> createDmChatroom(@RequestParam("username") String username,
 			@RequestParam("friendUsername") String friendUsername) {
