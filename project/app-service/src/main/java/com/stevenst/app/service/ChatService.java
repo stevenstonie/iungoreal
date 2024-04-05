@@ -23,7 +23,7 @@ public interface ChatService {
 	
 	public ChatroomPayload createGroupChatroom(String username);
 
-	public ResponsePayload addUserToGroupChatroom(String username, Long chatroomId, String friendUsername);
+	public ResponsePayload addUserToGroupChatroom(String username, Long chatroomId, String usernameOfUserToAdd);
 
 	public ResponsePayload updateChatroomName(Long chatroomId, String chatroomName);
 	

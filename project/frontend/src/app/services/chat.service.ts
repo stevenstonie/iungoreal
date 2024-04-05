@@ -30,24 +30,6 @@ export class ChatService {
       );
   }
 
-  createDmChatroom(friendUsername: string, username: string): Observable<ChatroomPayload> {
-    const params = new HttpParams().set('username', username).set('friendUsername', friendUsername);
-
-    return this.http.post<ChatroomPayload>(`${this.apiUrl}/createDmChatroom`, null, { params })
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
-  createGroupChatroom(username: string): Observable<ChatroomPayload> {
-    const params = new HttpParams().set('username', username);
-
-    return this.http.post<ChatroomPayload>(`${this.apiUrl}/createGroupChatroom`, null, { params })
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
   getAllDmChatroomsOfUser(username: string): Observable<ChatroomPayload[]> {
     const params = new HttpParams().set('username', username);
 
@@ -78,10 +60,28 @@ export class ChatService {
       );
   }
 
-  leaveChatroom(username: string, chatroomId: number): Observable<ResponsePayload> {
-    const params = new HttpParams().set('chatroomId', chatroomId.toString()).set('username', username);
+  createDmChatroom(friendUsername: string, username: string): Observable<ChatroomPayload> {
+    const params = new HttpParams().set('username', username).set('friendUsername', friendUsername);
 
-    return this.http.delete<ResponsePayload>(`${this.apiUrl}/leaveChatroom`, { params })
+    return this.http.post<ChatroomPayload>(`${this.apiUrl}/createDmChatroom`, null, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  createGroupChatroom(username: string): Observable<ChatroomPayload> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.post<ChatroomPayload>(`${this.apiUrl}/createGroupChatroom`, null, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  addUserToGroupChatroom(username: string, chatroomId: number, usernameOfUserToAdd: string): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('chatroomId', chatroomId.toString()).set('usernameOfUserToAdd', usernameOfUserToAdd);
+
+    return this.http.post<ResponsePayload>(`${this.apiUrl}/addUserToGroupChatroom`, null, { params })
       .pipe(
         catchError(this.handleError)
       );
@@ -91,6 +91,15 @@ export class ChatService {
     const params = new HttpParams().set('chatroomId', chatroomId.toString()).set('chatroomName', chatroomName);
 
     return this.http.put<ResponsePayload>(`${this.apiUrl}/updateChatroomName`, params)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  leaveChatroom(username: string, chatroomId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('chatroomId', chatroomId.toString()).set('username', username);
+
+    return this.http.delete<ResponsePayload>(`${this.apiUrl}/leaveChatroom`, { params })
       .pipe(
         catchError(this.handleError)
       );

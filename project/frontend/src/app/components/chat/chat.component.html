@@ -4,9 +4,10 @@
 			<p style="margin: 2px;">Chat Rooms</p>
 			<button (click)="toggleAddNewDmChatroom()">add new dm</button>
 			<button (click)="createNewGroupChatroom()">create group</button>
-			<div class="left-sidebar" *ngIf="isLeftSidebarOpen">
-				<ng-container *ngFor="let friendUsername of friendsUsernamesWithNoChats">
-					<button (click)="createNewDmChatroom(friendUsername)">{{ friendUsername }}</button>
+			<div class="left-sidebar" *ngIf="this.leftSidebarState.isLeftSidebarOpen">
+				<ng-container *ngFor="let username of usernamesAppearingInLeftSidebar">
+					<button *ngIf="this.leftSidebarState.addingDmChatroom" (click)="createNewDmChatroom(username)">{{ username }}</button>
+					<button *ngIf="this.leftSidebarState.addingUserToGroup" (click)="addUserToGroup(username)">{{ username }}</button>
 				</ng-container>
 			</div>
 		</div>

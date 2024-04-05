@@ -65,8 +65,9 @@ public class ChatController {
 
 	@PostMapping("/addUserToGroupChatroom")
 	public ResponseEntity<ResponsePayload> addUserToGroupChatroom(@RequestParam("username") String username,
-			@RequestParam("chatroomId") Long chatroomId, @RequestParam("friendUsername") String friendUsername) {
-		return ResponseEntity.ok(chatService.addUserToGroupChatroom(username, chatroomId, friendUsername));
+			@RequestParam("chatroomId") Long chatroomId,
+			@RequestParam("usernameOfUserToAdd") String usernameOfUserToAdd) {
+		return ResponseEntity.ok(chatService.addUserToGroupChatroom(username, chatroomId, usernameOfUserToAdd));
 	}
 
 	@PutMapping("/updateChatroomName")

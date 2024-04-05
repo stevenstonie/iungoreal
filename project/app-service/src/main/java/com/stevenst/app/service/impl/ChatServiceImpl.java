@@ -147,27 +147,28 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	@Override
-	public ResponsePayload addUserToGroupChatroom(String username, Long chatroomid, String friendUsername) {
+	public ResponsePayload addUserToGroupChatroom(String username, Long chatroomid, String usernameOfUserToAdd) {
 		User user = getUserFromDbByUsername(username);
 		Chatroom chatroom = chatroomRepository.findById(chatroomid).get();
-		User friend = getUserFromDbByUsername(friendUsername);
+		User userToAdd = getUserFromDbByUsername(usernameOfUserToAdd);
 
 		if (!user.getUsername().equals(chatroom.getAdminUsername())) {
 			throw new RuntimeException(
 					"User " + username + " is not the admin of chatroom with id " + chatroomid + "."); // TODO: add a custom IgorUnauthorizedOperationException
 		}
 
-		ChatroomParticipant friendParticipant = chatroomParticipantRepository.findByUserAndChatroom(friend, chatroom);
+		ChatroomParticipant userParticipant = chatroomParticipantRepository.findByUserAndChatroom(userToAdd, chatroom);
 
-		if (friendParticipant != null) {
+		if (userParticipant != null) {
 			throw new IgorEntityAlreadyExistsException(
-					"User " + friendUsername + " is already in chatroom with id " + chatroomid + ".");
+					"User " + usernameOfUserToAdd + " is already in chatroom with id " + chatroomid + ".");
 		}
 
 		chatroomParticipantRepository
-				.save(ChatroomParticipant.builder().user(friend).chatroom(chatroom).hasLeft(false).build());
+				.save(ChatroomParticipant.builder().user(userToAdd).chatroom(chatroom).hasLeft(false).build());
 
-		return ResponsePayload.builder().status(200).message("User " + friendUsername + " added to chatroom successfully.").build();
+		return ResponsePayload.builder().status(201)
+				.message("User " + usernameOfUserToAdd + " added to chatroom successfully.").build();
 	}
 
 	@Override

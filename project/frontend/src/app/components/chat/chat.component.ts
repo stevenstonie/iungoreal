@@ -16,17 +16,21 @@ export class ChatComponent {
   loggedUserUsername: string = localStorage.getItem('username') ?? '';
   @ViewChild('chatContainer') chatContainer!: ElementRef;
 
-  isLeftSidebarOpen: boolean = false;
   areDmChatroomsOpen: boolean = false;
   areGroupChatroomsOpen: boolean = false;
   areRegionalChatroomsOpen: boolean = false;
   isChatroomOpened: boolean = false;
   loadingMessages: boolean = false;
   isEditingChatroomName: boolean = false;
+  leftSidebarState = {
+    isLeftSidebarOpen: false,
+    addingDmChatroom: false,
+    addingUserToGroup: false,
+    removingUserFromGroup: false
+  };
 
   currentChatroom: ChatroomPayload | null = null;
-  friendsUsernamesWithNoChats: string[] = [];
-  friendsUsernamesNotInChatroom: string[] = [];
+  usernamesAppearingInLeftSidebar: string[] = [];
   usersInChatroom: string[] = [];
   dmChatrooms: ChatroomPayload[] = [];
   groupChatrooms: ChatroomPayload[] = [];
@@ -49,12 +53,14 @@ export class ChatComponent {
   // chatroom --------------------------------------------------------------------
 
   toggleAddNewDmChatroom(): void {
-    this.isLeftSidebarOpen = !this.isLeftSidebarOpen;
+    this.setStatesToFalseInLeftSidebar();
+    this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
+    this.leftSidebarState.addingDmChatroom = true;
 
     // fetch users that dont have a chatroom with the loggedUser
     this.chatService.getAllFriendsWithNoDmChats(this.loggedUserUsername).subscribe({
       next: (usernames) => {
-        this.friendsUsernamesWithNoChats = usernames;
+        this.usernamesAppearingInLeftSidebar = usernames;
       },
       error: (error) => {
         console.error(error);
@@ -63,14 +69,14 @@ export class ChatComponent {
   }
 
   toggleAddUserToGroupChatroom(chatroomId: number | undefined): void {
-    this.isLeftSidebarOpen = !this.isLeftSidebarOpen;
+    this.setStatesToFalseInLeftSidebar();
+    this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
+    this.leftSidebarState.addingUserToGroup = true;
 
     // get all friends not in this group chatroom
     this.chatService.getAllFriendsNotInChatroom(this.loggedUserUsername, chatroomId as number).subscribe({
       next: (usernames) => {
-        this.friendsUsernamesNotInChatroom = usernames;
-        console.log(this.friendsUsernamesNotInChatroom);
-        
+        this.usernamesAppearingInLeftSidebar = usernames;
       },
       error: (error) => {
         console.error(error);
@@ -79,7 +85,7 @@ export class ChatComponent {
   }
 
   toggleRemoveUserFromGroupChatroom(chatroomId: number | undefined): void {
-    this.isLeftSidebarOpen = !this.isLeftSidebarOpen;
+    //
   }
 
   createNewDmChatroom(friendUsername: string): void {
@@ -87,7 +93,7 @@ export class ChatComponent {
       next: (chatroom) => {
         console.log(chatroom);
         this.openChatroom(chatroom);
-        this.isLeftSidebarOpen = false;
+        this.leftSidebarState.isLeftSidebarOpen = false;
         this.areDmChatroomsOpen = false;
       },
       error: (error) => {
@@ -101,7 +107,19 @@ export class ChatComponent {
       next: (chatroom) => {
         console.log(chatroom);
         this.openChatroom(chatroom);
-        this.isLeftSidebarOpen = false;
+        this.areGroupChatroomsOpen = false;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  addUserToGroup(usernameOfUserToAdd: string): void {
+    this.chatService.addUserToGroupChatroom(this.loggedUserUsername, this.currentChatroom?.id as number, usernameOfUserToAdd).subscribe({
+      next: (response) => {
+        console.log(response.status + ' ' + response.message);
+        this.leftSidebarState.isLeftSidebarOpen = false;
         this.areGroupChatroomsOpen = false;
       },
       error: (error) => {
@@ -244,6 +262,12 @@ export class ChatComponent {
   }
 
   // ^^^ --------------------------------
+
+  setStatesToFalseInLeftSidebar(): void {
+    this.leftSidebarState.addingDmChatroom = false;
+    this.leftSidebarState.addingUserToGroup = false;
+    this.leftSidebarState.removingUserFromGroup = false;
+  }
 
   onScroll(): void {
     const chatContainerElement = this.chatContainer.nativeElement;
