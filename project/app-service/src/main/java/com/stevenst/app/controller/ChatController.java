@@ -30,19 +30,9 @@ public class ChatController {
 	}
 
 	@GetMapping("/getFriendsNotInChatroom")
-	public ResponseEntity<List<String>> getFriendsNotInChatroom(@RequestParam("username") String username, @RequestParam("chatroomId") Long chatroomId) {
+	public ResponseEntity<List<String>> getFriendsNotInChatroom(@RequestParam("username") String username,
+			@RequestParam("chatroomId") Long chatroomId) {
 		return ResponseEntity.ok(chatService.getFriendsNotInChatroom(username, chatroomId));
-	}
-
-	@PostMapping("/createDmChatroom")
-	public ResponseEntity<ChatroomPayload> createDmChatroom(@RequestParam("username") String username,
-			@RequestParam("friendUsername") String friendUsername) {
-		return ResponseEntity.ok(chatService.createDmChatroom(username, friendUsername));
-	}
-
-	@PostMapping("/createGroupChatroom")
-	public ResponseEntity<ChatroomPayload> createGroupChatroom(@RequestParam("username") String username) {
-		return ResponseEntity.ok(chatService.createGroupChatroom(username));
 	}
 
 	@GetMapping("/getAllDmChatroomsOfUser")
@@ -62,10 +52,21 @@ public class ChatController {
 		return ResponseEntity.ok(chatService.getMessagesBeforeCursorByChatroomId(chatroomId, cursor, limit));
 	}
 
-	@DeleteMapping("/leaveChatroom")
-	public ResponseEntity<ResponsePayload> leaveChatroom(@RequestParam("username") String username,
-			@RequestParam("chatroomId") Long chatroomId) {
-		return ResponseEntity.ok(chatService.leaveChatroom(username, chatroomId));
+	@PostMapping("/createDmChatroom")
+	public ResponseEntity<ChatroomPayload> createDmChatroom(@RequestParam("username") String username,
+			@RequestParam("friendUsername") String friendUsername) {
+		return ResponseEntity.ok(chatService.createDmChatroom(username, friendUsername));
+	}
+
+	@PostMapping("/createGroupChatroom")
+	public ResponseEntity<ChatroomPayload> createGroupChatroom(@RequestParam("username") String username) {
+		return ResponseEntity.ok(chatService.createGroupChatroom(username));
+	}
+
+	@PostMapping("/addUserToGroupChatroom")
+	public ResponseEntity<ResponsePayload> addUserToGroupChatroom(@RequestParam("username") String username,
+			@RequestParam("chatroomId") Long chatroomId, @RequestParam("friendUsername") String friendUsername) {
+		return ResponseEntity.ok(chatService.addUserToGroupChatroom(username, chatroomId, friendUsername));
 	}
 
 	@PutMapping("/updateChatroomName")
@@ -73,4 +74,11 @@ public class ChatController {
 			@RequestParam("chatroomName") String chatroomName) {
 		return ResponseEntity.ok(chatService.updateChatroomName(chatroomId, chatroomName));
 	}
+
+	@DeleteMapping("/leaveChatroom")
+	public ResponseEntity<ResponsePayload> leaveChatroom(@RequestParam("username") String username,
+			@RequestParam("chatroomId") Long chatroomId) {
+		return ResponseEntity.ok(chatService.leaveChatroom(username, chatroomId));
+	}
+
 }

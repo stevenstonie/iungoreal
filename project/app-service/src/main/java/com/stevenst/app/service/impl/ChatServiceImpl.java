@@ -18,6 +18,7 @@ import com.stevenst.app.repository.ChatroomParticipantRepository;
 import com.stevenst.app.repository.ChatroomRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.ChatService;
+import com.stevenst.lib.exception.IgorEntityAlreadyExistsException;
 import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorNullValueException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
@@ -37,6 +38,14 @@ public class ChatServiceImpl implements ChatService {
 	private final WebClient webClient;
 	private static final String USER_NOT_FOUND = "User not found";
 
+	@Override
+	public List<ChatMessage> getMessagesBeforeCursorByChatroomId(Long chatroomId, Long cursor, int limit) {
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("id").descending());
+
+		return chatMessageRepository.findMessagesBeforeCursorByChatroomId(chatroomId, cursor, pageRequest);
+	}
+
+	@Override
 	public List<String> getFriendsWithoutDmChatrooms(String username) {
 		User user = getUserFromDbByUsername(username);
 
@@ -67,6 +76,27 @@ public class ChatServiceImpl implements ChatService {
 		return allFriendsUsernames.stream().filter(friend -> !chatroomParticipants.stream()
 				.anyMatch(participant -> participant.getUser().getUsername().equals(friend)))
 				.toList();
+	}
+
+	@Override
+	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username) {
+		User user = getUserFromDbByUsername(username);
+
+		return getAllDmChatroomsOfUser(user);
+	}
+
+	@Override
+	public List<ChatroomPayload> getAllGroupChatroomsOfUser(String username) {
+		User user = getUserFromDbByUsername(username);
+
+		return getAllGroupChatroomsOfUser(user);
+	}
+
+	@Override
+	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage) {
+		chatMessageRepository.save(chatMessage);
+
+		return ResponsePayload.builder().status(201).message("Message inserted successfully.").build();
 	}
 
 	@Override
@@ -102,6 +132,7 @@ public class ChatServiceImpl implements ChatService {
 		return createChatroomPayload(chatroom, List.of(friend.getUsername()));
 	}
 
+	@Override
 	public ChatroomPayload createGroupChatroom(String username) {
 		User user = getUserFromDbByUsername(username);
 
@@ -115,28 +146,41 @@ public class ChatServiceImpl implements ChatService {
 		return createChatroomPayload(chatroom, List.of(user.getUsername()));
 	}
 
-	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username) {
+	@Override
+	public ResponsePayload addUserToGroupChatroom(String username, Long chatroomid, String friendUsername) {
 		User user = getUserFromDbByUsername(username);
+		Chatroom chatroom = chatroomRepository.findById(chatroomid).get();
+		User friend = getUserFromDbByUsername(friendUsername);
 
-		return getAllDmChatroomsOfUser(user);
+		if (!user.getUsername().equals(chatroom.getAdminUsername())) {
+			throw new RuntimeException(
+					"User " + username + " is not the admin of chatroom with id " + chatroomid + "."); // TODO: add a custom IgorUnauthorizedOperationException
+		}
+
+		ChatroomParticipant friendParticipant = chatroomParticipantRepository.findByUserAndChatroom(friend, chatroom);
+
+		if (friendParticipant != null) {
+			throw new IgorEntityAlreadyExistsException(
+					"User " + friendUsername + " is already in chatroom with id " + chatroomid + ".");
+		}
+
+		chatroomParticipantRepository
+				.save(ChatroomParticipant.builder().user(friend).chatroom(chatroom).hasLeft(false).build());
+
+		return ResponsePayload.builder().status(200).message("User " + friendUsername + " added to chatroom successfully.").build();
 	}
 
-	public List<ChatroomPayload> getAllGroupChatroomsOfUser(String username) {
-		User user = getUserFromDbByUsername(username);
+	@Override
+	public ResponsePayload updateChatroomName(Long chatroomId, String chatroomName) {
+		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
+		if (chatroom == null) {
+			throw new IgorEntityNotFoundException("Chatroom with id " + chatroomId + " not found.");
+		}
 
-		return getAllGroupChatroomsOfUser(user);
-	}
+		chatroom.setName(chatroomName);
+		chatroomRepository.save(chatroom);
 
-	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage) {
-		chatMessageRepository.save(chatMessage);
-
-		return ResponsePayload.builder().status(201).message("Message inserted successfully.").build();
-	}
-
-	public List<ChatMessage> getMessagesBeforeCursorByChatroomId(Long chatroomId, Long cursor, int limit) {
-		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("id").descending());
-
-		return chatMessageRepository.findMessagesBeforeCursorByChatroomId(chatroomId, cursor, pageRequest);
+		return ResponsePayload.builder().status(200).message("Chatroom name updated successfully.").build();
 	}
 
 	@Override
@@ -178,19 +222,6 @@ public class ChatServiceImpl implements ChatService {
 			return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.")
 					.build();
 		}
-	}
-
-	@Override
-	public ResponsePayload updateChatroomName(Long chatroomId, String chatroomName) {
-		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
-		if (chatroom == null) {
-			throw new IgorEntityNotFoundException("Chatroom with id " + chatroomId + " not found.");
-		}
-
-		chatroom.setName(chatroomName);
-		chatroomRepository.save(chatroom);
-
-		return ResponsePayload.builder().status(200).message("Chatroom name updated successfully.").build();
 	}
 
 	// --------------------------------------------------------

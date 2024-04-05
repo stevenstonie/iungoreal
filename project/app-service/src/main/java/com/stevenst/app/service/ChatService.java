@@ -11,19 +11,21 @@ public interface ChatService {
 
 	public List<String> getFriendsNotInChatroom(String username, Long chatroomId);
 
-	public ChatroomPayload createDmChatroom(String username, String friendUsername);
-
-	public ChatroomPayload createGroupChatroom(String username);
-	
 	public List<ChatroomPayload> getAllDmChatroomsOfUser(String username);
 
 	public List<ChatroomPayload> getAllGroupChatroomsOfUser(String username);
 
-	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage);
-
 	public List<ChatMessage> getMessagesBeforeCursorByChatroomId(Long chatroomId, Long cursor, int limit);
 
-	public ResponsePayload leaveChatroom(String username, Long chatroomId);
+	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage);
+	
+	public ChatroomPayload createDmChatroom(String username, String friendUsername);
+	
+	public ChatroomPayload createGroupChatroom(String username);
+
+	public ResponsePayload addUserToGroupChatroom(String username, Long chatroomId, String friendUsername);
 
 	public ResponsePayload updateChatroomName(Long chatroomId, String chatroomName);
+	
+	public ResponsePayload leaveChatroom(String username, Long chatroomId);
 }
