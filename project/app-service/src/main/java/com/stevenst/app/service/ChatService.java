@@ -17,7 +17,7 @@ public interface ChatService {
 
 	public List<ChatMessage> getMessagesBeforeCursorByChatroomId(Long chatroomId, Long cursor, int limit);
 
-	public List<String> getAllUsersUsernamesInChatroom(Long chatroomId);
+	public List<String> getAllMembersUsernamesInChatroom(Long chatroomId);
 
 	public ResponsePayload insertMessageIntoDb(ChatMessage chatMessage);
 	
@@ -30,4 +30,6 @@ public interface ChatService {
 	public ResponsePayload updateChatroomName(Long chatroomId, String chatroomName);
 	
 	public ResponsePayload leaveChatroom(String username, Long chatroomId);
+
+	public ResponsePayload removeMemberFromChatroom(String username, Long chatroomId, String usernameOfMemberToRemove);
 }

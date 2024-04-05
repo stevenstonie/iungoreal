@@ -93,11 +93,11 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	@Override
-	public List<String> getAllUsersUsernamesInChatroom(Long chatroomId) {
+	public List<String> getAllMembersUsernamesInChatroom(Long chatroomId) {
 		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
-		
+
 		List<ChatroomParticipant> chatroomParticipants = chatroomParticipantRepository.findByChatroom(chatroom);
-		
+
 		return chatroomParticipants.stream().map(participant -> participant.getUser().getUsername()).toList();
 	}
 
@@ -234,6 +234,32 @@ public class ChatServiceImpl implements ChatService {
 			return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.")
 					.build();
 		}
+	}
+
+	@Override
+	public ResponsePayload removeMemberFromChatroom(String username, Long chatroomId, String usernameOfMemberToRemove) {
+		User user = getUserFromDbByUsername(username);
+		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
+		User userToRemove = getUserFromDbByUsername(usernameOfMemberToRemove);
+
+		if (!user.getUsername().equals(chatroom.getAdminUsername())) {
+			throw new RuntimeException(
+					"User " + username + " is not the admin of chatroom with id " + chatroomId + "."); // TODO: add a custom IgorUnauthorizedOperationException
+		}
+
+		ChatroomParticipant participant = chatroomParticipantRepository
+				.findByUserAndChatroom(userToRemove, chatroom);
+		if (participant == null) {
+			throw new IgorEntityNotFoundException(
+					"Cannot remove user " + usernameOfMemberToRemove + " if the user is not in the chatroom with id "
+							+ chatroomId + ".");
+		}
+		chatroomParticipantRepository.delete(participant);
+
+		return ResponsePayload.builder().status(200)
+				.message("User " + usernameOfMemberToRemove + " removed from chatroom with id " + chatroomId
+						+ " successfully.")
+				.build();
 	}
 
 	// --------------------------------------------------------

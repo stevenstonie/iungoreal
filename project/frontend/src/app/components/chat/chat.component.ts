@@ -91,7 +91,7 @@ export class ChatComponent {
     this.leftSidebarState.displayingGroupMembers = true;
 
     // get all users in this chatroom
-    this.chatService.getAllUsersInChatroom(this.currentChatroom?.id as number).subscribe({
+    this.chatService.getAllMembersUsernamesInChatroom(this.currentChatroom?.id as number).subscribe({
       next: (usernames) => {
         this.usernamesAppearingInLeftSidebar = usernames;
       },

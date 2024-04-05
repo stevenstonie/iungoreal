@@ -52,9 +52,9 @@ public class ChatController {
 		return ResponseEntity.ok(chatService.getMessagesBeforeCursorByChatroomId(chatroomId, cursor, limit));
 	}
 
-	@GetMapping("/getAllUsersUsernamesInChatroom")
-	public ResponseEntity<List<String>> getAllUsersUsernamesInChatroom(@RequestParam("chatroomId") Long chatroomId) {
-		return ResponseEntity.ok(chatService.getAllUsersUsernamesInChatroom(chatroomId));
+	@GetMapping("/getAllMembersUsernamesInChatroom")
+	public ResponseEntity<List<String>> getAllMembersUsernamesInChatroom(@RequestParam("chatroomId") Long chatroomId) {
+		return ResponseEntity.ok(chatService.getAllMembersUsernamesInChatroom(chatroomId));
 	}
 
 	@PostMapping("/createDmChatroom")
@@ -85,6 +85,12 @@ public class ChatController {
 	public ResponseEntity<ResponsePayload> leaveChatroom(@RequestParam("username") String username,
 			@RequestParam("chatroomId") Long chatroomId) {
 		return ResponseEntity.ok(chatService.leaveChatroom(username, chatroomId));
+	}
+
+	@DeleteMapping("/removeMemberFromChatroom")
+	public ResponseEntity<ResponsePayload> removeMemberFromChatroom(@RequestParam("username") String username,
+			@RequestParam("chatroomId") Long chatroomId, @RequestParam("usernameOfMemberToRemove") String usernameOfMemberToRemove) {
+		return ResponseEntity.ok(chatService.removeMemberFromChatroom(username, chatroomId, usernameOfMemberToRemove));
 	}
 
 }
