@@ -8,10 +8,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.stevenst.app.model.ChatMessage;
-import com.stevenst.app.model.Chatroom;
-import com.stevenst.app.model.ChatroomParticipant;
-import com.stevenst.app.model.ChatroomType;
+import com.stevenst.app.model.chat.ChatMessage;
+import com.stevenst.app.model.chat.Chatroom;
+import com.stevenst.app.model.chat.ChatroomParticipant;
+import com.stevenst.app.model.chat.ChatroomType;
 import com.stevenst.app.payload.ChatroomPayload;
 import com.stevenst.app.repository.ChatMessageRepository;
 import com.stevenst.app.repository.ChatroomParticipantRepository;

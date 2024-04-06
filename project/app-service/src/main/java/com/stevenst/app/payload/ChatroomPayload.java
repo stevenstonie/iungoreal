@@ -3,7 +3,7 @@ package com.stevenst.app.payload;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.stevenst.app.model.ChatroomType;
+import com.stevenst.app.model.chat.ChatroomType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

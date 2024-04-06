@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.stevenst.app.model.ChatMessage;
+import com.stevenst.app.model.chat.ChatMessage;
 import com.stevenst.app.payload.ChatroomPayload;
 import com.stevenst.app.service.ChatService;
 import com.stevenst.lib.payload.ResponsePayload;

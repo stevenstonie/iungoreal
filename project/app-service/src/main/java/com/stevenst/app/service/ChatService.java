@@ -2,7 +2,7 @@ package com.stevenst.app.service;
 
 import java.util.List;
 
-import com.stevenst.app.model.ChatMessage;
+import com.stevenst.app.model.chat.ChatMessage;
 import com.stevenst.app.payload.ChatroomPayload;
 import com.stevenst.lib.payload.ResponsePayload;
 

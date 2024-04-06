@@ -85,6 +85,8 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 				countryRepository.save(countryToInsertIntoDb);
 				regionRepository.saveAll(regionsToInsertIntoDb);
 
+				// create chatrooms for these regions and assign them to the junction table
+
 				return ResponsePayload.builder().status(200).message("Country and regions inserted successfully.")
 						.build();
 			} catch (IOException e) {
@@ -115,6 +117,8 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 
 		regionRepository.deleteAll(regions);
 		countryRepository.delete(country);
+
+		// remove all chatrooms of these regions by junction table
 
 		return ResponsePayload.builder().status(200).message("Country and regions removed successfully.").build();
 	}
