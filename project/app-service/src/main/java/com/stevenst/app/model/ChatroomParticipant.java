@@ -1,5 +1,7 @@
 package com.stevenst.app.model;
 
+import java.time.LocalDateTime;
+
 import com.stevenst.lib.model.User;
 
 import jakarta.persistence.Column;
@@ -36,4 +38,7 @@ public class ChatroomParticipant {
 
 	@Column(nullable = false)
 	private boolean hasLeft;
+
+	@Column(nullable = false)
+	private final LocalDateTime addedAt = LocalDateTime.now();
 }

@@ -197,10 +197,10 @@ public class ChatServiceImpl implements ChatService {
 	public ResponsePayload leaveChatroom(String username, Long chatroomId) {
 		User user = getUserFromDbByUsername(username);
 		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
+		ChatroomParticipant participant = chatroomParticipantRepository.findByUserAndChatroom(user, chatroom);
 
 		if (chatroom.getType() == ChatroomType.DM) {
 			// for dms -> when users leave mark them as left
-			ChatroomParticipant participant = chatroomParticipantRepository.findByUserAndChatroom(user, chatroom);
 			participant.setHasLeft(true);
 			chatroomParticipantRepository.save(participant);
 
@@ -218,12 +218,9 @@ public class ChatServiceImpl implements ChatService {
 		}
 
 		// for groups -> when users leave then remove them as participants
-		ChatroomParticipant participant = chatroomParticipantRepository.findByUserAndChatroom(user, chatroom);
 		chatroomParticipantRepository.delete(participant);
 
-		// TODO: assign a new admin to the oldest member
-
-		// for groups -> if the group is empty then remove the group as well
+		// for groups -> if the group is empty then remove the group and messages as well
 		Long count = chatroomParticipantRepository.countByChatroomAndHasLeftIsFalse(chatroom);
 		if (count == 0) {
 			removeChatroomAndParticipantsAndMessages(chatroom);
@@ -231,6 +228,12 @@ public class ChatServiceImpl implements ChatService {
 			return ResponsePayload.builder().status(200)
 					.message("User " + username + " left the chatroom and chatroom removed successfully.").build();
 		} else {
+			// if the user was an admin assign the oldest member as new admin
+			if (chatroom.getAdminUsername().equals(username)) {
+				chatroom.setAdminUsername(getUsernameOfOldestParticipant(chatroom));
+				chatroomRepository.save(chatroom);
+			}
+
 			return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.")
 					.build();
 		}
@@ -267,6 +270,13 @@ public class ChatServiceImpl implements ChatService {
 
 	// --------------------------------------------------------
 
+	private String getUsernameOfOldestParticipant(Chatroom chatroom) {
+		ChatroomParticipant oldestParticipant = chatroomParticipantRepository
+				.findParticipantsInChatroomFromOldest(chatroom.getId(), PageRequest.of(0, 1)).get(0);
+
+		return oldestParticipant.getUser().getUsername();
+	}
+
 	private List<String> getAllFriendsUsernamesOfUser(String username) {
 		// get all friends of user
 		Mono<List<String>> friendsUsernamesMono = webClient.get()
@@ -295,8 +305,8 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	private void removeChatroomAndParticipantsAndMessages(Chatroom chatroom) {
-		chatroomParticipantRepository.deleteByChatroom(chatroom);
 		chatMessageRepository.deleteByChatroomId(chatroom.getId());
+		chatroomParticipantRepository.deleteByChatroom(chatroom);
 		chatroomRepository.delete(chatroom);
 	}
 

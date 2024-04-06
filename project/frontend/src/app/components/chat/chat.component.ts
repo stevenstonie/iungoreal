@@ -54,13 +54,12 @@ export class ChatComponent {
   // chatroom --------------------------------------------------------------------
 
   toggleAddNewDmChatroom(): void {
-    this.setStatesToFalseInLeftSidebar();
-    this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
-    this.leftSidebarState.addingDmChatroom = true;
-
     // fetch users that dont have a chatroom with the loggedUser
     this.chatService.getAllFriendsWithNoDmChats(this.loggedUserUsername).subscribe({
       next: (usernames) => {
+        this.setStatesToFalseInLeftSidebar();
+        this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
+        this.leftSidebarState.addingDmChatroom = true;
         this.usernamesAppearingInLeftSidebar = usernames;
       },
       error: (error) => {
@@ -70,13 +69,12 @@ export class ChatComponent {
   }
 
   toggleAddUserToGroupChatroom(chatroomId: number | undefined): void {
-    this.setStatesToFalseInLeftSidebar();
-    this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
-    this.leftSidebarState.addingUserToGroup = true;
-
     // get all friends not in this group chatroom
     this.chatService.getAllFriendsNotInChatroom(this.loggedUserUsername, chatroomId as number).subscribe({
       next: (usernames) => {
+        this.setStatesToFalseInLeftSidebar();
+        this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
+        this.leftSidebarState.addingUserToGroup = true;
         this.usernamesAppearingInLeftSidebar = usernames;
       },
       error: (error) => {
@@ -85,14 +83,13 @@ export class ChatComponent {
     });
   }
 
-  toggleDisplayAllMembers(): void {
-    this.setStatesToFalseInLeftSidebar();
-    this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
-    this.leftSidebarState.displayingGroupMembers = true;
-
+  toggleDisplayAllMembers(): void {    
     // get all users in this chatroom
     this.chatService.getAllMembersUsernamesInChatroom(this.currentChatroom?.id as number).subscribe({
       next: (usernames) => {
+        this.setStatesToFalseInLeftSidebar();
+        this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
+        this.leftSidebarState.displayingGroupMembers = true;
         this.usernamesAppearingInLeftSidebar = usernames;
       },
       error: (error) => {
@@ -101,14 +98,13 @@ export class ChatComponent {
     });
   }
 
-  toggleRemoveUserFromGroupChatroom(chatroomId: number | undefined): void {
-    this.setStatesToFalseInLeftSidebar();
-    this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
-    this.leftSidebarState.removingUserFromGroup = true;
-
+  toggleRemoveUserFromGroupChatroom(chatroomId: number | undefined): void {    
     // get all users in this chatroom to remove
     this.chatService.getAllMembersUsernamesInChatroom(this.currentChatroom?.id as number).subscribe({
       next: (usernames) => {
+        this.setStatesToFalseInLeftSidebar();
+        this.leftSidebarState.isLeftSidebarOpen = !this.leftSidebarState.isLeftSidebarOpen;
+        this.leftSidebarState.removingUserFromGroup = true;
         this.usernamesAppearingInLeftSidebar = usernames;
       },
       error: (error) => {
@@ -147,7 +143,7 @@ export class ChatComponent {
   addUserToGroup(usernameOfUserToAdd: string): void {
     this.chatService.addUserToGroupChatroom(this.loggedUserUsername, this.currentChatroom?.id as number, usernameOfUserToAdd).subscribe({
       next: (response) => {
-        console.log(response.status + ' ' + response.message);
+        console.log(response);
         this.leftSidebarState.isLeftSidebarOpen = false;
         this.areGroupChatroomsOpen = false;
       },
@@ -206,6 +202,7 @@ export class ChatComponent {
 
   closeChatroom(): void {
     this.isChatroomOpened = false;
+    this.leftSidebarState.isLeftSidebarOpen = false;
     this.currentChatroom = null;
     this.disconnectFromWebsocket();
     this.receivedMessages = [];

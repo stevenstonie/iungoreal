@@ -60,8 +60,8 @@
 				<ng-container *ngIf="(currentChatroom?.type === 'GROUP')">
 					<button (click)="toggleDisplayAllMembers()">members</button>
 					<ng-container *ngIf="currentChatroom?.adminUsername === loggedUserUsername">
-						<button (click)="toggleAddUserToGroupChatroom(currentChatroom?.id)">add user</button>
-						<button (click)="toggleRemoveUserFromGroupChatroom(currentChatroom?.id)">remove user</button>
+						<button (click)="toggleAddUserToGroupChatroom(currentChatroom?.id)">add</button>
+						<button (click)="toggleRemoveUserFromGroupChatroom(currentChatroom?.id)">remove</button>
 					</ng-container>
 				</ng-container>
 				<button (click)="leaveChatroom(currentChatroom?.id)">leave chatroom</button>

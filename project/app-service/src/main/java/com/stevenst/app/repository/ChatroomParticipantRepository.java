@@ -2,6 +2,7 @@ package com.stevenst.app.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,11 +23,10 @@ public interface ChatroomParticipantRepository extends JpaRepository<ChatroomPar
 
 	List<ChatroomParticipant> findByChatroom(Chatroom chatroom);
 
-	@Modifying
-	@Transactional
-	Long deleteByChatroom(Chatroom chatroom);
-
-	Long countByChatroomAndHasLeftIsFalse(Chatroom chatroom);
+	@Query("SELECT p FROM ChatroomParticipant p " +
+			"WHERE p.chatroom.id = :chatroomId " +
+			"ORDER BY p.addedAt ASC")
+	List<ChatroomParticipant> findParticipantsInChatroomFromOldest(Long chatroomId, Pageable pageable);
 
 	@Query("SELECT part.chatroom FROM ChatroomParticipant part " +
 			"WHERE part.user = :user " +
@@ -50,4 +50,10 @@ public interface ChatroomParticipantRepository extends JpaRepository<ChatroomPar
 			"WHERE part2.user = :user2 " +
 			"AND part2.chatroom.type = 'DM')")
 	Chatroom findCommonDmChatroomOfUsers(User user1, User user2);
+
+	@Modifying
+	@Transactional
+	Long deleteByChatroom(Chatroom chatroom);
+
+	Long countByChatroomAndHasLeftIsFalse(Chatroom chatroom);
 }
