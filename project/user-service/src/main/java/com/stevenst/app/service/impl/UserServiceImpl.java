@@ -267,7 +267,7 @@ public class UserServiceImpl implements UserService {
 
 		return ResponsePayload.builder()
 				.status(200)
-				.message("Successfully set country: " + country.getName() + " for user:  " + username + ".")
+				.message("Successfully set country: " + country.getName() + " for user: " + username + ".")
 				.build();
 	}
 
@@ -288,14 +288,7 @@ public class UserServiceImpl implements UserService {
 					"Cannot assign this region because it is already primary (for user: " + user.getUsername() + ").");
 		}
 
-		// find the chatroom assigned to this region
-		Long idOfChatroomAssignedToTheRegion = chatroomsRegionsRepository
-				.findChatroomIdByRegionId(regionToSetAsPrimary.getId());
-		Chatroom chatroom = chatroomRepository.findById(idOfChatroomAssignedToTheRegion).get();
-
-		// and add the user as chatroom participant for it
-		chatroomParticipantRepository
-				.save(ChatroomParticipant.builder().chatroom(chatroom).user(user).hasLeft(false).build());
+		addUserAsParticipantForTheChatroomOfThisRegion(user, regionToSetAsPrimary);
 
 		user.setPrimaryRegionId(regionToSetAsPrimary.getId());
 		userRepository.save(user);
@@ -328,7 +321,7 @@ public class UserServiceImpl implements UserService {
 
 		checkIfRegionAlreadyExistsAsSecondary(user, regionToAddAsSecondaryInDb);
 
-		// add the user as chatroom participant for the chatroom assigned to this region
+		addUserAsParticipantForTheChatroomOfThisRegion(user, regionToAddAsSecondaryInDb);
 
 		secondaryRegionsUsersRepository.save(
 				Objects.requireNonNull(SecondaryRegionsUsers.builder()
@@ -352,8 +345,16 @@ public class UserServiceImpl implements UserService {
 		}
 
 		// if the user has a primary region search if he is participant in the chatroom assigned to that region and remove if found
+		if (user.getPrimaryRegionId() != null) {
+			removeUserAsParticipantForTheChatroomOfTheRegionId(user, user.getPrimaryRegionId());
+		}
 
 		// go through the secondary regions of his and do the same as above with each one
+		List<SecondaryRegionsUsers> secondaryRegionJoiners = secondaryRegionsUsersRepository.findByUserId(user.getId());
+		for (SecondaryRegionsUsers secondaryRegionJoiner : secondaryRegionJoiners) {
+			removeUserAsParticipantForTheChatroomOfTheRegionId(user,
+					secondaryRegionJoiner.getSecondaryRegion().getId());
+		}
 
 		secondaryRegionsUsersRepository.removeAllByUserId(user.getId());
 		user.setCountryId(null);
@@ -374,7 +375,8 @@ public class UserServiceImpl implements UserService {
 					"No primary region to remove was found (for user: " + username + ").");
 		}
 
-		// search if the user is participant in the chatroom assigned to this region and remove him if found
+		// remove the user as participant in the chatroom assigned to the region's id
+		removeUserAsParticipantForTheChatroomOfTheRegionId(user, user.getPrimaryRegionId());
 
 		user.setPrimaryRegionId(null);
 		userRepository.save(user);
@@ -387,12 +389,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponsePayload removeSecondaryRegionForUser(String username, Long regionId) {
 		User user = getUserFromDbByUsername(username);
+		SecondaryRegionsUsers secondaryRegionLinker = getSecondaryRegionFromDb(user, regionId);
 
-		SecondaryRegionsUsers secondaryRegion = getSecondaryRegionFromDb(user, regionId);
+		removeUserAsParticipantForTheChatroomOfTheRegionId(user, secondaryRegionLinker.getSecondaryRegion().getId());
 
-		// search if the user is participant in the chatroom assigned to this rergion and remove him if found
-
-		secondaryRegionsUsersRepository.delete(secondaryRegion);
+		secondaryRegionsUsersRepository.delete(secondaryRegionLinker);
 		return ResponsePayload.builder()
 				.status(200)
 				.message("Removed secondary region for user: " + username + ".")
@@ -428,6 +429,28 @@ public class UserServiceImpl implements UserService {
 
 		return countryRepository.findById(countryId)
 				.orElseThrow(() -> new IgorEntityNotFoundException("Country not found (with id: " + countryId + ")."));
+	}
+
+	private void addUserAsParticipantForTheChatroomOfThisRegion(User user, Region region) {
+		// find the chatroom assigned to this region
+		Long idOfChatroomAssignedToTheRegion = chatroomsRegionsRepository
+				.findChatroomIdByRegionId(region.getId());
+		Chatroom chatroom = chatroomRepository.findById(idOfChatroomAssignedToTheRegion).get();
+
+		// and add the user as chatroom participant for it
+		chatroomParticipantRepository
+				.save(ChatroomParticipant.builder().chatroom(chatroom).user(user).hasLeft(false).build());
+	}
+
+	private void removeUserAsParticipantForTheChatroomOfTheRegionId(User user, Long regionId) {
+		// find the chatroom assigned to this region
+		Long idOfChatroomAssignedToTheRegion = chatroomsRegionsRepository
+				.findChatroomIdByRegionId(regionId);
+		Chatroom chatroom = chatroomRepository.findById(idOfChatroomAssignedToTheRegion).get();
+
+		// and remove the user as chatroom participant for it
+		chatroomParticipantRepository
+				.deleteByChatroomAndUser(chatroom, user);
 	}
 
 	private Region getRegionFromDb(Long regionId) {
