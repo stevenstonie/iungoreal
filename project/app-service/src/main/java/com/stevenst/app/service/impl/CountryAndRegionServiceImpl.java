@@ -6,6 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.stevenst.app.model.chat.Chatroom;
+import com.stevenst.app.model.chat.ChatroomType;
+import com.stevenst.app.model.chat.ChatroomsRegions;
+import com.stevenst.app.repository.ChatroomRepository;
+import com.stevenst.app.repository.ChatroomsRegionsRepository;
 import com.stevenst.app.repository.CountryRepository;
 import com.stevenst.app.repository.RegionRepository;
 import com.stevenst.app.repository.SecondaryRegionsUsersRepository;
@@ -29,10 +34,12 @@ import lombok.RequiredArgsConstructor;
 public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 	@Value("${app.countries-and-regions-filename}")
 	private String COUNTRIES_AND_REGIONS_FILENAME;
+	private final UserRepository userRepository;
 	private final RegionRepository regionRepository;
 	private final CountryRepository countryRepository;
-	private final UserRepository userRepository;
 	private final SecondaryRegionsUsersRepository secondaryRegionsUsersRepository;
+	private final ChatroomRepository chatroomRepository;
+	private final ChatroomsRegionsRepository chatroomsRegionsRepository;
 
 	@Override
 	public List<Country> getAllCountries() {
@@ -86,6 +93,7 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 				regionRepository.saveAll(regionsToInsertIntoDb);
 
 				// create chatrooms for these regions and assign them to the junction table
+				createChatroomsForRegions(regionsToInsertIntoDb);
 
 				return ResponsePayload.builder().status(200).message("Country and regions inserted successfully.")
 						.build();
@@ -110,17 +118,44 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 		// get the list of regions of that country
 		List<Region> regions = regionRepository.findAllByCountry(country);
 
-		// remove all constraints from each user and then the regions and country
-		secondaryRegionsUsersRepository.deleteSecondaryRegionsInList(regions.stream().map(Region::getId).toList());
+		// first remove all chatrooms of these regions by junction table
+		removeAllChatroomsForRegions(regions);
+
+		// then remove all constraints from each user and the regions and country
 		userRepository.updateCountryAndPrimaryRegionToNullByCountryIdAndRegionIds(country.getId(),
 				regions.stream().map(Region::getId).toList());
+		secondaryRegionsUsersRepository.deleteSecondaryRegionsInList(regions.stream().map(Region::getId).toList());
 
+		// and lastly remove the regions and country themselves
 		regionRepository.deleteAll(regions);
 		countryRepository.delete(country);
 
-		// remove all chatrooms of these regions by junction table
-
 		return ResponsePayload.builder().status(200).message("Country and regions removed successfully.").build();
+	}
+
+	// ---------------------------------------------------------------------------------
+
+	private void createChatroomsForRegions(List<Region> addedRegions) {
+		// for each region create a chatroom and add an entry in the junction table to connect them
+		for (Region region : addedRegions) {
+			Chatroom chatroom = Chatroom.builder().name(region.getName()).type(ChatroomType.REGIONAL).build();
+			chatroom = chatroomRepository.save(chatroom);
+
+			ChatroomsRegions chatroomsRegions = ChatroomsRegions.builder().regionId(region.getId())
+					.chatroomId(chatroom.getId()).build();
+			chatroomsRegionsRepository.save(chatroomsRegions);
+		}
+	}
+
+	private void removeAllChatroomsForRegions(List<Region> regionsToBeDeleted) {
+		// for each region remove the chatroom associated with it by the junction table
+		for (Region region : regionsToBeDeleted) {
+			// get the id of the chatroom and then remove both the constraint and the chatroom with it
+			Long chatroomId = chatroomsRegionsRepository.findChatroomIdByRegionId(region.getId());
+			chatroomsRegionsRepository.deleteByChatroomId(chatroomId);
+
+			chatroomRepository.deleteById(chatroomId);
+		}
 	}
 
 }
