@@ -1,4 +1,4 @@
-package com.stevenst.app.model.chat;
+package com.stevenst.lib.model.chat;
 
 import java.time.LocalDateTime;
 

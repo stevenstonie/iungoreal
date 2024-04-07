@@ -27,10 +27,16 @@ import com.stevenst.lib.model.Country;
 import com.stevenst.lib.model.Region;
 import com.stevenst.lib.model.SecondaryRegionsUsers;
 import com.stevenst.lib.model.User;
+import com.stevenst.lib.model.chat.Chatroom;
+import com.stevenst.lib.model.chat.ChatroomParticipant;
+import com.stevenst.lib.model.chat.ChatroomsRegions;
 import com.stevenst.lib.payload.ResponsePayload;
 import com.stevenst.lib.payload.CountryOrRegionPayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
+import com.stevenst.app.repository.ChatroomParticipantRepository;
+import com.stevenst.app.repository.ChatroomRepository;
+import com.stevenst.app.repository.ChatroomsRegionsRepository;
 import com.stevenst.app.repository.CountryRepository;
 import com.stevenst.app.repository.RegionRepository;
 import com.stevenst.app.repository.SecondaryRegionsUsersRepository;
@@ -63,6 +69,9 @@ public class UserServiceImpl implements UserService {
 	private final RegionRepository regionRepository;
 	private final CountryRepository countryRepository;
 	private final SecondaryRegionsUsersRepository secondaryRegionsUsersRepository;
+	private final ChatroomRepository chatroomRepository;
+	private final ChatroomParticipantRepository chatroomParticipantRepository;
+	private final ChatroomsRegionsRepository chatroomsRegionsRepository;
 	private final S3Client s3Client;
 	@Value("${aws.bucketName}")
 	private String bucketName;
@@ -268,22 +277,33 @@ public class UserServiceImpl implements UserService {
 
 		checkIfUserHasACountryAssigned(user);
 
-		Region region = getRegionFromDb(regionId);
+		Region regionToSetAsPrimary = getRegionFromDb(regionId);
 
-		checkIfRegionIsPartOfUsersCountry(user, region);
+		checkIfRegionIsPartOfUsersCountry(user, regionToSetAsPrimary);
 
-		checkIfRegionAlreadyExistsAsSecondary(user, region);
+		checkIfRegionAlreadyExistsAsSecondary(user, regionToSetAsPrimary);
 
-		// check if region is already primary
+		if (Objects.equals(regionToSetAsPrimary.getId(), user.getPrimaryRegionId())) {
+			throw new IgorCountryAndRegionException(
+					"Cannot assign this region because it is already primary (for user: " + user.getUsername() + ").");
+		}
 
-		// add the user as chatroom participant for the chatroom assigned to this region
+		// find the chatroom assigned to this region
+		Long idOfChatroomAssignedToTheRegion = chatroomsRegionsRepository
+				.findChatroomIdByRegionId(regionToSetAsPrimary.getId());
+		Chatroom chatroom = chatroomRepository.findById(idOfChatroomAssignedToTheRegion).get();
 
-		user.setPrimaryRegionId(region.getId());
+		// and add the user as chatroom participant for it
+		chatroomParticipantRepository
+				.save(ChatroomParticipant.builder().chatroom(chatroom).user(user).hasLeft(false).build());
+
+		user.setPrimaryRegionId(regionToSetAsPrimary.getId());
 		userRepository.save(user);
 
 		return ResponsePayload.builder()
 				.status(200)
-				.message("Successfully set primary region: " + region.getName() + " for user: " + username + ".")
+				.message("Successfully set primary region: " + regionToSetAsPrimary.getName() + " for user: " + username
+						+ ".")
 				.build();
 	}
 

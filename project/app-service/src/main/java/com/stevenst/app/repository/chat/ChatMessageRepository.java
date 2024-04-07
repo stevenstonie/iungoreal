@@ -1,4 +1,4 @@
-package com.stevenst.app.repository;
+package com.stevenst.app.repository.chat;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.stevenst.app.model.chat.ChatMessage;
+import com.stevenst.lib.model.chat.ChatMessage;
 
 import jakarta.transaction.Transactional;
 

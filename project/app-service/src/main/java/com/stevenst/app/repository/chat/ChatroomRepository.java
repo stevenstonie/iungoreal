@@ -1,4 +1,4 @@
-package com.stevenst.app.repository;
+package com.stevenst.app.repository.chat;
 
 import java.util.List;
 
@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.stevenst.app.model.chat.Chatroom;
-import com.stevenst.app.model.chat.ChatroomParticipant;
-import com.stevenst.app.model.chat.ChatroomType;
+import com.stevenst.lib.model.chat.Chatroom;
+import com.stevenst.lib.model.chat.ChatroomParticipant;
+import com.stevenst.lib.model.chat.ChatroomType;
 import com.stevenst.lib.model.User;
 
 @Repository

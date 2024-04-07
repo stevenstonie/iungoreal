@@ -1,11 +1,7 @@
-package com.stevenst.app.model.chat;
-
-import java.time.LocalDateTime;
+package com.stevenst.lib.model.chat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,26 +12,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "\"chatroom\"")
+@Table(name = "\"chatrooms_regions\"")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Chatroom {
+public class ChatroomsRegions {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(nullable = false)
-	private String name;
+	private Long regionId;
 
 	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private ChatroomType type;
-
-	private String adminUsername;
-
-	@Builder.Default
-	@Column(nullable = false)
-	private LocalDateTime lastMessageTime = LocalDateTime.now();
+	private Long chatroomId;
 }
