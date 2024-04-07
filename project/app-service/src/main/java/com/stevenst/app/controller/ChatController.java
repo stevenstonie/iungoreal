@@ -45,6 +45,12 @@ public class ChatController {
 		return ResponseEntity.ok(chatService.getAllGroupChatroomsOfUser(username));
 	}
 
+	@GetMapping("/getAllRegionalChatroomsOfUser")
+	public ResponseEntity<List<ChatroomPayload>> getAllRegionalChatroomsOfUser(
+			@RequestParam("username") String username) {
+		return ResponseEntity.ok(chatService.getAllRegionalChatroomsOfUser(username));
+	}
+
 	@GetMapping("/getNextMessagesByChatroomId")
 	public ResponseEntity<List<ChatMessage>> getNextMessagesByChatroomId(@RequestParam Long chatroomId,
 			@RequestParam(required = false) Long cursor,
@@ -89,7 +95,8 @@ public class ChatController {
 
 	@DeleteMapping("/removeMemberFromChatroom")
 	public ResponseEntity<ResponsePayload> removeMemberFromChatroom(@RequestParam("username") String username,
-			@RequestParam("chatroomId") Long chatroomId, @RequestParam("usernameOfMemberToRemove") String usernameOfMemberToRemove) {
+			@RequestParam("chatroomId") Long chatroomId,
+			@RequestParam("usernameOfMemberToRemove") String usernameOfMemberToRemove) {
 		return ResponseEntity.ok(chatService.removeMemberFromChatroom(username, chatroomId, usernameOfMemberToRemove));
 		// TODO: make it for groups only
 	}

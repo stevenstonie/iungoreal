@@ -15,6 +15,8 @@ public interface ChatService {
 
 	public List<ChatroomPayload> getAllGroupChatroomsOfUser(String username);
 
+	public List<ChatroomPayload> getAllRegionalChatroomsOfUser(String usernmae);
+
 	public List<ChatMessage> getMessagesBeforeCursorByChatroomId(Long chatroomId, Long cursor, int limit);
 
 	public List<String> getAllMembersUsernamesInChatroom(Long chatroomId);

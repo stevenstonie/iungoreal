@@ -437,7 +437,14 @@ public class UserServiceImpl implements UserService {
 				.findChatroomIdByRegionId(region.getId());
 		Chatroom chatroom = chatroomRepository.findById(idOfChatroomAssignedToTheRegion).get();
 
-		// and add the user as chatroom participant for it
+		// check if the participant is already in the chatroom
+		ChatroomParticipant participant = chatroomParticipantRepository
+				.findChatroomParticipantByChatroomAndUser(chatroom, user);
+		if (participant != null) {
+			return;
+		}
+
+		// if not add the user as chatroom participant for it
 		chatroomParticipantRepository
 				.save(ChatroomParticipant.builder().chatroom(chatroom).user(user).hasLeft(false).build());
 	}

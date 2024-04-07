@@ -39,6 +39,11 @@ public interface ChatroomParticipantRepository extends JpaRepository<ChatroomPar
 			"AND part.chatroom.type = 'GROUP'")
 	List<Chatroom> findGroupChatroomsOfUser(User user);
 
+	@Query("SELECT part.chatroom FROM ChatroomParticipant part " +
+			"WHERE part.user = :user " +
+			"AND part.chatroom.type = 'REGIONAL'")
+	List<Chatroom> findRegionalChatroomsOfUser(User user);
+
 	@Query("SELECT part FROM ChatroomParticipant part " +
 			"WHERE part.chatroom IN :chatrooms " +
 			"AND part.user <> :user")

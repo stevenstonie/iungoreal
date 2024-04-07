@@ -93,6 +93,13 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	@Override
+	public List<ChatroomPayload> getAllRegionalChatroomsOfUser(String username) {
+		User user = getUserFromDbByUsername(username);
+
+		return getAllRegionalChatroomsOfUser(user);
+	}
+
+	@Override
 	public List<String> getAllMembersUsernamesInChatroom(Long chatroomId) {
 		Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
 
@@ -311,7 +318,7 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	private List<ChatroomPayload> getAllDmChatroomsOfUser(User user) {
-		// get all dms of user where user hasLeft = false
+		// get all dm chats of user where user hasLeft = false
 		List<Chatroom> dmChatroomsOfUser = chatroomParticipantRepository.findDmChatroomsOfUserNotLeft(user);
 
 		// get all participants (excluding the user) that have a chatroom in common with the user
@@ -338,7 +345,6 @@ public class ChatServiceImpl implements ChatService {
 
 	private List<ChatroomPayload> getAllGroupChatroomsOfUser(User user) {
 		List<Chatroom> groupChatroomsOfUser = chatroomParticipantRepository.findGroupChatroomsOfUser(user);
-
 		List<ChatroomPayload> chatrooms = new java.util.ArrayList<>();
 
 		for (Chatroom groupChatroomOfUser : groupChatroomsOfUser) {
@@ -352,6 +358,29 @@ public class ChatServiceImpl implements ChatService {
 					.type(groupChatroomOfUser.getType())
 					.adminUsername(groupChatroomOfUser.getAdminUsername())
 					.lastMessageTime(groupChatroomOfUser.getLastMessageTime())
+					.participantsUsernames(participantsUsernames)
+					.build();
+			chatrooms.add(payload);
+		}
+
+		return chatrooms;
+	}
+
+	private List<ChatroomPayload> getAllRegionalChatroomsOfUser(User user) {
+		List<Chatroom> regionalChatroomsOfUser = chatroomParticipantRepository.findRegionalChatroomsOfUser(user);
+		List<ChatroomPayload> chatrooms = new java.util.ArrayList<>();
+
+		for (Chatroom regionalChatroomOfUser : regionalChatroomsOfUser) {
+			// for each chatroom search for its participants and insert it into the payload
+			List<String> participantsUsernames = chatroomParticipantRepository.findByChatroom(regionalChatroomOfUser)
+					.stream().map(participant -> participant.getUser().getUsername()).toList();
+
+			ChatroomPayload payload = ChatroomPayload.builder()
+					.id(regionalChatroomOfUser.getId())
+					.name(regionalChatroomOfUser.getName())
+					.type(regionalChatroomOfUser.getType())
+					.adminUsername(regionalChatroomOfUser.getAdminUsername())
+					.lastMessageTime(regionalChatroomOfUser.getLastMessageTime())
 					.participantsUsernames(participantsUsernames)
 					.build();
 			chatrooms.add(payload);
