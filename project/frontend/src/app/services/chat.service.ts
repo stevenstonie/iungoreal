@@ -57,6 +57,15 @@ export class ChatService {
       );
   }
 
+  getAllRegionalChatroomsOfUser(username: string): Observable<ChatroomPayload[]> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<ChatroomPayload[]>(`${this.apiUrl}/getAllRegionalChatroomsOfUser`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   getNextMessagesByChatroomId(chatroomId: number, lastMessageId: number | null): Observable<ChatMessage[]> {
     let params = new HttpParams().set('chatroomId', chatroomId.toString());
     if (lastMessageId !== null) {

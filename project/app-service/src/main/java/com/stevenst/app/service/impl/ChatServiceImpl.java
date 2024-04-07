@@ -222,27 +222,39 @@ public class ChatServiceImpl implements ChatService {
 				return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.")
 						.build();
 			}
-		}
+		} else if (chatroom.getType() == ChatroomType.GROUP) {
+			// for groups -> when users leave then remove them as participants
+			chatroomParticipantRepository.delete(participant);
 
-		// for groups -> when users leave then remove them as participants
-		chatroomParticipantRepository.delete(participant);
+			// for groups -> if the group is empty then remove the group and messages as well
+			Long count = chatroomParticipantRepository.countByChatroomAndHasLeftIsFalse(chatroom);
+			if (count == 0) {
+				removeChatroomAndParticipantsAndMessages(chatroom);
 
-		// for groups -> if the group is empty then remove the group and messages as well
-		Long count = chatroomParticipantRepository.countByChatroomAndHasLeftIsFalse(chatroom);
-		if (count == 0) {
-			removeChatroomAndParticipantsAndMessages(chatroom);
+				return ResponsePayload.builder().status(200)
+						.message("User " + username + " left the chatroom and chatroom removed successfully.").build();
+			} else {
+				// if the user was an admin assign the oldest member as new admin
+				if (chatroom.getAdminUsername().equals(username)) {
+					chatroom.setAdminUsername(getUsernameOfOldestParticipant(chatroom));
+					chatroomRepository.save(chatroom);
+				}
 
-			return ResponsePayload.builder().status(200)
-					.message("User " + username + " left the chatroom and chatroom removed successfully.").build();
-		} else {
-			// if the user was an admin assign the oldest member as new admin
-			if (chatroom.getAdminUsername().equals(username)) {
-				chatroom.setAdminUsername(getUsernameOfOldestParticipant(chatroom));
-				chatroomRepository.save(chatroom);
+				return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.")
+						.build();
 			}
-
-			return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.")
-					.build();
+		} else if (chatroom.getType() == ChatroomType.REGIONAL) {
+			// for regions -> when users leave then remove them as participants
+			if (participant != null) {
+				chatroomParticipantRepository.delete(participant);
+				return ResponsePayload.builder().status(200).message("User " + username + " left the chatroom.")
+						.build();
+			} else {
+				return ResponsePayload.builder().status(200).message("User " + username + " is not in the chatroom.")
+						.build();
+			}
+		} else {
+			throw new RuntimeException("create a custom exception for an enum, field or value that doesnt exist");
 		}
 	}
 

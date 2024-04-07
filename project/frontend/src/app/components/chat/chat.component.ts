@@ -184,7 +184,18 @@ export class ChatComponent {
   }
 
   toggleRegionalChatrooms() {
+    this.areRegionalChatroomsOpen = !this.areRegionalChatroomsOpen;
 
+    if (this.areRegionalChatroomsOpen) {
+      this.chatService.getAllRegionalChatroomsOfUser(this.loggedUserUsername).subscribe({
+        next: (regionalChatrooms) => {
+          this.regionalChatrooms = regionalChatrooms;
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
   }
 
   openChatroom(chatroom: ChatroomPayload): void {
