@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.stevenst.app.model.chat.Chatroom;
+import com.stevenst.app.model.chat.ChatroomParticipant;
 import com.stevenst.app.model.chat.ChatroomType;
 import com.stevenst.app.model.chat.ChatroomsRegions;
+import com.stevenst.app.repository.ChatMessageRepository;
+import com.stevenst.app.repository.ChatroomParticipantRepository;
 import com.stevenst.app.repository.ChatroomRepository;
 import com.stevenst.app.repository.ChatroomsRegionsRepository;
 import com.stevenst.app.repository.CountryRepository;
@@ -39,6 +42,8 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 	private final CountryRepository countryRepository;
 	private final SecondaryRegionsUsersRepository secondaryRegionsUsersRepository;
 	private final ChatroomRepository chatroomRepository;
+	private final ChatroomParticipantRepository chatroomParticipantRepository;
+	private final ChatMessageRepository chatMessageRepository;
 	private final ChatroomsRegionsRepository chatroomsRegionsRepository;
 
 	@Override
@@ -119,7 +124,7 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 		List<Region> regions = regionRepository.findAllByCountry(country);
 
 		// first remove all chatrooms of these regions by junction table
-		removeAllChatroomsForRegions(regions);
+		removeAllChatroomsAndParticipantsAndMessagesForRegions(regions);
 
 		// then remove all constraints from each user and the regions and country
 		userRepository.updateCountryAndPrimaryRegionToNullByCountryIdAndRegionIds(country.getId(),
@@ -147,14 +152,20 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 		}
 	}
 
-	private void removeAllChatroomsForRegions(List<Region> regionsToBeDeleted) {
-		// for each region remove the chatroom associated with it by the junction table
+	private void removeAllChatroomsAndParticipantsAndMessagesForRegions(List<Region> regionsToBeDeleted) {
+		// for each region remove the chatroom associated with it by the junction table, its participants and all messages
 		for (Region region : regionsToBeDeleted) {
-			// get the id of the chatroom and then remove both the constraint and the chatroom with it
+			// get the chatroom associated with the region
 			Long chatroomId = chatroomsRegionsRepository.findChatroomIdByRegionId(region.getId());
-			chatroomsRegionsRepository.deleteByChatroomId(chatroomId);
+			Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
 
-			chatroomRepository.deleteById(chatroomId);
+			// remove all participants and messages
+			chatroomParticipantRepository.deleteAllByChatroom(chatroom);
+			chatMessageRepository.deleteAllByChatroomId(chatroom.getId());
+			
+			// and then remove both the constraint and the chatroom
+			chatroomsRegionsRepository.deleteByChatroomId(chatroom.getId());
+			chatroomRepository.deleteById(chatroom.getId());
 		}
 	}
 

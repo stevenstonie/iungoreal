@@ -305,7 +305,7 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	private void removeChatroomAndParticipantsAndMessages(Chatroom chatroom) {
-		chatMessageRepository.deleteByChatroomId(chatroom.getId());
+		chatMessageRepository.deleteAllByChatroomId(chatroom.getId());
 		chatroomParticipantRepository.deleteByChatroom(chatroom);
 		chatroomRepository.delete(chatroom);
 	}

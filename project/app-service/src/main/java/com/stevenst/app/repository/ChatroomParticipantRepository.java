@@ -51,9 +51,14 @@ public interface ChatroomParticipantRepository extends JpaRepository<ChatroomPar
 			"AND part2.chatroom.type = 'DM')")
 	Chatroom findCommonDmChatroomOfUsers(User user1, User user2);
 
+	Long countByChatroomAndHasLeftIsFalse(Chatroom chatroom);
+	
 	@Modifying
 	@Transactional
 	Long deleteByChatroom(Chatroom chatroom);
 
-	Long countByChatroomAndHasLeftIsFalse(Chatroom chatroom);
+	@Modifying
+	@Transactional
+	@Query("DELETE FROM ChatroomParticipant participant WHERE participant.chatroom = :chatroom")
+	void deleteAllByChatroom(Chatroom chatroom);
 }

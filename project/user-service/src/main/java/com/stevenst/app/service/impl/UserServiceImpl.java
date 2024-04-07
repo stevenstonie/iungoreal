@@ -105,24 +105,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponsePayload savePfp(String username, MultipartFile file) {
-		User user = getUserFromDbByUsername(username);
-		String fileName = file.getOriginalFilename();
-
-		removePfpFromDbAndCloud(username);
-
-		setPfpNameInDb(user, fileName);
-
-		Map<String, String> metadata = new HashMap<>();
-		metadata.put("Content-Type", file.getContentType());
-		metadata.put("Content-Length", String.valueOf(file.getSize()));
-		metadata.put("username", username);
-		metadata.put("pfp_name", file.getOriginalFilename());
-		String key = USERS_PATH + username + "/" + fileName;
-		return uploadPfpToS3(key, metadata, file);
-	}
-
-	@Override
 	public String getPfpPreSignedLinkFromS3(String username) {
 		User user = getUserFromDbByUsername(username);
 
@@ -145,6 +127,24 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public ResponsePayload savePfp(String username, MultipartFile file) {
+		User user = getUserFromDbByUsername(username);
+		String fileName = file.getOriginalFilename();
+
+		removePfpFromDbAndCloud(username);
+
+		setPfpNameInDb(user, fileName);
+
+		Map<String, String> metadata = new HashMap<>();
+		metadata.put("Content-Type", file.getContentType());
+		metadata.put("Content-Length", String.valueOf(file.getSize()));
+		metadata.put("username", username);
+		metadata.put("pfp_name", file.getOriginalFilename());
+		String key = USERS_PATH + username + "/" + fileName;
+		return uploadPfpToS3(key, metadata, file);
+	}
+
+	@Override
 	public ResponsePayload removePfpFromDbAndCloud(String username) {
 		User user = getUserFromDbByUsername(username);
 
@@ -162,6 +162,8 @@ public class UserServiceImpl implements UserService {
 		setPfpNameInDb(user, null);
 		return removePfpFromCloud(key, username);
 	}
+
+	// countries and regions below --------------------------------------------------------------------------------
 
 	@Override
 	public List<CountryOrRegionPayload> getAvailableRegionsForUser(String username) {
@@ -272,6 +274,10 @@ public class UserServiceImpl implements UserService {
 
 		checkIfRegionAlreadyExistsAsSecondary(user, region);
 
+		// check if region is already primary
+
+		// add the user as chatroom participant for the chatroom assigned to this region
+
 		user.setPrimaryRegionId(region.getId());
 		userRepository.save(user);
 
@@ -295,12 +301,14 @@ public class UserServiceImpl implements UserService {
 							+ user.getUsername() + ").");
 		}
 
-		checkIfRegionAlreadyExistsAsSecondary(user, regionToAddAsSecondaryInDb);
-
 		if (Objects.equals(regionToAddAsSecondaryInDb.getId(), user.getPrimaryRegionId())) {
 			throw new IgorCountryAndRegionException(
 					"Cannot assign this region because it is already primary (for user: " + user.getUsername() + ").");
 		}
+
+		checkIfRegionAlreadyExistsAsSecondary(user, regionToAddAsSecondaryInDb);
+
+		// add the user as chatroom participant for the chatroom assigned to this region
 
 		secondaryRegionsUsersRepository.save(
 				Objects.requireNonNull(SecondaryRegionsUsers.builder()
@@ -323,6 +331,10 @@ public class UserServiceImpl implements UserService {
 			throw new IgorNoContentToRemoveException("No country to remove was found (for user: " + username + ").");
 		}
 
+		// if the user has a primary region search if he is participant in the chatroom assigned to that region and remove if found
+
+		// go through the secondary regions of his and do the same as above with each one
+
 		secondaryRegionsUsersRepository.removeAllByUserId(user.getId());
 		user.setCountryId(null);
 		user.setPrimaryRegionId(null);
@@ -342,6 +354,8 @@ public class UserServiceImpl implements UserService {
 					"No primary region to remove was found (for user: " + username + ").");
 		}
 
+		// search if the user is participant in the chatroom assigned to this region and remove him if found
+
 		user.setPrimaryRegionId(null);
 		userRepository.save(user);
 		return ResponsePayload.builder()
@@ -355,6 +369,8 @@ public class UserServiceImpl implements UserService {
 		User user = getUserFromDbByUsername(username);
 
 		SecondaryRegionsUsers secondaryRegion = getSecondaryRegionFromDb(user, regionId);
+
+		// search if the user is participant in the chatroom assigned to this rergion and remove him if found
 
 		secondaryRegionsUsersRepository.delete(secondaryRegion);
 		return ResponsePayload.builder()
@@ -411,7 +427,8 @@ public class UserServiceImpl implements UserService {
 		SecondaryRegionsUsers secondaryRegion = secondaryRegionsUsersRepository
 				.findByUserIdAndSecondaryRegionId(user.getId(), regionId);
 		if (secondaryRegion == null) {
-			throw new IgorEntityNotFoundException("Region not found (with id: " + regionId + ") associated with user: " + user.getUsername() + ".");
+			throw new IgorEntityNotFoundException(
+					"Region not found (with id: " + regionId + ") associated with user: " + user.getUsername() + ".");
 		}
 
 		return secondaryRegion;

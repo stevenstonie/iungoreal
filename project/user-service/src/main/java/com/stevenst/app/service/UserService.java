@@ -16,14 +16,16 @@ public interface UserService {
 
 	UserPrivatePayload getUserByEmail(String email);
 
-	ResponsePayload savePfp(String username, MultipartFile file);
-
 	String getPfpPreSignedLinkFromS3(String username);
+
+	ResponsePayload savePfp(String username, MultipartFile file);
 
 	ResponsePayload removePfpFromDbAndCloud(String username);
 
+	// countries and regions below --------------------------------------------------------------------------------
+
 	List<CountryOrRegionPayload> getAvailableRegionsForUser(String username);
-	
+
 	CountryOrRegionPayload getCountryOfUser(String username);
 
 	CountryOrRegionPayload getPrimaryRegionOfUser(String username);
