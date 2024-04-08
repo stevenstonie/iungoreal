@@ -125,12 +125,10 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 	@Override
 	public ResponsePayload setCountryForUser(String username, Long countryId) {
 		User user = getUserFromDbByUsername(username);
-
 		Country country = getCountryFromDb(countryId);
 
-		if (!Objects.equals(country.getId(), user.getCountryId())) {
-			user.setPrimaryRegionId(null);
-			secondaryRegionsUsersRepository.removeAllByUserId(user.getId());
+		if (user.getCountryId() != null) {
+			removeCountryForUser(username);
 		}
 
 		user.setCountryId(country.getId());
@@ -157,6 +155,10 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 		if (Objects.equals(regionToSetAsPrimary.getId(), user.getPrimaryRegionId())) {
 			throw new IgorCountryAndRegionException(
 					"Cannot assign this region because it is already primary (for user: " + user.getUsername() + ").");
+		}
+
+		if (user.getPrimaryRegionId() != null) {
+			removePrimaryRegionForUser(username);
 		}
 
 		addUserAsParticipantForTheChatroomOfThisRegion(user, regionToSetAsPrimary);
@@ -380,5 +382,4 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 				.map(CountryOrRegionPayload::getId)
 				.collect(Collectors.toList());
 	}
-
 }
