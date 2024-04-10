@@ -13,4 +13,6 @@ public interface RegionRepository extends JpaRepository<Region, Long> {
 	Long countByCountry(Country country);
 
 	List<Region> findAllByCountry(Country country);
+
+	
 }

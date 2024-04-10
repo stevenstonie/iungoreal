@@ -18,6 +18,7 @@ import { ChatComponent } from './components/chat/chat.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { FriendRequestsComponent } from './components/friend-requests/friend-requests.component';
 import { PostsComponent } from './components/posts/posts.component';
+import { InfiniteScrollModule } from "ngx-infinite-scroll";
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { PostsComponent } from './components/posts/posts.component';
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    InfiniteScrollModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -6,14 +6,25 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.stevenst.lib.model.chat.Chatroom;
+import com.stevenst.lib.model.chat.ChatroomParticipant;
+import com.stevenst.lib.model.chat.ChatroomType;
+import com.stevenst.lib.model.chat.ChatroomsRegions;
 import com.stevenst.app.repository.CountryRepository;
 import com.stevenst.app.repository.RegionRepository;
+import com.stevenst.app.repository.SecondaryRegionsUsersRepository;
+import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.chat.ChatMessageRepository;
+import com.stevenst.app.repository.chat.ChatroomParticipantRepository;
+import com.stevenst.app.repository.chat.ChatroomRepository;
+import com.stevenst.app.repository.chat.ChatroomsRegionsRepository;
 import com.stevenst.app.service.CountryAndRegionService;
 import com.stevenst.app.util.CountryFromJson;
 import com.stevenst.app.util.JsonUtil;
 import com.stevenst.lib.exception.IgorEntityAlreadyExistsException;
 import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
+import com.stevenst.lib.exception.IgorNoContentToRemoveException;
 import com.stevenst.lib.model.Country;
 import com.stevenst.lib.model.Region;
 import com.stevenst.lib.payload.CountryOrRegionPayload;
@@ -26,8 +37,14 @@ import lombok.RequiredArgsConstructor;
 public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 	@Value("${app.countries-and-regions-filename}")
 	private String COUNTRIES_AND_REGIONS_FILENAME;
+	private final UserRepository userRepository;
 	private final RegionRepository regionRepository;
 	private final CountryRepository countryRepository;
+	private final SecondaryRegionsUsersRepository secondaryRegionsUsersRepository;
+	private final ChatroomRepository chatroomRepository;
+	private final ChatroomParticipantRepository chatroomParticipantRepository;
+	private final ChatMessageRepository chatMessageRepository;
+	private final ChatroomsRegionsRepository chatroomsRegionsRepository;
 
 	@Override
 	public List<Country> getAllCountries() {
@@ -40,9 +57,9 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 		if (country == null) {
 			throw new IgorEntityNotFoundException("Country not found.");
 		}
-	
+
 		List<Region> regions = regionRepository.findAllByCountry(country);
-	
+
 		List<CountryOrRegionPayload> regionPayloads = new ArrayList<>();
 		for (Region region : regions) {
 			regionPayloads.add(CountryOrRegionPayload.builder()
@@ -50,7 +67,7 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 					.name(region.getName())
 					.build());
 		}
-	
+
 		return regionPayloads;
 	}
 
@@ -72,13 +89,16 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 				}
 
 				Country countryToInsertIntoDb = countryFromJson.convertToCountry();
-				List<Region> regions = countryFromJson.getRegions();
-				for (Region region : regions) {
+				List<Region> regionsToInsertIntoDb = countryFromJson.getRegions();
+				for (Region region : regionsToInsertIntoDb) {
 					region.setCountry(countryToInsertIntoDb);
 				}
 
 				countryRepository.save(countryToInsertIntoDb);
-				regionRepository.saveAll(regions);
+				regionRepository.saveAll(regionsToInsertIntoDb);
+
+				// create chatrooms for these regions and assign them to the junction table
+				createChatroomsForRegions(regionsToInsertIntoDb);
 
 				return ResponsePayload.builder().status(200).message("Country and regions inserted successfully.")
 						.build();
@@ -87,6 +107,65 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 			}
 		} else {
 			return ResponsePayload.builder().status(200).message("Regions already exist.").build();
+		}
+	}
+
+	@Override
+	public ResponsePayload removeCountryAndItsRegions(String countryName) {
+		// get the country
+		Country country = countryRepository.findByName(countryName);
+
+		// if the country is null then throw an exception saying an unexistent country cannot be removed
+		if (country == null) {
+			throw new IgorNoContentToRemoveException(countryName + " cannot be removed if it does not exist.");
+		}
+
+		// get the list of regions of that country
+		List<Region> regions = regionRepository.findAllByCountry(country);
+
+		// first remove all chatrooms of these regions by junction table
+		removeAllChatroomsAndParticipantsAndMessagesForRegions(regions);
+
+		// then remove all constraints from each user and the regions and country
+		userRepository.updateCountryAndPrimaryRegionToNullByCountryIdAndRegionIds(country.getId(),
+				regions.stream().map(Region::getId).toList());
+		secondaryRegionsUsersRepository.deleteSecondaryRegionsInList(regions.stream().map(Region::getId).toList());
+
+		// and lastly remove the regions and country themselves
+		regionRepository.deleteAll(regions);
+		countryRepository.delete(country);
+
+		return ResponsePayload.builder().status(200).message("Country and regions removed successfully.").build();
+	}
+
+	// ---------------------------------------------------------------------------------
+
+	private void createChatroomsForRegions(List<Region> addedRegions) {
+		// for each region create a chatroom and add an entry in the junction table to connect them
+		for (Region region : addedRegions) {
+			Chatroom chatroom = Chatroom.builder().name(region.getName()).type(ChatroomType.REGIONAL).build();
+			chatroom = chatroomRepository.save(chatroom);
+
+			ChatroomsRegions chatroomsRegions = ChatroomsRegions.builder().regionId(region.getId())
+					.chatroomId(chatroom.getId()).build();
+			chatroomsRegionsRepository.save(chatroomsRegions);
+		}
+	}
+
+	private void removeAllChatroomsAndParticipantsAndMessagesForRegions(List<Region> regionsToBeDeleted) {
+		// for each region remove the chatroom associated with it by the junction table, its participants and all messages
+		for (Region region : regionsToBeDeleted) {
+			// get the chatroom associated with the region
+			Long chatroomId = chatroomsRegionsRepository.findChatroomIdByRegionId(region.getId());
+			Chatroom chatroom = chatroomRepository.findById(chatroomId).get();
+
+			// remove all participants and messages
+			chatroomParticipantRepository.deleteAllByChatroom(chatroom);
+			chatMessageRepository.deleteAllByChatroomId(chatroom.getId());
+			
+			// and then remove both the constraint and the chatroom
+			chatroomsRegionsRepository.deleteByChatroomId(chatroom.getId());
+			chatroomRepository.deleteById(chatroom.getId());
 		}
 	}
 

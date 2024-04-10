@@ -16,6 +16,7 @@ import com.stevenst.app.controller.api.UserApi;
 import com.stevenst.lib.payload.CountryOrRegionPayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
+import com.stevenst.app.service.CountryAndRegionService;
 import com.stevenst.app.service.UserService;
 import com.stevenst.lib.payload.ResponsePayload;
 
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController implements UserApi {
 	private final UserService userService;
+	private final CountryAndRegionService countryAndRegionService;
 
 	@GetMapping("/getPublicByUsername")
 	public ResponseEntity<UserPublicPayload> getUserPublicByUsername(@RequestParam String username) {
@@ -64,55 +66,55 @@ public class UserController implements UserApi {
 
 	@GetMapping("/getAvailableRegions")
 	public ResponseEntity<List<CountryOrRegionPayload>> getAvailableRegionsForUser(@RequestParam String username) {
-		return ResponseEntity.ok(userService.getAvailableRegionsForUser(username));
+		return ResponseEntity.ok(countryAndRegionService.getAvailableRegionsForUser(username));
 	}
 
 	@GetMapping("/getCountry")
 	public ResponseEntity<CountryOrRegionPayload> getCountryOfUser(@RequestParam String username) {
-		return ResponseEntity.ok(userService.getCountryOfUser(username));
+		return ResponseEntity.ok(countryAndRegionService.getCountryOfUser(username));
 	}
 
 	@GetMapping("/getPrimaryRegion")
 	public ResponseEntity<CountryOrRegionPayload> getPrimaryRegionOfUser(@RequestParam String username) {
-		return ResponseEntity.ok(userService.getPrimaryRegionOfUser(username));
+		return ResponseEntity.ok(countryAndRegionService.getPrimaryRegionOfUser(username));
 	}
 
 	@GetMapping("/getSecondaryRegions")
 	public ResponseEntity<List<CountryOrRegionPayload>> getSecondaryRegionsOfUser(@RequestParam String username) {
-		return ResponseEntity.ok(userService.getSecondaryRegionsOfUser(username));
+		return ResponseEntity.ok(countryAndRegionService.getSecondaryRegionsOfUser(username));
 	}
 
 	@PutMapping("/setCountry")
 	public ResponseEntity<ResponsePayload> setCountryForUser(@RequestParam String username,
 			@RequestParam Long countryId) {
-		return ResponseEntity.ok(userService.setCountryForUser(username, countryId));
+		return ResponseEntity.ok(countryAndRegionService.setCountryForUser(username, countryId));
 	}
 
 	@PutMapping("/setPrimaryRegion")
 	public ResponseEntity<ResponsePayload> setPrimaryRegionOfUser(@RequestParam String username,
 			@RequestParam Long regionId) {
-		return ResponseEntity.ok(userService.setPrimaryRegionOfUser(username, regionId));
+		return ResponseEntity.ok(countryAndRegionService.setPrimaryRegionOfUser(username, regionId));
 	}
 
 	@PostMapping("/addSecondaryRegion")
 	public ResponseEntity<ResponsePayload> addSecondaryRegionForUser(@RequestParam String username,
 			@RequestParam Long regionId) {
-		return ResponseEntity.ok(userService.addSecondaryRegionForUser(username, regionId));
+		return ResponseEntity.ok(countryAndRegionService.addSecondaryRegionForUser(username, regionId));
 	}
 
 	@DeleteMapping("/removeCountry")
 	public ResponseEntity<ResponsePayload> removeCountryForUser(@RequestParam String username) {
-		return ResponseEntity.ok(userService.removeCountryForUser(username));
+		return ResponseEntity.ok(countryAndRegionService.removeCountryForUser(username));
 	}
 
 	@DeleteMapping("/removePrimaryRegion")
 	public ResponseEntity<ResponsePayload> removePrimaryRegionForUser(@RequestParam String username) {
-		return ResponseEntity.ok(userService.removePrimaryRegionForUser(username));
+		return ResponseEntity.ok(countryAndRegionService.removePrimaryRegionForUser(username));
 	}
 
 	@DeleteMapping("/removeSecondaryRegion")
 	public ResponseEntity<ResponsePayload> removeSecondaryRegionForUser(@RequestParam String username,
 			@RequestParam Long regionId) {
-		return ResponseEntity.ok(userService.removeSecondaryRegionForUser(username, regionId));
+		return ResponseEntity.ok(countryAndRegionService.removeSecondaryRegionForUser(username, regionId));
 	}
 }

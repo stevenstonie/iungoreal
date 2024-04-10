@@ -1,4 +1,5 @@
 import { SafeUrl } from "@angular/platform-browser";
+import { User } from "./user";
 
 export interface ResponsePayload {
 	status: number;
@@ -28,4 +29,19 @@ export interface NotificationFPayload {
 export interface CountryOrRegionPayload {
 	id: number,
 	name: string
+}
+
+export interface ChatroomPayload {
+	id: number,
+	name: string,
+	type: ChatroomType,
+	adminUsername: string,
+	lastMessageTime: Date,
+	participantsUsernames: string[]
+}
+
+export enum ChatroomType {
+	DM = 'DM',
+	GROUP = 'GROUP',
+	REGIONAL = 'REGIONAL'
 }

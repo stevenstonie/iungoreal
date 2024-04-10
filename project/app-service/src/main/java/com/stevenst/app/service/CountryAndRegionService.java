@@ -12,4 +12,6 @@ public interface CountryAndRegionService {
 	public List<CountryOrRegionPayload> getAllRegionPayloadsByCountryName(String countryName);
 
 	public ResponsePayload insertCountryAndRegionsIntoDb(String countryName);
+
+	public ResponsePayload removeCountryAndItsRegions(String countryName);
 }
