@@ -1,5 +1,10 @@
-package com.stevenst.lib.model;
+package com.stevenst.lib.model.chat;
 
+import java.time.LocalDateTime;
+
+import com.stevenst.lib.model.User;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,21 +18,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "\"secondary_regions_users\"")
+@Table(name = "\"chatroom_participant\"")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SecondaryRegionsUsers {
+public class ChatroomParticipant {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "\"user_id\"", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "chatroom_id")
+	private Chatroom chatroom;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id")
 	private User user;
-	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "\"secondary_region_id\"", nullable = false)
-	private Region secondaryRegion;
+
+	@Column(nullable = false)
+	private boolean hasLeft;
+
+	@Column(nullable = false)
+	private final LocalDateTime addedAt = LocalDateTime.now();
 }

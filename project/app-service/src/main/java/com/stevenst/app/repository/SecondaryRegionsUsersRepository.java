@@ -4,21 +4,16 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.stevenst.lib.model.SecondaryRegionsUsers;
 
 import jakarta.transaction.Transactional;
 
-@Repository
 public interface SecondaryRegionsUsersRepository extends JpaRepository<SecondaryRegionsUsers, Long> {
-	List<SecondaryRegionsUsers> findByUserId(Long userId);
-
-	SecondaryRegionsUsers findByUserIdAndSecondaryRegionId(Long userId, Long secondaryRegionId);
-
-	Long countByUserId(Long userId);
 	
 	@Modifying
 	@Transactional
-	void removeAllByUserId(Long userId);
+	@Query("DELETE FROM SecondaryRegionsUsers sru WHERE sru.secondaryRegion.id IN :regionIds")
+	void deleteSecondaryRegionsInList(List<Long> regionIds);
 }

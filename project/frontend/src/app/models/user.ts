@@ -1,5 +1,3 @@
-import { CountryOrRegionPayload } from "./Payloads";
-
 export interface User {
 	id: number;
 	email: string;

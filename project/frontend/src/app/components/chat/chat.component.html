@@ -1,25 +1,91 @@
 <div id="chat-container">
 	<div id="left-section">
 		<div id="left-section-header">
-			<p>Chat Rooms</p>
+			<p style="margin: 2px;">Chat Rooms</p>
+			<button (click)="toggleAddNewDmChatroom()">add new dm</button>
+			<button (click)="createNewGroupChatroom()">create group</button>
+			<div class="left-sidebar" *ngIf="this.leftSidebarState.isLeftSidebarOpen">
+				<button (click)="this.leftSidebarState.isLeftSidebarOpen = false"><i
+						class="close-button material-icons">close</i></button>
+				<ng-container *ngFor="let username of usernamesAppearingInLeftSidebar">
+					<button *ngIf="this.leftSidebarState.addingDmChatroom" (click)="createNewDmChatroom(username)">{{
+						username }}</button>
+					<button *ngIf="this.leftSidebarState.addingUserToGroup" (click)="addUserToGroup(username)">{{
+						username }}</button>
+					<button *ngIf="this.leftSidebarState.displayingGroupMembers">{{ username }}</button>
+					<button *ngIf="this.leftSidebarState.removingUserFromGroup" (click)="removeMemberFromGroup(username)">{{ username }}</button>
+				</ng-container>
+			</div>
 		</div>
-		<div id="left-section-body">
-			<p>room1</p>
-			<p>room2</p>
-			<p>room3</p>
+
+		<div id="left-section-body" class="vertical-list">
+			<button (click)="toggleDmChatrooms()">dms</button>
+			<ng-container *ngIf="areDmChatroomsOpen">
+				<ng-container *ngFor="let dmChatroom of dmChatrooms">
+					<button (click)="openChatroom(dmChatroom)">{{ dmChatroom.participantsUsernames[0] }}</button>
+				</ng-container>
+			</ng-container>
+
+			<button (click)="toggleGroupChatrooms()">groups</button>
+			<ng-container *ngIf="areGroupChatroomsOpen">
+				<ng-container *ngFor="let groupChatroom of groupChatrooms">
+					<button (click)="openChatroom(groupChatroom)">{{ groupChatroom.name }}</button>
+				</ng-container>
+			</ng-container>
+
+			<button (click)="toggleRegionalChatrooms()">regionals</button>
+			<ng-container *ngIf="areRegionalChatroomsOpen">
+				<ng-container *ngFor="let regionalChatroom of regionalChatrooms">
+					<button (click)="openChatroom(regionalChatroom)">{{ regionalChatroom.name }}</button>
+				</ng-container>
+			</ng-container>
+
 		</div>
 	</div>
 	<div id="right-section">
-		<div id="right-section-header">
-			<p>Chat room name</p>
-			<button id="settings">Settings</button>
-			<button id="close">Close</button>
-		</div>
-		<div id="right-section-body">
-			<p>Lorem ipsum dolor sit amet consectetur, </p>
-			<p>adipisicing elit. Saepe doloribus, praesentium perferendis repudiandae ipsam totam et similique porro
-				quos
-				quas necessitatibus non quisquam officiis quasi eius nemo soluta temporibus autem.</p>
+		<div *ngIf="isChatroomOpened">
+			<div id="right-section-header">
+				<!-- if the chatroom is a group and the logged user is not the admin just display the chatoom name -->
+				<ng-container
+					*ngIf="(currentChatroom?.type !== 'DM') && (currentChatroom?.adminUsername !== loggedUserUsername)">
+					{{ currentChatroom?.name }}
+				</ng-container>
+				<!-- if the chatroom is either a dm or the logged user is the admin make the name editable (dm participants can both update the chatroom name) -->
+				<div *ngIf="(currentChatroom?.type === 'DM') || (currentChatroom?.adminUsername === loggedUserUsername)"
+					(dblclick)="isEditingChatroomName = true">
+					<ng-container *ngIf="!isEditingChatroomName; else editMode">
+						{{ currentChatroom?.name }}
+					</ng-container>
+					<ng-template #editMode>
+						<input type="text" [(ngModel)]="currentChatroom!.name"
+							(blur)="updateChatroomName(currentChatroom!.name)"
+							(keyup.enter)="updateChatroomName(currentChatroom!.name)" autofocus>
+					</ng-template>
+				</div>
+				<ng-container *ngIf="(currentChatroom?.type === 'GROUP' || currentChatroom?.type === 'REGIONAL')">
+					<button (click)="toggleDisplayAllMembers()">members</button>
+					<ng-container *ngIf="currentChatroom?.adminUsername === loggedUserUsername">
+						<button (click)="toggleAddUserToGroupChatroom(currentChatroom?.id)">add</button>
+						<button (click)="toggleRemoveUserFromGroupChatroom(currentChatroom?.id)">remove</button>
+					</ng-container>
+				</ng-container>
+				<button (click)="leaveChatroom(currentChatroom?.id)">leave chatroom</button>
+				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
+			</div>
+			<div id="right-section-body" #chatContainer (scroll)="onScroll()">
+				<div class="messages" *ngIf="isWebsocketConnected()">
+					<div *ngFor="let message of receivedMessages"
+						[ngClass]="{'text-right': message.senderUsername === loggedUserUsername, 'text-left': message.senderUsername !== loggedUserUsername}">
+						<p class="sender-username">{{message.senderUsername}}</p>
+						<p class="message" [innerHTML]="messageWithParsedLinks(message.message)">{{message.message}}</p>
+						<div class="message-time">{{ message.createdAt | date: 'HH:mm' }}</div>
+					</div>
+				</div>
+				<div class="input">
+					<input type="text" [(ngModel)]="messageToSend" (keyup.enter)="sendMessage(currentChatroom?.id)" />
+					<button (click)="sendMessage(currentChatroom?.id)">Send</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

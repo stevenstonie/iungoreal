@@ -1,11 +1,12 @@
-package com.stevenst.lib.model;
+package com.stevenst.lib.model.chat;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,21 +14,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "\"secondary_regions_users\"")
+@Table(name = "\"chat_message\"")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SecondaryRegionsUsers {
+public class ChatMessage {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "\"user_id\"", nullable = false)
-	private User user;
-	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "\"secondary_region_id\"", nullable = false)
-	private Region secondaryRegion;
+	@Column(nullable = false)
+	private Long chatroomId;
+
+	@Column(nullable = false)
+	private String senderUsername;
+
+	@Column(nullable = false)
+	private String message;
+
+	@Column(nullable = false)
+	private final LocalDateTime createdAt = LocalDateTime.now();
 }

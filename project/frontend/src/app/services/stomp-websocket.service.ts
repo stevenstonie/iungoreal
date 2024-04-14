@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Client, Message } from '@stomp/stompjs';
+import { Client, IMessage } from '@stomp/stompjs';
+import { ChatMessage } from '../models/app';
 
 @Injectable({
   providedIn: 'root'
@@ -7,9 +8,9 @@ import { Client, Message } from '@stomp/stompjs';
 export class StompWebsocketService {
   private stompClient: Client;
 
-  constructor() { 
+  constructor() {
     this.stompClient = new Client({
-      brokerURL: 'ws://localhost:8080/notification-endpoint',
+      brokerURL: 'ws://localhost:8083/chat-endpoint',
       debug: function (str) {
         console.log(str);
       },
@@ -20,13 +21,18 @@ export class StompWebsocketService {
     this.stompClient.activate();
   }
 
-  subscribeToTopic(topic: string, callback: (message: Message) => void) {
+  subscribeToTopic(topic: string, callback: (chatMessage: ChatMessage) => void) {
     this.stompClient.onConnect = () => {
-      this.stompClient.subscribe(topic, callback);
-    }
+      this.stompClient.subscribe(topic, (message: IMessage) => {
+        const chatMessage: ChatMessage = JSON.parse(message.body);
+        callback(chatMessage);
+      });
+    };
   }
 
-  sendMessage(destination: string, message: string) {
+  sendMessage(destination: string, chatMessage: ChatMessage) {
+    const message = JSON.stringify(chatMessage);
+
     this.stompClient.publish({
       destination: destination,
       body: message

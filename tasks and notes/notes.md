@@ -7,15 +7,18 @@
 	- (recurring) show window dialogs on errors / restrictions for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 	- [ ] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. will only be shown for selected regions
 	- [ ] (fr, bk) set up the websocket code to implement the chat component
+=======
+>>>>>>> b3e30a6e0cb3f9a105116ccff8e61cc486555e15
 	- [ ] (fr, bk) add the chat functionality -> (3 types: dms, regional and custom)
 =======
 >>>>>>> Stashed changes
 	- [ ] (fr, bk) implement search functionality
-	- [ ] (fr) add a "loading" cue to the screen when a request is in the making
 	- [ ] (fr, bk) add functionality for the main page (fetching friends posts)
+	- [ ] (fr) add a "loading" cue to the screen when a request is in the making
 	- [ ] (fr) add verification through email when registering
 	- [ ] (fr) add upload size cap for the file size on frontend (and update the existing ones from backend)
 	- [ ] (bk) add logging instead of console prints
@@ -33,12 +36,17 @@
 
 	_________________________________
 	---------------------------------
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
 	- [x] (fr, bk) add the chat functionality -> (3 types: dms, regional and custom)
 	- [x] (fr, bk) set up the websocket code to implement the chat component
 	- [x] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. will only be shown for selected regions
 >>>>>>> Stashed changes
+=======
+	- [x] (fr, bk) set up the websocket code to implement the chat component
+	- [x] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. will only be shown for selected regions
+>>>>>>> b3e30a6e0cb3f9a105116ccff8e61cc486555e15
 	- [x] (fr, bk) notificationsF
 	- [x] (fr, bk) create posts and display them on the profile
 	- [x] (bk) integrate s3 as object storage service -> tested by uploading and displaying the profile picture
