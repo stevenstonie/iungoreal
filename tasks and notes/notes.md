@@ -7,7 +7,6 @@
 	- (recurring) show window dialogs on errors / restrictions for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
-	- [ ] (fr, bk) add the chat functionality -> (3 types: dms, regional and custom)
 	- [ ] (fr, bk) implement search functionality
 	- [ ] (fr, bk) add functionality for the main page (fetching friends posts)
 	- [ ] (fr) add a "loading" cue to the screen when a request is in the making
@@ -28,6 +27,7 @@
 
 	_________________________________
 	---------------------------------
+	- [x] (fr, bk) add the chat functionality -> (3 types: dms, regional and custom)
 	- [x] (fr, bk) set up the websocket code to implement the chat component
 	- [x] (fr, bk) implement regions (user can have one primary region and other secondary ones) -> notifications, events, etc. will only be shown for selected regions
 	- [x] (fr, bk) notificationsF
