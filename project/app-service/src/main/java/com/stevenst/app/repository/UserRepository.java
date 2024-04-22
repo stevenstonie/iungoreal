@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.lib.model.User;
 
 import jakarta.transaction.Transactional;
@@ -25,4 +26,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	void updateCountryAndPrimaryRegionToNullByCountryIdAndRegionIds(Long countryId, List<Long> regionIds);
 	// for each user it will remove the country if it matches and the region if its inside the list
 
+	@Query("SELECT u FROM User u WHERE u.username LIKE %:input%")
+	List<User> findUsersByUsernameContaining(String input);
 }

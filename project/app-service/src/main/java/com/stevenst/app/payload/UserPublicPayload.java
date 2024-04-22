@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserPublicPayload {
+	private Long id;
 	private String username;
 	private String profilePictureName;
 }
