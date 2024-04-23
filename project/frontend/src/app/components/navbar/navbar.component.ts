@@ -4,6 +4,7 @@ import { User } from 'src/app/models/user';
 import { catchError, delayWhen, firstValueFrom, retry, throwError, timeout, timer } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { NotificationService } from 'src/app/services/notification.service';
+import { MiscService } from '../../services/misc.service';
 
 @Component({
   selector: 'app-navbar',
@@ -20,7 +21,7 @@ export class NavbarComponent implements OnInit {
   nbOfNotificationsF: number = 0;
   searchInput: string = '';
 
-  constructor(private userService: UserService, private authService: AuthService, private notificationService: NotificationService) { }
+  constructor(private userService: UserService, private authService: AuthService, private notificationService: NotificationService, private miscService: MiscService) { }
 
   // TODO: test this thoroughly (also make it so that this only happens once and not every time the page reloads or smth)
   async ngOnInit() {
@@ -78,7 +79,14 @@ export class NavbarComponent implements OnInit {
 
   search(): void {
     if (this.searchInput.length >= 3) {
-      console.log('searching...')
+      this.miscService.searchForUsersByInput(this.searchInput).subscribe({
+        next: (response) => {
+          console.log(response);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
     }
   }
 

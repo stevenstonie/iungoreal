@@ -136,6 +136,6 @@ export class ChatService {
 
   private handleError(error: HttpErrorResponse) {
     console.error(error);
-    return throwError(() => new Error('An error occurred in friends service.'));
+    return throwError(() => new Error('An error occurred in chat service.'));
   }
 }
