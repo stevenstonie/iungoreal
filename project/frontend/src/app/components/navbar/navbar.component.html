@@ -15,7 +15,7 @@
 		</div>
 
 		<div class="middle-section">
-			<input id="search-bar" type="text" placeholder="Search..." (input)="search()">
+			<input id="search-bar" type="text" placeholder="search..." [(ngModel)]="searchInput" (keydown.enter)="search()">
 		</div>
 
 		<div class="right-section">

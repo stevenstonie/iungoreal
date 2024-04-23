@@ -18,6 +18,7 @@ export class NavbarComponent implements OnInit {
   showNotifications: boolean = false;
   showFriendRequests: boolean = false;
   nbOfNotificationsF: number = 0;
+  searchInput: string = '';
 
   constructor(private userService: UserService, private authService: AuthService, private notificationService: NotificationService) { }
 
@@ -76,7 +77,9 @@ export class NavbarComponent implements OnInit {
   }
 
   search(): void {
-    // TODO: Implement search
+    if (this.searchInput.length >= 3) {
+      console.log('searching...')
+    }
   }
 
   createPost(): void {
