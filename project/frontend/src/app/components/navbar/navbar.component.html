@@ -16,6 +16,11 @@
 
 		<div class="middle-section">
 			<input id="search-bar" type="text" placeholder="search..." [(ngModel)]="searchInput" (keydown.enter)="search()">
+			<ul *ngIf="searchResults.length > 0">
+				<li *ngFor="let result of searchResults">
+				  smth {{ result.username }}
+				</li>
+			  </ul>
 		</div>
 
 		<div class="right-section">

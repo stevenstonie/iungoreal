@@ -5,6 +5,7 @@ import { catchError, delayWhen, firstValueFrom, retry, throwError, timeout, time
 import { UserService } from '../../services/user.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { MiscService } from '../../services/misc.service';
+import { PublicUserPayload } from 'src/app/models/Payloads';
 
 @Component({
   selector: 'app-navbar',
@@ -20,6 +21,7 @@ export class NavbarComponent implements OnInit {
   showFriendRequests: boolean = false;
   nbOfNotificationsF: number = 0;
   searchInput: string = '';
+  searchResults: PublicUserPayload[] = [];
 
   constructor(private userService: UserService, private authService: AuthService, private notificationService: NotificationService, private miscService: MiscService) { }
 
@@ -81,12 +83,15 @@ export class NavbarComponent implements OnInit {
     if (this.searchInput.length >= 3) {
       this.miscService.searchForUsersByInput(this.searchInput).subscribe({
         next: (response) => {
-          console.log(response);
+          this.searchResults = response;
         },
         error: (error) => {
           console.error(error);
         }
       });
+    }
+    else {
+      this.searchResults = [];
     }
   }
 
