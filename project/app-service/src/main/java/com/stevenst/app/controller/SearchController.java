@@ -9,16 +9,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stevenst.app.payload.UserPublicPayload;
+import com.stevenst.app.service.SearchService;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/search")
+@RequiredArgsConstructor
 public class SearchController {
+	private final SearchService searchService;
 
 	@GetMapping("/getUsersMatching")
 	public ResponseEntity<List<UserPublicPayload>> getUsersMatching(@RequestParam("input") String input) {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(searchService.getUsersMatching(input));
 	}
 }
