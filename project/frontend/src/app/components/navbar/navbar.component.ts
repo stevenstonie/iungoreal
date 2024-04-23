@@ -138,4 +138,8 @@ export class NavbarComponent implements OnInit {
   updateNbOfNotificationsF() {
     --this.nbOfNotificationsF;
   }
+
+  goToUserProfile(usernameOfUser: string) {
+    window.location.href = '/user/' + usernameOfUser;
+  }
 }
