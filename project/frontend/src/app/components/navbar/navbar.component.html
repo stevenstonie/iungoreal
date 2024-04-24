@@ -7,7 +7,8 @@
 	<app-map *ngIf="showMap" [loggedUser]="loggedUser"></app-map>
 	<app-chat *ngIf="showChat"></app-chat>
 	<app-notifications *ngIf="showNotifications"></app-notifications>
-	<app-friend-requests (notificationRemoved)="updateNbOfNotificationsF()" *ngIf="showFriendRequests"></app-friend-requests>
+	<app-friend-requests (notificationRemoved)="updateNbOfNotificationsF()"
+		*ngIf="showFriendRequests"></app-friend-requests>
 
 	<div id="navbar">
 		<div class="left-section">
@@ -15,12 +16,14 @@
 		</div>
 
 		<div class="middle-section">
-			<input id="search-bar" type="text" placeholder="search..." [(ngModel)]="searchInput" (keydown.enter)="search()">
+			<input id="search-bar" type="text" placeholder="search..." [(ngModel)]="searchInput"
+				(keydown.enter)="search()">
 			<ul *ngIf="searchResults.length > 0">
 				<li *ngFor="let result of searchResults" (click)="goToUserProfile(result.username)">
-				  {{ result.username }}
+					<img id="profile-picture" [src]="result.pfpLink" alt="(Profile picture)">
+					<span class="username">{{ result.username }}</span>
 				</li>
-			  </ul>
+			</ul>
 		</div>
 
 		<div class="right-section">
@@ -30,7 +33,8 @@
 
 			<button (click)="toggleChat()">Chat</button>
 
-			<button (click)="toggleFriendRequests()">Friend Requests ({{ nbOfNotificationsF > 50 ? '50+' : nbOfNotificationsF }})</button>
+			<button (click)="toggleFriendRequests()">Friend Requests ({{ nbOfNotificationsF > 50 ? '50+' :
+				nbOfNotificationsF }})</button>
 
 			<button (click)="toggleNotifications()">Notifications</button>
 

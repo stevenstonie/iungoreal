@@ -39,7 +39,7 @@
 		ul {
 			position: absolute;
 			top: var(--height);
-			left: 200px;
+			left: 20%;
 			width: 300px;
 			background-color: white;
 			border: 1px solid #ccc;
@@ -52,18 +52,35 @@
 			li {
 				display: flex;
 				align-items: center;
-				padding: 10px;
 				border-bottom: 1px solid #ccc;
-			}
+			
+				img#profile-picture {
+				  width: 30px;
+				  height: 30px;
+				  border-radius: 50%;
+				  margin: 5px 10px; // Center the image vertically within the list item
+				}
+			
+				span {
+				  white-space: nowrap;
+				  overflow: hidden;
+				  text-overflow: ellipsis;
+				}
+			  }
 
-			li:hover{
+
+			li:hover {
 				background-color: #ccc;
 				cursor: pointer;
 			}
+		}
 
-			li>* {
-				display: inline-block;
-			}
+		#profile-picture {
+			background-color: aquamarine;
+			width: 35px;
+			height: 35px;
+			margin: auto auto 10px 10px;
+			border-radius: 50px;
 		}
 	}
 

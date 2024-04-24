@@ -48,5 +48,5 @@ export enum ChatroomType {
 export interface PublicUserPayload {
 	id: number,
 	username: string,
-	pfpName: string
+	pfpLink: string
 }
