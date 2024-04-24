@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class UserPublicPayload {
 	private Long id;
 	private String username;
-	private String pfpName;
+	private String pfpLink;
 }

@@ -254,7 +254,7 @@ public class ChatServiceImpl implements ChatService {
 						.build();
 			}
 		} else {
-			throw new RuntimeException("create a custom exception for an enum, field or value that doesnt exist");
+			throw new RuntimeException("create a custom exception for an enum, field or value that doesnt exist");	// TODO
 		}
 	}
 
