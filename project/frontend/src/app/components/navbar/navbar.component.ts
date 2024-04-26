@@ -84,6 +84,7 @@ export class NavbarComponent implements OnInit {
       this.miscService.searchForUsersByInput(this.searchInput).subscribe({
         next: (response) => {
           this.searchResults = response;
+          
         },
         error: (error) => {
           console.error(error);

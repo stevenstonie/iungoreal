@@ -32,7 +32,18 @@ public class SearchServiceImpl implements SearchService {
 
 		List<User> matchingUsers = userRepository.findUsersByUsernameContaining(input);
 
-		for (User user : matchingUsers) {
+		// matchingUsers = setThePfpLinkForEachUser(matchingUsers);
+		matchingUsers = setThePfpLinkForEachUserToNull(matchingUsers);
+
+		return matchingUsers.stream()
+				.map(user -> new UserPublicPayload(user.getId(), user.getUsername(), user.getProfilePictureName()))
+				.collect(Collectors.toList());
+	}
+
+	// ----------------------------------------------------------------
+
+	private List<User> setThePfpLinkForEachUser(List<User> users) {
+		for (User user : users) {
 			Mono<String> userPfpLinkMono = webClient.get()
 					.uri(uriBuilder -> uriBuilder.path("/api/user/getProfilePictureLink")
 							.queryParam("username", user.getUsername())
@@ -47,11 +58,16 @@ public class SearchServiceImpl implements SearchService {
 						.replace("{\"string\":\"", "")
 						.replace("\"}", ""));
 			}
-
 		}
 
-		return matchingUsers.stream()
-				.map(user -> new UserPublicPayload(user.getId(), user.getUsername(), user.getProfilePictureName()))
-				.collect(Collectors.toList());
+		return users;
+	}
+
+	private List<User> setThePfpLinkForEachUserToNull(List<User> users) {
+		for (User user : users) {
+			user.setProfilePictureName(null);
+		}
+
+		return users;
 	}
 }
