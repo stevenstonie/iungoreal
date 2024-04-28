@@ -43,6 +43,6 @@ export class NotificationService {
 
   private handleError(error: HttpErrorResponse) {
     console.error(error);
-    return throwError(() => new Error('An error occurred in app service.'));
+    return throwError(() => new Error('An error occurred in notification service.'));
   }
 }

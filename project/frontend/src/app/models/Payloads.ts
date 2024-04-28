@@ -1,5 +1,4 @@
 import { SafeUrl } from "@angular/platform-browser";
-import { User } from "./user";
 
 export interface ResponsePayload {
 	status: number;
@@ -44,4 +43,10 @@ export enum ChatroomType {
 	DM = 'DM',
 	GROUP = 'GROUP',
 	REGIONAL = 'REGIONAL'
+}
+
+export interface PublicUserPayload {
+	id: number,
+	username: string,
+	pfpLink: string
 }

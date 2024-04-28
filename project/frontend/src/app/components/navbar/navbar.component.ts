@@ -4,6 +4,8 @@ import { User } from 'src/app/models/user';
 import { catchError, delayWhen, firstValueFrom, retry, throwError, timeout, timer } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { NotificationService } from 'src/app/services/notification.service';
+import { MiscService } from '../../services/misc.service';
+import { PublicUserPayload } from 'src/app/models/Payloads';
 
 @Component({
   selector: 'app-navbar',
@@ -18,8 +20,10 @@ export class NavbarComponent implements OnInit {
   showNotifications: boolean = false;
   showFriendRequests: boolean = false;
   nbOfNotificationsF: number = 0;
+  searchInput: string = '';
+  searchResults: PublicUserPayload[] = [];
 
-  constructor(private userService: UserService, private authService: AuthService, private notificationService: NotificationService) { }
+  constructor(private userService: UserService, private authService: AuthService, private notificationService: NotificationService, private miscService: MiscService) { }
 
   // TODO: test this thoroughly (also make it so that this only happens once and not every time the page reloads or smth)
   async ngOnInit() {
@@ -76,7 +80,20 @@ export class NavbarComponent implements OnInit {
   }
 
   search(): void {
-    // TODO: Implement search
+    if (this.searchInput.length >= 3) {
+      this.miscService.searchForUsersByInput(this.searchInput).subscribe({
+        next: (response) => {
+          this.searchResults = response;
+          
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+    else {
+      this.searchResults = [];
+    }
   }
 
   createPost(): void {
@@ -121,5 +138,9 @@ export class NavbarComponent implements OnInit {
 
   updateNbOfNotificationsF() {
     --this.nbOfNotificationsF;
+  }
+
+  goToUserProfile(usernameOfUser: string) {
+    window.location.href = '/user/' + usernameOfUser;
   }
 }
