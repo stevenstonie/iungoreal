@@ -88,6 +88,7 @@ public class PostServiceImpl implements PostService {
 			Long dislikes = 0L;
 
 			postsDetails.add(PostPayload.builder()
+					.id(post.getId())
 					.authorUsername(author.getUsername())
 					.title(post.getTitle())
 					.description(post.getDescription())
@@ -102,15 +103,15 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostPayload> getAllPostsOfAllFriends(String username) {
+	public List<PostPayload> getPostsOfFriendsBeforeCursorId(String username, Long cursorId, int limit) {
 		User user = userRepository.findByUsername(username).orElseThrow(
 				() -> new IgorUserNotFoundException("User with username " + username + " not found."));
 
 		// get a list of all friends's usernames
 
-		// use getAllPosts method with each friend's username and add all of those in a postsDetails variable
+		// call a query to get the next 'limit' posts of friends before cursorId from db
 
-		// return postsDetails
+		// and return them
 
 		return Collections.emptyList();
 	}

@@ -12,5 +12,5 @@ public interface PostService {
 
 	List<PostPayload> getAllPostsOfAnUser(String authorUsername);
 
-	List<PostPayload> getAllPostsOfAllFriends(String username);
+	List<PostPayload> getPostsOfFriendsBeforeCursorId(String username, Long cursorId, int limit);
 }

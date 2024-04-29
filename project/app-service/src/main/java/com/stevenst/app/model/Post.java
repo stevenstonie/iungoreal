@@ -39,7 +39,4 @@ public class Post {
 
 	@Column(nullable = false)
 	private final LocalDateTime createdAt = LocalDateTime.now();
-
-	@Builder.Default
-	private boolean seen = false;
 }

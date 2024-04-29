@@ -18,12 +18,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "\"post_votes\"")
+@Table(name = "\"post_interaction\"")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostVotes {
+public class PostInteraction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -40,6 +40,6 @@ public class PostVotes {
 
 	private boolean disliked;
 
-	@Column(nullable = false)
-	private final LocalDateTime createdAt = LocalDateTime.now();
+	@Builder.Default
+	private boolean seen = false;
 }
