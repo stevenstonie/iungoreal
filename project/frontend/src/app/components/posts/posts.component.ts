@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { AppService } from '../../services/app.service';
 import { PostPayload } from 'src/app/models/Payloads';
+import { PostService } from 'src/app/services/post.service';
 
 @Component({
   selector: 'app-posts',
@@ -11,13 +11,13 @@ export class PostsComponent implements OnChanges {
   @Input() usernameOfUserOnScreen: string | undefined;
   posts: PostPayload[] = [];
 
-  constructor(private appService: AppService) {
+  constructor(private postService: PostService) {
 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     // if (this.usernameOfUserOnScreen) {
-    //   this.appService.getAllPosts(this.usernameOfUserOnScreen).subscribe({
+    //   this.postService.getAllPostsOfUser(this.usernameOfUserOnScreen).subscribe({
     //     next: (posts) => {
     //       this.posts = posts;
     //     },

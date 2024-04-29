@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AppService } from '../../services/app.service';
+import { PostService } from '../../services/post.service';
 
 @Component({
   selector: 'app-create-post',
@@ -15,7 +15,7 @@ export class CreatePostComponent implements OnDestroy {
   files: File[] = [];
   previewUrls: any[] = [];
 
-  constructor(private sanitizer: DomSanitizer, private http: HttpClient, private appService: AppService) {
+  constructor(private sanitizer: DomSanitizer, private http: HttpClient, private postService: PostService) {
 
   }
 
@@ -36,6 +36,7 @@ export class CreatePostComponent implements OnDestroy {
 
   createPost(): void {
     // const formData = new FormData();
+
     // formData.append('title', this.title);
     // formData.append('authorUsername', this.authorUsername);
     // if (this.description) {
@@ -47,10 +48,11 @@ export class CreatePostComponent implements OnDestroy {
     //   });
     // }
 
-    // this.appService.createPost(formData).subscribe({
+    // this.postService.createPost(formData).subscribe({
     //   next: (response) => {
-    //     window.location.reload();
     //     console.log('Post created successfully', response);
+    //     this.title = this.description = '';
+    //     this.previewUrls = this.files = [];
     //   },
     //   error: (error) => {
     //     console.error('Error creating post', error);

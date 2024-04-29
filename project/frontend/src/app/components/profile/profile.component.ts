@@ -5,8 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FriendService } from 'src/app/services/friend.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
-import { StringInJson } from 'src/app/models/app';
-import { ResponsePayload } from 'src/app/models/Payloads';
 
 @Component({
   selector: 'app-profile',
