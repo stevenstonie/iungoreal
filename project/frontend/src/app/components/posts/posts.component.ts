@@ -9,6 +9,7 @@ import { PostService } from 'src/app/services/post.service';
 })
 export class PostsComponent implements OnChanges {
   @Input() usernameOfUserOnScreen: string | undefined;
+  @Input() isFeed: boolean = false;
   posts: PostPayload[] = [];
 
   constructor(private postService: PostService) {
@@ -16,15 +17,20 @@ export class PostsComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // if (this.usernameOfUserOnScreen) {
-    //   this.postService.getAllPostsOfUser(this.usernameOfUserOnScreen).subscribe({
-    //     next: (posts) => {
-    //       this.posts = posts;
-    //     },
-    //     error: (error) => {
-    //       console.error(error);
-    //     }
-    //   });
-    // }
+    if (this.isFeed) {
+      console.log("to implement");
+    }
+    else {
+      if (this.usernameOfUserOnScreen) {
+        this.postService.getAllPostsOfUser(this.usernameOfUserOnScreen).subscribe({
+          next: (posts) => {
+            this.posts = posts;
+          },
+          error: (error) => {
+            console.error(error);
+          }
+        });
+      }
+    }
   }
 }
