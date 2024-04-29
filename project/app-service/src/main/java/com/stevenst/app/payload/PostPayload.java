@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostPayload {
+	private Long id;
 	private String authorUsername;
 	private String title;
 	private String description;

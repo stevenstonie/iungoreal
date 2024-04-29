@@ -10,7 +10,7 @@ import com.stevenst.lib.payload.ResponsePayload;
 public interface PostService {
 	ResponsePayload createPost(String title, String description, String authorUsername, List<MultipartFile> files);
 
-	List<PostPayload> getAllPosts(String authorUsername);
+	List<PostPayload> getAllPostsOfAnUser(String authorUsername);
 
 	List<PostPayload> getAllPostsOfAllFriends(String username);
 }

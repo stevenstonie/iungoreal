@@ -50,6 +50,7 @@ export class CreatePostComponent implements OnDestroy {
     // this.appService.createPost(formData).subscribe({
     //   next: (response) => {
     //     console.log('Post created successfully', response);
+    //     window.location.reload();
     //   },
     //   error: (error) => {
     //     console.error('Error creating post', error);
