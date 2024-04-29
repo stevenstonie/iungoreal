@@ -13,7 +13,10 @@ import com.stevenst.app.model.Post;
 public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findAllByAuthorUsernameOrderByCreatedAtDesc(String authorUsername);
 
-	@Query("SELECT post FROM Post post WHERE post.author.username IN :friendUsernames AND (:cursor IS NULL OR post.id < :cursor) ORDER BY post.createdAt DESC")
-	// TODO: also add the seen = false condition
-	List<Post> findPostsFromFriendsBeforeCursorId(List<String> friendUsernames, Long cursor, Pageable pageable);
+	@Query("SELECT post FROM Post post "
+			+ "LEFT JOIN PostInteraction interaction ON post.id = interaction.post.id AND interaction.user.username = :currentUser "
+			+ "WHERE post.author.username IN :friendUsernames AND (:cursor IS NULL OR post.id < :cursor) AND (interaction.id IS NULL OR interaction.seen = false) "
+			+ "ORDER BY post.createdAt DESC")
+	List<Post> findPostsFromFriendsBeforeCursorId(String currentUser, List<String> friendUsernames, Long cursor,
+			Pageable pageable);
 }

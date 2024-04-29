@@ -120,7 +120,8 @@ public class PostServiceImpl implements PostService {
 		friendUsernames.add(username);
 
 		// get the next 'limit' posts before the cursorId for the user
-		List<Post> posts = postRepository.findPostsFromFriendsBeforeCursorId(friendUsernames, cursorId, pageRequest);
+		List<Post> posts = postRepository.findPostsFromFriendsBeforeCursorId(username, friendUsernames, cursorId,
+				pageRequest);
 
 		List<PostPayload> postPayloads = new ArrayList<>();
 

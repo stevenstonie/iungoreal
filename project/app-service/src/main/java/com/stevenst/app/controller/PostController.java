@@ -42,7 +42,7 @@ public class PostController implements PostApi {
 	@GetMapping("/getNextPostsOfFriends")
 	public ResponseEntity<List<PostPayload>> getNextPostsOfFriends(@RequestParam("username") String username,
 			@RequestParam(required = false) Long cursor,
-			@RequestParam(defaultValue = "2") int limit) {
+			@RequestParam(defaultValue = "20") int limit) {
 		return ResponseEntity.ok(postService.getPostsOfFriendsBeforeCursorId(username, cursor, limit));
 	}
 }
