@@ -10,8 +10,12 @@ import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.stevenst.app.exception.IgorPostException;
 import com.stevenst.lib.exception.IgorImageNotFoundException;
@@ -28,6 +32,7 @@ import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
 
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -47,6 +52,7 @@ public class PostServiceImpl implements PostService {
 	private final UserRepository userRepository;
 	private final PostMediaRepository postMediaRepository;
 	private final S3Client s3Client;
+	private final WebClient webClient;
 	@Value("${aws.bucketName}")
 	private String bucketName;
 
@@ -107,16 +113,46 @@ public class PostServiceImpl implements PostService {
 		User user = userRepository.findByUsername(username).orElseThrow(
 				() -> new IgorUserNotFoundException("User with username " + username + " not found."));
 
-		// get a list of all friends's usernames
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
 
-		// call a query to get the next 'limit' posts of friends before cursorId from db
+		// get all friends of the user (including the user)
+		List<String> friendUsernames = getAllFriendsUsernamesOfUser(username);
+		friendUsernames.add(username);
 
-		// and return them
+		// get the next 'limit' posts before the cursorId for the user
+		List<Post> posts = postRepository.findPostsFromFriendsBeforeCursorId(friendUsernames, cursorId, pageRequest);
 
-		return Collections.emptyList();
+		List<PostPayload> postPayloads = new ArrayList<>();
+
+		for (Post post : posts) {
+			postPayloads.add(PostPayload.builder()
+					.id(post.getId())
+					.authorUsername(post.getAuthor().getUsername())
+					.title(post.getTitle())
+					.description(post.getDescription())
+					.createdAt(post.getCreatedAt())
+					.build());
+		}
+
+		// return these posts
+		return postPayloads;
 	}
 
 	// ---------------------------------------------
+
+	private List<String> getAllFriendsUsernamesOfUser(String username) {
+		// get all friends of user
+		Mono<List<String>> friendsUsernamesMono = webClient.get()
+				.uri(uriBuilder -> uriBuilder.path("/api/friend/getAllFriendsUsernames")
+						.queryParam("username", username)
+						.build())
+				.retrieve()
+				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
+				});
+
+		// Convert the Mono to a List and return it
+		return friendsUsernamesMono.block();
+	}
 
 	private List<String> getLinksForAllMediaOfAPost(String username, Long postId, List<String> mediaNames) {
 		List<String> mediaLinks = new ArrayList<>();
