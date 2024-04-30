@@ -39,9 +39,12 @@ export class MainPageComponent {
 
   fetchPosts() {
     if (this.usernameOfLoggedUser) {
-      this.postService.getNextPostsFromFriends(this.usernameOfLoggedUser, this.posts[0]?.id).subscribe({
+      this.postService.getNextPostsFromFriends(this.usernameOfLoggedUser, this.posts[this.posts.length - 1]?.id).subscribe({
         next: (posts) => {
-          this.posts = posts;
+          if (posts.length <= 0) {
+            alert("no more posts");
+          }
+          this.posts = this.posts.concat(posts);
         },
         error: (error) => {
           console.error(error);

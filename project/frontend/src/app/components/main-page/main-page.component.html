@@ -19,9 +19,6 @@
 				<h3>{{ post.title }}</h3>
 				<p>{{ post.description }}</p>
 				<i>author: {{ post.authorUsername }}</i>
-				<br>
-				<br>
-				<br>
 
 				<div class="post-buttons">
 					<button>Like</button>
@@ -32,6 +29,8 @@
 			</div>
 
 		</ng-container>
+
+		<button (click)="fetchPosts()">load more</button>
 	</div>
 	<div id="right-section">
 		<h4>friends</h4>
