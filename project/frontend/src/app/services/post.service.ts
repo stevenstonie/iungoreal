@@ -27,8 +27,11 @@ export class PostService {
       );
   }
 
-  getNextPostsFromFriends(username: string): Observable<PostPayload[]> {
-    const params = new HttpParams().set('username', username);
+  getNextPostsFromFriends(username: string, lastPostId: number | null): Observable<PostPayload[]> {
+    let params = new HttpParams().set('username', username);
+    if (lastPostId) {
+      params = params.set('cursor', lastPostId.toString());
+    }
 
     return this.httpClient.get<PostPayload[]>(`${this.postApiUrl}/getNextPostsOfFriends`, { params })
       .pipe(

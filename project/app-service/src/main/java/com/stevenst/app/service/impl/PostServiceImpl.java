@@ -126,12 +126,15 @@ public class PostServiceImpl implements PostService {
 		List<PostPayload> postPayloads = new ArrayList<>();
 
 		for (Post post : posts) {
+			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
+
 			postPayloads.add(PostPayload.builder()
 					.id(post.getId())
 					.authorUsername(post.getAuthor().getUsername())
 					.title(post.getTitle())
 					.description(post.getDescription())
 					.createdAt(post.getCreatedAt())
+					.mediaLinks(getLinksForAllMediaOfAPost(username, post.getId(), mediaNames))
 					.build());
 		}
 

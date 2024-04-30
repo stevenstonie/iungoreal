@@ -19,7 +19,7 @@ export class PostsComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (this.usernameOfUserOnScreen) {
       if (this.isFeed) {
-        this.postService.getNextPostsFromFriends(this.usernameOfUserOnScreen).subscribe({
+        this.postService.getNextPostsFromFriends(this.usernameOfUserOnScreen, null).subscribe({
           next: (posts) => {
             this.posts = posts;
           },
@@ -39,5 +39,9 @@ export class PostsComponent implements OnChanges {
         });
       }
     }
+  }
+
+  onScroll(event: Event): void {
+    console.log("scrolled");
   }
 }
