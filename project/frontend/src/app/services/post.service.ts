@@ -27,6 +27,15 @@ export class PostService {
       );
   }
 
+  getNextPostsFromFriends(username: string): Observable<PostPayload[]> {
+    const params = new HttpParams().set('username', username);
+
+    return this.httpClient.get<PostPayload[]>(`${this.postApiUrl}/getNextPostsOfFriends`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   // ----------------------------------------------------------
 
   private handleError(error: HttpErrorResponse) {

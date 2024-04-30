@@ -6,6 +6,7 @@ export interface ResponsePayload {
 }
 
 export interface PostPayload {
+	id: number;
 	authorUsername: string;
 	title: string;
 	description: string;

@@ -17,11 +17,18 @@ export class PostsComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.isFeed) {
-      console.log("to implement");
-    }
-    else {
-      if (this.usernameOfUserOnScreen) {
+    if (this.usernameOfUserOnScreen) {
+      if (this.isFeed) {
+        this.postService.getNextPostsFromFriends(this.usernameOfUserOnScreen).subscribe({
+          next: (posts) => {
+            this.posts = posts;
+          },
+          error: (error) => {
+            console.error(error);
+          }
+        });
+      }
+      else {
         this.postService.getAllPostsOfUser(this.usernameOfUserOnScreen).subscribe({
           next: (posts) => {
             this.posts = posts;
