@@ -38,6 +38,28 @@
 	margin-right: auto;
 }
 
+.post-header {
+	display: flex;
+	flex-direction: column;
+}
+
+.post-image {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	button {
+		margin: 5px;
+		height: 50px;
+		width: 30px;
+	}
+
+	img {
+		max-width: 500px;
+		max-height: 500px;
+	}
+}
+
 @media (max-width: 1100px) {
 	#left-section {
 		display: none;

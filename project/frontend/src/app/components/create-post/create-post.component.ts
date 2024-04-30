@@ -50,7 +50,7 @@ export class CreatePostComponent implements OnDestroy {
 
     // this.postService.createPost(formData).subscribe({
     //   next: (response) => {
-    //     console.log('Post created successfully', response);
+    //     alert('Post created successfully');
     //     this.title = this.description = '';
     //     this.previewUrls = this.files = [];
     //   },

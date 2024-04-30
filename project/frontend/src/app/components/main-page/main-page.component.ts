@@ -53,6 +53,27 @@ export class MainPageComponent {
     }
   }
 
+  currentPostIndex: number = 0;
+  currentImageIndex: number = 0;
+
+  nextImage() {
+    if (this.posts.length > 0 && this.currentPostIndex < this.posts.length) {
+      const currentPost = this.posts[this.currentPostIndex];
+      if (currentPost.mediaLinks.length > 0) {
+        this.currentImageIndex = (this.currentImageIndex + 1) % currentPost.mediaLinks.length;
+      }
+    }
+  }
+
+  previousImage() {
+    if (this.posts.length > 0 && this.currentPostIndex < this.posts.length) {
+      const currentPost = this.posts[this.currentPostIndex];
+      if (currentPost.mediaLinks.length > 0) {
+        this.currentImageIndex = (this.currentImageIndex - 1 + currentPost.mediaLinks.length) % currentPost.mediaLinks.length;
+      }
+    }
+  }
+
   onScroll(event: Event): void {
     console.log("scrolled");
   }
