@@ -16,6 +16,8 @@ export class MainPageComponent {
   friendsUsernames: string[] = [];
   usernameOfLoggedUser = localStorage.getItem('username') ?? '';
   posts: PostPayload[] = [];
+  currentPostIndex: number = 0;
+  currentPostIndexes: number[] = [];
 
   constructor(private friendService: FriendService, private postService: PostService) {
   }
@@ -44,7 +46,13 @@ export class MainPageComponent {
           if (posts.length <= 0) {
             alert("no more posts");
           }
+          console.log(posts);
+
           this.posts = this.posts.concat(posts);
+
+          for (let i = 0; i < posts.length; i++) {
+            this.currentPostIndexes.push(0);
+          }
         },
         error: (error) => {
           console.error(error);
@@ -53,26 +61,23 @@ export class MainPageComponent {
     }
   }
 
-  currentPostIndex: number = 0;
-  currentImageIndex: number = 0;
-
-  nextImage() {
-    if (this.posts.length > 0 && this.currentPostIndex < this.posts.length) {
-      const currentPost = this.posts[this.currentPostIndex];
-      if (currentPost.mediaLinks.length > 0) {
-        this.currentImageIndex = (this.currentImageIndex + 1) % currentPost.mediaLinks.length;
-      }
+  nextImage(postIndex: number) {
+    const currentPost = this.posts[postIndex];
+    if (currentPost.mediaLinks.length > 0 && this.currentPostIndexes[postIndex] < currentPost.mediaLinks.length - 1) {
+      this.currentPostIndexes[postIndex]++;
     }
   }
 
-  previousImage() {
-    if (this.posts.length > 0 && this.currentPostIndex < this.posts.length) {
-      const currentPost = this.posts[this.currentPostIndex];
-      if (currentPost.mediaLinks.length > 0) {
-        this.currentImageIndex = (this.currentImageIndex - 1 + currentPost.mediaLinks.length) % currentPost.mediaLinks.length;
-      }
+  previousImage(postIndex: number) {
+    const currentPost = this.posts[postIndex];
+    if (currentPost.mediaLinks.length > 0 && this.currentPostIndexes[postIndex] > 0) {
+      this.currentPostIndexes[postIndex]--;
     }
   }
+
+  // TODO: current problems:
+  //            -> images from friends posts are not visible.only images from one's own posts
+  //            -> videos are not displayed
 
   onScroll(event: Event): void {
     console.log("scrolled");
