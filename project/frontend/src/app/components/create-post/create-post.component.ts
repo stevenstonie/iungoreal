@@ -35,29 +35,29 @@ export class CreatePostComponent implements OnDestroy {
   }
 
   createPost(): void {
-    // const formData = new FormData();
+    const formData = new FormData();
 
-    // formData.append('title', this.title);
-    // formData.append('authorUsername', this.authorUsername);
-    // if (this.description) {
-    //   formData.append('description', this.description);
-    // }
-    // if (this.files?.length) {
-    //   this.files.forEach((file) => {
-    //     formData.append('files', file, file.name);
-    //   });
-    // }
+    formData.append('title', this.title);
+    formData.append('authorUsername', this.authorUsername);
+    if (this.description) {
+      formData.append('description', this.description);
+    }
+    if (this.files?.length) {
+      this.files.forEach((file) => {
+        formData.append('files', file, file.name);
+      });
+    }
 
-    // this.postService.createPost(formData).subscribe({
-    //   next: (response) => {
-    //     alert('Post created successfully');
-    //     this.title = this.description = '';
-    //     this.previewUrls = this.files = [];
-    //   },
-    //   error: (error) => {
-    //     console.error('Error creating post', error);
-    //   }
-    // });
+    this.postService.createPost(formData).subscribe({
+      next: (response) => {
+        alert('Post created successfully');
+        this.title = this.description = '';
+        this.previewUrls = this.files = [];
+      },
+      error: (error) => {
+        console.error('Error creating post', error);
+      }
+    });
   }
 
   isImage(file: File): boolean {

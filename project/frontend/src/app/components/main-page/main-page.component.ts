@@ -43,7 +43,7 @@ export class MainPageComponent {
     if (this.usernameOfLoggedUser) {
       this.postService.getNextPostsFromFriends(this.usernameOfLoggedUser, this.posts[this.posts.length - 1]?.id).subscribe({
         next: (posts) => {
-          if (posts.length <= 0) {
+          if (posts.length <= 0 && this.posts.length > 0) {
             alert("no more posts");
           }
           console.log(posts);
@@ -76,12 +76,8 @@ export class MainPageComponent {
   }
 
   isImage(file: string): boolean {
-    return true;
+    return file.includes('.png') || file.includes('.jpg') || file.includes('.jpeg') || file.includes('.gif') || file.includes('.webp');
   }
-
-  // TODO: current problems:
-  //            -> images from friends posts are not visible.only images from one's own posts
-  //            -> videos are not displayed
 
   onScroll(): void {
     console.log("scrolled");
