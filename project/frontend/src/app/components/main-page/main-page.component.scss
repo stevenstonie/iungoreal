@@ -41,6 +41,7 @@
 .post-preview {
 	display: flex;
 	flex-direction: column;
+	width: 600px;
 	margin-bottom: 30px;
 }
 
@@ -52,6 +53,7 @@
 .post-image {
 	display: flex;
 	flex-direction: row;
+	justify-content: center;
 	align-items: center;
 
 	button {
@@ -62,9 +64,17 @@
 
 	img,
 	video {
-		max-width: 500px;
-		max-height: 500px;
+		width: 500px;
+		height: 500px;
+		object-fit: contain;
 	}
+}
+
+.current-media-index {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	// center this 
+	text-align: center;
 }
 
 @media (max-width: 1100px) {
