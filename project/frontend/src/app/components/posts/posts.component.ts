@@ -11,37 +11,82 @@ export class PostsComponent implements OnChanges {
   @Input() usernameOfUserOnScreen: string | undefined;
   @Input() isFeed: boolean = false;
   posts: PostPayload[] = [];
+  currentPostIndex: number = 0;
+  currentPostIndexes: number[] = [];
 
   constructor(private postService: PostService) {
 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.usernameOfUserOnScreen) {
-      if (this.isFeed) {
-        this.postService.getNextPostsFromFriends(this.usernameOfUserOnScreen, null).subscribe({
-          next: (posts) => {
-            this.posts = posts;
-          },
-          error: (error) => {
-            console.error(error);
-          }
-        });
-      }
-      else {
-        this.postService.getAllPostsOfUser(this.usernameOfUserOnScreen).subscribe({
-          next: (posts) => {
-            this.posts = posts;
-          },
-          error: (error) => {
-            console.error(error);
-          }
-        });
-      }
+    this.fetchPosts();
+  }
+
+  fetchPosts() {
+    if (this.isFeed) {
+      this.fetchPostsForFeed();
+    } else {
+      this.fetchPostsOfUser();
     }
   }
 
-  onScroll(event: Event): void {
+  fetchPostsForFeed() {
+    if (this.usernameOfUserOnScreen) {
+      this.postService.getNextPostsFromFriends(this.usernameOfUserOnScreen, this.posts[this.posts.length - 1]?.id).subscribe({
+        next: (posts) => {
+          if (posts.length <= 0 && this.posts.length > 0) {
+            alert("no more posts");
+          }
+          console.log(posts);
+
+          this.posts = this.posts.concat(posts);
+
+          for (const element of posts) {
+            this.currentPostIndexes.push(0);
+          }
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
+
+  fetchPostsOfUser() {
+    if (this.usernameOfUserOnScreen) {
+      this.postService.getNextPostsOfUser(this.usernameOfUserOnScreen).subscribe({
+        next: (posts) => {
+          this.posts = posts;
+          for (const element of posts) {
+            this.currentPostIndexes.push(0);
+          }
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
+
+  nextImage(postIndex: number) {
+    const currentPost = this.posts[postIndex];
+    if (currentPost.mediaLinks.length > 0 && this.currentPostIndexes[postIndex] < currentPost.mediaLinks.length - 1) {
+      this.currentPostIndexes[postIndex]++;
+    }
+  }
+
+  previousImage(postIndex: number) {
+    const currentPost = this.posts[postIndex];
+    if (currentPost.mediaLinks.length > 0 && this.currentPostIndexes[postIndex] > 0) {
+      this.currentPostIndexes[postIndex]--;
+    }
+  }
+
+  isImage(file: string): boolean {
+    return file.includes('.png') || file.includes('.jpg') || file.includes('.jpeg') || file.includes('.gif') || file.includes('.webp');
+  }
+
+  onScroll(): void {
     console.log("scrolled");
   }
 }

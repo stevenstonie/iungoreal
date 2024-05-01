@@ -1,24 +1,47 @@
-<div id="posts-container" (scroll)="onScroll($event)">
+<div id="post-sort">Sort by:
+	<button>New</button>
+	<button>Hot</button>
+	<button>Top</button>
+</div>
+<br>
+<br>
 
-	<div id="post-sort">Sort by:
-		<button>New</button>
-		<button>Hot</button>
-		<button>Top</button>
-	</div>
-
-	<ng-container *ngFor="let post of posts">
-		<div class="post-preview">
+<ng-container *ngFor="let post of posts; let i = index">
+	<div class="post-preview">
+		<div class="post-header">
 			<h3>{{ post.title }}</h3>
 			<p>{{ post.description }}</p>
 			<i>author: {{ post.authorUsername }}</i>
-
-			<div class="post-buttons">
-				<button>Like</button>
-				<button>Dislike</button>
-				<button>Comment</button>
-				<button>Save</button>
-			</div>
 		</div>
 
-	</ng-container>
-</div>
+		<div class="post-image">
+			<button (click)="previousImage(i)" [disabled]="currentPostIndexes[i] === 0">&larr;</button>
+			<ng-container *ngIf="isImage(post.mediaLinks[currentPostIndexes[i]]); else videoTemplate">
+				<img [src]="post.mediaLinks[currentPostIndexes[i]]" alt="Post Image">
+			</ng-container>
+			<ng-template #videoTemplate>
+				<video controls>
+					<source [src]="post.mediaLinks[currentPostIndexes[i]]" type="video/mp4">
+					Your browser does not support the video tag.
+				</video>
+			</ng-template>
+			<button (click)="nextImage(i)"
+				[disabled]="currentPostIndexes[i] === post.mediaLinks.length - 1">&rarr;</button>
+		</div>
+
+		<p class="current-media-index">({{ currentPostIndexes[i] + 1 }})</p>
+
+
+		<div class="post-buttons">
+			<button>Upvote</button>
+			<button>Downvote</button>
+			<button>Comment</button>
+			<button>Save</button>
+		</div>
+	</div>
+
+</ng-container>
+
+<button style="display: flex; align-items: center; justify-content: center;" (click)="fetchPosts()">load more</button>
+<br>
+<br>

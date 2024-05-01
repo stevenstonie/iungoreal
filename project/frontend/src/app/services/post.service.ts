@@ -18,7 +18,7 @@ export class PostService {
       );
   }
 
-  getAllPostsOfUser(username: string): Observable<PostPayload[]> {
+  getNextPostsOfUser(username: string): Observable<PostPayload[]> {
     const params = new HttpParams().set('authorUsername', username);
 
     return this.httpClient.get<PostPayload[]>(`${this.postApiUrl}/getAll`, { params })
