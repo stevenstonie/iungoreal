@@ -134,7 +134,7 @@ public class PostServiceImpl implements PostService {
 					.title(post.getTitle())
 					.description(post.getDescription())
 					.createdAt(post.getCreatedAt())
-					.mediaLinks(getLinksForAllMediaOfAPost(username, post.getId(), mediaNames))
+					.mediaLinks(getLinksForAllMediaOfAPost(post.getAuthor().getUsername(), post.getId(), mediaNames))
 					.build());
 		}
 
@@ -177,6 +177,7 @@ public class PostServiceImpl implements PostService {
 		try {
 			checkIfMediaFileExistsInS3(key);
 		} catch (IgorImageNotFoundException e) {
+			System.err.println("File not found in S3:" + e.getMessage());
 			return null;
 		}
 

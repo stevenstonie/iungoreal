@@ -75,11 +75,15 @@ export class MainPageComponent {
     }
   }
 
+  isImage(file: string): boolean {
+    return true;
+  }
+
   // TODO: current problems:
   //            -> images from friends posts are not visible.only images from one's own posts
   //            -> videos are not displayed
 
-  onScroll(event: Event): void {
+  onScroll(): void {
     console.log("scrolled");
   }
 }
