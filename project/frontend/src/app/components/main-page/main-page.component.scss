@@ -38,6 +38,12 @@
 	margin-right: auto;
 }
 
+.post-preview {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 30px;
+}
+
 .post-header {
 	display: flex;
 	flex-direction: column;
@@ -54,7 +60,8 @@
 		width: 30px;
 	}
 
-	img, video {
+	img,
+	video {
 		max-width: 500px;
 		max-height: 500px;
 	}
