@@ -23,6 +23,7 @@ export class ProfileComponent {
   previewUrl: SafeUrl | null = null;
   profilePictureUrl: string = '';
   profileCoverUrl: string = '';
+  selectedSection: string = 'about';
 
   constructor(private userService: UserService, private friendService: FriendService, private route: ActivatedRoute, private router: Router, private sanitizer: DomSanitizer, private http: HttpClient) { }
 
@@ -207,6 +208,10 @@ export class ProfileComponent {
         console.error(error);
       }
     });
+  }
+
+  selectSection(sectionName: string) {
+    this.selectedSection = sectionName;
   }
 
   editProfile() {

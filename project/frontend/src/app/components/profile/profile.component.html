@@ -5,17 +5,35 @@
 	<h2 *ngIf="!isUserOnScreenTheLoggedOne">{{userOnScreen.username}}'s profile</h2>
 </div>
 
+<!--
+
+		<button (click)="selectSection('account')">Account</button>
+	<button (click)="selectSection('regions')">Regions</button>
+	<button (click)="selectSection('notifications')">Notifications</button>
+	<button (click)="selectSection('profile')">Profile</button>
+	<button (click)="selectSection('privacy')">Privacy</button>
+	<button (click)="selectSection('feed')">Feed</button>
+-->
+
 <section id="section-left">
-	<button>About</button>
-	<button>Posts</button>
-	<button>Comments</button>
+	<button (click)="selectSection('about')">About</button>
+	<button (click)="selectSection('posts')">Posts</button>
+	<button (click)="selectSection('comments')">Comments</button>
 	<ng-container *ngIf="isUserOnScreenTheLoggedOne">
-		<button>Liked</button>
-		<button>Disliked</button>
-		<button>Saved posts</button>
-		<button>Saved comments</button>
+		<button (click)="selectSection('liked')">Liked</button>
+		<button (click)="selectSection('disliked')">Disliked</button>
+		<button (click)="selectSection('savedPosts')">Saved posts</button>
+		<button (click)="selectSection('savedComments')">Saved comments</button>
 	</ng-container>
-	<app-posts [usernameOfUserOnScreen]="userOnScreen.username"></app-posts>
+
+	<ng-container *ngIf="selectedSection === 'about'">
+	
+	</ng-container>
+	
+
+	<ng-container *ngIf="selectedSection === 'posts'">
+		<app-posts [usernameOfUserOnScreen]="userOnScreen.username"></app-posts>
+	</ng-container>
 </section>
 
 <section id="section-right-container">
