@@ -61,8 +61,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public ResponsePayload createPost(String authorUsername, String title, String description,
 			List<MultipartFile> files) {
-		User author = userRepository.findByUsername(authorUsername).orElseThrow(
-				() -> new IgorUserNotFoundException("Author with username " + authorUsername + " not found."));
+		User author = findUserByUsername(authorUsername);
 		if (title == null || title.isEmpty()) {
 			throw new IgorPostException("Title cannot be null or empty");
 		}
@@ -88,12 +87,11 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostPayload> getAllPostsOfUser(String authorUsername, Long cursor, int limit) {
-		User author = userRepository.findByUsername(authorUsername).orElseThrow(
-				() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
+		User author = findUserByUsername(authorUsername);
 
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
 
-		List<Post> posts = postRepository.findPostsOfUserBeforeCursor(authorUsername, cursor,
+		List<Post> posts = postRepository.findPostsOfUserBeforeCursor(author.getUsername(), cursor,
 				pageRequest);
 
 		List<PostPayload> postPayloads = new ArrayList<>();
@@ -116,8 +114,7 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostPayload> getPostsOfFriendsBeforeCursor(String username, Long cursor, int limit) {
-		User user = userRepository.findByUsername(username).orElseThrow(
-				() -> new IgorUserNotFoundException("User with username " + username + " not found."));
+		User user = findUserByUsername(username);
 
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
 
@@ -150,12 +147,9 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public ResponsePayload removePost(String authorUsername, Long postId) {
-		User author;
-		if (authorUsername != null || postId != null) {
-			author = userRepository.findByUsername(authorUsername).orElseThrow(
-					() -> new IgorUserNotFoundException("Author with username " + authorUsername + " not found."));
-		} else {
-			throw new IgorPostException("Parameter cannot be null.");
+		User author = findUserByUsername(authorUsername);
+		if (postId == null) {
+			throw new IgorPostException("Post id cannot be null.");
 		}
 
 		// get the specific post and check if it belongs to the provided author
@@ -171,9 +165,9 @@ public class PostServiceImpl implements PostService {
 		// comments
 
 		// post_media
-			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(postId);
-			removeMediaOfPostFromCloud(author.getUsername(), postId, mediaNames);
-			postMediaRepository.deleteAllByPostId(postId);
+		List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(postId);
+		removeMediaOfPostFromCloud(author.getUsername(), postId, mediaNames);
+		postMediaRepository.deleteAllByPostId(postId);
 
 		// post_interaction
 
@@ -181,7 +175,8 @@ public class PostServiceImpl implements PostService {
 		postRepository.delete(post);
 
 		return ResponsePayload.builder().status(200)
-				.message("Post with id: " + postId + " of user: " + author.getUsername() + " removed successfully.").build();
+				.message("Post with id: " + postId + " of user: " + author.getUsername() + " removed successfully.")
+				.build();
 	}
 
 	// ---------------------------------------------
@@ -299,15 +294,19 @@ public class PostServiceImpl implements PostService {
 		}
 	}
 
+	// used to be sure that all files have unique names (even though its unlikely the user uploads the same file twice)
 	private List<String> getUniqueFilenamesFromFiles(List<MultipartFile> files) {
+		// use a map for file names and the number of times each one appears in the list
 		Map<String, Byte> filenameCounts = new HashMap<>();
 		List<String> uniqueFilenames = new ArrayList<>();
 
 		for (MultipartFile file : files) {
 			String originalFilename = file.getOriginalFilename();
+			// search in the map if the file name already exists
 			Byte count = filenameCounts.getOrDefault(originalFilename, (byte) 0);
 
 			String uniqueFilename;
+			// if the file name already exists, add a new number to the end
 			if (count > 0) {
 				String baseName = FilenameUtils.removeExtension(originalFilename);
 				String extension = FilenameUtils.getExtension(originalFilename);
@@ -363,5 +362,10 @@ public class PostServiceImpl implements PostService {
 		}
 
 		System.out.println("Successfully removed post media (with id: " + postId + ") from cloud.");
+	}
+
+	private User findUserByUsername(String username) {
+		return userRepository.findByUsername(username).orElseThrow(
+				() -> new IgorUserNotFoundException("User with username " + username + " not found."));
 	}
 }
