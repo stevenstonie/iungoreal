@@ -18,7 +18,26 @@ export class PostService {
       );
   }
 
-  getNextPostsOfUser(username: string, lastPostId: number | null): Observable<PostPayload[]> {
+  getNextPosts(username: string, lastPostId: number | null, isFeed: boolean): Observable<PostPayload[]> {
+    if (isFeed) {
+      return this.getNextPostsFromFriends(username, lastPostId);
+    } else {
+      return this.getNextPostsOfUser(username, lastPostId);
+    }
+  }
+
+  removePostById(username: string, postId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('postId', postId.toString());
+
+    return this.http.delete<ResponsePayload>(`${this.postApiUrl}/remove`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // ----------------------------------------------------------
+
+  private getNextPostsOfUser(username: string, lastPostId: number | null): Observable<PostPayload[]> {
     let params = new HttpParams().set('authorUsername', username);
     if (lastPostId) {
       params = params.set('cursor', lastPostId.toString());
@@ -30,7 +49,7 @@ export class PostService {
       );
   }
 
-  getNextPostsFromFriends(username: string, lastPostId: number | null): Observable<PostPayload[]> {
+  private getNextPostsFromFriends(username: string, lastPostId: number | null): Observable<PostPayload[]> {
     let params = new HttpParams().set('username', username);
     if (lastPostId) {
       params = params.set('cursor', lastPostId.toString());
@@ -41,17 +60,6 @@ export class PostService {
         catchError(this.handleError)
       );
   }
-
-  removePostById(authorUsername: string, postId: number): Observable<ResponsePayload> {
-    const params = new HttpParams().set('authorUsername', authorUsername).set('postId', postId.toString());
-
-    return this.http.delete<ResponsePayload>(`${this.postApiUrl}/remove`, { params })
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
-  // ----------------------------------------------------------
 
   private handleError(error: HttpErrorResponse) {
     console.error(error);

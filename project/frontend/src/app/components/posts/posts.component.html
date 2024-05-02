@@ -12,7 +12,7 @@
 		<div class="post-header">
 			<div class="same-line">
 				<h3>{{ post.title }}</h3>
-				<button style="margin-right: 5px;" *ngIf="post.authorUsername === usernameOfUserOnScreen"
+				<button style="margin-right: 5px;" *ngIf="post.authorUsername === usernameOfLoggedUser"
 					(click)="removePost(i)">🗑</button>
 			</div>
 			<p>{{ post.description }}</p>
@@ -47,7 +47,7 @@
 			<p>{{0}}</p>
 			<button>⬇</button>
 			<button>💬 {{0}}</button>
-			<button style="font-size: 1.5rem;">&star;</button>
+			<button>&star;</button>
 		</div>
 	</div>
 </ng-container>

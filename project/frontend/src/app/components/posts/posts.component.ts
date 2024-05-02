@@ -12,6 +12,7 @@ export class PostsComponent implements OnChanges {
   @Input() isFeed: boolean = false;
   posts: PostPayload[] = [];
   currentPostIndex: number[] = [];
+  usernameOfLoggedUser = localStorage.getItem('username');
 
   constructor(private postService: PostService) {
 
@@ -22,16 +23,8 @@ export class PostsComponent implements OnChanges {
   }
 
   fetchPosts() {
-    if (this.isFeed) {
-      this.fetchPostsForFeed();
-    } else {
-      this.fetchPostsOfUser();
-    }
-  }
-
-  fetchPostsForFeed() {
     if (this.usernameOfUserOnScreen) {
-      this.postService.getNextPostsFromFriends(this.usernameOfUserOnScreen, this.posts[this.posts.length - 1]?.id).subscribe({
+      this.postService.getNextPosts(this.usernameOfUserOnScreen, this.posts[this.posts.length - 1]?.id, this.isFeed).subscribe({
         next: (posts) => {
           if (posts.length <= 0 && this.posts.length > 0) {
             alert("no more posts");
@@ -39,29 +32,6 @@ export class PostsComponent implements OnChanges {
           console.log(posts);
 
           this.posts = this.posts.concat(posts);
-
-          for (const element of posts) {
-            this.currentPostIndex.push(0);
-          }
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      });
-    }
-  }
-
-  fetchPostsOfUser() {
-    if (this.usernameOfUserOnScreen) {
-      this.postService.getNextPostsOfUser(this.usernameOfUserOnScreen, this.posts[this.posts.length - 1]?.id).subscribe({
-        next: (posts) => {
-          if (posts.length <= 0 && this.posts.length > 0) {
-            alert("no more posts");
-          }
-          console.log(posts);
-
-          this.posts = this.posts.concat(posts);
-
           for (const element of posts) {
             this.currentPostIndex.push(0);
           }
@@ -94,8 +64,8 @@ export class PostsComponent implements OnChanges {
   removePost(postIndex: number) {
     const confirmation = window.confirm("Are you sure you want to remove this post?");
 
-    if (confirmation && this.usernameOfUserOnScreen) {
-      this.postService.removePostById(this.usernameOfUserOnScreen, this.posts[postIndex].id).subscribe({
+    if (confirmation && this.usernameOfLoggedUser) {
+      this.postService.removePostById(this.usernameOfLoggedUser, this.posts[postIndex].id).subscribe({
         next: (response) => {
           this.posts.splice(postIndex, 1);
           alert("post removed successfully.");
