@@ -82,6 +82,11 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	public ResponsePayload upvotePost(String username, Long postId) {
+		return null;
+	}
+
+	@Override
 	public List<PostPayload> getAllPostsOfUser(String authorUsername, Long cursor, int limit) {
 		User author = userRepository.findByUsername(authorUsername).orElseThrow(
 				() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));

@@ -36,10 +36,19 @@ public class PostInteraction {
 	@JoinColumn(name = "post_id", nullable = false)
 	private Post post;
 
-	private boolean liked;
+	@Column(nullable = false)
+	@Builder.Default
+	private boolean upvoted = false;
 
-	private boolean disliked;
+	@Column(nullable = false)
+	@Builder.Default
+	private boolean downvoted = false;
 
+	@Column(nullable = false)
 	@Builder.Default
 	private boolean seen = false;
+
+	@Column(nullable = false)
+	@Builder.Default
+	private boolean saved = false;
 }

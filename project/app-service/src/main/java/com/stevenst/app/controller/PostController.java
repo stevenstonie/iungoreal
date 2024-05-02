@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/post")
@@ -33,6 +35,12 @@ public class PostController implements PostApi {
 			@RequestParam(value = "description", required = false) String description,
 			@RequestParam(value = "files", required = false) List<MultipartFile> file) {
 		return ResponseEntity.ok(postService.createPost(authorUsername, title, description, file));
+	}
+
+	@PutMapping("/upvote")
+	public ResponseEntity<ResponsePayload> upvotePost(@RequestParam("username") String username,
+			@RequestParam("postId") Long postId) {
+		return ResponseEntity.ok(postService.upvotePost(username, postId));
 	}
 
 	@GetMapping("/getNextPostsOfUser")
