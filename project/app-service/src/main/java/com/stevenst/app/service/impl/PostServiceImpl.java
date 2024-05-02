@@ -141,6 +141,14 @@ public class PostServiceImpl implements PostService {
 		return postPayloads;
 	}
 
+	@Override
+	public ResponsePayload removePost(String authorUsername, Long postId) {
+		return ResponsePayload.builder()
+				.status(420)
+				.message("in the making.")
+				.build();
+	}
+
 	// ---------------------------------------------
 
 	private List<String> getAllFriendsUsernamesOfUser(String username) {

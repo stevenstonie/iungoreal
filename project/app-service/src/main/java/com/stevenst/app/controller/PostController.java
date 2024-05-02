@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -46,5 +47,11 @@ public class PostController implements PostApi {
 			@RequestParam(required = false) Long cursor,
 			@RequestParam(defaultValue = "3") int limit) {
 		return ResponseEntity.ok(postService.getPostsOfFriendsBeforeCursor(username, cursor, limit));
+	}
+
+	@DeleteMapping("/remove")
+	public ResponseEntity<ResponsePayload> removePost(@RequestParam("authorUsername") String authorUsername,
+			@RequestParam("postId") Long postId) {
+		return ResponseEntity.ok(postService.removePost(authorUsername, postId));
 	}
 }
