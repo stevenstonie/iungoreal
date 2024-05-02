@@ -92,6 +92,14 @@ export class PostsComponent implements OnChanges {
     return file.includes('.png') || file.includes('.jpg') || file.includes('.jpeg') || file.includes('.gif') || file.includes('.webp');
   }
 
+  removePost(postIndex: number) {
+    const confirmation = window.confirm("Are you sure you want to remove this post?");
+
+    if (confirmation) {
+      console.log("to implement");
+    }
+  }
+
   onScroll(): void {
     console.log("scrolled");
   }

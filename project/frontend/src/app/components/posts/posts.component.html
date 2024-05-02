@@ -9,9 +9,15 @@
 <ng-container *ngFor="let post of posts; let i = index">
 	<div class="post-preview">
 		<div class="post-header">
-			<h3>{{ post.title }}</h3>
+			<div class="same-line">
+				<h3>{{ post.title }}</h3>
+				<button style="margin-right: 5px;" *ngIf="post.authorUsername === usernameOfUserOnScreen"
+					(click)="removePost(i)">🗑</button>
+			</div>
 			<p>{{ post.description }}</p>
 			<i>author: {{ post.authorUsername }}</i>
+			<i style="font-size: .8rem">post date: {{ post.createdAt | date: 'dd/MM/yyyy' }} at {{ post.createdAt |
+				date: 'HH:mm' }}</i>
 		</div>
 
 		<ng-container *ngIf="post.mediaLinks.length > 0">
@@ -36,11 +42,11 @@
 		</ng-container>
 
 		<div class="post-buttons">
-			<button>&uparrow;</button>
+			<button>👍</button>
 			<p>0</p>
-			<button>&downarrow;</button>
-			<button>&bne;</button>
-			<button>&star;</button>
+			<button>👎</button>
+			<button>💬</button>
+			<button style="font-size: 1.5rem;">&star;</button>
 		</div>
 	</div>
 
