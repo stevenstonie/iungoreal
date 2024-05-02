@@ -36,6 +36,9 @@ import reactor.core.publisher.Mono;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
@@ -55,12 +58,13 @@ public class PostServiceImpl implements PostService {
 	private final WebClient webClient;
 	@Value("${aws.bucketName}")
 	private String bucketName;
+	private static final String USERS_PATH = "users/";
 
 	@Override
 	public ResponsePayload createPost(String authorUsername, String title, String description,
 			List<MultipartFile> files) {
 		User author = userRepository.findByUsername(authorUsername).orElseThrow(
-				() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
+				() -> new IgorUserNotFoundException("Author with username " + authorUsername + " not found."));
 		if (title == null || title.isEmpty()) {
 			throw new IgorPostException("Title cannot be null or empty");
 		}
@@ -115,11 +119,11 @@ public class PostServiceImpl implements PostService {
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
 
 		// get all friends of the user (including the user)
-		List<String> friendUsernames = getAllFriendsUsernamesOfUser(username);
-		friendUsernames.add(username);
+		List<String> friendUsernames = getAllFriendsUsernamesOfUser(user.getUsername());
+		friendUsernames.add(user.getUsername());
 
 		// get the next 'limit' posts before the cursor for the user
-		List<Post> posts = postRepository.findPostsFromFriendsBeforeCursor(username, friendUsernames, cursor,
+		List<Post> posts = postRepository.findPostsFromFriendsBeforeCursor(user.getUsername(), friendUsernames, cursor,
 				pageRequest);
 
 		List<PostPayload> postPayloads = new ArrayList<>();
@@ -143,10 +147,33 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public ResponsePayload removePost(String authorUsername, Long postId) {
-		return ResponsePayload.builder()
-				.status(420)
-				.message("in the making.")
-				.build();
+		User author = userRepository.findByUsername(authorUsername).orElseThrow(
+				() -> new IgorUserNotFoundException("Author with username " + authorUsername + " not found."));
+
+		// get the specific post and check if it belongs to the provided author
+		Post post = postRepository.findById(postId).orElseThrow(() -> new IgorPostException(
+				"Post with id " + postId + " not found."));
+
+		if (!post.getAuthor().getUsername().equals(authorUsername)) {
+			throw new IgorPostException("Post with id " + postId + " does not belong to " + authorUsername);
+		}
+
+		// remove constraints
+
+		// comments
+
+		// post_media
+			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(postId);
+			removeMediaForPostFromCloud(authorUsername, postId, mediaNames);
+			postMediaRepository.deleteAllByPostId(postId);
+
+		// post_interaction
+
+		// remove the post from the db and cloud
+		postRepository.delete(post);
+
+		return ResponsePayload.builder().status(200)
+				.message("Post with id: " + postId + " of user: " + authorUsername + " removed successfully.").build();
 	}
 
 	// ---------------------------------------------
@@ -231,6 +258,7 @@ public class PostServiceImpl implements PostService {
 				.title(title)
 				.description(description)
 				.build();
+
 		return postRepository.save(post);
 	}
 
@@ -316,5 +344,16 @@ public class PostServiceImpl implements PostService {
 				.bucket(bucketName)
 				.key(key)
 				.build();
+	}
+
+	private void removeMediaForPostFromCloud(String authorUsername, Long postId, List<String> filenames) {
+		String key = authorUsername + "/posts/" + postId + "/";
+
+		for (String filename : filenames) {
+			String keyToRemove = key + filename;
+			s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(keyToRemove).build());
+		}
+
+		System.out.println("Successfully removed post media (with id: " + postId + ") from cloud.");
 	}
 }
