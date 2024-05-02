@@ -16,5 +16,5 @@ public interface PostService {
 
 	List<PostPayload> getPostsOfFriendsBeforeCursor(String username, Long cursor, int limit);
 
-	ResponsePayload removePost(String authorUsername, Long postId);
+	ResponsePayload removePost(String username, Long postId);
 }

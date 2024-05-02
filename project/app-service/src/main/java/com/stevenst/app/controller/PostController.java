@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/api/post")
 @RequiredArgsConstructor
 public class PostController implements PostApi {
+	private final String DEFAULT_LIMIT_OF_POSTS = "5";
 	private final PostService postService;
 
 	@PostMapping("/create")
@@ -46,20 +47,20 @@ public class PostController implements PostApi {
 	@GetMapping("/getNextPostsOfUser")
 	public ResponseEntity<List<PostPayload>> getAllPosts(@RequestParam("authorUsername") String authorUsername,
 			@RequestParam(required = false) Long cursor,
-			@RequestParam(defaultValue = "6") int limit) {
+			@RequestParam(defaultValue = DEFAULT_LIMIT_OF_POSTS) int limit) {
 		return ResponseEntity.ok(postService.getAllPostsOfUser(authorUsername, cursor, limit));
 	}
 
 	@GetMapping("/getNextPostsOfFriends")
 	public ResponseEntity<List<PostPayload>> getNextPostsOfFriends(@RequestParam("username") String username,
 			@RequestParam(required = false) Long cursor,
-			@RequestParam(defaultValue = "3") int limit) {
+			@RequestParam(defaultValue = DEFAULT_LIMIT_OF_POSTS) int limit) {
 		return ResponseEntity.ok(postService.getPostsOfFriendsBeforeCursor(username, cursor, limit));
 	}
 
 	@DeleteMapping("/remove")
-	public ResponseEntity<ResponsePayload> removePost(@RequestParam("authorUsername") String authorUsername,
+	public ResponseEntity<ResponsePayload> removePost(@RequestParam("username") String username,
 			@RequestParam("postId") Long postId) {
-		return ResponseEntity.ok(postService.removePost(authorUsername, postId));
+		return ResponseEntity.ok(postService.removePost(username, postId));
 	}
 }

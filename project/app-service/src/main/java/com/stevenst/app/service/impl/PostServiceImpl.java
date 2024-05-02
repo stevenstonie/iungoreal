@@ -170,8 +170,8 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public ResponsePayload removePost(String authorUsername, Long postId) {
-		User author = findUserByUsername(authorUsername);
+	public ResponsePayload removePost(String username, Long postId) {
+		User user = findUserByUsername(username);
 		if (postId == null) {
 			throw new IgorPostException("Post id cannot be null.");
 		}
@@ -179,8 +179,8 @@ public class PostServiceImpl implements PostService {
 		// get the specific post and check if it belongs to the provided author
 		Post post = findPostById(postId);
 
-		if (!post.getAuthor().getUsername().equals(author.getUsername())) {
-			throw new IgorPostException("Post with id " + postId + " does not belong to " + author.getUsername());
+		if (!post.getAuthor().getUsername().equals(user.getUsername())) {
+			throw new IgorPostException("Post with id " + postId + " does not belong to " + user.getUsername());
 		}
 
 		// remove constraints
@@ -189,7 +189,7 @@ public class PostServiceImpl implements PostService {
 
 		// post_media
 		List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(postId);
-		removeMediaOfPostFromCloud(author.getUsername(), postId, mediaNames);
+		removeMediaOfPostFromCloud(user.getUsername(), postId, mediaNames);
 		postMediaRepository.deleteAllByPostId(postId);
 
 		// post_interaction
@@ -198,7 +198,7 @@ public class PostServiceImpl implements PostService {
 		postRepository.delete(post);
 
 		return ResponsePayload.builder().status(200)
-				.message("Post with id: " + postId + " of user: " + author.getUsername() + " removed successfully.")
+				.message("Post with id: " + postId + " of user: " + user.getUsername() + " removed successfully.")
 				.build();
 	}
 
