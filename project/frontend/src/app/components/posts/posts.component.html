@@ -1,8 +1,9 @@
 <div id="post-sort">Sort by:
-	<button>New</button>
-	<button>Hot</button>
+	<button>Newest</button>
+	<button>Oldest</button>
 	<button>Top</button>
 </div>
+<button>filter seen posts</button>
 <br>
 <br>
 
@@ -16,40 +17,39 @@
 			</div>
 			<p>{{ post.description }}</p>
 			<i>author: {{ post.authorUsername }}</i>
-			<i style="font-size: .8rem">post date: {{ post.createdAt | date: 'dd/MM/yyyy' }} at {{ post.createdAt |
+			<i style="font-size: .8rem">added on: {{ post.createdAt | date: 'dd/MM/yyyy' }} at {{ post.createdAt |
 				date: 'HH:mm' }}</i>
 		</div>
 
 		<ng-container *ngIf="post.mediaLinks.length > 0">
 			<div class="post-image">
-				<button (click)="previousImage(i)" [disabled]="currentPostIndexes[i] === 0">&larr;</button>
+				<button (click)="previousImage(i)" [disabled]="currentPostIndex[i] === 0">&larr;</button>
 
-				<ng-container *ngIf="isImage(post.mediaLinks[currentPostIndexes[i]]); else videoTemplate">
-					<img [src]="post.mediaLinks[currentPostIndexes[i]]" alt="post img">
+				<ng-container *ngIf="isImage(post.mediaLinks[currentPostIndex[i]]); else videoTemplate">
+					<img [src]="post.mediaLinks[currentPostIndex[i]]" alt="post img">
 				</ng-container>
 				<ng-template #videoTemplate>
 					<video controls>
-						<source [src]="post.mediaLinks[currentPostIndexes[i]]" type="video/mp4">
+						<source [src]="post.mediaLinks[currentPostIndex[i]]" type="video/mp4">
 						Your browser does not support the video tag.
 					</video>
 				</ng-template>
 
 				<button (click)="nextImage(i)"
-					[disabled]="currentPostIndexes[i] === post.mediaLinks.length - 1">&rarr;</button>
+					[disabled]="currentPostIndex[i] === post.mediaLinks.length - 1">&rarr;</button>
 			</div>
 
-			<p class="current-media-index">({{ currentPostIndexes[i] + 1 }})</p>
+			<p class="current-media-index">({{ currentPostIndex[i] + 1 }})</p>
 		</ng-container>
 
 		<div class="post-buttons">
-			<button>👍</button>
-			<p>0</p>
-			<button>👎</button>
-			<button>💬</button>
+			<button>⬆</button>
+			<p>{{0}}</p>
+			<button>⬇</button>
+			<button>💬 {{0}}</button>
 			<button style="font-size: 1.5rem;">&star;</button>
 		</div>
 	</div>
-
 </ng-container>
 
 <button style="display: flex; align-items: center; justify-content: center;" (click)="fetchPosts()">load more</button>

@@ -11,8 +11,7 @@ export class PostsComponent implements OnChanges {
   @Input() usernameOfUserOnScreen: string | undefined;
   @Input() isFeed: boolean = false;
   posts: PostPayload[] = [];
-  currentPostIndex: number = 0;
-  currentPostIndexes: number[] = [];
+  currentPostIndex: number[] = [];
 
   constructor(private postService: PostService) {
 
@@ -42,7 +41,7 @@ export class PostsComponent implements OnChanges {
           this.posts = this.posts.concat(posts);
 
           for (const element of posts) {
-            this.currentPostIndexes.push(0);
+            this.currentPostIndex.push(0);
           }
         },
         error: (error) => {
@@ -64,7 +63,7 @@ export class PostsComponent implements OnChanges {
           this.posts = this.posts.concat(posts);
 
           for (const element of posts) {
-            this.currentPostIndexes.push(0);
+            this.currentPostIndex.push(0);
           }
         },
         error: (error) => {
@@ -76,15 +75,15 @@ export class PostsComponent implements OnChanges {
 
   nextImage(postIndex: number) {
     const currentPost = this.posts[postIndex];
-    if (currentPost.mediaLinks.length > 0 && this.currentPostIndexes[postIndex] < currentPost.mediaLinks.length - 1) {
-      this.currentPostIndexes[postIndex]++;
+    if (currentPost.mediaLinks.length > 0 && this.currentPostIndex[postIndex] < currentPost.mediaLinks.length - 1) {
+      this.currentPostIndex[postIndex]++;
     }
   }
 
   previousImage(postIndex: number) {
     const currentPost = this.posts[postIndex];
-    if (currentPost.mediaLinks.length > 0 && this.currentPostIndexes[postIndex] > 0) {
-      this.currentPostIndexes[postIndex]--;
+    if (currentPost.mediaLinks.length > 0 && this.currentPostIndex[postIndex] > 0) {
+      this.currentPostIndex[postIndex]--;
     }
   }
 
