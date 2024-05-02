@@ -22,8 +22,10 @@ import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.model.Post;
+import com.stevenst.app.model.PostInteraction;
 import com.stevenst.app.model.PostMedia;
 import com.stevenst.app.payload.PostPayload;
+import com.stevenst.app.repository.PostInteractionRepository;
 import com.stevenst.app.repository.PostMediaRepository;
 import com.stevenst.app.repository.PostRepository;
 import com.stevenst.app.repository.UserRepository;
@@ -49,9 +51,10 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
-	private final PostRepository postRepository;
 	private final UserRepository userRepository;
+	private final PostRepository postRepository;
 	private final PostMediaRepository postMediaRepository;
+	private final PostInteractionRepository postInteractionRepository;
 	private final S3Client s3Client;
 	private final WebClient webClient;
 	@Value("${aws.bucketName}")
@@ -82,7 +85,28 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public ResponsePayload upvotePost(String username, Long postId) {
-		return null;
+		User user = findUserByUsername(username);
+		if (postId == null) {
+			throw new IgorPostException("Post id cannot be null");
+		}
+		Post post = findPostById(postId);
+		PostInteraction postInteraction = postInteractionRepository.findByPostAndUser(post, user);
+
+		if (postInteraction == null) {
+			postInteraction = PostInteraction.builder().user(user).post(post).upvoted(true).seen(true).build();
+
+			postInteractionRepository.save(postInteraction);
+			return ResponsePayload.builder().status(201).message("Post upvoted.").build();
+		} else {
+			postInteraction.setUpvoted(!postInteraction.isUpvoted());
+
+			postInteractionRepository.save(postInteraction);
+			if (postInteraction.isUpvoted()) {
+				return ResponsePayload.builder().status(200).message("Post upvoted.").build();
+			} else {
+				return ResponsePayload.builder().status(200).message("Post unupvoted.").build();
+			}
+		}
 	}
 
 	@Override
@@ -153,8 +177,7 @@ public class PostServiceImpl implements PostService {
 		}
 
 		// get the specific post and check if it belongs to the provided author
-		Post post = postRepository.findById(postId).orElseThrow(() -> new IgorPostException(
-				"Post with id " + postId + " not found."));
+		Post post = findPostById(postId);
 
 		if (!post.getAuthor().getUsername().equals(author.getUsername())) {
 			throw new IgorPostException("Post with id " + postId + " does not belong to " + author.getUsername());
@@ -367,5 +390,10 @@ public class PostServiceImpl implements PostService {
 	private User findUserByUsername(String username) {
 		return userRepository.findByUsername(username).orElseThrow(
 				() -> new IgorUserNotFoundException("User with username " + username + " not found."));
+	}
+
+	private Post findPostById(Long postId) {
+		return postRepository.findById(postId)
+				.orElseThrow(() -> new IgorPostException("Post with id " + postId + " not found."));
 	}
 }
