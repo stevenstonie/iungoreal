@@ -80,13 +80,13 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostPayload> getAllPostsOfUser(String authorUsername, Long cursorId, int limit) {
+	public List<PostPayload> getAllPostsOfUser(String authorUsername, Long cursor, int limit) {
 		User author = userRepository.findByUsername(authorUsername).orElseThrow(
 				() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
 
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
 
-		List<Post> posts = postRepository.findPostsOfUserBeforeCursorId(authorUsername, cursorId,
+		List<Post> posts = postRepository.findPostsOfUserBeforeCursor(authorUsername, cursor,
 				pageRequest);
 
 		List<PostPayload> postPayloads = new ArrayList<>();
@@ -108,7 +108,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostPayload> getPostsOfFriendsBeforeCursorId(String username, Long cursorId, int limit) {
+	public List<PostPayload> getPostsOfFriendsBeforeCursor(String username, Long cursor, int limit) {
 		User user = userRepository.findByUsername(username).orElseThrow(
 				() -> new IgorUserNotFoundException("User with username " + username + " not found."));
 
@@ -118,8 +118,8 @@ public class PostServiceImpl implements PostService {
 		List<String> friendUsernames = getAllFriendsUsernamesOfUser(username);
 		friendUsernames.add(username);
 
-		// get the next 'limit' posts before the cursorId for the user
-		List<Post> posts = postRepository.findPostsFromFriendsBeforeCursorId(username, friendUsernames, cursorId,
+		// get the next 'limit' posts before the cursor for the user
+		List<Post> posts = postRepository.findPostsFromFriendsBeforeCursor(username, friendUsernames, cursor,
 				pageRequest);
 
 		List<PostPayload> postPayloads = new ArrayList<>();

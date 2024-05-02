@@ -10,7 +10,7 @@ import com.stevenst.lib.payload.ResponsePayload;
 public interface PostService {
 	ResponsePayload createPost(String title, String description, String authorUsername, List<MultipartFile> files);
 
-	List<PostPayload> getAllPostsOfUser(String authorUsername, Long cursorId, int limit);
+	List<PostPayload> getAllPostsOfUser(String authorUsername, Long cursor, int limit);
 
-	List<PostPayload> getPostsOfFriendsBeforeCursorId(String username, Long cursorId, int limit);
+	List<PostPayload> getPostsOfFriendsBeforeCursor(String username, Long cursor, int limit);
 }
