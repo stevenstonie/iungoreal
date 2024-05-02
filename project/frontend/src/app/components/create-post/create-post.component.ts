@@ -58,6 +58,7 @@ export class CreatePostComponent implements OnDestroy {
     //     console.error('Error creating post', error);
     //   }
     // });
+    // // commented for development
   }
 
   isImage(file: File): boolean {

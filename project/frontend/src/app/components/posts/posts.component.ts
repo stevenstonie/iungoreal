@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { PostPayload } from 'src/app/models/Payloads';
+import { PostInteractionPayload, PostPayload } from 'src/app/models/Payloads';
 import { PostService } from 'src/app/services/post.service';
 
 @Component({
@@ -11,6 +11,7 @@ export class PostsComponent implements OnChanges {
   @Input() usernameOfUserOnScreen: string | undefined;
   @Input() isFeed: boolean = false;
   posts: PostPayload[] = [];
+  postInteractions: PostInteractionPayload[] = [];
   currentPostIndex: number[] = [];
   usernameOfLoggedUser = localStorage.getItem('username');
 
@@ -31,10 +32,25 @@ export class PostsComponent implements OnChanges {
           }
           console.log(posts);
 
+          this.fetchPostInteractions(posts.map(post => post.id));
+
           this.posts = this.posts.concat(posts);
           for (const element of posts) {
             this.currentPostIndex.push(0);
           }
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
+
+  fetchPostInteractions(postIds: number[]) {
+    if (this.usernameOfLoggedUser) {
+      this.postService.getPostInteractionsForPosts(this.usernameOfLoggedUser, postIds).subscribe({
+        next: (postInteractions) => {
+          this.postInteractions = postInteractions;
         },
         error: (error) => {
           console.error(error);

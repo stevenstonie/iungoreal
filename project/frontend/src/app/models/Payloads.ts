@@ -12,8 +12,14 @@ export interface PostPayload {
 	description: string;
 	createdAt: Date;
 	mediaLinks: string[];
-	likes: number;
-	dislikes: number;
+	upvoteScore: number;
+	nbOfComments: number;
+}
+
+export interface PostInteractionPayload {
+	postId: number;
+	liked: boolean;
+	nbOfLikes: number;
 }
 
 export interface NotificationFPayload {
