@@ -145,15 +145,20 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public ResponsePayload removePost(String authorUsername, Long postId) {
-		User author = userRepository.findByUsername(authorUsername).orElseThrow(
-				() -> new IgorUserNotFoundException("Author with username " + authorUsername + " not found."));
+		User author;
+		if (authorUsername != null || postId != null) {
+			author = userRepository.findByUsername(authorUsername).orElseThrow(
+					() -> new IgorUserNotFoundException("Author with username " + authorUsername + " not found."));
+		} else {
+			throw new IgorPostException("Parameter cannot be null.");
+		}
 
 		// get the specific post and check if it belongs to the provided author
 		Post post = postRepository.findById(postId).orElseThrow(() -> new IgorPostException(
 				"Post with id " + postId + " not found."));
 
-		if (!post.getAuthor().getUsername().equals(authorUsername)) {
-			throw new IgorPostException("Post with id " + postId + " does not belong to " + authorUsername);
+		if (!post.getAuthor().getUsername().equals(author.getUsername())) {
+			throw new IgorPostException("Post with id " + postId + " does not belong to " + author.getUsername());
 		}
 
 		// remove constraints
@@ -162,7 +167,7 @@ public class PostServiceImpl implements PostService {
 
 		// post_media
 			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(postId);
-			removeMediaForPostFromCloud(authorUsername, postId, mediaNames);
+			removeMediaOfPostFromCloud(author.getUsername(), postId, mediaNames);
 			postMediaRepository.deleteAllByPostId(postId);
 
 		// post_interaction
@@ -171,7 +176,7 @@ public class PostServiceImpl implements PostService {
 		postRepository.delete(post);
 
 		return ResponsePayload.builder().status(200)
-				.message("Post with id: " + postId + " of user: " + authorUsername + " removed successfully.").build();
+				.message("Post with id: " + postId + " of user: " + author.getUsername() + " removed successfully.").build();
 	}
 
 	// ---------------------------------------------
@@ -206,7 +211,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	private String getLinkForAMediaOfAPost(String username, Long postId, String mediaName) {
-		String key = username + "/posts/" + postId + "/" + mediaName;
+		String key = USERS_PATH + username + "/posts/" + postId + "/" + mediaName;
 		try {
 			checkIfMediaFileExistsInS3(key);
 		} catch (IgorImageNotFoundException e) {
@@ -344,7 +349,7 @@ public class PostServiceImpl implements PostService {
 				.build();
 	}
 
-	private void removeMediaForPostFromCloud(String authorUsername, Long postId, List<String> filenames) {
+	private void removeMediaOfPostFromCloud(String authorUsername, Long postId, List<String> filenames) {
 		String key = USERS_PATH + authorUsername + "/posts/" + postId + "/";
 
 		for (String filename : filenames) {

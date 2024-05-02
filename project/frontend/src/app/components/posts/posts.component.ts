@@ -95,8 +95,16 @@ export class PostsComponent implements OnChanges {
   removePost(postIndex: number) {
     const confirmation = window.confirm("Are you sure you want to remove this post?");
 
-    if (confirmation) {
-      console.log("to implement");
+    if (confirmation && this.usernameOfUserOnScreen) {
+      this.postService.removePostById(this.usernameOfUserOnScreen, this.posts[postIndex].id).subscribe({
+        next: (response) => {
+          this.posts.splice(postIndex, 1);
+          alert("post removed successfully.");
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
     }
   }
 

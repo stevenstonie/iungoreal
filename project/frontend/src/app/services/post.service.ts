@@ -9,10 +9,10 @@ import { PostPayload, ResponsePayload } from '../models/Payloads';
 export class PostService {
   private postApiUrl = 'http://localhost:8083/api/post';
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
   createPost(formData: FormData): Observable<ResponsePayload> {
-    return this.httpClient.post<ResponsePayload>(`${this.postApiUrl}/create`, formData)
+    return this.http.post<ResponsePayload>(`${this.postApiUrl}/create`, formData)
       .pipe(
         catchError(this.handleError)
       );
@@ -24,7 +24,7 @@ export class PostService {
       params = params.set('cursor', lastPostId.toString());
     }
 
-    return this.httpClient.get<PostPayload[]>(`${this.postApiUrl}/getNextPostsOfUser`, { params })
+    return this.http.get<PostPayload[]>(`${this.postApiUrl}/getNextPostsOfUser`, { params })
       .pipe(
         catchError(this.handleError)
       );
@@ -36,7 +36,16 @@ export class PostService {
       params = params.set('cursor', lastPostId.toString());
     }
 
-    return this.httpClient.get<PostPayload[]>(`${this.postApiUrl}/getNextPostsOfFriends`, { params })
+    return this.http.get<PostPayload[]>(`${this.postApiUrl}/getNextPostsOfFriends`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  removePostById(authorUsername: string, postId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('authorUsername', authorUsername).set('postId', postId.toString());
+
+    return this.http.delete<ResponsePayload>(`${this.postApiUrl}/remove`, { params })
       .pipe(
         catchError(this.handleError)
       );
@@ -46,6 +55,6 @@ export class PostService {
 
   private handleError(error: HttpErrorResponse) {
     console.error(error);
-    return throwError(() => new Error('An error occurred in notification service.'));
+    return throwError(() => new Error('An error occurred in post service.'));
   }
 }
