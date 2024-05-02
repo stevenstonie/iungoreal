@@ -37,8 +37,6 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
-import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
@@ -276,7 +274,7 @@ public class PostServiceImpl implements PostService {
 
 	private void saveMediaFilesInCloud(String username, Long postId, List<MultipartFile> files,
 			List<String> filenames) {
-		String keyPath = username + "/posts/" + postId;
+		String keyPath = USERS_PATH + username + "/posts/" + postId;
 
 		if (files.size() != filenames.size()) {
 			throw new IllegalArgumentException("Change this into a custom exception pointing to a 500 status error"); // TODO:
@@ -347,7 +345,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	private void removeMediaForPostFromCloud(String authorUsername, Long postId, List<String> filenames) {
-		String key = authorUsername + "/posts/" + postId + "/";
+		String key = USERS_PATH + authorUsername + "/posts/" + postId + "/";
 
 		for (String filename : filenames) {
 			String keyToRemove = key + filename;
