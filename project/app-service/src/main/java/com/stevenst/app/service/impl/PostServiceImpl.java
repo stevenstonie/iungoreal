@@ -67,7 +67,7 @@ public class PostServiceImpl implements PostService {
 
 		Post post = savePostInDbAndReturn(author, title, description);
 
-		if (files.size() > 0) {
+		if (files != null && !files.isEmpty()) {
 			List<String> uniqueFilenames = getUniqueFilenamesFromFiles(files);
 
 			saveMediaNamesInDb(post, uniqueFilenames);

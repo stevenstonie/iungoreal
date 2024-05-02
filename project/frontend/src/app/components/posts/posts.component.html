@@ -14,23 +14,26 @@
 			<i>author: {{ post.authorUsername }}</i>
 		</div>
 
-		<div class="post-image">
-			<button (click)="previousImage(i)" [disabled]="currentPostIndexes[i] === 0">&larr;</button>
-			<ng-container *ngIf="isImage(post.mediaLinks[currentPostIndexes[i]]); else videoTemplate">
-				<img [src]="post.mediaLinks[currentPostIndexes[i]]" alt="Post Image">
-			</ng-container>
-			<ng-template #videoTemplate>
-				<video controls>
-					<source [src]="post.mediaLinks[currentPostIndexes[i]]" type="video/mp4">
-					Your browser does not support the video tag.
-				</video>
-			</ng-template>
-			<button (click)="nextImage(i)"
-				[disabled]="currentPostIndexes[i] === post.mediaLinks.length - 1">&rarr;</button>
-		</div>
+		<ng-container *ngIf="post.mediaLinks.length > 0">
+			<div class="post-image">
+				<button (click)="previousImage(i)" [disabled]="currentPostIndexes[i] === 0">&larr;</button>
 
-		<p class="current-media-index">({{ currentPostIndexes[i] + 1 }})</p>
+				<ng-container *ngIf="isImage(post.mediaLinks[currentPostIndexes[i]]); else videoTemplate">
+					<img [src]="post.mediaLinks[currentPostIndexes[i]]" alt="Post Image">
+				</ng-container>
+				<ng-template #videoTemplate>
+					<video controls>
+						<source [src]="post.mediaLinks[currentPostIndexes[i]]" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+				</ng-template>
 
+				<button (click)="nextImage(i)"
+					[disabled]="currentPostIndexes[i] === post.mediaLinks.length - 1">&rarr;</button>
+			</div>
+
+			<p class="current-media-index">({{ currentPostIndexes[i] + 1 }})</p>
+		</ng-container>
 
 		<div class="post-buttons">
 			<button>Upvote</button>

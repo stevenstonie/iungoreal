@@ -79,7 +79,7 @@ export class PostsComponent implements OnChanges {
     const currentPost = this.posts[postIndex];
     if (currentPost.mediaLinks.length > 0 && this.currentPostIndexes[postIndex] > 0) {
       this.currentPostIndexes[postIndex]--;
-    }
+    } 
   }
 
   isImage(file: string): boolean {

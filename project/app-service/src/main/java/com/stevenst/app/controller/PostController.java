@@ -30,7 +30,7 @@ public class PostController implements PostApi {
 			@RequestParam("authorUsername") String authorUsername,
 			@RequestParam("title") String title,
 			@RequestParam(value = "description", required = false) String description,
-			@RequestParam("files") List<MultipartFile> file) {
+			@RequestParam(value = "files", required = false) List<MultipartFile> file) {
 		return ResponseEntity.ok(postService.createPost(authorUsername, title, description, file));
 	}
 
