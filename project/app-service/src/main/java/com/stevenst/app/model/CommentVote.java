@@ -38,9 +38,9 @@ public class CommentVote {
 
 	@Column(nullable = false)
 	@Builder.Default
-	private boolean liked = false;
+	private boolean upvoted = false;
 
 	@Column(nullable = false)
 	@Builder.Default
-	private boolean disliked = false;
+	private boolean downvoted = false;
 }

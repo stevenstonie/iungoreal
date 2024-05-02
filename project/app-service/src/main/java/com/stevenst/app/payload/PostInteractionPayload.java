@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostInteractionPayload {
 	private long postId;
-	private boolean liked;
-	private long nbOfLikes;
+	private boolean upvoted;
 }

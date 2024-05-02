@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 public interface PostInteractionRepository extends JpaRepository<PostInteraction, Long> {
 	PostInteraction findByPostAndUser(Post post, User user);
 
+	PostInteraction findByPostIdAndUserId(Long postId, Long userId);
+
 	@Transactional
 	@Modifying
 	void deleteAllByPost(Post post);

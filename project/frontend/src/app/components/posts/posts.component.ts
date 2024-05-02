@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { delay } from 'rxjs';
 import { PostInteractionPayload, PostPayload } from 'src/app/models/Payloads';
 import { PostService } from 'src/app/services/post.service';
 
@@ -10,10 +11,11 @@ import { PostService } from 'src/app/services/post.service';
 export class PostsComponent implements OnChanges {
   @Input() usernameOfUserOnScreen: string | undefined;
   @Input() isFeed: boolean = false;
-  posts: PostPayload[] = [];
-  postInteractions: PostInteractionPayload[] = [];
-  currentPostIndex: number[] = [];
   usernameOfLoggedUser = localStorage.getItem('username');
+  posts: PostPayload[] = [];
+  currentPostIndex: number[] = [];
+  postInteractions: PostInteractionPayload[] = [];
+  
 
   constructor(private postService: PostService) {
 
@@ -51,6 +53,8 @@ export class PostsComponent implements OnChanges {
       this.postService.getPostInteractionsForPosts(this.usernameOfLoggedUser, postIds).subscribe({
         next: (postInteractions) => {
           this.postInteractions = postInteractions;
+
+          console.log(postInteractions);
         },
         error: (error) => {
           console.error(error);

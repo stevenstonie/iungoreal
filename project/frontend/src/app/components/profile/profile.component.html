@@ -5,23 +5,13 @@
 	<h2 *ngIf="!isUserOnScreenTheLoggedOne">{{userOnScreen.username}}'s profile</h2>
 </div>
 
-<!--
-
-		<button (click)="selectSection('account')">Account</button>
-	<button (click)="selectSection('regions')">Regions</button>
-	<button (click)="selectSection('notifications')">Notifications</button>
-	<button (click)="selectSection('profile')">Profile</button>
-	<button (click)="selectSection('privacy')">Privacy</button>
-	<button (click)="selectSection('feed')">Feed</button>
--->
-
 <section id="section-left">
 	<button (click)="selectSection('about')">About</button>
 	<button (click)="selectSection('posts')">Posts</button>
 	<button (click)="selectSection('comments')">Comments</button>
 	<ng-container *ngIf="isUserOnScreenTheLoggedOne">
-		<button (click)="selectSection('liked')">Liked</button>
-		<button (click)="selectSection('disliked')">Disliked</button>
+		<button (click)="selectSection('upvoted')">Upvoted</button>
+		<button (click)="selectSection('downvoted')">Downvoted</button>
 		<button (click)="selectSection('savedPosts')">Saved posts</button>
 		<button (click)="selectSection('savedComments')">Saved comments</button>
 	</ng-container>
@@ -39,11 +29,11 @@
 
 	</section>
 
-	<section *ngIf="selectedSection === 'liked'">
+	<section *ngIf="selectedSection === 'upvoted'">
 
 	</section>
 
-	<section *ngIf="selectedSection === 'disliked'">
+	<section *ngIf="selectedSection === 'downvoted'">
 
 	</section>
 

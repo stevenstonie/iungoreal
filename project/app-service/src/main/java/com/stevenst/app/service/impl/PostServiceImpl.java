@@ -146,7 +146,24 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostInteractionPayload> getPostInteractionsForPostIds(String username, List<Long> postIds) {
-		return null;
+		User user = findUserByUsername(username);
+		// not checking if each post exists
+
+		List<PostInteractionPayload> postInteractionPayloads = new ArrayList<>();
+		for (Long postId : postIds) {
+			PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(postId, user.getId());
+
+			if (postInteraction == null) {
+				postInteractionPayloads.add(null);
+			} else {
+				postInteractionPayloads.add(PostInteractionPayload.builder()
+						.postId(postId)
+						.upvoted(postInteraction.isUpvoted())
+						.build());
+			}
+		}
+
+		return postInteractionPayloads;
 	}
 
 	@Override

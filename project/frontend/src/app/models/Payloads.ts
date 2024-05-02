@@ -18,8 +18,7 @@ export interface PostPayload {
 
 export interface PostInteractionPayload {
 	postId: number;
-	liked: boolean;
-	nbOfLikes: number;
+	upvoted: boolean;
 }
 
 export interface NotificationFPayload {

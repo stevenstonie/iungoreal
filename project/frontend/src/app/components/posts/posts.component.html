@@ -43,7 +43,8 @@
 		</ng-container>
 
 		<div class="post-buttons">
-			<button>⬆</button>
+			<button *ngIf="postInteractions[i] && postInteractions[i].upvoted" style="color: orangered;">⬆</button>
+			<button *ngIf="!postInteractions[i] || !postInteractions[i].upvoted">⬆</button>
 			<p>{{0}}</p>
 			<button>⬇</button>
 			<button>💬 {{0}}</button>
