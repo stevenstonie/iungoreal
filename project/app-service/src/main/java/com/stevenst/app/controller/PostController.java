@@ -34,15 +34,17 @@ public class PostController implements PostApi {
 		return ResponseEntity.ok(postService.createPost(authorUsername, title, description, file));
 	}
 
-	@GetMapping("/getAll")
-	public ResponseEntity<List<PostPayload>> getAllPosts(@RequestParam("authorUsername") String authorUsername) {
-		return ResponseEntity.ok(postService.getAllPostsOfAnUser(authorUsername));
+	@GetMapping("/getNextPostsOfUser")
+	public ResponseEntity<List<PostPayload>> getAllPosts(@RequestParam("authorUsername") String authorUsername,
+			@RequestParam(required = false) Long cursor,
+			@RequestParam(defaultValue = "6") int limit) {
+		return ResponseEntity.ok(postService.getAllPostsOfUser(authorUsername, cursor, limit));
 	}
 
 	@GetMapping("/getNextPostsOfFriends")
 	public ResponseEntity<List<PostPayload>> getNextPostsOfFriends(@RequestParam("username") String username,
 			@RequestParam(required = false) Long cursor,
-			@RequestParam(defaultValue = "10") int limit) {
+			@RequestParam(defaultValue = "3") int limit) {
 		return ResponseEntity.ok(postService.getPostsOfFriendsBeforeCursorId(username, cursor, limit));
 	}
 }

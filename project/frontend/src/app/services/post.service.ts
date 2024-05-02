@@ -18,10 +18,13 @@ export class PostService {
       );
   }
 
-  getNextPostsOfUser(username: string): Observable<PostPayload[]> {
-    const params = new HttpParams().set('authorUsername', username);
+  getNextPostsOfUser(username: string, lastPostId: number | null): Observable<PostPayload[]> {
+    let params = new HttpParams().set('authorUsername', username);
+    if (lastPostId) {
+      params = params.set('cursor', lastPostId.toString());
+    }
 
-    return this.httpClient.get<PostPayload[]>(`${this.postApiUrl}/getAll`, { params })
+    return this.httpClient.get<PostPayload[]>(`${this.postApiUrl}/getNextPostsOfUser`, { params })
       .pipe(
         catchError(this.handleError)
       );

@@ -80,32 +80,31 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostPayload> getAllPostsOfAnUser(String authorUsername) {
+	public List<PostPayload> getAllPostsOfUser(String authorUsername, Long cursorId, int limit) {
 		User author = userRepository.findByUsername(authorUsername).orElseThrow(
 				() -> new IgorUserNotFoundException("User with username " + authorUsername + " not found."));
-		List<Post> posts = postRepository.findAllByAuthorUsernameOrderByCreatedAtDesc(author.getUsername());
-		List<PostPayload> postsDetails = new ArrayList<>();
+
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+
+		List<Post> posts = postRepository.findPostsOfUserBeforeCursorId(authorUsername, cursorId,
+				pageRequest);
+
+		List<PostPayload> postPayloads = new ArrayList<>();
 
 		for (Post post : posts) {
 			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
-			List<String> mediaLinks = getLinksForAllMediaOfAPost(author.getUsername(), post.getId(), mediaNames);
 
-			Long likes = 0L;
-			Long dislikes = 0L;
-
-			postsDetails.add(PostPayload.builder()
+			postPayloads.add(PostPayload.builder()
 					.id(post.getId())
-					.authorUsername(author.getUsername())
+					.authorUsername(post.getAuthor().getUsername())
 					.title(post.getTitle())
 					.description(post.getDescription())
 					.createdAt(post.getCreatedAt())
-					.mediaLinks(mediaLinks)
-					.likes(likes)
-					.dislikes(dislikes)
+					.mediaLinks(getLinksForAllMediaOfAPost(post.getAuthor().getUsername(), post.getId(), mediaNames))
 					.build());
 		}
 
-		return postsDetails;
+		return postPayloads;
 	}
 
 	@Override
@@ -161,13 +160,14 @@ public class PostServiceImpl implements PostService {
 	private List<String> getLinksForAllMediaOfAPost(String username, Long postId, List<String> mediaNames) {
 		List<String> mediaLinks = new ArrayList<>();
 
-		for (String mediaName : mediaNames) {
-			try {
-				mediaLinks.add(getLinkForAMediaOfAPost(username, postId, mediaName));
-			} catch (IgorIoException e) {
-				System.err.println("Unable to generate a presigned url:" + e.getMessage());
-			}
-		}
+		// for (String mediaName : mediaNames) {
+		// 	try {
+		// 		mediaLinks.add(getLinkForAMediaOfAPost(username, postId, mediaName));
+		// 	} catch (IgorIoException e) {
+		// 		System.err.println("Unable to generate a presigned url:" + e.getMessage());
+		// 	}
+		// }
+		// // commented for development
 
 		return mediaLinks;
 	}

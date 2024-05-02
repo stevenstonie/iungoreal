@@ -54,9 +54,15 @@ export class PostsComponent implements OnChanges {
 
   fetchPostsOfUser() {
     if (this.usernameOfUserOnScreen) {
-      this.postService.getNextPostsOfUser(this.usernameOfUserOnScreen).subscribe({
+      this.postService.getNextPostsOfUser(this.usernameOfUserOnScreen, this.posts[this.posts.length - 1]?.id).subscribe({
         next: (posts) => {
-          this.posts = posts;
+          if (posts.length <= 0 && this.posts.length > 0) {
+            alert("no more posts");
+          }
+          console.log(posts);
+
+          this.posts = this.posts.concat(posts);
+
           for (const element of posts) {
             this.currentPostIndexes.push(0);
           }
@@ -79,7 +85,7 @@ export class PostsComponent implements OnChanges {
     const currentPost = this.posts[postIndex];
     if (currentPost.mediaLinks.length > 0 && this.currentPostIndexes[postIndex] > 0) {
       this.currentPostIndexes[postIndex]--;
-    } 
+    }
   }
 
   isImage(file: string): boolean {

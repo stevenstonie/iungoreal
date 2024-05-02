@@ -11,7 +11,8 @@ import com.stevenst.app.model.Post;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-	List<Post> findAllByAuthorUsernameOrderByCreatedAtDesc(String authorUsername);
+	@Query("SELECT post FROM Post post WHERE post.author.username = :username AND (:cursor IS NULL OR post.id < :cursor) ORDER BY post.createdAt DESC")
+	List<Post> findPostsOfUserBeforeCursorId(String username, Long cursor, Pageable pageable);
 
 	@Query("SELECT post FROM Post post "
 			+ "LEFT JOIN PostInteraction interaction ON post.id = interaction.post.id AND interaction.user.username = :currentUser "

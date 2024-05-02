@@ -23,11 +23,4 @@ public interface PostApi {
 	})
 	public ResponseEntity<ResponsePayload> createPost(String authorUsername, String title, String description,
 			List<MultipartFile> files);
-
-	@Operation(summary = "Get all posts", description = "Get all posts of an user", tags = "Post")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Successful", content = {
-					@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostPayload[].class)) })
-	})
-	public ResponseEntity<List<PostPayload>> getAllPosts(String authorUsername);
 }
