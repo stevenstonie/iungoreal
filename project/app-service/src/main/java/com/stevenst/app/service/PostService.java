@@ -4,17 +4,20 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.stevenst.app.payload.PostInteractionPayload;
 import com.stevenst.app.payload.PostPayload;
 import com.stevenst.lib.payload.ResponsePayload;
 
 public interface PostService {
 	ResponsePayload createPost(String title, String description, String authorUsername, List<MultipartFile> files);
 
-	ResponsePayload upvotePost(String username, Long postId);
-
 	List<PostPayload> getAllPostsOfUser(String authorUsername, Long cursor, int limit);
 
 	List<PostPayload> getPostsOfFriendsBeforeCursor(String username, Long cursor, int limit);
+
+	List<PostInteractionPayload> getPostInteractionsForPostIds(String username, List<Long> postIds);
+
+	ResponsePayload upvotePost(String username, Long postId);
 
 	ResponsePayload removePost(String username, Long postId);
 }

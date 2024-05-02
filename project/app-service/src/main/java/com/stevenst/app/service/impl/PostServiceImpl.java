@@ -24,6 +24,7 @@ import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.model.Post;
 import com.stevenst.app.model.PostInteraction;
 import com.stevenst.app.model.PostMedia;
+import com.stevenst.app.payload.PostInteractionPayload;
 import com.stevenst.app.payload.PostPayload;
 import com.stevenst.app.repository.PostInteractionRepository;
 import com.stevenst.app.repository.PostMediaRepository;
@@ -81,32 +82,6 @@ public class PostServiceImpl implements PostService {
 
 		return ResponsePayload.builder().status(200)
 				.message("Post created successfully for " + author.getUsername() + ".").build();
-	}
-
-	@Override
-	public ResponsePayload upvotePost(String username, Long postId) {
-		User user = findUserByUsername(username);
-		if (postId == null) {
-			throw new IgorPostException("Post id cannot be null");
-		}
-		Post post = findPostById(postId);
-		PostInteraction postInteraction = postInteractionRepository.findByPostAndUser(post, user);
-
-		if (postInteraction == null) {
-			postInteraction = PostInteraction.builder().user(user).post(post).upvoted(true).seen(true).build();
-
-			postInteractionRepository.save(postInteraction);
-			return ResponsePayload.builder().status(201).message("Post upvoted.").build();
-		} else {
-			postInteraction.setUpvoted(!postInteraction.isUpvoted());
-
-			postInteractionRepository.save(postInteraction);
-			if (postInteraction.isUpvoted()) {
-				return ResponsePayload.builder().status(200).message("Post upvoted.").build();
-			} else {
-				return ResponsePayload.builder().status(200).message("Post unupvoted.").build();
-			}
-		}
 	}
 
 	@Override
@@ -170,6 +145,37 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	public List<PostInteractionPayload> getPostInteractionsForPostIds(String username, List<Long> postIds) {
+		return null;
+	}
+
+	@Override
+	public ResponsePayload upvotePost(String username, Long postId) {
+		User user = findUserByUsername(username);
+		if (postId == null) {
+			throw new IgorPostException("Post id cannot be null");
+		}
+		Post post = findPostById(postId);
+		PostInteraction postInteraction = postInteractionRepository.findByPostAndUser(post, user);
+
+		if (postInteraction == null) {
+			postInteraction = PostInteraction.builder().user(user).post(post).upvoted(true).seen(true).build();
+
+			postInteractionRepository.save(postInteraction);
+			return ResponsePayload.builder().status(201).message("Post upvoted.").build();
+		} else {
+			postInteraction.setUpvoted(!postInteraction.isUpvoted());
+
+			postInteractionRepository.save(postInteraction);
+			if (postInteraction.isUpvoted()) {
+				return ResponsePayload.builder().status(200).message("Post upvoted.").build();
+			} else {
+				return ResponsePayload.builder().status(200).message("Post unupvoted.").build();
+			}
+		}
+	}
+
+	@Override
 	public ResponsePayload removePost(String username, Long postId) {
 		User user = findUserByUsername(username);
 		if (postId == null) {
@@ -187,12 +193,13 @@ public class PostServiceImpl implements PostService {
 
 		// comments
 
-		// post_media
+		// media
 		List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(postId);
 		removeMediaOfPostFromCloud(user.getUsername(), postId, mediaNames);
 		postMediaRepository.deleteAllByPostId(postId);
 
-		// post_interaction
+		// interactions
+		postInteractionRepository.deleteAllByPost(post);
 
 		// remove the post from the db and cloud
 		postRepository.delete(post);

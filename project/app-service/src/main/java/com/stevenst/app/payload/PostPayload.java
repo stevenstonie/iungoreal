@@ -19,6 +19,6 @@ public class PostPayload {
 	private String description;
 	private LocalDateTime createdAt;
 	private List<String> mediaLinks;
-	private Long likes;
-	private Long dislikes;
+	private Long upvoteScore;
+	private Long nbOfComments;
 }
