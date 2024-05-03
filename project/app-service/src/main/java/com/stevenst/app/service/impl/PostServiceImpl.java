@@ -24,7 +24,6 @@ import com.stevenst.lib.exception.IgorUserNotFoundException;
 import com.stevenst.app.model.Post;
 import com.stevenst.app.model.PostInteraction;
 import com.stevenst.app.model.PostMedia;
-import com.stevenst.app.payload.PostInteractionPayload;
 import com.stevenst.app.payload.PostPayload;
 import com.stevenst.app.repository.PostInteractionRepository;
 import com.stevenst.app.repository.PostMediaRepository;
@@ -129,6 +128,11 @@ public class PostServiceImpl implements PostService {
 
 		for (Post post : posts) {
 			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
+			PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(),
+					user.getId());
+			if (postInteraction == null) {
+				postInteraction = new PostInteraction();
+			}
 
 			postPayloads.add(PostPayload.builder()
 					.id(post.getId())
@@ -137,33 +141,17 @@ public class PostServiceImpl implements PostService {
 					.description(post.getDescription())
 					.createdAt(post.getCreatedAt())
 					.mediaLinks(getLinksForAllMediaOfAPost(post.getAuthor().getUsername(), post.getId(), mediaNames))
+					.upvoteScore(0L)
+					.nbOfComments(0L)
+					.upvoted(postInteraction.isUpvoted())
+					.downvoted(postInteraction.isDownvoted())
+					.saved(postInteraction.isSaved())
+					.seen(postInteraction.isSeen())
 					.build());
 		}
 
 		// return these posts
 		return postPayloads;
-	}
-
-	@Override
-	public List<PostInteractionPayload> getPostInteractionsForPostIds(String username, List<Long> postIds) {
-		User user = findUserByUsername(username);
-		// not checking if each post exists
-
-		List<PostInteractionPayload> postInteractionPayloads = new ArrayList<>();
-		for (Long postId : postIds) {
-			PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(postId, user.getId());
-
-			if (postInteraction == null) {
-				postInteractionPayloads.add(null);
-			} else {
-				postInteractionPayloads.add(PostInteractionPayload.builder()
-						.postId(postId)
-						.upvoted(postInteraction.isUpvoted())
-						.build());
-			}
-		}
-
-		return postInteractionPayloads;
 	}
 
 	@Override

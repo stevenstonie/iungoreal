@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { delay } from 'rxjs';
-import { PostInteractionPayload, PostPayload } from 'src/app/models/Payloads';
+import { PostPayload } from 'src/app/models/Payloads';
 import { PostService } from 'src/app/services/post.service';
 
 @Component({
@@ -14,8 +14,6 @@ export class PostsComponent implements OnChanges {
   usernameOfLoggedUser = localStorage.getItem('username');
   posts: PostPayload[] = [];
   currentPostIndex: number[] = [];
-  postInteractions: PostInteractionPayload[] = [];
-
 
   constructor(private postService: PostService) {
 
@@ -34,27 +32,10 @@ export class PostsComponent implements OnChanges {
           }
           console.log(posts);
 
-          this.fetchPostInteractions(posts.map(post => post.id));
-
           this.posts = this.posts.concat(posts);
           for (const element of posts) {
             this.currentPostIndex.push(0);
           }
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      });
-    }
-  }
-
-  fetchPostInteractions(postIds: number[]) {
-    if (this.usernameOfLoggedUser) {
-      this.postService.getPostInteractionsForPosts(this.usernameOfLoggedUser, postIds).subscribe({
-        next: (postInteractions) => {
-          this.postInteractions = postInteractions;
-
-          console.log(postInteractions);
         },
         error: (error) => {
           console.error(error);
@@ -102,14 +83,8 @@ export class PostsComponent implements OnChanges {
       this.postService.upvotePost(this.usernameOfLoggedUser, this.posts[postIndex].id).subscribe({
         next: (response) => {
           console.log(response);
-          if (this.postInteractions[postIndex]) {
-            this.postInteractions[postIndex].upvoted = this.postInteractions[postIndex].upvoted ? false : true;
-          } else {
-            this.postInteractions[postIndex] = {
-              postId: this.posts[postIndex].id, // Provide the postId value
-              upvoted: true
-            };
-          }
+
+          this.posts[postIndex].upvoted = !this.posts[postIndex].upvoted;
         },
         error: (error) => {
           console.error(error);

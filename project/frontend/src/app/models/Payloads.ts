@@ -14,11 +14,10 @@ export interface PostPayload {
 	mediaLinks: string[];
 	upvoteScore: number;
 	nbOfComments: number;
-}
-
-export interface PostInteractionPayload {
-	postId: number;
 	upvoted: boolean;
+	downvoted: boolean;
+	saved: boolean;
+	seen: boolean;
 }
 
 export interface NotificationFPayload {

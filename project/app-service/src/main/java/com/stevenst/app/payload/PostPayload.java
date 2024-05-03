@@ -21,4 +21,8 @@ public class PostPayload {
 	private List<String> mediaLinks;
 	private Long upvoteScore;
 	private Long nbOfComments;
+	private boolean upvoted;
+	private boolean downvoted;
+	private boolean saved;
+	private boolean seen;
 }

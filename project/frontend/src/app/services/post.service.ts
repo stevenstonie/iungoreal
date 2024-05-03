@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { PostInteractionPayload, PostPayload, ResponsePayload } from '../models/Payloads';
+import { PostPayload, ResponsePayload } from '../models/Payloads';
 
 @Injectable({
   providedIn: 'root'
@@ -24,15 +24,6 @@ export class PostService {
     } else {
       return this.getNextPostsOfUser(username, lastPostId);
     }
-  }
-
-  getPostInteractionsForPosts(username: string, postIds: number[]): Observable<PostInteractionPayload[]> {
-    const params = new HttpParams().set('username', username).set('postIds', postIds.toString());
-
-    return this.http.get<PostInteractionPayload[]>(`${this.postApiUrl}/getPostInteractionsForPostIds`, { params })
-      .pipe(
-        catchError(this.handleError)
-      );
   }
 
   upvotePost(username: string, postId: number): Observable<ResponsePayload> {

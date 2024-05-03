@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stevenst.app.controller.api.PostApi;
-import com.stevenst.app.payload.PostInteractionPayload;
 import com.stevenst.app.payload.PostPayload;
 import com.stevenst.app.service.PostService;
 import com.stevenst.lib.payload.ResponsePayload;
@@ -50,13 +49,6 @@ public class PostController implements PostApi {
 			@RequestParam(required = false) Long cursor,
 			@RequestParam(defaultValue = DEFAULT_LIMIT_OF_POSTS) int limit) {
 		return ResponseEntity.ok(postService.getPostsOfFriendsBeforeCursor(username, cursor, limit));
-	}
-
-	@GetMapping("/getPostInteractionsForPostIds")
-	public ResponseEntity<List<PostInteractionPayload>> getPostInteractionsForPostIds(
-			@RequestParam("username") String username,
-			@RequestParam("postIds") List<Long> postIds) {
-		return ResponseEntity.ok(postService.getPostInteractionsForPostIds(username, postIds));
 	}
 
 	@PutMapping("/upvote")
