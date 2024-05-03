@@ -56,8 +56,10 @@
 	align-items: center;
 
 	* {
-		margin: 5px;
-		font-size: medium;
+		margin: 3px;
+		font-size: larger;
+		padding: 1px 7px;
+		border-radius: 0.4rem;
 	}
 
 	.upvoted {

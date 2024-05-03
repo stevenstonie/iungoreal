@@ -44,6 +44,15 @@ export class PostService {
       );
   }
 
+  savePost(username: string, postId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('postId', postId.toString());
+
+    return this.http.put<ResponsePayload>(`${this.postApiUrl}/save`, null, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   removePostById(username: string, postId: number): Observable<ResponsePayload> {
     const params = new HttpParams().set('username', username).set('postId', postId.toString());
 

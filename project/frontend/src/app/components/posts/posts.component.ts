@@ -118,6 +118,21 @@ export class PostsComponent implements OnChanges {
     }
   }
 
+  savePost(postIndex: number) {
+    if (this.usernameOfLoggedUser) {
+      this.postService.savePost(this.usernameOfLoggedUser, this.posts[postIndex].id).subscribe({
+        next: (response) => {
+          console.log(response);
+
+          this.posts[postIndex].saved = !this.posts[postIndex].saved;
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
+
   onScroll(): void {
     console.log("scrolled");
   }

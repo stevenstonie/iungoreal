@@ -47,7 +47,8 @@
 			<p>{{ posts[i] && posts[i].upvoteScore }}</p>
 			<button (click)="downvotePost(i)" [ngClass]="{'downvoted': posts[i] && posts[i].downvoted}">⬇</button>
 			<button>💬 {{0}}</button>
-			<button>&star;</button>
+			<button (click)="savePost(i)" *ngIf="!posts[i] || !posts[i].saved">&star;</button>
+			<button (click)="savePost(i)" *ngIf="posts[i] && posts[i].saved">&bigstar;</button>
 		</div>
 	</div>
 </ng-container>
