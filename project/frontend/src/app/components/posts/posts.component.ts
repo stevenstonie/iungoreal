@@ -85,6 +85,7 @@ export class PostsComponent implements OnChanges {
           console.log(response);
 
           this.posts[postIndex].upvoted = !this.posts[postIndex].upvoted;
+          this.posts[postIndex].upvoteScore += this.posts[postIndex].upvoted ? 1 : -1;
         },
         error: (error) => {
           console.error(error);

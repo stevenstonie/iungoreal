@@ -126,6 +126,7 @@ public class PostServiceImpl implements PostService {
 
 		List<PostPayload> postPayloads = new ArrayList<>();
 
+		// populate the posts with details: default, media, interactions, etc
 		for (Post post : posts) {
 			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
 			PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(),
@@ -141,7 +142,7 @@ public class PostServiceImpl implements PostService {
 					.description(post.getDescription())
 					.createdAt(post.getCreatedAt())
 					.mediaLinks(getLinksForAllMediaOfAPost(post.getAuthor().getUsername(), post.getId(), mediaNames))
-					.upvoteScore(0L)
+					.upvoteScore(postInteractionRepository.countByPostIdAndUpvotedIsTrue(post.getId()))
 					.nbOfComments(0L)
 					.upvoted(postInteraction.isUpvoted())
 					.downvoted(postInteraction.isDownvoted())
@@ -161,7 +162,7 @@ public class PostServiceImpl implements PostService {
 			throw new IgorPostException("Post id cannot be null");
 		}
 		Post post = findPostById(postId);
-		PostInteraction postInteraction = postInteractionRepository.findByPostAndUser(post, user);
+		PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(), user.getId());
 
 		if (postInteraction == null) {
 			postInteraction = PostInteraction.builder().user(user).post(post).upvoted(true).seen(true).build();
