@@ -15,7 +15,7 @@ export class PostsComponent implements OnChanges {
   posts: PostPayload[] = [];
   currentPostIndex: number[] = [];
   postInteractions: PostInteractionPayload[] = [];
-  
+
 
   constructor(private postService: PostService) {
 
@@ -89,6 +89,27 @@ export class PostsComponent implements OnChanges {
         next: (response) => {
           this.posts.splice(postIndex, 1);
           alert("post removed successfully.");
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
+
+  upvotePost(postIndex: number) {
+    if (this.usernameOfLoggedUser) {
+      this.postService.upvotePost(this.usernameOfLoggedUser, this.posts[postIndex].id).subscribe({
+        next: (response) => {
+          console.log(response);
+          if (this.postInteractions[postIndex]) {
+            this.postInteractions[postIndex].upvoted = this.postInteractions[postIndex].upvoted ? false : true;
+          } else {
+            this.postInteractions[postIndex] = {
+              postId: this.posts[postIndex].id, // Provide the postId value
+              upvoted: true
+            };
+          }
         },
         error: (error) => {
           console.error(error);
