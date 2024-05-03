@@ -13,7 +13,10 @@ public interface PostInteractionRepository extends JpaRepository<PostInteraction
 	PostInteraction findByPostIdAndUserId(Long postId, Long userId);
 
 	@Query("SELECT COUNT(inter) FROM PostInteraction inter WHERE inter.post.id = :postId AND inter.upvoted = true")
-    Long countByPostIdAndUpvotedIsTrue(Long postId);
+	Long countByPostIdAndUpvotedIsTrue(Long postId);
+
+	@Query("SELECT COUNT(inter) FROM PostInteraction inter WHERE inter.post.id = :postId AND inter.downvoted = true")
+	Long countByPostIdAndDownvotedIsTrue(Long postId);
 
 	@Transactional
 	@Modifying

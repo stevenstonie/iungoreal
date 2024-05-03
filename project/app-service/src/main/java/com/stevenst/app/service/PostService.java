@@ -14,5 +14,7 @@ public interface PostService {
 
 	ResponsePayload upvotePost(String username, Long postId);
 
+	ResponsePayload downvotePost(String username, Long postId);
+
 	ResponsePayload removePost(String username, Long postId);
 }

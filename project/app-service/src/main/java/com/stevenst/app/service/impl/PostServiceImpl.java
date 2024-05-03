@@ -90,12 +90,12 @@ public class PostServiceImpl implements PostService {
 		List<Post> posts = new ArrayList<>();
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
 
+		// get all friends of the user (including the user) or just the user if the posts are from someones profile
+		// then get the next 'limit' posts before the cursor
 		if (includeFriends) {
-			// get all friends of the user (including the user)
 			List<String> friendUsernames = getAllFriendsUsernamesOfUser(user.getUsername());
 			friendUsernames.add(user.getUsername());
 
-			// get the next 'limit' posts before the cursor for the user
 			posts = postRepository.findPostsOfFriendsBeforeCursor(user.getUsername(), friendUsernames,
 					cursor, pageRequest);
 		} else {
@@ -107,6 +107,7 @@ public class PostServiceImpl implements PostService {
 		// populate the posts with data: default, media, interactions, etc
 		for (Post post : posts) {
 			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
+			// get the interactions of the user to the author's posts
 			PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(),
 					user.getId());
 			if (postInteraction == null) {
@@ -120,7 +121,8 @@ public class PostServiceImpl implements PostService {
 					.description(post.getDescription())
 					.createdAt(post.getCreatedAt())
 					.mediaLinks(getLinksForAllMediaOfAPost(post.getAuthor().getUsername(), post.getId(), mediaNames))
-					.upvoteScore(postInteractionRepository.countByPostIdAndUpvotedIsTrue(post.getId()))
+					.upvoteScore(postInteractionRepository.countByPostIdAndUpvotedIsTrue(post.getId()) -
+							postInteractionRepository.countByPostIdAndDownvotedIsTrue(post.getId()))
 					.nbOfComments(0L)
 					.upvoted(postInteraction.isUpvoted())
 					.downvoted(postInteraction.isDownvoted())
@@ -149,12 +151,40 @@ public class PostServiceImpl implements PostService {
 			return ResponsePayload.builder().status(201).message("Post upvoted.").build();
 		} else {
 			postInteraction.setUpvoted(!postInteraction.isUpvoted());
+			postInteraction.setDownvoted(false);
 
 			postInteractionRepository.save(postInteraction);
 			if (postInteraction.isUpvoted()) {
 				return ResponsePayload.builder().status(200).message("Post upvoted.").build();
 			} else {
 				return ResponsePayload.builder().status(200).message("Post unupvoted.").build();
+			}
+		}
+	}
+
+	@Override
+	public ResponsePayload downvotePost(String username, Long postId) {
+		User user = findUserByUsername(username);
+		if (postId == null) {
+			throw new IgorPostException("Post id cannot be null");
+		}
+		Post post = findPostById(postId);
+		PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(), user.getId());
+
+		if (postInteraction == null) {
+			postInteraction = PostInteraction.builder().user(user).post(post).downvoted(true).seen(true).build();
+
+			postInteractionRepository.save(postInteraction);
+			return ResponsePayload.builder().status(201).message("Post downvoted.").build();
+		} else {
+			postInteraction.setDownvoted(!postInteraction.isDownvoted());
+			postInteraction.setUpvoted(false);
+
+			postInteractionRepository.save(postInteraction);
+			if (postInteraction.isUpvoted()) {
+				return ResponsePayload.builder().status(200).message("Post downvoted.").build();
+			} else {
+				return ResponsePayload.builder().status(200).message("Post undownvoted.").build();
 			}
 		}
 	}
