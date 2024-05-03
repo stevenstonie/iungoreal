@@ -181,10 +181,36 @@ public class PostServiceImpl implements PostService {
 			postInteraction.setUpvoted(false);
 
 			postInteractionRepository.save(postInteraction);
-			if (postInteraction.isUpvoted()) {
+			if (postInteraction.isDownvoted()) {
 				return ResponsePayload.builder().status(200).message("Post downvoted.").build();
 			} else {
 				return ResponsePayload.builder().status(200).message("Post undownvoted.").build();
+			}
+		}
+	}
+
+	@Override
+	public ResponsePayload savePost(String username, Long postId) {
+		User user = findUserByUsername(username);
+		if (postId == null) {
+			throw new IgorPostException("Post id cannot be null.");
+		}
+		Post post = findPostById(postId);
+		PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(), user.getId());
+
+		if (postInteraction == null) {
+			postInteraction = PostInteraction.builder().user(user).post(post).saved(true).seen(true).build();
+
+			postInteractionRepository.save(postInteraction);
+			return ResponsePayload.builder().status(201).message("Post saved.").build();
+		} else {
+			postInteraction.setSaved(!postInteraction.isSaved());
+
+			postInteractionRepository.save(postInteraction);
+			if (postInteraction.isSaved()) {
+				return ResponsePayload.builder().status(200).message("Post saved.").build();
+			} else {
+				return ResponsePayload.builder().status(200).message("Post unsaved.").build();
 			}
 		}
 	}

@@ -64,6 +64,12 @@ public class PostController implements PostApi {
 		return ResponseEntity.ok(postService.downvotePost(username, postId));
 	}
 
+	@PutMapping("/save")
+	public ResponseEntity<ResponsePayload> savePost(@RequestParam("username") String username,
+			@RequestParam("postId") Long postId) {
+		return ResponseEntity.ok(postService.savePost(username, postId));
+	}
+
 	@DeleteMapping("/remove")
 	public ResponseEntity<ResponsePayload> removePost(@RequestParam("username") String username,
 			@RequestParam("postId") Long postId) {
