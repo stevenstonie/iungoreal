@@ -84,49 +84,27 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostPayload> getAllPostsOfUser(String authorUsername, Long cursor, int limit) {
-		User author = findUserByUsername(authorUsername);
-
+	public List<PostPayload> getNextPostsBeforeCursor(
+			String authorUsername, String username, boolean includeFriends, Long cursor, int limit) {
+		User user = findUserByUsername(username);
+		List<Post> posts = new ArrayList<>();
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
 
-		List<Post> posts = postRepository.findPostsOfUserBeforeCursor(author.getUsername(), cursor,
-				pageRequest);
+		if (includeFriends) {
+			// get all friends of the user (including the user)
+			List<String> friendUsernames = getAllFriendsUsernamesOfUser(user.getUsername());
+			friendUsernames.add(user.getUsername());
 
-		List<PostPayload> postPayloads = new ArrayList<>();
-
-		for (Post post : posts) {
-			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
-
-			postPayloads.add(PostPayload.builder()
-					.id(post.getId())
-					.authorUsername(post.getAuthor().getUsername())
-					.title(post.getTitle())
-					.description(post.getDescription())
-					.createdAt(post.getCreatedAt())
-					.mediaLinks(getLinksForAllMediaOfAPost(post.getAuthor().getUsername(), post.getId(), mediaNames))
-					.build());
+			// get the next 'limit' posts before the cursor for the user
+			posts = postRepository.findPostsOfFriendsBeforeCursor(user.getUsername(), friendUsernames,
+					cursor, pageRequest);
+		} else {
+			posts = postRepository.findPostsOfUserBeforeCursor(authorUsername, cursor, pageRequest);
 		}
 
-		return postPayloads;
-	}
-
-	@Override
-	public List<PostPayload> getPostsOfFriendsBeforeCursor(String username, Long cursor, int limit) {
-		User user = findUserByUsername(username);
-
-		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
-
-		// get all friends of the user (including the user)
-		List<String> friendUsernames = getAllFriendsUsernamesOfUser(user.getUsername());
-		friendUsernames.add(user.getUsername());
-
-		// get the next 'limit' posts before the cursor for the user
-		List<Post> posts = postRepository.findPostsFromFriendsBeforeCursor(user.getUsername(), friendUsernames, cursor,
-				pageRequest);
-
 		List<PostPayload> postPayloads = new ArrayList<>();
 
-		// populate the posts with details: default, media, interactions, etc
+		// populate the posts with data: default, media, interactions, etc
 		for (Post post : posts) {
 			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
 			PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(),

@@ -37,18 +37,19 @@ public class PostController implements PostApi {
 		return ResponseEntity.ok(postService.createPost(authorUsername, title, description, file));
 	}
 
-	@GetMapping("/getNextPostsOfUser")
-	public ResponseEntity<List<PostPayload>> getAllPosts(@RequestParam("authorUsername") String authorUsername,
+	@GetMapping("/getNextPostsOfAuthor")
+	public ResponseEntity<List<PostPayload>> getNextPostsOfAuthor(@RequestParam("authorUsername") String authorUsername,
+			@RequestParam("username") String username,
 			@RequestParam(required = false) Long cursor,
 			@RequestParam(defaultValue = DEFAULT_LIMIT_OF_POSTS) int limit) {
-		return ResponseEntity.ok(postService.getAllPostsOfUser(authorUsername, cursor, limit));
+		return ResponseEntity.ok(postService.getNextPostsBeforeCursor(authorUsername, username, false, cursor, limit));
 	}
 
 	@GetMapping("/getNextPostsOfFriends")
 	public ResponseEntity<List<PostPayload>> getNextPostsOfFriends(@RequestParam("username") String username,
 			@RequestParam(required = false) Long cursor,
 			@RequestParam(defaultValue = DEFAULT_LIMIT_OF_POSTS) int limit) {
-		return ResponseEntity.ok(postService.getPostsOfFriendsBeforeCursor(username, cursor, limit));
+		return ResponseEntity.ok(postService.getNextPostsBeforeCursor(username, username, true, cursor, limit));
 	}
 
 	@PutMapping("/upvote")

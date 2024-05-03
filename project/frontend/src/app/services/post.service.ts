@@ -18,11 +18,11 @@ export class PostService {
       );
   }
 
-  getNextPosts(username: string, lastPostId: number | null, isFeed: boolean): Observable<PostPayload[]> {
+  getNextPosts(authorUsername: string, username: string, lastPostId: number | null, isFeed: boolean): Observable<PostPayload[]> {
     if (isFeed) {
       return this.getNextPostsFromFriends(username, lastPostId);
     } else {
-      return this.getNextPostsOfUser(username, lastPostId);
+      return this.getNextPostsOfAuthor(authorUsername, username, lastPostId);
     }
   }
 
@@ -46,13 +46,13 @@ export class PostService {
 
   // ----------------------------------------------------------
 
-  private getNextPostsOfUser(username: string, lastPostId: number | null): Observable<PostPayload[]> {
-    let params = new HttpParams().set('authorUsername', username);
+  private getNextPostsOfAuthor(authorUsername: string, username: string, lastPostId: number | null): Observable<PostPayload[]> {
+    let params = new HttpParams().set('authorUsername', authorUsername).set('username', username);
     if (lastPostId) {
       params = params.set('cursor', lastPostId.toString());
     }
 
-    return this.http.get<PostPayload[]>(`${this.postApiUrl}/getNextPostsOfUser`, { params })
+    return this.http.get<PostPayload[]>(`${this.postApiUrl}/getNextPostsOfAuthor`, { params })
       .pipe(
         catchError(this.handleError)
       );

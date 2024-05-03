@@ -18,6 +18,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			+ "LEFT JOIN PostInteraction interaction ON post.id = interaction.post.id AND interaction.user.username = :currentUser "
 			+ "WHERE post.author.username IN :friendUsernames AND (:cursor IS NULL OR post.id < :cursor) " // AND (interaction.id IS NULL OR interaction.seen = false) <-- add this when implementing the seen logic
 			+ "ORDER BY post.createdAt DESC")
-	List<Post> findPostsFromFriendsBeforeCursor(String currentUser, List<String> friendUsernames, Long cursor,
+	List<Post> findPostsOfFriendsBeforeCursor(String currentUser, List<String> friendUsernames, Long cursor,
 			Pageable pageable);
 }

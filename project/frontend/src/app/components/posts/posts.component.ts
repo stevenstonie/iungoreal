@@ -24,8 +24,8 @@ export class PostsComponent implements OnChanges {
   }
 
   fetchPosts() {
-    if (this.usernameOfUserOnScreen) {
-      this.postService.getNextPosts(this.usernameOfUserOnScreen, this.posts[this.posts.length - 1]?.id, this.isFeed).subscribe({
+    if (this.usernameOfUserOnScreen && this.usernameOfLoggedUser) {
+      this.postService.getNextPosts(this.usernameOfUserOnScreen, this.usernameOfLoggedUser, this.posts[this.posts.length - 1]?.id, this.isFeed).subscribe({
         next: (posts) => {
           if (posts.length <= 0 && this.posts.length > 0) {
             alert("no more posts");
