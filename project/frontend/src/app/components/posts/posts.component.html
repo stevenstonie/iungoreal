@@ -45,7 +45,7 @@
 		<div class="post-buttons">
 			<button (click)="upvotePost(i)" [ngClass]="{'upvoted': posts[i] && posts[i].upvoted}">⬆</button>
 			<p>{{ posts[i] && posts[i].upvoteScore }}</p>
-			<button>⬇</button>
+			<button (click)="downvotePost(i)" [ngClass]="{'downvoted': posts[i] && posts[i].downvoted}">⬇</button>
 			<button>💬 {{0}}</button>
 			<button>&star;</button>
 		</div>

@@ -84,8 +84,32 @@ export class PostsComponent implements OnChanges {
         next: (response) => {
           console.log(response);
 
+          if (this.posts[postIndex].downvoted) {
+            this.posts[postIndex].upvoteScore++;
+            this.posts[postIndex].downvoted = false;
+          }
           this.posts[postIndex].upvoted = !this.posts[postIndex].upvoted;
           this.posts[postIndex].upvoteScore += this.posts[postIndex].upvoted ? 1 : -1;
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
+
+  downvotePost(postIndex: number) {
+    if (this.usernameOfLoggedUser) {
+      this.postService.downvotePost(this.usernameOfLoggedUser, this.posts[postIndex].id).subscribe({
+        next: (response) => {
+          console.log(response);
+
+          if (this.posts[postIndex].upvoted) {
+            this.posts[postIndex].upvoteScore--;
+            this.posts[postIndex].upvoted = false;
+          }
+          this.posts[postIndex].downvoted = !this.posts[postIndex].downvoted;
+          this.posts[postIndex].upvoteScore -= this.posts[postIndex].downvoted ? 1 : -1;
         },
         error: (error) => {
           console.error(error);
