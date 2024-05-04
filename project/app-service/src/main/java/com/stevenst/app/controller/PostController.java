@@ -37,6 +37,12 @@ public class PostController implements PostApi {
 		return ResponseEntity.ok(postService.createPost(authorUsername, title, description, file));
 	}
 
+	@PostMapping("/addComment")
+	public ResponseEntity<ResponsePayload> addComment(@RequestParam("username") String username,
+			@RequestParam("content") String content, @RequestParam("postId") Long postId) {
+		return ResponseEntity.ok(postService.addComment(username, content, postId));
+	}
+
 	@GetMapping("/getNextPostsOfAuthor")
 	public ResponseEntity<List<PostPayload>> getNextPostsOfAuthor(@RequestParam("authorUsername") String authorUsername,
 			@RequestParam("username") String username,

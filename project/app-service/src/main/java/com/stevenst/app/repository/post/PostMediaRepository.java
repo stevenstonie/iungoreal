@@ -1,4 +1,4 @@
-package com.stevenst.app.repository;
+package com.stevenst.app.repository.post;
 
 import java.util.List;
 

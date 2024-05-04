@@ -3,7 +3,6 @@ package com.stevenst.app.service.impl;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,14 +20,16 @@ import com.stevenst.app.exception.IgorPostException;
 import com.stevenst.lib.exception.IgorImageNotFoundException;
 import com.stevenst.lib.exception.IgorIoException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
+import com.stevenst.app.model.Comment;
 import com.stevenst.app.model.Post;
 import com.stevenst.app.model.PostInteraction;
 import com.stevenst.app.model.PostMedia;
 import com.stevenst.app.payload.PostPayload;
-import com.stevenst.app.repository.PostInteractionRepository;
-import com.stevenst.app.repository.PostMediaRepository;
-import com.stevenst.app.repository.PostRepository;
 import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.post.CommentRepository;
+import com.stevenst.app.repository.post.PostInteractionRepository;
+import com.stevenst.app.repository.post.PostMediaRepository;
+import com.stevenst.app.repository.post.PostRepository;
 import com.stevenst.app.service.PostService;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
@@ -55,6 +56,7 @@ public class PostServiceImpl implements PostService {
 	private final PostRepository postRepository;
 	private final PostMediaRepository postMediaRepository;
 	private final PostInteractionRepository postInteractionRepository;
+	private final CommentRepository commentRepository;
 	private final S3Client s3Client;
 	private final WebClient webClient;
 	@Value("${aws.bucketName}")
@@ -81,6 +83,28 @@ public class PostServiceImpl implements PostService {
 
 		return ResponsePayload.builder().status(200)
 				.message("Post created successfully for " + author.getUsername() + ".").build();
+	}
+
+	@Override
+	public ResponsePayload addComment(String username, String content, Long postId) {
+		User user = findUserByUsername(username);
+		Post post = findPostById(postId);
+
+		// create the comment and save it
+		commentRepository.save(Comment.builder()
+				.author(user)
+				.post(post)
+				.content(content)
+				.build());
+
+		// check if an interaction exists and if not then create it
+		PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(), user.getId());
+		if (postInteraction == null) {
+			postInteraction = PostInteraction.builder().user(user).post(post).seen(true).build();
+			postInteractionRepository.save(postInteraction);
+		}
+
+		return ResponsePayload.builder().status(201).message("Comment added successfully.").build();
 	}
 
 	@Override
@@ -138,9 +162,6 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public ResponsePayload upvotePost(String username, Long postId) {
 		User user = findUserByUsername(username);
-		if (postId == null) {
-			throw new IgorPostException("Post id cannot be null");
-		}
 		Post post = findPostById(postId);
 		PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(), user.getId());
 
@@ -165,9 +186,6 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public ResponsePayload downvotePost(String username, Long postId) {
 		User user = findUserByUsername(username);
-		if (postId == null) {
-			throw new IgorPostException("Post id cannot be null");
-		}
 		Post post = findPostById(postId);
 		PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(), user.getId());
 
@@ -192,9 +210,6 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public ResponsePayload savePost(String username, Long postId) {
 		User user = findUserByUsername(username);
-		if (postId == null) {
-			throw new IgorPostException("Post id cannot be null.");
-		}
 		Post post = findPostById(postId);
 		PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(), user.getId());
 
@@ -218,13 +233,8 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public ResponsePayload removePost(String username, Long postId) {
 		User user = findUserByUsername(username);
-		if (postId == null) {
-			throw new IgorPostException("Post id cannot be null.");
-		}
-
 		// get the specific post and check if it belongs to the provided author
 		Post post = findPostById(postId);
-
 		if (!post.getAuthor().getUsername().equals(user.getUsername())) {
 			throw new IgorPostException("Post with id " + postId + " does not belong to " + user.getUsername());
 		}
@@ -440,6 +450,9 @@ public class PostServiceImpl implements PostService {
 	}
 
 	private Post findPostById(Long postId) {
+		if (postId == null) {
+			throw new IgorPostException("Post id cannot be null.");
+		}
 		return postRepository.findById(postId)
 				.orElseThrow(() -> new IgorPostException("Post with id " + postId + " not found."));
 	}
