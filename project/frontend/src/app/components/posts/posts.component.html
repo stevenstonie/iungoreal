@@ -7,7 +7,7 @@
 <br>
 <br>
 
-<ng-container *ngFor="let post of posts; let i = index">
+<div *ngFor="let post of posts; let i = index">
 	<div class="post-preview">
 		<div class="post-header">
 			<div class="same-line">
@@ -47,14 +47,15 @@
 			<p>{{ posts[i] && posts[i].upvoteScore }}</p>
 			<button (click)="downvotePost(i)" [ngClass]="{'downvoted': posts[i] && posts[i].downvoted}">⬇</button>
 
-			<button>💬 {{0}}</button>
+			<button>💬 {{posts[i].nbOfComments}}</button>
 
 			<button (click)="savePost(i)" *ngIf="!posts[i] || !posts[i].saved">&star;</button>
 			<button (click)="savePost(i)" *ngIf="posts[i] && posts[i].saved">&bigstar;</button>
 		</div>
 	</div>
-</ng-container>
+</div>
 
-<button style="display: flex; align-items: center; justify-content: center;" (click)="fetchPosts()">load more</button>
+<button style="display: flex; align-items: center; justify-content: center;" (click)="fetchPosts()">load
+	more</button>
 <br>
 <br>

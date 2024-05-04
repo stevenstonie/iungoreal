@@ -16,7 +16,6 @@ export class PostsComponent implements OnChanges {
   currentPostIndex: number[] = [];
 
   constructor(private postService: PostService) {
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
