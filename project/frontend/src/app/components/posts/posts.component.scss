@@ -2,6 +2,32 @@
 	word-wrap: break-word;
 }
 
+#body {
+	display: flex;
+	flex-direction: row;
+}
+
+#comments-container {
+    position: sticky;
+    top: 100px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 30px;
+    width: 30%;
+	height: 70vh;
+    margin-top: 20px;
+    align-self: stretch;
+	overflow-y: auto;
+}
+
+#posts-container {
+	display: flex;
+	flex-direction: column;
+	width: 60%;
+	max-width: 1000px;
+	margin-bottom: 30px;
+}
+
 #post-sort {
 	padding: 5px;
 	max-height: 50px;
@@ -9,14 +35,6 @@
 	button {
 		margin-left: 5px;
 	}
-}
-
-.post-preview {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	max-width: 600px;
-	margin-bottom: 30px;
 }
 
 .post-header {
@@ -39,8 +57,8 @@
 
 	img,
 	video {
+		aspect-ratio: 1 / 1;
 		width: 90%;
-		height: 90%;
 		object-fit: contain;
 	}
 }

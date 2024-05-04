@@ -20,6 +20,14 @@ export interface PostPayload {
 	seen: boolean;
 }
 
+export interface CommentPayload {
+	id: number;
+	authorUsername: string;
+	postId: number;
+	content: string;
+	createdAt: Date;
+}
+
 export interface NotificationFPayload {
 	id: number,
 	receiverUsername: string,

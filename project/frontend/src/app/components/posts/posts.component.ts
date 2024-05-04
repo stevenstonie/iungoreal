@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { delay } from 'rxjs';
-import { PostPayload } from 'src/app/models/Payloads';
+import { CommentPayload, PostPayload } from 'src/app/models/Payloads';
 import { PostService } from 'src/app/services/post.service';
 
 @Component({
@@ -14,6 +14,9 @@ export class PostsComponent implements OnChanges {
   usernameOfLoggedUser = localStorage.getItem('username');
   posts: PostPayload[] = [];
   currentPostIndex: number[] = [];
+  comments: CommentPayload[] = [];
+  showComments: boolean = false;
+  lastCommentSectionId: number | undefined;
 
   constructor(private postService: PostService) {
   }
@@ -133,6 +136,30 @@ export class PostsComponent implements OnChanges {
         }
       });
     }
+  }
+
+  toggleComments(postIndex: number) {
+    this.showComments = !this.showComments;
+
+    if (this.showComments) {
+      if (this.lastCommentSectionId != postIndex) {
+        this.comments = [];
+      }
+      this.lastCommentSectionId = postIndex;
+
+      this.getNextCommentsOfPost(postIndex);
+    }
+  }
+
+  getNextCommentsOfPost(postIndex: number) {
+    this.postService.getNextComments(this.posts[postIndex].id, this.comments[this.comments.length - 1]?.id).subscribe({
+      next: (comments) => {
+        this.comments = this.comments.concat(comments);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   // implement making posts seen when scrolling past them
