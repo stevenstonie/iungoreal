@@ -1,5 +1,5 @@
 <div id="body">
-	<div id="posts-container">
+	<div id="posts-section">
 		<div id="post-sort">Sort by:
 			<button>Newest</button>
 			<button>Oldest</button>
@@ -62,15 +62,24 @@
 		<br>
 
 	</div>
-	<div id="comments-container" *ngIf="showComments">
+	<section id="comments-section" *ngIf="showComments">
 		<h3 *ngIf="lastCommentSectionId">Comments on "{{ posts[lastCommentSectionId].title }}"</h3>
-		<div class="comment" *ngFor="let comment of comments; let i = index">
-			<div class="same-line">
-				<p class="bold">{{ comment.authorUsername }}</p>
-				<i style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{ comment.createdAt | date: 'dd/MM/yyyy' }} at {{ comment.createdAt | date: 'HH:mm' }}</i>
+		<div id="comments-container">
+			<div class="comment" *ngFor="let comment of comments; let i = index">
+				<div class="same-line">
+					<p class="bold">{{ comment.authorUsername }}</p>
+					<i style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{ comment.createdAt | date:
+						'dd/MM/yyyy' }} at {{ comment.createdAt | date: 'HH:mm' }}</i>
+				</div>
+				<p>{{ comment.content }}</p>
 			</div>
-			<p>{{ comment.content }}</p>
 		</div>
 
-	</div>
+		<button (click)="getNextCommentsOfPost(lastCommentSectionId!)">load more</button>
+		<div class="input">
+			<input type="text" [(ngModel)]="commentToAdd" placeholder="Add a comment"
+				(keyup.enter)="addComment(lastCommentSectionId!)" />
+			<button (click)="addComment(lastCommentSectionId!)">Add comment</button>
+		</div>
+	</section>
 </div>

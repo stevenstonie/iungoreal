@@ -17,6 +17,7 @@ export class PostsComponent implements OnChanges {
   comments: CommentPayload[] = [];
   showComments: boolean = false;
   lastCommentSectionId: number | undefined;
+  commentToAdd: string = "";
 
   constructor(private postService: PostService) {
   }
@@ -139,7 +140,9 @@ export class PostsComponent implements OnChanges {
   }
 
   toggleComments(postIndex: number) {
-    this.showComments = !this.showComments;
+    if (postIndex === this.lastCommentSectionId || this.lastCommentSectionId === undefined) {
+      this.showComments = !this.showComments;
+    }
 
     if (this.showComments) {
       if (this.lastCommentSectionId != postIndex) {
@@ -160,6 +163,10 @@ export class PostsComponent implements OnChanges {
         console.error(error);
       }
     });
+  }
+
+  addComment(postIndex: number) {
+
   }
 
   // implement making posts seen when scrolling past them
