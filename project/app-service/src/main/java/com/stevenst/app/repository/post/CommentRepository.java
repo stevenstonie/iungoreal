@@ -18,4 +18,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
 	@Query("SELECT comment FROM Comment comment WHERE comment.post.id = :postId AND (:cursor IS NULL OR comment.id < :cursor) ORDER BY comment.createdAt DESC")
 	List<Comment> findCommentsBeforeCursor(Long postId, Long cursor, Pageable pageable);
+
+	Long countByPostId(Long postId);
 }

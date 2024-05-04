@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import com.stevenst.app.model.Comment;
 import com.stevenst.app.model.Post;
 import com.stevenst.app.model.PostInteraction;
 import com.stevenst.app.model.PostMedia;
+import com.stevenst.app.payload.CommentPayload;
 import com.stevenst.app.payload.PostPayload;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.repository.post.CommentRepository;
@@ -147,7 +149,7 @@ public class PostServiceImpl implements PostService {
 					.mediaLinks(getLinksForAllMediaOfAPost(post.getAuthor().getUsername(), post.getId(), mediaNames))
 					.upvoteScore(postInteractionRepository.countByPostIdAndUpvotedIsTrue(post.getId()) -
 							postInteractionRepository.countByPostIdAndDownvotedIsTrue(post.getId()))
-					.nbOfComments(0L)
+					.nbOfComments(commentRepository.countByPostId(post.getId()))
 					.upvoted(postInteraction.isUpvoted())
 					.downvoted(postInteraction.isDownvoted())
 					.saved(postInteraction.isSaved())
@@ -160,11 +162,13 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<Comment> getNextCommentsBeforeCursor(Long postId, Long cursor, int limit) {
+	public List<CommentPayload> getNextCommentsBeforeCursor(Long postId, Long cursor, int limit) {
 		Post post = findPostById(postId);
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
 
-		return commentRepository.findCommentsBeforeCursor(post.getId(), cursor, pageRequest);
+		List<Comment> comments = commentRepository.findCommentsBeforeCursor(post.getId(), cursor, pageRequest);
+
+		return commentEntitiesToPayloads(comments);
 	}
 
 	@Override
@@ -267,6 +271,17 @@ public class PostServiceImpl implements PostService {
 	}
 
 	// ---------------------------------------------
+
+	private List<CommentPayload> commentEntitiesToPayloads(List<Comment> comments) {
+		return comments.stream().map(comment -> CommentPayload.builder()
+				.id(comment.getId())
+				.authorUsername(comment.getAuthor().getUsername())
+				.postId(comment.getPost().getId())
+				.content(comment.getContent())
+				.createdAt(comment.getCreatedAt())
+				.build())
+				.collect(Collectors.toList());
+	}
 
 	private void removeCommentsOfPost(Long postId) {
 		commentRepository.deleteAllByPostId(postId);
