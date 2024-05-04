@@ -276,6 +276,20 @@ public class PostServiceImpl implements PostService {
 				.build();
 	}
 
+	@Override
+	public ResponsePayload removeComment(String username, Long commentId) {
+		User user = findUserByUsername(username);
+		Comment comment = findCommentById(commentId);
+		if (!comment.getAuthor().getUsername().equals(user.getUsername())) {
+			throw new IgorPostException("Comment with id " + commentId + " does not belong to " + user.getUsername());
+		}
+
+		commentRepository.delete(comment);
+		return ResponsePayload.builder().status(200)
+				.message("Comment removed successfully.")
+				.build();
+	}
+
 	// ---------------------------------------------
 
 	private List<CommentPayload> commentEntitiesToPayloads(List<Comment> comments) {
@@ -494,5 +508,13 @@ public class PostServiceImpl implements PostService {
 		}
 		return postRepository.findById(postId)
 				.orElseThrow(() -> new IgorPostException("Post with id " + postId + " not found."));
+	}
+
+	private Comment findCommentById(Long commentId) {
+		if (commentId == null) {
+			throw new IgorPostException("Comment id cannot be null.");
+		}
+		return commentRepository.findById(commentId)
+				.orElseThrow(() -> new IgorPostException("Comment with id " + commentId + " not found."));
 	}
 }

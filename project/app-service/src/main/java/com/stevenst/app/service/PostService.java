@@ -25,4 +25,6 @@ public interface PostService {
 	ResponsePayload savePost(String username, Long postId);
 
 	ResponsePayload removePost(String username, Long postId);
+
+	ResponsePayload removeComment(String username, Long commentId);
 }

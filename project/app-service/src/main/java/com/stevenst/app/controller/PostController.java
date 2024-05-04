@@ -90,4 +90,10 @@ public class PostController implements PostApi {
 			@RequestParam("postId") Long postId) {
 		return ResponseEntity.ok(postService.removePost(username, postId));
 	}
+
+	@DeleteMapping("/removeComment")
+	public ResponseEntity<ResponsePayload> removeComment(@RequestParam("username") String username,
+			@RequestParam("commentId") Long commentId) {
+		return ResponseEntity.ok(postService.removeComment(username, commentId));
+	}
 }
