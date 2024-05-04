@@ -18,6 +18,15 @@ export class PostService {
       );
   }
 
+  addComment(username: string, content: string, postId: number): Observable<CommentPayload> {
+    const params = new HttpParams().set('username', username).set('content', content).set('postId', postId.toString());
+
+    return this.http.post<CommentPayload>(`${this.postApiUrl}/addComment`, null, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   getNextPosts(authorUsername: string, username: string, lastPostId: number | null, isFeed: boolean): Observable<PostPayload[]> {
     if (isFeed) {
       return this.getNextPostsFromFriends(username, lastPostId);

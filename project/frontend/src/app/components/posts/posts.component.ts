@@ -140,11 +140,18 @@ export class PostsComponent implements OnChanges {
   }
 
   toggleComments(postIndex: number) {
-    if (postIndex === this.lastCommentSectionId || this.lastCommentSectionId === undefined) {
+    // toggle the comment section if no comment section was opened before or if the user clicks on the same section again
+    if (this.lastCommentSectionId === undefined || postIndex === this.lastCommentSectionId) {
       this.showComments = !this.showComments;
     }
 
+    // open if the section is closed and the user clicks on a different section
+    if (!this.showComments && this.lastCommentSectionId != postIndex) {
+      this.showComments = true;
+    }
+
     if (this.showComments) {
+      // when opening the section if its a new one then reset the comments
       if (this.lastCommentSectionId != postIndex) {
         this.comments = [];
       }
@@ -166,7 +173,21 @@ export class PostsComponent implements OnChanges {
   }
 
   addComment(postIndex: number) {
+    if (this.usernameOfLoggedUser) {
+      this.postService.addComment(this.usernameOfLoggedUser, this.commentToAdd, this.posts[postIndex].id).subscribe({
+        next: (response) => {
+          console.log(response);
 
+          this.comments = [response, ...this.comments];
+          this.posts[postIndex].nbOfComments++;
+          this.posts[postIndex].seen = true;
+          this.commentToAdd = "";
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
   }
 
   // implement making posts seen when scrolling past them

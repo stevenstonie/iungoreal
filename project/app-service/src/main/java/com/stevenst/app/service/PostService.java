@@ -11,7 +11,7 @@ import com.stevenst.lib.payload.ResponsePayload;
 public interface PostService {
 	ResponsePayload createPost(String title, String description, String authorUsername, List<MultipartFile> files);
 
-	ResponsePayload addComment(String username, String content, Long postId);
+	CommentPayload addComment(String username, String content, Long postId);
 
 	List<PostPayload> getNextPostsBeforeCursor(String authorUsername, String username, boolean includeFriends,
 			Long cursor, int limit);

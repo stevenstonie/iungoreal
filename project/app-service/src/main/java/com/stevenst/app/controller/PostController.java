@@ -40,7 +40,7 @@ public class PostController implements PostApi {
 	}
 
 	@PostMapping("/addComment")
-	public ResponseEntity<ResponsePayload> addComment(@RequestParam("username") String username,
+	public ResponseEntity<CommentPayload> addComment(@RequestParam("username") String username,
 			@RequestParam("content") String content, @RequestParam("postId") Long postId) {
 		return ResponseEntity.ok(postService.addComment(username, content, postId));
 	}

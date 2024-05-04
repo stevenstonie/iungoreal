@@ -88,12 +88,12 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public ResponsePayload addComment(String username, String content, Long postId) {
+	public CommentPayload addComment(String username, String content, Long postId) {
 		User user = findUserByUsername(username);
 		Post post = findPostById(postId);
 
 		// create the comment and save it
-		commentRepository.save(Comment.builder()
+		Comment comment = commentRepository.save(Comment.builder()
 				.author(user)
 				.post(post)
 				.content(content)
@@ -106,7 +106,13 @@ public class PostServiceImpl implements PostService {
 			postInteractionRepository.save(postInteraction);
 		}
 
-		return ResponsePayload.builder().status(201).message("Comment added successfully.").build();
+		return CommentPayload.builder()
+				.id(comment.getId())
+				.authorUsername(username)
+				.postId(postId)
+				.content(content)
+				.createdAt(comment.getCreatedAt())
+				.build();
 	}
 
 	@Override

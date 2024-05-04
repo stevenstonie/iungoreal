@@ -7,52 +7,49 @@
 		</div>
 		<button style="margin-left: 10px;">Filter seen posts</button>
 
-		<div *ngFor="let post of posts; let i = index">
-			<div class="post-preview">
-				<div class="post-header">
-					<div class="same-line">
-						<h3 [ngClass]="{'seen': posts[i] && posts[i].seen}">{{ post.title }}</h3>
-						<button style="margin-right: 5px;" *ngIf="post.authorUsername === usernameOfLoggedUser"
-							(click)="removePost(i)">🗑</button>
-					</div>
-					<p>{{ post.description }}</p>
-					<i>author: {{ post.authorUsername }}</i>
-					<i style="font-size: .8rem">added on: {{ post.createdAt | date: 'dd/MM/yyyy' }} at {{ post.createdAt
-						| date: 'HH:mm' }}</i>
+		<div class="post" *ngFor="let post of posts; let i = index">
+			<div class="post-header">
+				<div class="same-line">
+					<h3 [ngClass]="{'seen': posts[i] && posts[i].seen}">{{ post.title }}</h3>
+					<button style="margin-right: 5px;" *ngIf="post.authorUsername === usernameOfLoggedUser"
+						(click)="removePost(i)">🗑</button>
+				</div>
+				<p>{{ post.description }}</p>
+				<i>author: {{ post.authorUsername }}</i>
+				<i style="font-size: .8rem">added on: {{ post.createdAt | date: 'dd/MM/yyyy' }} at {{ post.createdAt
+					| date: 'HH:mm' }}</i>
+			</div>
+
+			<ng-container *ngIf="post.mediaLinks.length > 0">
+				<div class="post-image">
+					<button (click)="previousImage(i)" [disabled]="currentPostIndex[i] === 0">&larr;</button>
+
+					<ng-container *ngIf="isImage(post.mediaLinks[currentPostIndex[i]]); else videoTemplate">
+						<img [src]="post.mediaLinks[currentPostIndex[i]]" alt="post img">
+					</ng-container>
+					<ng-template #videoTemplate>
+						<video controls>
+							<source [src]="post.mediaLinks[currentPostIndex[i]]" type="video/mp4">
+							Your browser does not support the video tag.
+						</video>
+					</ng-template>
+
+					<button (click)="nextImage(i)"
+						[disabled]="currentPostIndex[i] === post.mediaLinks.length - 1">&rarr;</button>
 				</div>
 
-				<ng-container *ngIf="post.mediaLinks.length > 0">
-					<div class="post-image">
-						<button (click)="previousImage(i)" [disabled]="currentPostIndex[i] === 0">&larr;</button>
+				<p class="current-media-index">({{ currentPostIndex[i] + 1 }})</p>
+			</ng-container>
 
-						<ng-container *ngIf="isImage(post.mediaLinks[currentPostIndex[i]]); else videoTemplate">
-							<img [src]="post.mediaLinks[currentPostIndex[i]]" alt="post img">
-						</ng-container>
-						<ng-template #videoTemplate>
-							<video controls>
-								<source [src]="post.mediaLinks[currentPostIndex[i]]" type="video/mp4">
-								Your browser does not support the video tag.
-							</video>
-						</ng-template>
+			<div class="post-buttons">
+				<button (click)="upvotePost(i)" [ngClass]="{'upvoted': posts[i] && posts[i].upvoted}">⬆</button>
+				<p>{{ posts[i] && posts[i].upvoteScore }}</p>
+				<button (click)="downvotePost(i)" [ngClass]="{'downvoted': posts[i] && posts[i].downvoted}">⬇</button>
 
-						<button (click)="nextImage(i)"
-							[disabled]="currentPostIndex[i] === post.mediaLinks.length - 1">&rarr;</button>
-					</div>
+				<button (click)="toggleComments(i)">💬 {{posts[i].nbOfComments}}</button>
 
-					<p class="current-media-index">({{ currentPostIndex[i] + 1 }})</p>
-				</ng-container>
-
-				<div class="post-buttons">
-					<button (click)="upvotePost(i)" [ngClass]="{'upvoted': posts[i] && posts[i].upvoted}">⬆</button>
-					<p>{{ posts[i] && posts[i].upvoteScore }}</p>
-					<button (click)="downvotePost(i)"
-						[ngClass]="{'downvoted': posts[i] && posts[i].downvoted}">⬇</button>
-
-					<button (click)="toggleComments(i)">💬 {{posts[i].nbOfComments}}</button>
-
-					<button (click)="savePost(i)" *ngIf="!posts[i] || !posts[i].saved">&star;</button>
-					<button (click)="savePost(i)" *ngIf="posts[i] && posts[i].saved">&bigstar;</button>
-				</div>
+				<button (click)="savePost(i)" *ngIf="!posts[i] || !posts[i].saved">&star;</button>
+				<button (click)="savePost(i)" *ngIf="posts[i] && posts[i].saved">&bigstar;</button>
 			</div>
 		</div>
 
@@ -63,7 +60,7 @@
 
 	</div>
 	<section id="comments-section" *ngIf="showComments">
-		<h3 *ngIf="lastCommentSectionId">Comments on "{{ posts[lastCommentSectionId].title }}"</h3>
+		<h3>Comments on "{{ posts[lastCommentSectionId!].title }}"</h3>
 		<div id="comments-container">
 			<div class="comment" *ngFor="let comment of comments; let i = index">
 				<div class="same-line">
@@ -75,7 +72,7 @@
 			</div>
 		</div>
 
-		<button (click)="getNextCommentsOfPost(lastCommentSectionId!)">load more</button>
+		<button (click)="getNextCommentsOfPost(lastCommentSectionId!)">Load more</button>
 		<div class="input">
 			<input type="text" [(ngModel)]="commentToAdd" placeholder="Add a comment"
 				(keyup.enter)="addComment(lastCommentSectionId!)" />
