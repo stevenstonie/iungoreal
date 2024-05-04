@@ -18,8 +18,7 @@
 					<p>{{ post.description }}</p>
 					<i>author: {{ post.authorUsername }}</i>
 					<i style="font-size: .8rem">added on: {{ post.createdAt | date: 'dd/MM/yyyy' }} at {{ post.createdAt
-						|
-						date: 'HH:mm' }}</i>
+						| date: 'HH:mm' }}</i>
 				</div>
 
 				<ng-container *ngIf="post.mediaLinks.length > 0">
@@ -65,9 +64,12 @@
 	</div>
 	<div id="comments-container" *ngIf="showComments">
 		<h3 *ngIf="lastCommentSectionId">Comments on "{{ posts[lastCommentSectionId].title }}"</h3>
-		<div *ngFor="let comment of comments; let i = index">
-				<p>{{ comment.authorUsername }}: </p>
-				<p>{{ comment.content }}</p>
+		<div class="comment" *ngFor="let comment of comments; let i = index">
+			<div class="same-line">
+				<p class="bold">{{ comment.authorUsername }}</p>
+				<i style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{ comment.createdAt | date: 'dd/MM/yyyy' }} at {{ comment.createdAt | date: 'HH:mm' }}</i>
+			</div>
+			<p>{{ comment.content }}</p>
 		</div>
 
 	</div>
