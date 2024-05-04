@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.stevenst.app.model.Comment;
 import com.stevenst.app.payload.PostPayload;
 import com.stevenst.lib.payload.ResponsePayload;
 
@@ -12,7 +13,10 @@ public interface PostService {
 
 	ResponsePayload addComment(String username, String content, Long postId);
 
-	List<PostPayload> getNextPostsBeforeCursor(String authorUsername, String username, boolean includeFriends, Long cursor, int limit);
+	List<PostPayload> getNextPostsBeforeCursor(String authorUsername, String username, boolean includeFriends,
+			Long cursor, int limit);
+
+	List<Comment> getNextCommentsBeforeCursor(Long postId, Long cursor, int limit);
 
 	ResponsePayload upvotePost(String username, Long postId);
 

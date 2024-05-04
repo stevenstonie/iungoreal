@@ -128,7 +128,7 @@ public class PostServiceImpl implements PostService {
 
 		List<PostPayload> postPayloads = new ArrayList<>();
 
-		// populate the posts with data: default, media, interactions, etc
+		// populate the post payloads with data: default, media, interactions, etc
 		for (Post post : posts) {
 			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
 			// get the interactions of the user to the author's posts
@@ -157,6 +157,14 @@ public class PostServiceImpl implements PostService {
 
 		// return these posts
 		return postPayloads;
+	}
+
+	@Override
+	public List<Comment> getNextCommentsBeforeCursor(Long postId, Long cursor, int limit) {
+		Post post = findPostById(postId);
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+
+		return commentRepository.findCommentsBeforeCursor(post.getId(), cursor, pageRequest);
 	}
 
 	@Override
@@ -239,19 +247,18 @@ public class PostServiceImpl implements PostService {
 			throw new IgorPostException("Post with id " + postId + " does not belong to " + user.getUsername());
 		}
 
-		// remove constraints
+		// remove the next constraints:
 
 		// comments
+		removeCommentsOfPost(postId);
 
 		// media
-		List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(postId);
-		removeMediaOfPostFromCloud(user.getUsername(), postId, mediaNames);
-		postMediaRepository.deleteAllByPostId(postId);
+		removeMediaOfPost(postId, user.getUsername());
 
 		// interactions
 		postInteractionRepository.deleteAllByPost(post);
 
-		// remove the post from the db and cloud
+		// and then remove the post from the db and cloud
 		postRepository.delete(post);
 
 		return ResponsePayload.builder().status(200)
@@ -260,6 +267,17 @@ public class PostServiceImpl implements PostService {
 	}
 
 	// ---------------------------------------------
+
+	private void removeCommentsOfPost(Long postId) {
+		commentRepository.deleteAllByPostId(postId);
+	}
+
+	private void removeMediaOfPost(Long postId, String username) {
+		List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(postId);
+
+		removeMediaOfPostFromCloud(username, postId, mediaNames);
+		postMediaRepository.deleteAllByPostId(postId);
+	}
 
 	private List<String> getAllFriendsUsernamesOfUser(String username) {
 		// get all friends of user

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stevenst.app.controller.api.PostApi;
+import com.stevenst.app.model.Comment;
 import com.stevenst.app.payload.PostPayload;
 import com.stevenst.app.service.PostService;
 import com.stevenst.lib.payload.ResponsePayload;
@@ -56,6 +57,13 @@ public class PostController implements PostApi {
 			@RequestParam(required = false) Long cursor,
 			@RequestParam(defaultValue = DEFAULT_LIMIT_OF_POSTS) int limit) {
 		return ResponseEntity.ok(postService.getNextPostsBeforeCursor(username, username, true, cursor, limit));
+	}
+
+	@GetMapping("/getNextCommentsOfPost")
+	public ResponseEntity<List<Comment>> getNextCommentsOfPost(@RequestParam("postId") Long postId,
+			@RequestParam(required = false) Long cursor,
+			@RequestParam(defaultValue = "20") int limit) {
+		return ResponseEntity.ok(postService.getNextCommentsBeforeCursor(postId, cursor, limit));
 	}
 
 	@PutMapping("/upvote")
