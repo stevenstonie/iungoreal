@@ -11,7 +11,7 @@
 	<div class="post-preview">
 		<div class="post-header">
 			<div class="same-line">
-				<h3>{{ post.title }}</h3>
+				<h3 [ngClass]="{'seen': posts[i] && posts[i].seen}">{{ post.title }}</h3>
 				<button style="margin-right: 5px;" *ngIf="post.authorUsername === usernameOfLoggedUser"
 					(click)="removePost(i)">🗑</button>
 			</div>
@@ -46,7 +46,9 @@
 			<button (click)="upvotePost(i)" [ngClass]="{'upvoted': posts[i] && posts[i].upvoted}">⬆</button>
 			<p>{{ posts[i] && posts[i].upvoteScore }}</p>
 			<button (click)="downvotePost(i)" [ngClass]="{'downvoted': posts[i] && posts[i].downvoted}">⬇</button>
+
 			<button>💬 {{0}}</button>
+
 			<button (click)="savePost(i)" *ngIf="!posts[i] || !posts[i].saved">&star;</button>
 			<button (click)="savePost(i)" *ngIf="posts[i] && posts[i].saved">&bigstar;</button>
 		</div>

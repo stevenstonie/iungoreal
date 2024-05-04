@@ -90,6 +90,7 @@ export class PostsComponent implements OnChanges {
           }
           this.posts[postIndex].upvoted = !this.posts[postIndex].upvoted;
           this.posts[postIndex].upvoteScore += this.posts[postIndex].upvoted ? 1 : -1;
+          this.posts[postIndex].seen = true;
         },
         error: (error) => {
           console.error(error);
@@ -110,6 +111,7 @@ export class PostsComponent implements OnChanges {
           }
           this.posts[postIndex].downvoted = !this.posts[postIndex].downvoted;
           this.posts[postIndex].upvoteScore -= this.posts[postIndex].downvoted ? 1 : -1;
+          this.posts[postIndex].seen = true;
         },
         error: (error) => {
           console.error(error);
@@ -125,6 +127,7 @@ export class PostsComponent implements OnChanges {
           console.log(response);
 
           this.posts[postIndex].saved = !this.posts[postIndex].saved;
+          this.posts[postIndex].seen = true;
         },
         error: (error) => {
           console.error(error);
@@ -132,6 +135,8 @@ export class PostsComponent implements OnChanges {
       });
     }
   }
+
+  // implement making posts seen when scrolling past them
 
   onScroll(): void {
     console.log("scrolled");

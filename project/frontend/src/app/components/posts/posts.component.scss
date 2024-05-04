@@ -61,19 +61,23 @@
 		padding: 1px 7px;
 		border-radius: 0.4rem;
 	}
-
-	.upvoted {
-		color: orangered;
-		background-color: rgba(255, 0, 0, 0.2);
-	}
-
-	.downvoted {
-		color: blue;
-		background-color: rgba(0, 0, 255, 0.2);
-	}
 }
 
 .same-line {
 	display: flex;
 	flex-direction: row;
+}
+
+.upvoted {
+	color: orangered;
+	background-color: rgba(255, 0, 0, 0.2);
+}
+
+.downvoted {
+	color: blue;
+	background-color: rgba(0, 0, 255, 0.2);
+}
+
+.seen {
+	opacity: .75;
 }

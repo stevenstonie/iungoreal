@@ -187,8 +187,8 @@ export class UserSettingsComponent {
 
   //  -----------------------------------------------------------------------------------------------
 
-  selectSection(section: string) {
-    this.selectedSection = section;
+  selectSection(sectionName: string) {
+    this.selectedSection = sectionName;
   }
 
 }
