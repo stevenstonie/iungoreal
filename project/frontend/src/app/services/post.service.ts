@@ -84,6 +84,15 @@ export class PostService {
       );
   }
 
+  removeComment(username: string, commentId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('commentId', commentId.toString());
+
+    return this.http.delete<ResponsePayload>(`${this.postApiUrl}/removeComment`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   // ----------------------------------------------------------
 
   private getNextPostsOfAuthor(authorUsername: string, username: string, lastPostId: number | null): Observable<PostPayload[]> {

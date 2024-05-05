@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { delay } from 'rxjs';
 import { CommentPayload, PostPayload } from 'src/app/models/Payloads';
 import { PostService } from 'src/app/services/post.service';
 
@@ -72,6 +71,7 @@ export class PostsComponent implements OnChanges {
       this.postService.removePostById(this.usernameOfLoggedUser, this.posts[postIndex].id).subscribe({
         next: (response) => {
           this.posts.splice(postIndex, 1);
+
           alert("post removed successfully.");
         },
         error: (error) => {
@@ -85,8 +85,6 @@ export class PostsComponent implements OnChanges {
     if (this.usernameOfLoggedUser) {
       this.postService.upvotePost(this.usernameOfLoggedUser, this.posts[postIndex].id).subscribe({
         next: (response) => {
-          console.log(response);
-
           if (this.posts[postIndex].downvoted) {
             this.posts[postIndex].upvoteScore++;
             this.posts[postIndex].downvoted = false;
@@ -94,6 +92,8 @@ export class PostsComponent implements OnChanges {
           this.posts[postIndex].upvoted = !this.posts[postIndex].upvoted;
           this.posts[postIndex].upvoteScore += this.posts[postIndex].upvoted ? 1 : -1;
           this.posts[postIndex].seen = true;
+          
+          console.log(response);
         },
         error: (error) => {
           console.error(error);
@@ -106,8 +106,6 @@ export class PostsComponent implements OnChanges {
     if (this.usernameOfLoggedUser) {
       this.postService.downvotePost(this.usernameOfLoggedUser, this.posts[postIndex].id).subscribe({
         next: (response) => {
-          console.log(response);
-
           if (this.posts[postIndex].upvoted) {
             this.posts[postIndex].upvoteScore--;
             this.posts[postIndex].upvoted = false;
@@ -115,6 +113,8 @@ export class PostsComponent implements OnChanges {
           this.posts[postIndex].downvoted = !this.posts[postIndex].downvoted;
           this.posts[postIndex].upvoteScore -= this.posts[postIndex].downvoted ? 1 : -1;
           this.posts[postIndex].seen = true;
+          
+          console.log(response);
         },
         error: (error) => {
           console.error(error);
@@ -127,10 +127,10 @@ export class PostsComponent implements OnChanges {
     if (this.usernameOfLoggedUser) {
       this.postService.savePost(this.usernameOfLoggedUser, this.posts[postIndex].id).subscribe({
         next: (response) => {
-          console.log(response);
-
           this.posts[postIndex].saved = !this.posts[postIndex].saved;
           this.posts[postIndex].seen = true;
+          
+          console.log(response);
         },
         error: (error) => {
           console.error(error);
@@ -176,12 +176,29 @@ export class PostsComponent implements OnChanges {
     if (this.usernameOfLoggedUser) {
       this.postService.addComment(this.usernameOfLoggedUser, this.commentToAdd, this.posts[postIndex].id).subscribe({
         next: (response) => {
-          console.log(response);
-
           this.comments = [response, ...this.comments];
           this.posts[postIndex].nbOfComments++;
           this.posts[postIndex].seen = true;
           this.commentToAdd = "";
+          
+          console.log(response);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
+
+  removeComment(commentIndex: number) {
+    if (this.usernameOfLoggedUser) {
+      this.postService.removeComment(this.usernameOfLoggedUser, this.comments[commentIndex].id).subscribe({
+        next: (response) => {
+          this.comments.splice(commentIndex, 1);
+          this.posts[this.lastCommentSectionId!].nbOfComments--;
+
+          console.log("comment removed");
+          
         },
         error: (error) => {
           console.error(error);
