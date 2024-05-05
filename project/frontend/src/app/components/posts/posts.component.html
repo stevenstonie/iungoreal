@@ -9,6 +9,10 @@
 		<div class="post" *ngFor="let post of posts; let i = index">
 			<div class="post-header">
 				<div class="same-line">
+					<p class="seen-button" (click)="setSeen(i)">
+						<ng-container *ngIf="!posts[i] || !posts[i].seen; else seenEmoji">⬛</ng-container>
+						<ng-template #seenEmoji>✅</ng-template>
+					</p>
 					<h3 [ngClass]="{'seen': posts[i] && posts[i].seen}">{{ post.title }}</h3>
 					<button style="margin-right: 5px;" *ngIf="post.authorUsername === usernameOfLoggedUser"
 						(click)="removePost(i)">🗑</button>
@@ -71,7 +75,9 @@
 				</div>
 				<p>{{ comment.content }}</p>
 			</div>
-			<p *ngIf="comments.length === 0" style="text-align: center; margin-top: 40px; font-style: italic; color: gray; font-size: 20px;">no comments on this post yet..</p>
+			<p *ngIf="comments.length === 0"
+				style="text-align: center; margin-top: 40px; font-style: italic; color: gray; font-size: 20px;">no
+				comments on this post yet..</p>
 		</div>
 
 		<button (click)="getNextCommentsOfPost(lastCommentSectionId!)">Load more</button>

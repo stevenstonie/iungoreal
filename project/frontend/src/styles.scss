@@ -16,7 +16,7 @@ body {
 }
 
 button {
-	background: rgba(255, 255, 255, 0.4);
+	background-color: #fff;
 	border: none;
 	outline: none;
 	margin: 0 auto;
@@ -34,5 +34,9 @@ button {
 		border-radius: 0.2rem;
 		cursor: pointer;
 		transition-duration: 0.3s;
+	}
+
+	&:active {
+		opacity: .5;
 	}
 }

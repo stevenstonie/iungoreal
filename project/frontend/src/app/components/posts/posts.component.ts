@@ -92,7 +92,7 @@ export class PostsComponent implements OnChanges {
           this.posts[postIndex].upvoted = !this.posts[postIndex].upvoted;
           this.posts[postIndex].upvoteScore += this.posts[postIndex].upvoted ? 1 : -1;
           this.posts[postIndex].seen = true;
-          
+
           console.log(response);
         },
         error: (error) => {
@@ -113,7 +113,7 @@ export class PostsComponent implements OnChanges {
           this.posts[postIndex].downvoted = !this.posts[postIndex].downvoted;
           this.posts[postIndex].upvoteScore -= this.posts[postIndex].downvoted ? 1 : -1;
           this.posts[postIndex].seen = true;
-          
+
           console.log(response);
         },
         error: (error) => {
@@ -129,7 +129,7 @@ export class PostsComponent implements OnChanges {
         next: (response) => {
           this.posts[postIndex].saved = !this.posts[postIndex].saved;
           this.posts[postIndex].seen = true;
-          
+
           console.log(response);
         },
         error: (error) => {
@@ -180,7 +180,7 @@ export class PostsComponent implements OnChanges {
           this.posts[postIndex].nbOfComments++;
           this.posts[postIndex].seen = true;
           this.commentToAdd = "";
-          
+
           console.log(response);
         },
         error: (error) => {
@@ -198,7 +198,22 @@ export class PostsComponent implements OnChanges {
           this.posts[this.lastCommentSectionId!].nbOfComments--;
 
           console.log("comment removed");
-          
+
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
+
+  setSeen(postIndex: number) {
+    if (!this.posts[postIndex].seen && this.usernameOfLoggedUser) {
+      this.postService.setSeen(this.usernameOfLoggedUser, this.posts[postIndex].id).subscribe({
+        next: (response) => {
+          this.posts[postIndex].seen = true;
+
+          console.log(response);
         },
         error: (error) => {
           console.error(error);

@@ -124,6 +124,20 @@ input {
 	opacity: .75;
 }
 
+.seen-button {
+	cursor: pointer;
+
+	&:hover {
+		opacity: 1;
+		transform: scale(1.1);
+		transition: all .1s ease-in-out;
+	}
+
+	&:active {
+		opacity: .5;
+	}
+}
+
 .same-line {
 	display: flex;
 	flex-direction: row;

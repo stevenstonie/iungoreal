@@ -27,6 +27,15 @@ export class PostService {
       );
   }
 
+  setSeen(username: string, postId: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('username', username).set('postId', postId.toString());
+
+    return this.http.post<ResponsePayload>(`${this.postApiUrl}/setSeen`, null, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   getNextPosts(authorUsername: string, username: string, lastPostId: number | null, isFeed: boolean): Observable<PostPayload[]> {
     if (isFeed) {
       return this.getNextPostsFromFriends(username, lastPostId);
