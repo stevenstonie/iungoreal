@@ -33,6 +33,7 @@ public class SearchServiceImpl implements SearchService {
 		List<User> matchingUsers = userRepository.findUsersByUsernameContaining(input);
 
 		// matchingUsers = setThePfpLinkForEachUser(matchingUsers);
+		// // comment the one above and use the one below for development
 		matchingUsers = setThePfpLinkForEachUserToNull(matchingUsers);
 
 		return matchingUsers.stream()

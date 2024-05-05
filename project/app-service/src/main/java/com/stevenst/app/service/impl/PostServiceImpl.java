@@ -116,6 +116,22 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	public ResponsePayload setSeen(String username, Long postId) {
+		User user = findUserByUsername(username);
+		Post post = findPostById(postId);
+
+		PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(), user.getId());
+		if (postInteraction == null) {
+			postInteraction = PostInteraction.builder().user(user).post(post).seen(true).build();
+			postInteractionRepository.save(postInteraction);
+
+			return ResponsePayload.builder().status(201).message("Post set as seen.").build();
+		} else {
+			return ResponsePayload.builder().status(200).message("Post already set as seen.").build();
+		}
+	}
+
+	@Override
 	public List<PostPayload> getNextPostsBeforeCursor(
 			String authorUsername, String username, boolean includeFriends, Long cursor, int limit) {
 		User user = findUserByUsername(username);

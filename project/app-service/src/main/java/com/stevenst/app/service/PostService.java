@@ -13,6 +13,8 @@ public interface PostService {
 
 	CommentPayload addComment(String username, String content, Long postId);
 
+	ResponsePayload setSeen(String username, Long postId);
+
 	List<PostPayload> getNextPostsBeforeCursor(String authorUsername, String username, boolean includeFriends,
 			Long cursor, int limit);
 
