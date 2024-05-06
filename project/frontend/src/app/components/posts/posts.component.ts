@@ -1,11 +1,14 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommentPayload, PostPayload } from 'src/app/models/Payloads';
+import { TimeAgoPipe } from 'src/app/pipes/time-ago.pipe';
 import { PostService } from 'src/app/services/post.service';
+
 
 @Component({
   selector: 'app-posts',
   templateUrl: './posts.component.html',
-  styleUrls: ['./posts.component.scss']
+  styleUrls: ['./posts.component.scss'],
+  providers: [TimeAgoPipe]
 })
 export class PostsComponent implements OnChanges {
   @Input() usernameOfUserOnScreen: string | undefined;

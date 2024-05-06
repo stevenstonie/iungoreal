@@ -9,6 +9,10 @@
 
 #comments-section {
 	position: sticky;
+	position: -webkit-sticky;
+	position: -moz-sticky;
+	position: -ms-sticky;
+	position: -o-sticky;
 	top: 100px;
 	display: flex;
 	flex-direction: column;
@@ -126,6 +130,10 @@ input {
 
 .seen-button {
 	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 
 	&:hover {
 		opacity: 1;
