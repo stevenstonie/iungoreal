@@ -165,7 +165,7 @@ export class PostsComponent implements OnChanges {
   }
 
   getNextCommentsOfPost(postIndex: number) {
-    this.postService.getNextComments(this.posts[postIndex].id, this.comments[this.comments.length - 1]?.id).subscribe({
+    this.postService.getNextCommentsOfPost(this.posts[postIndex].id, this.comments[this.comments.length - 1]?.id).subscribe({
       next: (comments) => {
         this.comments = this.comments.concat(comments);
       },

@@ -28,6 +28,13 @@ export interface CommentPayload {
 	createdAt: Date;
 }
 
+export interface CommentDetachedPayload {
+	id: number;
+	postTitle: string;
+	content: string;
+	createdAt: Date;
+}
+
 export interface NotificationFPayload {
 	id: number,
 	receiverUsername: string,

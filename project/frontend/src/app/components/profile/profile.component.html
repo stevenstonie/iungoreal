@@ -8,7 +8,7 @@
 <section id="section-left">
 	<button (click)="selectSection('about')">About</button>
 	<button (click)="selectSection('posts')">Posts</button>
-	<button (click)="selectSection('comments')">Comments</button>
+	<button (click)="selectSection('comments')" (click)="getNextCommentsOfUser()">Comments</button>
 	<ng-container *ngIf="isUserOnScreenTheLoggedOne">
 		<button (click)="selectSection('upvoted')">Upvoted</button>
 		<button (click)="selectSection('downvoted')">Downvoted</button>
@@ -25,7 +25,16 @@
 	</section>
 
 	<section *ngIf="selectedSection === 'comments'">
+		<div *ngFor="let comment of comments; let i = index">
+			<p style="margin-right: 10px; font-weight: bold; margin-top: 3.5px;">{{ usernameOfUserOnScreen }} on "{{
+				comment.postTitle }}"</p>
+			<i style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{comment.createdAt | timeAgo}}</i>
+			<p>{{ comment.content }}</p>
 
+			<hr style="margin-top: 5px; margin-bottom: 5px; width: 80%" *ngIf="i < comments.length - 1">
+		</div>
+		<button style="margin: 15px;" (click)="getNextCommentsOfUser()">load
+			more</button>
 	</section>
 
 	<section *ngIf="selectedSection === 'upvoted'">

@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { CommentPayload, PostPayload, ResponsePayload } from '../models/Payloads';
+import { CommentDetachedPayload, CommentPayload, PostPayload, ResponsePayload } from '../models/Payloads';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +44,7 @@ export class PostService {
     }
   }
 
-  getNextComments(postId: number, lastCommentId: number | null): Observable<CommentPayload[]> {
+  getNextCommentsOfPost(postId: number, lastCommentId: number | null): Observable<CommentPayload[]> {
     let params = new HttpParams().set('postId', postId.toString());
 
     if (lastCommentId) {
@@ -52,6 +52,19 @@ export class PostService {
     }
 
     return this.http.get<CommentPayload[]>(`${this.postApiUrl}/getNextCommentsOfPost`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getNextCommentsOfUser(username: string, lastCommentId: number | null): Observable<CommentDetachedPayload[]> {
+    let params = new HttpParams().set('username', username);
+
+    if (lastCommentId) {
+      params = params.set('cursor', lastCommentId.toString());
+    }
+
+    return this.http.get<CommentDetachedPayload[]>(`${this.postApiUrl}/getNextCommentsOfUser`, { params })
       .pipe(
         catchError(this.handleError)
       );
