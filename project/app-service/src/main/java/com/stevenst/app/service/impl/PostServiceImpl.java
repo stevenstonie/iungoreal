@@ -344,6 +344,7 @@ public class PostServiceImpl implements PostService {
 		return friendsUsernamesMono.block();
 	}
 
+	// dev comm
 	private List<String> getLinksForAllMediaOfAPost(String username, Long postId, List<String> mediaNames) {
 		List<String> mediaLinks = new ArrayList<>();
 
