@@ -25,6 +25,7 @@ import com.stevenst.app.model.Comment;
 import com.stevenst.app.model.Post;
 import com.stevenst.app.model.PostInteraction;
 import com.stevenst.app.model.PostMedia;
+import com.stevenst.app.payload.CommentDetachedPayload;
 import com.stevenst.app.payload.CommentPayload;
 import com.stevenst.app.payload.PostPayload;
 import com.stevenst.app.repository.UserRepository;
@@ -184,13 +185,24 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<CommentPayload> getNextCommentsBeforeCursor(Long postId, Long cursor, int limit) {
+	public List<CommentPayload> getNextCommentsOfPostBeforeCursor(Long postId, Long cursor, int limit) {
 		Post post = findPostById(postId);
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
 
-		List<Comment> comments = commentRepository.findCommentsBeforeCursor(post.getId(), cursor, pageRequest);
+		List<Comment> comments = commentRepository.findCommentsOfPostBeforeCursor(post.getId(), cursor, pageRequest);
 
 		return commentEntitiesToPayloads(comments);
+	}
+
+	@Override
+	public List<CommentDetachedPayload> getNextCommentsOfUserBeforeCursor(String username, Long cursor, int limit) {
+		User user = findUserByUsername(username);
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+
+		List<Comment> comments = commentRepository.findCommentsOfUserBeforeCursor(user.getUsername(), cursor,
+				pageRequest);
+
+		return returnListOfDetachedCommentPayload(comments);
 	}
 
 	@Override
@@ -307,6 +319,22 @@ public class PostServiceImpl implements PostService {
 	}
 
 	// ---------------------------------------------
+
+	private List<CommentDetachedPayload> returnListOfDetachedCommentPayload(
+			List<Comment> comments) {
+		List<CommentDetachedPayload> commentDetachedPayloads = new ArrayList<>();
+
+		for (Comment comment : comments) {
+			commentDetachedPayloads.add(CommentDetachedPayload.builder()
+					.id(comment.getId())
+					.postTitle(comment.getPost().getTitle())
+					.content(comment.getContent())
+					.createdAt(comment.getCreatedAt())
+					.build());
+		}
+
+		return commentDetachedPayloads;
+	}
 
 	private List<CommentPayload> commentEntitiesToPayloads(List<Comment> comments) {
 		return comments.stream().map(comment -> CommentPayload.builder()

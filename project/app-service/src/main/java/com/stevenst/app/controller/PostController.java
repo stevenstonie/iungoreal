@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.stevenst.app.controller.api.PostApi;
 import com.stevenst.app.model.Comment;
+import com.stevenst.app.payload.CommentDetachedPayload;
 import com.stevenst.app.payload.CommentPayload;
 import com.stevenst.app.payload.PostPayload;
 import com.stevenst.app.service.PostService;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequiredArgsConstructor
 public class PostController implements PostApi {
 	private final String DEFAULT_LIMIT_OF_POSTS = "5";
+	private final String DEFAULT_LIMIT_OF_COMMENTS = "20";
 	private final PostService postService;
 
 	@PostMapping("/create")
@@ -69,8 +71,15 @@ public class PostController implements PostApi {
 	@GetMapping("/getNextCommentsOfPost")
 	public ResponseEntity<List<CommentPayload>> getNextCommentsOfPost(@RequestParam("postId") Long postId,
 			@RequestParam(required = false) Long cursor,
-			@RequestParam(defaultValue = "20") int limit) {
-		return ResponseEntity.ok(postService.getNextCommentsBeforeCursor(postId, cursor, limit));
+			@RequestParam(defaultValue = DEFAULT_LIMIT_OF_COMMENTS) int limit) {
+		return ResponseEntity.ok(postService.getNextCommentsOfPostBeforeCursor(postId, cursor, limit));
+	}
+
+	@GetMapping("/getNextCommentsOfUser")
+	public ResponseEntity<List<CommentDetachedPayload>> getNextCommentsOfUser(@RequestParam("username") String username,
+			@RequestParam(required = false) Long cursor,
+			@RequestParam(defaultValue = DEFAULT_LIMIT_OF_COMMENTS) int limit) {
+		return ResponseEntity.ok(postService.getNextCommentsOfUserBeforeCursor(username, cursor, limit));
 	}
 
 	@PutMapping("/upvote")

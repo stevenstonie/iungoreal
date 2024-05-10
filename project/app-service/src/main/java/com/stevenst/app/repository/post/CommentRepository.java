@@ -17,7 +17,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	void deleteAllByPostId(Long postId);
 
 	@Query("SELECT comment FROM Comment comment WHERE comment.post.id = :postId AND (:cursor IS NULL OR comment.id < :cursor) ORDER BY comment.createdAt DESC")
-	List<Comment> findCommentsBeforeCursor(Long postId, Long cursor, Pageable pageable);
+	List<Comment> findCommentsOfPostBeforeCursor(Long postId, Long cursor, Pageable pageable);
+
+	@Query("SELECT comment FROM Comment comment WHERE comment.author.username = :username AND (:cursor IS NULL OR comment.id < :cursor) ORDER BY comment.createdAt DESC")
+	List<Comment> findCommentsOfUserBeforeCursor(String username, Long cursor, Pageable pageable);
 
 	Long countByPostId(Long postId);
 }
