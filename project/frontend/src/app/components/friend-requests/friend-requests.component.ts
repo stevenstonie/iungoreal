@@ -27,19 +27,20 @@ export class FriendRequestsComponent implements OnInit {
   }
 
   removeNotificationFAndRedirectToProfile(notificationFId: number, emitterUsername: string) {
-    this.notificationService.removeNotificationF(notificationFId).subscribe({
-      next: (response) => {
-        console.log(response);
-        if (emitterUsername == '' || emitterUsername == null) {
+    if (emitterUsername == '' || emitterUsername == null) {
+      this.notificationService.removeNotificationF(notificationFId).subscribe({
+        next: (response) => {
           this.last50NotificationsF = this.last50NotificationsF.filter(notificationF => notificationF.id != notificationFId);
           this.notificationRemoved.emit();
-        } else {
-          window.location.href = '/user/' + emitterUsername;
+
+          console.log(response);
+        },
+        error: (error) => {
+          console.error(error);
         }
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
+      });
+    } else {
+      window.location.href = '/user/' + emitterUsername;
+    }
   }
 }
