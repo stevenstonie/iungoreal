@@ -41,36 +41,10 @@ export class PostsComponent implements OnChanges {
     }
   }
 
-  nextImage(postIndex: number) {
-    const currentPost = this.posts[postIndex];
-    if (currentPost.mediaLinks.length > 0 && this.currentPostIndex[postIndex] < currentPost.mediaLinks.length - 1) {
-      this.currentPostIndex[postIndex]++;
-    }
-  }
-
-  previousImage(postIndex: number) {
-    const currentPost = this.posts[postIndex];
-    if (currentPost.mediaLinks.length > 0 && this.currentPostIndex[postIndex] > 0) {
-      this.currentPostIndex[postIndex]--;
-    }
-  }
-
-  isImage(file: string): boolean {
-    return file.includes('.png') || file.includes('.jpg') || file.includes('.jpeg') || file.includes('.gif') || file.includes('.webp');
-  }
-
   getPostsOfUserOnScreen() {
     this.postService.getNextPosts(this.usernameOfUserOnScreen!, this.usernameOfLoggedUser!, this.posts[this.posts.length - 1]?.id, this.isFeed).subscribe({
       next: (posts) => {
-        if (posts.length <= 0 && this.posts.length > 0) {
-          alert("no more posts");
-        }
-        console.log(posts);
-
-        this.posts = this.posts.concat(posts);
-        for (const element of posts) {
-          this.currentPostIndex.push(0);
-        }
+        this.concatPostsAndLog(posts);
       },
       error: (error) => {
         console.error(error);
@@ -81,15 +55,7 @@ export class PostsComponent implements OnChanges {
   getUpvotedPostsByUserOnScreen() {
     this.postService.getNextUpvotedPostsByUser(this.usernameOfLoggedUser!, this.posts[this.posts.length - 1]?.id).subscribe({
       next: (posts) => {
-        if (posts.length <= 0 && this.posts.length > 0) {
-          alert("no more posts");
-        }
-        console.log(posts);
-
-        this.posts = this.posts.concat(posts);
-        for (const element of posts) {
-          this.currentPostIndex.push(0);
-        }
+        this.concatPostsAndLog(posts);
       },
       error: (error) => {
         console.error(error);
@@ -172,28 +138,6 @@ export class PostsComponent implements OnChanges {
     }
   }
 
-  toggleComments(postIndex: number) {
-    // toggle the comment section if no comment section was opened before or if the user clicks on the same section again
-    if (this.lastCommentSectionId === undefined || postIndex === this.lastCommentSectionId) {
-      this.showComments = !this.showComments;
-    }
-
-    // open if the section is closed and the user clicks on a different section
-    if (!this.showComments && this.lastCommentSectionId != postIndex) {
-      this.showComments = true;
-    }
-
-    if (this.showComments) {
-      // when opening the section if its a new one then reset the comments
-      if (this.lastCommentSectionId != postIndex) {
-        this.comments = [];
-      }
-      this.lastCommentSectionId = postIndex;
-
-      this.getNextCommentsOfPost(postIndex);
-    }
-  }
-
   getNextCommentsOfPost(postIndex: number) {
     this.postService.getNextCommentsOfPost(this.posts[postIndex].id, this.comments[this.comments.length - 1]?.id).subscribe({
       next: (comments) => {
@@ -253,6 +197,58 @@ export class PostsComponent implements OnChanges {
         }
       });
     }
+  }
+
+  toggleComments(postIndex: number) {
+    // toggle the comment section if no comment section was opened before or if the user clicks on the same section again
+    if (this.lastCommentSectionId === undefined || postIndex === this.lastCommentSectionId) {
+      this.showComments = !this.showComments;
+    }
+
+    // open if the section is closed and the user clicks on a different section
+    if (!this.showComments && this.lastCommentSectionId != postIndex) {
+      this.showComments = true;
+    }
+
+    if (this.showComments) {
+      // when opening the section if its a new one then reset the comments
+      if (this.lastCommentSectionId != postIndex) {
+        this.comments = [];
+      }
+      this.lastCommentSectionId = postIndex;
+
+      this.getNextCommentsOfPost(postIndex);
+    }
+  }
+
+  concatPostsAndLog(posts: PostPayload[]) {
+    if (posts.length <= 0 && this.posts.length > 0) {
+      alert("no more posts");
+    }
+    console.log(posts);
+
+    this.posts = this.posts.concat(posts);
+    for (const element of posts) {
+      this.currentPostIndex.push(0);
+    }
+  }
+
+  nextImage(postIndex: number) {
+    const currentPost = this.posts[postIndex];
+    if (currentPost.mediaLinks.length > 0 && this.currentPostIndex[postIndex] < currentPost.mediaLinks.length - 1) {
+      this.currentPostIndex[postIndex]++;
+    }
+  }
+
+  previousImage(postIndex: number) {
+    const currentPost = this.posts[postIndex];
+    if (currentPost.mediaLinks.length > 0 && this.currentPostIndex[postIndex] > 0) {
+      this.currentPostIndex[postIndex]--;
+    }
+  }
+
+  isImage(file: string): boolean {
+    return file.includes('.png') || file.includes('.jpg') || file.includes('.jpeg') || file.includes('.gif') || file.includes('.webp');
   }
 
   // implement making posts seen when scrolling past them

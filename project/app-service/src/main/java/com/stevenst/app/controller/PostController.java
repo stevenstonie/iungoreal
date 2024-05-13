@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequiredArgsConstructor
 public class PostController implements PostApi {
 	private final String DEFAULT_LIMIT_OF_POSTS = "5";
-	private final String DEFAULT_LIMIT_OF_COMMENTS = "6";
+	private final String DEFAULT_LIMIT_OF_COMMENTS = "20";
 	private final PostService postService;
 
 	@PostMapping("/create")

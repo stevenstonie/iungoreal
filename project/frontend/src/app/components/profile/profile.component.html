@@ -6,7 +6,6 @@
 </div>
 
 <section id="section-left">
-	<button (click)="selectSection('about')">About</button>
 	<button (click)="selectSection('posts')">Posts</button>
 	<button (click)="selectSection('comments')" (click)="getNextCommentsOfUser()">Comments</button>
 	<ng-container *ngIf="isUserOnScreenTheLoggedOne">
@@ -14,11 +13,6 @@
 		<button (click)="selectSection('downvoted')">Downvoted</button>
 		<button (click)="selectSection('savedPosts')">Saved posts</button>
 	</ng-container>
-
-	<section *ngIf="selectedSection === 'about'">
-
-	</section>
-
 
 	<section *ngIf="selectedSection === 'posts'">
 		<app-posts [usernameOfUserOnScreen]="userOnScreen.username"></app-posts>
