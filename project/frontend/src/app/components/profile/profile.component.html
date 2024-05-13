@@ -38,7 +38,7 @@
 	</section>
 
 	<section *ngIf="selectedSection === 'upvoted'">
-
+		<app-posts [usernameOfUserOnScreen]="userOnScreen.username" [isThoseUpvoted]="true"></app-posts>
 	</section>
 
 	<section *ngIf="selectedSection === 'downvoted'">

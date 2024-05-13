@@ -70,6 +70,19 @@ export class PostService {
       );
   }
 
+  getNextUpvotedPostsByUser(username: string, LastPostId: number | null): Observable<PostPayload[]> {
+    let params = new HttpParams().set('username', username);
+
+    if (LastPostId) {
+      params = params.set('cursor', LastPostId.toString());
+    }
+
+    return this.http.get<PostPayload[]>(`${this.postApiUrl}/getNextUpvotedByUser`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   upvotePost(username: string, postId: number): Observable<ResponsePayload> {
     const params = new HttpParams().set('username', username).set('postId', postId.toString());
 

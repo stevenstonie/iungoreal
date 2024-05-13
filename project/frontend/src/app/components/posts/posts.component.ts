@@ -13,6 +13,9 @@ import { PostService } from 'src/app/services/post.service';
 export class PostsComponent implements OnChanges {
   @Input() usernameOfUserOnScreen: string | undefined;
   @Input() isFeed: boolean = false;
+  @Input() isThoseUpvoted: boolean = false;
+  @Input() isThoseDownvoted: boolean = false;
+  @Input() isThoseSaved: boolean = false;
   usernameOfLoggedUser = localStorage.getItem('username');
   posts: PostPayload[] = [];
   currentPostIndex: number[] = [];
@@ -30,22 +33,11 @@ export class PostsComponent implements OnChanges {
 
   fetchPosts() {
     if (this.usernameOfUserOnScreen && this.usernameOfLoggedUser) {
-      this.postService.getNextPosts(this.usernameOfUserOnScreen, this.usernameOfLoggedUser, this.posts[this.posts.length - 1]?.id, this.isFeed).subscribe({
-        next: (posts) => {
-          if (posts.length <= 0 && this.posts.length > 0) {
-            alert("no more posts");
-          }
-          console.log(posts);
-
-          this.posts = this.posts.concat(posts);
-          for (const element of posts) {
-            this.currentPostIndex.push(0);
-          }
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      });
+      if (this.isThoseUpvoted) {
+        this.getUpvotedPostsByUserOnScreen();
+      } else {
+        this.getPostsOfUserOnScreen();
+      }
     }
   }
 
@@ -65,6 +57,44 @@ export class PostsComponent implements OnChanges {
 
   isImage(file: string): boolean {
     return file.includes('.png') || file.includes('.jpg') || file.includes('.jpeg') || file.includes('.gif') || file.includes('.webp');
+  }
+
+  getPostsOfUserOnScreen() {
+    this.postService.getNextPosts(this.usernameOfUserOnScreen!, this.usernameOfLoggedUser!, this.posts[this.posts.length - 1]?.id, this.isFeed).subscribe({
+      next: (posts) => {
+        if (posts.length <= 0 && this.posts.length > 0) {
+          alert("no more posts");
+        }
+        console.log(posts);
+
+        this.posts = this.posts.concat(posts);
+        for (const element of posts) {
+          this.currentPostIndex.push(0);
+        }
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  getUpvotedPostsByUserOnScreen() {
+    this.postService.getNextUpvotedPostsByUser(this.usernameOfLoggedUser!, this.posts[this.posts.length - 1]?.id).subscribe({
+      next: (posts) => {
+        if (posts.length <= 0 && this.posts.length > 0) {
+          alert("no more posts");
+        }
+        console.log(posts);
+
+        this.posts = this.posts.concat(posts);
+        for (const element of posts) {
+          this.currentPostIndex.push(0);
+        }
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   removePost(postIndex: number) {

@@ -224,7 +224,6 @@ export class ProfileComponent {
         next: (comments) => {
           this.comments = this.comments.concat(comments);
 
-
           console.log(comments);
         },
         error: (error) => {

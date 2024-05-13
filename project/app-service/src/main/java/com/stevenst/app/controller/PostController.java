@@ -81,7 +81,7 @@ public class PostController implements PostApi {
 		return ResponseEntity.ok(postService.getNextCommentsOfUserBeforeCursor(username, cursor, limit));
 	}
 
-	@GetMapping("/getNextUpvotedOfUser")
+	@GetMapping("/getNextUpvotedByUser")
 	public ResponseEntity<List<PostPayload>> getNextUpvotedOfUser(@RequestParam("username") String username,
 			@RequestParam(required = false) Long cursor,
 			@RequestParam(defaultValue = DEFAULT_LIMIT_OF_POSTS) int limit) {
