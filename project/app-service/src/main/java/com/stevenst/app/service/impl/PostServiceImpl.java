@@ -151,37 +151,7 @@ public class PostServiceImpl implements PostService {
 			posts = postRepository.findPostsOfUserBeforeCursor(authorUsername, cursor, pageRequest);
 		}
 
-		List<PostPayload> postPayloads = new ArrayList<>();
-
-		// populate the post payloads with data: default, media, interactions, etc
-		for (Post post : posts) {
-			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
-			// get the interactions of the user to the author's posts
-			PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(),
-					user.getId());
-			if (postInteraction == null) {
-				postInteraction = new PostInteraction();
-			}
-
-			postPayloads.add(PostPayload.builder()
-					.id(post.getId())
-					.authorUsername(post.getAuthor().getUsername())
-					.title(post.getTitle())
-					.description(post.getDescription())
-					.createdAt(post.getCreatedAt())
-					.mediaLinks(getLinksForAllMediaOfAPost(post.getAuthor().getUsername(), post.getId(), mediaNames))
-					.upvoteScore(postInteractionRepository.countByPostIdAndUpvotedIsTrue(post.getId()) -
-							postInteractionRepository.countByPostIdAndDownvotedIsTrue(post.getId()))
-					.nbOfComments(commentRepository.countByPostId(post.getId()))
-					.upvoted(postInteraction.isUpvoted())
-					.downvoted(postInteraction.isDownvoted())
-					.saved(postInteraction.isSaved())
-					.seen(postInteraction.isSeen())
-					.build());
-		}
-
-		// return these posts
-		return postPayloads;
+		return postEntitiesToPayloads(posts, user.getId());
 	}
 
 	@Override
@@ -203,6 +173,16 @@ public class PostServiceImpl implements PostService {
 				pageRequest);
 
 		return returnListOfDetachedCommentPayload(comments);
+	}
+
+	@Override
+	public List<PostPayload> getNextUpvotedOfUserBeforeCursor(String username, Long cursor, int limit) {
+		User user = findUserByUsername(username);
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+
+		List<Post> posts = postRepository.findNextUpvotedPostsByUser(username, cursor, pageRequest);
+
+		return postEntitiesToPayloads(posts, user.getId());
 	}
 
 	@Override
@@ -319,6 +299,40 @@ public class PostServiceImpl implements PostService {
 	}
 
 	// ---------------------------------------------
+
+	private List<PostPayload> postEntitiesToPayloads(List<Post> posts, Long userId) {
+		List<PostPayload> postPayloads = new ArrayList<>();
+
+		// populate the post payloads with data: default, media, interactions, etc
+		for (Post post : posts) {
+			List<String> mediaNames = postMediaRepository.findMediaNamesByPostId(post.getId());
+			// get the interactions of the user to the author's posts
+			PostInteraction postInteraction = postInteractionRepository.findByPostIdAndUserId(post.getId(),
+					userId);
+			if (postInteraction == null) {
+				postInteraction = new PostInteraction();
+			}
+
+			postPayloads.add(PostPayload.builder()
+					.id(post.getId())
+					.authorUsername(post.getAuthor().getUsername())
+					.title(post.getTitle())
+					.description(post.getDescription())
+					.createdAt(post.getCreatedAt())
+					.mediaLinks(getLinksForAllMediaOfAPost(post.getAuthor().getUsername(), post.getId(), mediaNames))
+					.upvoteScore(postInteractionRepository.countByPostIdAndUpvotedIsTrue(post.getId()) -
+							postInteractionRepository.countByPostIdAndDownvotedIsTrue(post.getId()))
+					.nbOfComments(commentRepository.countByPostId(post.getId()))
+					.upvoted(postInteraction.isUpvoted())
+					.downvoted(postInteraction.isDownvoted())
+					.saved(postInteraction.isSaved())
+					.seen(postInteraction.isSeen())
+					.build());
+		}
+
+		// return these posts
+		return postPayloads;
+	}
 
 	private List<CommentDetachedPayload> returnListOfDetachedCommentPayload(
 			List<Comment> comments) {

@@ -23,6 +23,8 @@ public interface PostService {
 
 	List<CommentDetachedPayload> getNextCommentsOfUserBeforeCursor(String username, Long cursor, int limit);
 
+	List<PostPayload> getNextUpvotedOfUserBeforeCursor(String username, Long cursor, int limit);
+
 	ResponsePayload upvotePost(String username, Long postId);
 
 	ResponsePayload downvotePost(String username, Long postId);

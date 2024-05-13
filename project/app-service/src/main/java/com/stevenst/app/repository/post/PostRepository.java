@@ -15,9 +15,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findPostsOfUserBeforeCursor(String username, Long cursor, Pageable pageable);
 
 	@Query("SELECT post FROM Post post "
-			+ "LEFT JOIN PostInteraction interaction ON post.id = interaction.post.id AND interaction.user.username = :currentUser "
+			+ "LEFT JOIN PostInteraction inter ON post.id = inter.post.id AND inter.user.username = :currentUser "
 			+ "WHERE post.author.username IN :friendUsernames AND (:cursor IS NULL OR post.id < :cursor) " // AND (interaction.id IS NULL OR interaction.seen = false) <-- add this when implementing the seen logic
 			+ "ORDER BY post.createdAt DESC")
 	List<Post> findPostsOfFriendsBeforeCursor(String currentUser, List<String> friendUsernames, Long cursor,
 			Pageable pageable);
+
+	@Query("SELECT post FROM Post post "
+			+ "JOIN PostInteraction inter ON post.id = inter.post.id "
+			+ "WHERE inter.user.username = :username AND inter.upvoted = true AND (:cursor IS NULL OR post.id < :cursor) "
+			+ "ORDER BY post.createdAt DESC")
+	List<Post> findNextUpvotedPostsByUser(String username, Long cursor, Pageable pageable);
 }
