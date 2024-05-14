@@ -88,6 +88,13 @@ public class PostController implements PostApi {
 		return ResponseEntity.ok(postService.getNextUpvotedOfUserBeforeCursor(username, cursor, limit));
 	}
 
+	@GetMapping("/getNextDownvotedByUser")
+	public ResponseEntity<List<PostPayload>> getNextDownvotedOfUser(@RequestParam("username") String username,
+			@RequestParam(required = false) Long cursor,
+			@RequestParam(defaultValue = DEFAULT_LIMIT_OF_POSTS) int limit) {
+		return ResponseEntity.ok(postService.getNextDownvotedOfUserBeforeCursor(username, cursor, limit));
+	}
+
 	@PutMapping("/upvote")
 	public ResponseEntity<ResponsePayload> upvotePost(@RequestParam("username") String username,
 			@RequestParam("postId") Long postId) {

@@ -186,6 +186,16 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	public List<PostPayload> getNextDownvotedOfUserBeforeCursor(String username, Long cursor, int limit) {
+		User user = findUserByUsername(username);
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+
+		List<Post> posts = postRepository.findNextDownvotedPostsByUser(username, cursor, pageRequest);
+
+		return postEntitiesToPayloads(posts, user.getId());
+	}
+
+	@Override
 	public ResponsePayload upvotePost(String username, Long postId) {
 		User user = findUserByUsername(username);
 		Post post = findPostById(postId);

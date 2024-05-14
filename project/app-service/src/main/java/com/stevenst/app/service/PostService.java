@@ -25,6 +25,8 @@ public interface PostService {
 
 	List<PostPayload> getNextUpvotedOfUserBeforeCursor(String username, Long cursor, int limit);
 
+	List<PostPayload> getNextDownvotedOfUserBeforeCursor(String username, Long cursor, int limit);
+
 	ResponsePayload upvotePost(String username, Long postId);
 
 	ResponsePayload downvotePost(String username, Long postId);
