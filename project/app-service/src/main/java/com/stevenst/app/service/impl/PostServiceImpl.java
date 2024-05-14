@@ -133,8 +133,8 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostPayload> getNextPostsBeforeCursor(
-			String authorUsername, String username, boolean includeFriends, Long cursor, int limit) {
+	public List<PostPayload> getNextPostsBeforeCursor(String authorUsername, String username, boolean includeFriends,
+			Long cursor, int limit) {
 		User user = findUserByUsername(username);
 		List<Post> posts = new ArrayList<>();
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
@@ -191,6 +191,16 @@ public class PostServiceImpl implements PostService {
 		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
 
 		List<Post> posts = postRepository.findNextDownvotedPostsByUser(username, cursor, pageRequest);
+
+		return postEntitiesToPayloads(posts, user.getId());
+	}
+
+	@Override
+	public List<PostPayload> getNextSavedOfUserBeforeCursor(String username, Long cursor, int limit) {
+		User user = findUserByUsername(username);
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+
+		List<Post> posts = postRepository.findNextSavedPostsByUser(username, cursor, pageRequest);
 
 		return postEntitiesToPayloads(posts, user.getId());
 	}

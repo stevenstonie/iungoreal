@@ -32,4 +32,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			+ "WHERE inter.user.username = :username AND inter.downvoted = true AND (:cursor IS NULL OR post.id < :cursor) "
 			+ "ORDER BY post.createdAt DESC")
 	List<Post> findNextDownvotedPostsByUser(String username, Long cursor, Pageable pageable);
+
+	@Query("SELECT post FROM Post post "
+			+ "JOIN PostInteraction inter ON post.id = inter.post.id "
+			+ "WHERE inter.user.username = :username AND inter.saved = true AND (:cursor IS NULL OR post.id < :cursor) "
+			+ "ORDER BY post.createdAt DESC")
+	List<Post> findNextSavedPostsByUser(String username, Long cursor, Pageable pageable);
 }
