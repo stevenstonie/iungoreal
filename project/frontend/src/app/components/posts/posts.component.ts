@@ -35,6 +35,8 @@ export class PostsComponent implements OnChanges {
     if (this.usernameOfUserOnScreen && this.usernameOfLoggedUser) {
       if (this.isThoseUpvoted) {
         this.getUpvotedPostsByUserOnScreen();
+      } else if (this.isThoseDownvoted) {
+        this.getDownvotedPostsByUserOnScreen();
       } else {
         this.getPostsOfUserOnScreen();
       }
@@ -54,6 +56,17 @@ export class PostsComponent implements OnChanges {
 
   getUpvotedPostsByUserOnScreen() {
     this.postService.getNextUpvotedPostsByUser(this.usernameOfLoggedUser!, this.posts[this.posts.length - 1]?.id).subscribe({
+      next: (posts) => {
+        this.concatPostsAndLog(posts);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  getDownvotedPostsByUserOnScreen() {
+    this.postService.getNextDownvotedPostsByUser(this.usernameOfLoggedUser!, this.posts[this.posts.length - 1]?.id).subscribe({
       next: (posts) => {
         this.concatPostsAndLog(posts);
       },
