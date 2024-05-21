@@ -40,7 +40,7 @@
 	</section>
 
 	<section *ngIf="selectedSection === 'savedPosts'">
-
+		<app-posts [usernameOfUserOnScreen]="userOnScreen.username" [isThoseSaved]="true"></app-posts>
 	</section>
 </section>
 
