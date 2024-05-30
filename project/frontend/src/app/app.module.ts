@@ -19,6 +19,8 @@ import { NotificationsComponent } from './components/notifications/notifications
 import { FriendRequestsComponent } from './components/friend-requests/friend-requests.component';
 import { PostsComponent } from './components/posts/posts.component';
 import { InfiniteScrollModule } from "ngx-infinite-scroll";
+import { TimeAgoPipe } from './pipes/time-ago.pipe';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,8 @@ import { InfiniteScrollModule } from "ngx-infinite-scroll";
     ChatComponent,
     NotificationsComponent,
     FriendRequestsComponent,
-    PostsComponent
+    PostsComponent,
+    TimeAgoPipe
   ],
   imports: [
     BrowserModule,
@@ -45,7 +48,7 @@ import { InfiniteScrollModule } from "ngx-infinite-scroll";
     BrowserAnimationsModule,
     InfiniteScrollModule
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

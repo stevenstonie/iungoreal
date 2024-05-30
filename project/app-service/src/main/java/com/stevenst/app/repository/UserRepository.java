@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.lib.model.User;
 
 import jakarta.transaction.Transactional;

@@ -5,8 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FriendService } from 'src/app/services/friend.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
-import { StringInJson } from 'src/app/models/app';
-import { ResponsePayload } from 'src/app/models/Payloads';
+import { CommentDetachedPayload } from 'src/app/models/Payloads';
+import { PostService } from 'src/app/services/post.service';
 
 @Component({
   selector: 'app-profile',
@@ -25,8 +25,11 @@ export class ProfileComponent {
   previewUrl: SafeUrl | null = null;
   profilePictureUrl: string = '';
   profileCoverUrl: string = '';
+  selectedSection: string = 'about';
+  comments: CommentDetachedPayload[] = [];
 
-  constructor(private userService: UserService, private friendService: FriendService, private route: ActivatedRoute, private router: Router, private sanitizer: DomSanitizer, private http: HttpClient) { }
+  constructor(private userService: UserService, private friendService: FriendService, private route: ActivatedRoute,
+    private router: Router, private sanitizer: DomSanitizer, private http: HttpClient, private postService: PostService) { }
 
   ngOnInit() {
     this.getUserFromService();
@@ -209,6 +212,25 @@ export class ProfileComponent {
         console.error(error);
       }
     });
+  }
+
+  selectSection(sectionName: string) {
+    this.selectedSection = sectionName;
+  }
+
+  getNextCommentsOfUser() {
+    if (this.usernameOfUserOnScreen) {
+      this.postService.getNextCommentsOfUser(this.usernameOfUserOnScreen, this.comments[this.comments.length - 1]?.id).subscribe({
+        next: (comments) => {
+          this.comments = this.comments.concat(comments);
+
+          console.log(comments);
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
   }
 
   editProfile() {

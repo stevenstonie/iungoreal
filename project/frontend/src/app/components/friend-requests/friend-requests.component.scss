@@ -17,13 +17,13 @@
 	display: flex;
 	align-items: center;
 	margin: 10px;
-	border: 1px solid hsl(0, 0%, 80%);
-	border-radius: 25px;
 
 	.info {
 		height: 100%;
-		border-radius: inherit;
+		border: 1px solid hsl(0, 0%, 80%);
+		border-radius: 25px;
 		width: 90%;
+		
 
 		.pfp {
 			width: 50px;
@@ -33,7 +33,7 @@
 		}
 
 		.description {
-			margin: 0;
+			margin: 5px;
 		}
 
 		a {
@@ -50,7 +50,11 @@
 	}
 
 	.close-button {
-		border-radius: inherit;
+		padding: 5px;
+		margin-left: 10px;
+		background-color: #fff;
+		border: 1px solid #ccc;
+		border-radius: 50%;
 
 		&:hover {
 			background-color: #ccc;

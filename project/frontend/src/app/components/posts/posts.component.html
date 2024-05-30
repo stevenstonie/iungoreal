@@ -1,20 +1,88 @@
-<div id="post-sort">Sort by:
-	<button>New</button>
-	<button>Hot</button>
-	<button>Top</button>
-</div>
-
-<ng-container *ngFor="let post of posts">
-	<div class="post-preview">
-		<h3>{{ post.title }}</h3>
-		<p>{{ post.description }}</p>
-
-		<div class="post-buttons">
-			<button>Like</button>
-			<button>Dislike</button>
-			<button>Comment</button>
-			<button>Save</button>
+<div id="body">
+	<div id="posts-section">
+		<div id="post-sort">Sort by:
+			<button>Newest</button>
+			<button>Oldest</button>
+			<button>Top</button>
 		</div>
+
+		<div class="post" *ngFor="let post of posts; let i = index">
+			<div class="post-header">
+				<div class="same-line">
+					<p class="seen-button" (click)="setSeen(i)">
+						<ng-container *ngIf="!posts[i] || !posts[i].seen; else seenEmoji">⬛</ng-container>
+						<ng-template #seenEmoji>✅</ng-template>
+					</p>
+					<h3 [ngClass]="{'seen': posts[i] && posts[i].seen}">{{ post.title }}</h3>
+					<button style="margin-right: 5px;" *ngIf="post.authorUsername === usernameOfLoggedUser"
+						(click)="removePost(i)">🗑</button>
+				</div>
+				<p>{{ post.description }}</p>
+				<i>author: {{ post.authorUsername }}</i>
+				<i style="font-size: .8rem">posted {{ post.createdAt | timeAgo }}</i>
+			</div>
+
+			<ng-container *ngIf="post.mediaLinks.length > 0">
+				<div class="post-image">
+					<button (click)="previousImage(i)" [disabled]="currentPostIndex[i] === 0">&larr;</button>
+
+					<ng-container *ngIf="isImage(post.mediaLinks[currentPostIndex[i]]); else videoTemplate">
+						<img [src]="post.mediaLinks[currentPostIndex[i]]" alt="post img">
+					</ng-container>
+					<ng-template #videoTemplate>
+						<video controls>
+							<source [src]="post.mediaLinks[currentPostIndex[i]]" type="video/mp4">
+							Your browser does not support the video tag.
+						</video>
+					</ng-template>
+
+					<button (click)="nextImage(i)"
+						[disabled]="currentPostIndex[i] === post.mediaLinks.length - 1">&rarr;</button>
+				</div>
+
+				<p class="current-media-index">({{ currentPostIndex[i] + 1 }})</p>
+			</ng-container>
+
+			<div class="post-buttons">
+				<button (click)="upvotePost(i)" [ngClass]="{'upvoted': posts[i] && posts[i].upvoted}">⬆</button>
+				<p>{{ posts[i] && posts[i].upvoteScore }}</p>
+				<button (click)="downvotePost(i)" [ngClass]="{'downvoted': posts[i] && posts[i].downvoted}">⬇</button>
+
+				<button (click)="toggleComments(i)">💬 {{posts[i].nbOfComments}}</button>
+
+				<button (click)="savePost(i)" *ngIf="!posts[i] || !posts[i].saved">&star;</button>
+				<button (click)="savePost(i)" *ngIf="posts[i] && posts[i].saved">&bigstar;</button>
+			</div>
+		</div>
+
+		<button style="display: flex; align-items: center; justify-content: center;" (click)="fetchPosts()">load
+			more</button>
+		<br>
+		<br>
+
 	</div>
-	
-</ng-container>
+	<section id="comments-section" *ngIf="showComments">
+		<h3>Comments on "{{ posts[lastCommentSectionId!].title }}"</h3>
+		<div id="comments-container">
+			<div class="comment" *ngFor="let comment of comments; let i = index">
+				<div class="same-line">
+					<p class="bold">{{ comment.authorUsername }}</p>
+					<i style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{comment.createdAt|timeAgo}}</i>
+					<button style="margin-left: 5px; padding: 0 5px"
+						*ngIf="comment.authorUsername === usernameOfLoggedUser" (click)="removeComment(i)">🗑</button>
+				</div>
+				<p>{{ comment.content }}</p>
+			</div>
+			<p *ngIf="comments.length === 0"
+				style="text-align: center; margin-top: 40px; font-style: italic; color: gray; font-size: 20px;">no
+				comments on this post yet..</p>
+		</div>
+
+		<button (click)="getNextCommentsOfPost(lastCommentSectionId!)">Load more</button>
+		<div class="input">
+			<input type="text" [(ngModel)]="commentToAdd" placeholder="Add a comment"
+				(keyup.enter)="addComment(lastCommentSectionId!)" />
+			<button (click)="addComment(lastCommentSectionId!)">Add</button>
+		</div>
+	</section>
+</div>

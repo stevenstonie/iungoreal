@@ -5,9 +5,10 @@
 </div>
 
 <div id="body">
-	<input [(ngModel)]="title" type="text" name="title" placeholder="Title" required>
-	<textarea [(ngModel)]="description" name="description" placeholder="Description"></textarea>
+	<input [(ngModel)]="title" type="text" name="title" placeholder="title" required>
+	<textarea [(ngModel)]="description" name="description" placeholder="description"></textarea>
 	<input type="file" (change)="onFileSelected($event)" accept="image/*, video/*" multiple>
+	<i style="font-size: .7rem">(supported types: .png, .jpg, .jpeg, .webp, .gif, .mp4)</i>
 	<div id="preview" *ngFor="let previewUrl of previewUrls; let i = index">
 		<img *ngIf="isImage(files[i])" [src]="previewUrl" alt="Image preview">
 		<video *ngIf="isVideo(files[i])" [src]="previewUrl" controls></video>

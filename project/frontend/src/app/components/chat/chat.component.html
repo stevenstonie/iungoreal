@@ -13,7 +13,8 @@
 					<button *ngIf="this.leftSidebarState.addingUserToGroup" (click)="addUserToGroup(username)">{{
 						username }}</button>
 					<button *ngIf="this.leftSidebarState.displayingGroupMembers">{{ username }}</button>
-					<button *ngIf="this.leftSidebarState.removingUserFromGroup" (click)="removeMemberFromGroup(username)">{{ username }}</button>
+					<button *ngIf="this.leftSidebarState.removingUserFromGroup"
+						(click)="removeMemberFromGroup(username)">{{ username }}</button>
 				</ng-container>
 			</div>
 		</div>
@@ -74,11 +75,18 @@
 			</div>
 			<div id="right-section-body" #chatContainer (scroll)="onScroll()">
 				<div class="messages" *ngIf="isWebsocketConnected()">
-					<div *ngFor="let message of receivedMessages"
-						[ngClass]="{'text-right': message.senderUsername === loggedUserUsername, 'text-left': message.senderUsername !== loggedUserUsername}">
-						<p class="sender-username">{{message.senderUsername}}</p>
-						<p class="message" [innerHTML]="messageWithParsedLinks(message.message)">{{message.message}}</p>
-						<div class="message-time">{{ message.createdAt | date: 'HH:mm' }}</div>
+					<div *ngFor="let message of receivedMessages; let i = index">
+						<div
+							*ngIf="i === 0 || (message.createdAt | date: 'dd/MM/yyyy')  !== (receivedMessages[i - 1].createdAt | date: 'dd/MM/yyyy')">
+							<p style="text-align: center; margin: 10px; padding: 0; color: gray; font-style: italic;" class="message-date">{{ message.createdAt | date: 'dd/MM/yyyy' }}</p>
+						</div>
+						<div
+							[ngClass]="{'text-right': message.senderUsername === loggedUserUsername, 'text-left': message.senderUsername !== loggedUserUsername}">
+							<p class="sender-username">{{message.senderUsername}}</p>
+							<p class="message" [innerHTML]="messageWithParsedLinks(message.message)">{{message.message}}
+							</p>
+							<div class="message-time">{{ message.createdAt | date: 'HH:mm' }}</div>
+						</div>
 					</div>
 				</div>
 				<div class="input">

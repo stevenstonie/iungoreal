@@ -27,9 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import com.stevenst.app.repository.PostMediaRepository;
-import com.stevenst.app.repository.PostRepository;
 import com.stevenst.app.repository.UserRepository;
+import com.stevenst.app.repository.post.PostMediaRepository;
+import com.stevenst.app.repository.post.PostRepository;
 import com.stevenst.lib.model.User;
 import com.stevenst.lib.payload.ResponsePayload;
 

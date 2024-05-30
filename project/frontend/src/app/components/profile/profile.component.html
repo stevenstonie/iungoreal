@@ -6,16 +6,42 @@
 </div>
 
 <section id="section-left">
-	<button>About</button>
-	<button>Posts</button>
-	<button>Comments</button>
+	<button (click)="selectSection('posts')">Posts</button>
+	<button (click)="selectSection('comments')" (click)="getNextCommentsOfUser()">Comments</button>
 	<ng-container *ngIf="isUserOnScreenTheLoggedOne">
-		<button>Liked</button>
-		<button>Disliked</button>
-		<button>Saved posts</button>
-		<button>Saved comments</button>
+		<button (click)="selectSection('upvoted')">Upvoted</button>
+		<button (click)="selectSection('downvoted')">Downvoted</button>
+		<button (click)="selectSection('savedPosts')">Saved posts</button>
 	</ng-container>
-	<app-posts [usernameOfUserOnScreen]="userOnScreen.username"></app-posts>
+
+	<section *ngIf="selectedSection === 'posts'">
+		<app-posts [usernameOfUserOnScreen]="userOnScreen.username"></app-posts>
+	</section>
+
+	<section *ngIf="selectedSection === 'comments'">
+		<div *ngFor="let comment of comments; let i = index">
+			<p style="margin-right: 10px; font-weight: bold; margin-top: 3.5px;">{{ usernameOfUserOnScreen }} on "{{
+				comment.postTitle }}"</p>
+			<i style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{comment.createdAt | timeAgo}}</i>
+			<p>{{ comment.content }}</p>
+
+			<hr style="margin-top: 5px; margin-bottom: 5px; width: 80%" *ngIf="i < comments.length - 1">
+		</div>
+		<button style="margin: 15px;" (click)="getNextCommentsOfUser()">load
+			more</button>
+	</section>
+
+	<section *ngIf="selectedSection === 'upvoted'">
+		<app-posts [usernameOfUserOnScreen]="userOnScreen.username" [isThoseUpvoted]="true"></app-posts>
+	</section>
+
+	<section *ngIf="selectedSection === 'downvoted'">
+		<app-posts [usernameOfUserOnScreen]="userOnScreen.username" [isThoseDownvoted]="true"></app-posts>
+	</section>
+
+	<section *ngIf="selectedSection === 'savedPosts'">
+		<app-posts [usernameOfUserOnScreen]="userOnScreen.username" [isThoseSaved]="true"></app-posts>
+	</section>
 </section>
 
 <section id="section-right-container">

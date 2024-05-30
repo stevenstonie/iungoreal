@@ -12,9 +12,9 @@
 	height: var(--chat-height);
 	// width: var(--left-section-width) + var(--right-section-width);
 	right: 80px;
-	bottom: 5px;
-	background-color: azure;
-	border: 1px solid #ccc;
+	bottom: 10px;
+	border: 2px solid #ccc;
+	background: linear-gradient(to right, white, rgb(228, 248, 255));
 	border-radius: 5px;
 	padding: 10px;
 	display: flex;
@@ -111,6 +111,7 @@
 			input {
 				width: calc(var(--right-section-width) - 100px);
 				padding: 3px;
+				margin: 5px;
 				border: 1px solid #ccc;
 				border-radius: 5px;
 			}

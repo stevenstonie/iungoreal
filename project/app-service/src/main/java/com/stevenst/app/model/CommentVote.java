@@ -18,28 +18,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "\"post_votes\"")
+@Table(name = "\"comment_vote\"")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostVotes {
+public class CommentVote {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "\"user_id\"", nullable = false)
-	private User user;
+	@JoinColumn(name = "\"author_id\"", nullable = false)
+	private User author;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "post_id", nullable = false)
-	private Post post;
-
-	private boolean liked;
-
-	private boolean disliked;
+	@JoinColumn(name = "comment_id", nullable = false)
+	private Comment comment;
 
 	@Column(nullable = false)
-	private final LocalDateTime createdAt = LocalDateTime.now();
+	@Builder.Default
+	private boolean upvoted = false;
+
+	@Column(nullable = false)
+	@Builder.Default
+	private boolean downvoted = false;
 }

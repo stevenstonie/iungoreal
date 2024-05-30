@@ -6,13 +6,33 @@ export interface ResponsePayload {
 }
 
 export interface PostPayload {
+	id: number;
 	authorUsername: string;
 	title: string;
 	description: string;
 	createdAt: Date;
 	mediaLinks: string[];
-	likes: number;
-	dislikes: number;
+	upvoteScore: number;
+	nbOfComments: number;
+	upvoted: boolean;
+	downvoted: boolean;
+	saved: boolean;
+	seen: boolean;
+}
+
+export interface CommentPayload {
+	id: number;
+	authorUsername: string;
+	postId: number;
+	content: string;
+	createdAt: Date;
+}
+
+export interface CommentDetachedPayload {
+	id: number;
+	postTitle: string;
+	content: string;
+	createdAt: Date;
 }
 
 export interface NotificationFPayload {

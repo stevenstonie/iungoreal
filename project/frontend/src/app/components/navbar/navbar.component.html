@@ -20,7 +20,7 @@
 				(keydown.enter)="search()">
 			<ul *ngIf="searchResults.length > 0">
 				<li *ngFor="let result of searchResults" (click)="goToUserProfile(result.username)">
-					<img id="profile-picture" [src]="result.pfpLink" alt="(Profile picture)">
+					<img id="profile-picture" [src]="result.pfpLink" alt="(pfp)">
 					<span class="username">{{ result.username }}</span>
 				</li>
 			</ul>

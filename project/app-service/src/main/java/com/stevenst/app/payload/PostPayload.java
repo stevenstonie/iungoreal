@@ -13,11 +13,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostPayload {
+	private Long id;
 	private String authorUsername;
 	private String title;
 	private String description;
 	private LocalDateTime createdAt;
 	private List<String> mediaLinks;
-	private Long likes;
-	private Long dislikes;
+	private Long upvoteScore;
+	private Long nbOfComments;
+	private boolean upvoted;
+	private boolean downvoted;
+	private boolean saved;
+	private boolean seen;
 }
