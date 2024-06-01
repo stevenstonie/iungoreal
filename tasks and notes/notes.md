@@ -7,7 +7,6 @@
 	- (recurring) show window dialogs on errors / restrictions for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
-	- [ ] (fr, bk) add functionality for the main page (fetching friends posts)
 	- [ ] (fr) add a "loading" cue to the screen when a request is in the making
 	- [ ] (fr) add verification through email when registering
 	- [ ] (fr, bk) implement search functionality for posts
@@ -20,13 +19,13 @@
 	- [ ] (fr) news section
 	- [ ] (fr, bk) reset email / password
 	- [ ] (bk) implement docker
-	- [ ] (bk) remove pins from bk when expiration date is reached
+	- [ ] (bk) remove map pins from bk when expiration date is reached
 	- [ ] (fr) do not store the token in the local storage. store it in an httpOnly cookie instead. (--> https://blog.logrocket.com/jwt-authentication-best-practices/)
-	- [ ] (fr, bk) make users be able to select which notifications have what priority (default: friend requests -> high, messages -> medium, posts -> low)
 	- [ ] (bk) change the return type of each controller to ResponseEntity<> to "handle" edge cases that cannot be handled through exceptions 
 
 	_________________________________
 	---------------------------------
+	- [x] (fr, bk) add the posts functionality (feed and profile)
 	- [x] (fr, bk) implement search functionality for users
 	- [x] (fr, bk) add the chat functionality -> (3 types: dms, regional and custom)
 	- [x] (fr, bk) set up the websocket code to implement the chat component
