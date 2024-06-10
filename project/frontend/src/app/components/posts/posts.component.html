@@ -18,7 +18,8 @@
 						(click)="removePost(i)">🗑</button>
 				</div>
 				<p>{{ post.description }}</p>
-				<i>author: {{ post.authorUsername }}</i>
+				<i>author: <span style="cursor: pointer;" (click)="navigateToProfile(post.authorUsername)">{{
+						post.authorUsername }}</span></i>
 				<i style="font-size: .8rem">posted {{ post.createdAt | timeAgo }}</i>
 			</div>
 
@@ -66,7 +67,8 @@
 		<div id="comments-container">
 			<div class="comment" *ngFor="let comment of comments; let i = index">
 				<div class="same-line">
-					<p class="bold">{{ comment.authorUsername }}</p>
+					<p class="bold" (click)="navigateToProfile(comment.authorUsername)" style="cursor: pointer">{{
+						comment.authorUsername }}</p>
 					<i style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{comment.createdAt|timeAgo}}</i>
 					<button style="margin-left: 5px; padding: 0 5px"
 						*ngIf="comment.authorUsername === usernameOfLoggedUser" (click)="removeComment(i)">🗑</button>

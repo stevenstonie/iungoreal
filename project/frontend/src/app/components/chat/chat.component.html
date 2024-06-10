@@ -78,11 +78,13 @@
 					<div *ngFor="let message of receivedMessages; let i = index">
 						<div
 							*ngIf="i === 0 || (message.createdAt | date: 'dd/MM/yyyy')  !== (receivedMessages[i - 1].createdAt | date: 'dd/MM/yyyy')">
-							<p style="text-align: center; margin: 10px; padding: 0; color: gray; font-style: italic;" class="message-date">{{ message.createdAt | date: 'dd/MM/yyyy' }}</p>
+							<p style="text-align: center; margin: 10px; padding: 0; color: gray; font-style: italic;"
+								class="message-date">{{ message.createdAt | date: 'dd/MM/yyyy' }}</p>
 						</div>
 						<div
 							[ngClass]="{'text-right': message.senderUsername === loggedUserUsername, 'text-left': message.senderUsername !== loggedUserUsername}">
-							<p class="sender-username">{{message.senderUsername}}</p>
+							<p class="sender-username" style="cursor: pointer;" (click)="navigateToProfile(message.senderUsername)">
+								{{message.senderUsername}}</p>
 							<p class="message" [innerHTML]="messageWithParsedLinks(message.message)">{{message.message}}
 							</p>
 							<div class="message-time">{{ message.createdAt | date: 'HH:mm' }}</div>

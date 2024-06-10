@@ -347,6 +347,10 @@ export class ChatComponent {
     });
   }
 
+  navigateToProfile(username: string): void {
+    window.location.href = '/user/' + username;
+  }
+
   sanitizeAndParseUrl(url: string): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }

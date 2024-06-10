@@ -277,6 +277,10 @@ export class PostsComponent implements OnChanges {
     return file.includes('.png') || file.includes('.jpg') || file.includes('.jpeg') || file.includes('.gif') || file.includes('.webp');
   }
 
+  navigateToProfile(username: string) {
+    window.location.href = '/user/' + username;
+  }
+
   // implement making posts seen when scrolling past them
 
   onScroll(): void {
