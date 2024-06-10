@@ -84,7 +84,7 @@ public class PostServiceImpl implements PostService {
 			saveMediaFilesInCloud(author.getUsername(), post.getId(), files, uniqueFilenames);
 		}
 
-		return ResponsePayload.builder().status(200)
+		return ResponsePayload.builder().status(201)
 				.message("Post created successfully for " + author.getUsername() + ".").build();
 	}
 
@@ -290,13 +290,13 @@ public class PostServiceImpl implements PostService {
 		// comments
 		removeCommentsOfPost(postId);
 
-		// media
+		// media from db and cloud
 		removeMediaOfPost(postId, user.getUsername());
 
 		// interactions
 		postInteractionRepository.deleteAllByPost(post);
 
-		// and then remove the post from the db and cloud
+		// and then remove the post from db
 		postRepository.delete(post);
 
 		return ResponsePayload.builder().status(200)
