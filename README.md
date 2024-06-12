@@ -29,5 +29,12 @@ now you can access the application through the web browser at `http://localhost:
 
 ![image](https://github.com/petreastefann/iungoreal/assets/56685226/74276d2f-e174-408e-ace4-0ffe86a9afcd) 
 
-![image](https://github.com/petreastefann/iungoreal/assets/56685226/974facc5-99a4-438b-a806-bacea8eba4e6)
+![image](https://github.com/petreastefann/iungoreal/assets/56685226/974facc5-99a4-438b-a806-bacea8eba4e6) 
+
+![image](https://github.com/petreastefann/iungoreal/assets/56685226/01fc8d7f-5774-45b3-ad84-da2cd3dd952f)
+
+![image](https://github.com/petreastefann/iungoreal/assets/56685226/91a78ab7-63b3-491e-9c6e-0bc2e8477848) 
+
+![image](https://github.com/petreastefann/iungoreal/assets/56685226/ba47fe9b-2cfe-4152-87fe-d4289bbfa192)
+
 
