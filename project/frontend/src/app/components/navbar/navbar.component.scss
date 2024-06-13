@@ -120,10 +120,11 @@
 	button {
 		border-radius: 0;
 		background-color: transparent;
-		border-left: transparent;
-		border-right: transparent;
+		border-left: 1px transparent solid;
+		border-right: 1px transparent solid;
 		box-shadow: none;
 		height: 80%;
+		transition-duration: 0.15s;
 
 		&:hover {
 			color: rgb(0, 0, 0);

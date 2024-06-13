@@ -100,7 +100,7 @@ export class ProfileComponent {
 
   /*
     the logic is like this:
-    the one who sends the friend request is the sender(duuh)
+    the one who sends the friend request is the sender
     the one who cancels it is the sender
     the one who accepts or declines is the receiver
     the one who unfriends is the unfriender

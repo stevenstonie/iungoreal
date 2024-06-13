@@ -1,10 +1,10 @@
 <div id="body">
 	<div id="posts-section">
-		<div id="post-sort">Sort by:
+		<!-- <div id="post-sort">Sort by:
 			<button>Newest</button>
 			<button>Oldest</button>
 			<button>Top</button>
-		</div>
+		</div> -->
 
 		<div class="post" *ngFor="let post of posts; let i = index">
 			<div class="post-header">
@@ -18,7 +18,7 @@
 						(click)="removePost(i)">🗑</button>
 				</div>
 				<p>{{ post.description }}</p>
-				<i>author: <span style="cursor: pointer;" (click)="navigateToProfile(post.authorUsername)">{{
+				<i>author: <span class="author-username" (click)="navigateToProfile(post.authorUsername)">{{
 						post.authorUsername }}</span></i>
 				<i style="font-size: .8rem">posted {{ post.createdAt | timeAgo }}</i>
 			</div>
@@ -67,7 +67,7 @@
 		<div id="comments-container">
 			<div class="comment" *ngFor="let comment of comments; let i = index">
 				<div class="same-line">
-					<p class="bold" (click)="navigateToProfile(comment.authorUsername)" style="cursor: pointer">{{
+					<p class="author-username" (click)="navigateToProfile(comment.authorUsername)">{{
 						comment.authorUsername }}</p>
 					<i style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{comment.createdAt|timeAgo}}</i>
 					<button style="margin-left: 5px; padding: 0 5px"

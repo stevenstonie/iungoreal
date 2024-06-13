@@ -36,7 +36,7 @@
 			<button (click)="toggleFriendRequests()">Friend Requests ({{ nbOfNotificationsF > 50 ? '50+' :
 				nbOfNotificationsF }})</button>
 
-			<button (click)="toggleNotifications()">Notifications</button>
+			<!-- <button (click)="toggleNotifications()">Notifications</button> -->
 
 			<button (click)="toggleUserMenu()">{{loggedUser.username}} ({{loggedUser.role}})</button>
 			<div *ngIf="showUserMenu">

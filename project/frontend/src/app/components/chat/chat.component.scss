@@ -53,6 +53,15 @@
 			button {
 				cursor: pointer;
 			}
+
+			.chatroom-name {
+				margin: 5px;
+				font-weight: 600;
+				max-width: 200px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
 		}
 
 		#right-section-body {
@@ -70,7 +79,9 @@
 					display: flex;
 					padding: 2px 0px;
 
-					.message, .sender-username, .message-time {
+					.message,
+					.sender-username,
+					.message-time {
 						padding: 5px;
 					}
 
@@ -84,6 +95,12 @@
 					.sender-username {
 						font-size: 0.9em;
 						font-style: italic;
+						cursor: pointer;
+						height: 100%;
+
+						&:hover {
+							text-decoration: underline;
+						}
 					}
 
 					.message-time {
@@ -135,7 +152,7 @@
 	justify-content: flex-start;
 	align-items: center;
 
-	> button {
+	>button {
 		margin: 5px;
 	}
 }
