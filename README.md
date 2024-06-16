@@ -15,7 +15,7 @@ before getting started, ensure you do the following:
 1. clone or download the project.
 2. fill out the `.yml` configuration file ('.\src\main\resources') of each microservice according to the hints provided in each file.
 3. open a terminal in the frontend project's directory and run `npm install` to install the necessary dependencies.
-4. unload the `.rar` file from lib, open a terminal in the lib directory and run `nvm clean install` to get access to countries and their regions
+4. To get access to countries and their regions: unload the `.rar` file from lib, open a terminal in the lib directory and run `nvm clean install`. Also run the app-service and access the '/insertCountryAndRegions' endpoint through Postman to manually insert countries of your choice.
 
 ## Running the Application
 
