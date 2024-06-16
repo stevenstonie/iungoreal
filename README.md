@@ -1,6 +1,6 @@
 # #iungoreal - social platform for outdoor activities
 
-### a social platform based on a microservice architecture, developed using spring boot and angular. this website is a hybrid approach at a website which uses some strong features but leaves negative aspects out, so that users dont have to deal with invasive ads or feed algorithms while using the app.
+### a social platform based on a microservice architecture, developed using spring boot and angular. this is a hybrid approach at a website which leaves some negative aspects out, so that users dont have to deal with invasive ads or feed algorithms while using the app.
 ### the purpose of this project is creating a dissimilar social media(might change it to a forum in the future) that encourages its users to get off their phones and be more active both physically and socially.
 
 ## Prerequisites
