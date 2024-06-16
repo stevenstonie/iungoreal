@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping("/api/marker")
 @RequiredArgsConstructor
-public class MarkerController {
+public class PublicMarkerController {
 	private final MarkerService markerService;
 
 	@GetMapping("/getAll")

@@ -65,6 +65,7 @@ public class PostServiceImpl implements PostService {
 	@Value("${aws.bucketName}")
 	private String bucketName;
 	private static final String USERS_PATH = "users/";
+	private static final String CREATED_AT = "createdAt";
 
 	@Override
 	public ResponsePayload createPost(String authorUsername, String title, String description,
@@ -137,7 +138,7 @@ public class PostServiceImpl implements PostService {
 			Long cursor, int limit) {
 		User user = findUserByUsername(username);
 		List<Post> posts = new ArrayList<>();
-		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(CREATED_AT).descending());
 
 		// get all friends of the user (including the user) or just the user if the posts are from someones profile
 		// then get the next 'limit' posts before the cursor
@@ -155,30 +156,9 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<CommentPayload> getNextCommentsOfPostBeforeCursor(Long postId, Long cursor, int limit) {
-		Post post = findPostById(postId);
-		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
-
-		List<Comment> comments = commentRepository.findCommentsOfPostBeforeCursor(post.getId(), cursor, pageRequest);
-
-		return commentEntitiesToPayloads(comments);
-	}
-
-	@Override
-	public List<CommentDetachedPayload> getNextCommentsOfUserBeforeCursor(String username, Long cursor, int limit) {
-		User user = findUserByUsername(username);
-		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
-
-		List<Comment> comments = commentRepository.findCommentsOfUserBeforeCursor(user.getUsername(), cursor,
-				pageRequest);
-
-		return returnListOfDetachedCommentPayload(comments);
-	}
-
-	@Override
 	public List<PostPayload> getNextUpvotedOfUserBeforeCursor(String username, Long cursor, int limit) {
 		User user = findUserByUsername(username);
-		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(CREATED_AT).descending());
 
 		List<Post> posts = postRepository.findNextUpvotedPostsByUser(username, cursor, pageRequest);
 
@@ -188,7 +168,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<PostPayload> getNextDownvotedOfUserBeforeCursor(String username, Long cursor, int limit) {
 		User user = findUserByUsername(username);
-		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(CREATED_AT).descending());
 
 		List<Post> posts = postRepository.findNextDownvotedPostsByUser(username, cursor, pageRequest);
 
@@ -198,11 +178,32 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<PostPayload> getNextSavedOfUserBeforeCursor(String username, Long cursor, int limit) {
 		User user = findUserByUsername(username);
-		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(CREATED_AT).descending());
 
 		List<Post> posts = postRepository.findNextSavedPostsByUser(username, cursor, pageRequest);
 
 		return postEntitiesToPayloads(posts, user.getId());
+	}
+
+	@Override
+	public List<CommentPayload> getNextCommentsOfPostBeforeCursor(Long postId, Long cursor, int limit) {
+		Post post = findPostById(postId);
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(CREATED_AT).descending());
+
+		List<Comment> comments = commentRepository.findCommentsOfPostBeforeCursor(post.getId(), cursor, pageRequest);
+
+		return commentEntitiesToPayloads(comments);
+	}
+
+	@Override
+	public List<CommentDetachedPayload> getNextCommentsOfUserBeforeCursor(String username, Long cursor, int limit) {
+		User user = findUserByUsername(username);
+		PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(CREATED_AT).descending());
+
+		List<Comment> comments = commentRepository.findCommentsOfUserBeforeCursor(user.getUsername(), cursor,
+				pageRequest);
+
+		return returnListOfDetachedCommentPayload(comments);
 	}
 
 	@Override
@@ -402,11 +403,10 @@ public class PostServiceImpl implements PostService {
 				.bodyToMono(new ParameterizedTypeReference<List<String>>() {
 				});
 
-		// Convert the Mono to a List and return it
+		// convert the Mono to a List and return it
 		return friendsUsernamesMono.block();
 	}
 
-	// dev comm
 	private List<String> getLinksForAllMediaOfAPost(String username, Long postId, List<String> mediaNames) {
 		List<String> mediaLinks = new ArrayList<>();
 
@@ -417,7 +417,7 @@ public class PostServiceImpl implements PostService {
 		// 		System.err.println("Unable to generate a presigned url:" + e.getMessage());
 		// 	}
 		// }
-		// // commented for development
+		// // dev comm
 
 		return mediaLinks;
 	}
@@ -434,7 +434,7 @@ public class PostServiceImpl implements PostService {
 		return generatePresignedUrl(key);
 	}
 
-	private void checkIfMediaFileExistsInS3(String key) {
+	private void checkIfMediaFileExistsInS3(String key) { // make this a lambda function where its used.. do lambda functions have names in java🤔🤔
 		HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key)
