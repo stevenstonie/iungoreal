@@ -300,8 +300,8 @@ class FriendsControllerIntegrationTest {
 			requestUrl1 += param1 + "=" + "doesntexist" + "&" + param2 + "=" + userBobby.getUsername();
 			requestUrl2 += param1 + "=" + userAndrew.getUsername() + "&" + param2 + "=" + "doesntexist";
 		}
-		MvcResult result1, result2;
 
+		MvcResult result1, result2;
 		switch (requestType) {
 			case "GET":
 				result1 = mockMvc.perform(get(requestUrl1)).andExpect(status().isNotFound()).andReturn();
@@ -319,7 +319,6 @@ class FriendsControllerIntegrationTest {
 				result1 = mockMvc.perform(delete(requestUrl1)).andExpect(status().isNotFound()).andReturn();
 				result2 = mockMvc.perform(delete(requestUrl2)).andExpect(status().isNotFound()).andReturn();
 				break;
-
 			default:
 				result1 = mockMvc.perform(get(requestUrl1)).andExpect(status().isNotFound()).andReturn();
 				result2 = mockMvc.perform(get(requestUrl2)).andExpect(status().isNotFound()).andReturn();

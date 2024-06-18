@@ -87,3 +87,4 @@ build/
 .vscode/
 .vscode
 .VSCodeCounter/
+appmap.yml
