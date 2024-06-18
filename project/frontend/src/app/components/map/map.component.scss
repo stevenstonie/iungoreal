@@ -78,3 +78,9 @@
 .click-cursor {
 	cursor: crosshair;
 }
+
+.map-info {
+	color: #424242;
+	top: calc((100% - var(--map-height)) / 2);
+	left: calc((100% - (var(--map-width))) / 2);
+}

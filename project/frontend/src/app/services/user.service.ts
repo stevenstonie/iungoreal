@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { User } from '../models/user';
 import { StringInJson } from '../models/app';
-import { CountryOrRegionPayload, ResponsePayload } from '../models/Payloads';
+import { CountryOrRegionPayload, RegionDetailsPayload, ResponsePayload } from '../models/Payloads';
 
 @Injectable({
   providedIn: 'root'
@@ -80,6 +80,15 @@ export class UserService {
     const params = new HttpParams().set('username', username);
 
     return this.http.get<CountryOrRegionPayload>(`${this.apiUrl}/getPrimaryRegion`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getPrimaryRegionDetailsOfUser(username: string): Observable<RegionDetailsPayload> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<RegionDetailsPayload>(`${this.apiUrl}/getPrimaryRegionDetails`, { params })
       .pipe(
         catchError(this.handleError)
       );

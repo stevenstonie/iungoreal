@@ -19,3 +19,5 @@
 		<button class="map-ui" id="marker-submit" (click)="submitMarker()">submit</button>
 	</div>
 </div>
+<p *ngIf="latMapInit == 0 && longMapInit == 0" class="map-info map-ui">Select a primary region to have the map center
+	around it.</p>

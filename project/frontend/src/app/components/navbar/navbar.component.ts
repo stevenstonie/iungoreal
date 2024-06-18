@@ -130,7 +130,7 @@ export class NavbarComponent implements OnInit {
   }
 
   about() {
-    alert(`nothing here for now..`);
+    alert();
   }
 
   mainPage() {

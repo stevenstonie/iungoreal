@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.stevenst.app.controller.api.UserApi;
 import com.stevenst.lib.payload.CountryOrRegionPayload;
+import com.stevenst.app.payload.DetailedRegionPayload;
 import com.stevenst.app.payload.UserPrivatePayload;
 import com.stevenst.app.payload.UserPublicPayload;
 import com.stevenst.app.service.CountryAndRegionService;
@@ -77,6 +78,11 @@ public class UserController implements UserApi {
 	@GetMapping("/getPrimaryRegion")
 	public ResponseEntity<CountryOrRegionPayload> getPrimaryRegionOfUser(@RequestParam String username) {
 		return ResponseEntity.ok(countryAndRegionService.getPrimaryRegionOfUser(username));
+	}
+
+	@GetMapping("/getPrimaryRegionDetails")
+	public ResponseEntity<DetailedRegionPayload> getPrimaryRegionDetailsOfUser(@RequestParam String username) {
+		return ResponseEntity.ok(countryAndRegionService.getPrimaryRegionDetailsOfUser(username));
 	}
 
 	@GetMapping("/getSecondaryRegions")

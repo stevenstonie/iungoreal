@@ -1,5 +1,6 @@
 import { Component, OnDestroy, AfterViewInit, ViewChild, ElementRef, Input } from '@angular/core';
 import * as L from 'leaflet';
+import { RegionDetailsPayload } from 'src/app/models/Payloads';
 import { Marker } from 'src/app/models/marker';
 import { Role, User } from 'src/app/models/user';
 import { MapService } from 'src/app/services/map.service';
@@ -18,6 +19,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   showMarkerInputs: boolean = false;
   latitude!: number;
   longitude!: number;
+  latMapInit: number = 0;
+  longMapInit: number = 0;
+  zoomMapInit: number = 3;
   markers: Marker[] = [];
 
   toggleAddMarker() {
@@ -31,12 +35,20 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   constructor(private mapService: MapService, private userService: UserService) {
-    console.log(this.loggedUser);
+    this.userService.getPrimaryRegionDetailsOfUser(localStorage.getItem('username') ?? '').subscribe({
+      next: (response: RegionDetailsPayload) => {
+        if (response.id != null) {
+          this.latMapInit = response.latitude;
+          this.longMapInit = response.longitude;
+          this.zoomMapInit = 11;
+        }
+        // Initialize the map once the response is received
+        this.initializeMap();
+      }
+    });
   }
 
   ngAfterViewInit() {
-    this.initializeMap();
-
     this.mapService.getMarkers().subscribe({
       next: (response) => {
         this.markers = response;
@@ -59,9 +71,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   initializeMap() {
-    
-
-    this.map = L.map(this.mapElement.nativeElement).setView([45.65, 25.603], 12);
+    this.map = L.map(this.mapElement.nativeElement).setView([this.latMapInit, this.longMapInit], this.zoomMapInit);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);

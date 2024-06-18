@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.stevenst.app.payload.DetailedRegionPayload;
 import com.stevenst.app.repository.ChatroomParticipantRepository;
 import com.stevenst.app.repository.ChatroomRepository;
 import com.stevenst.app.repository.ChatroomsRegionsRepository;
@@ -101,6 +102,26 @@ public class CountryAndRegionServiceImpl implements CountryAndRegionService {
 		return CountryOrRegionPayload.builder()
 				.id(region.getId())
 				.name(region.getName())
+				.build();
+	}
+
+	// TODO: make both methods call the same util method and also create an exception for no content found to use if region is not found
+
+	@Override
+	public DetailedRegionPayload getPrimaryRegionDetailsOfUser(String username) {
+		User user = getUserFromDbByUsername(username);
+
+		if (user.getPrimaryRegionId() == null) {
+			return new DetailedRegionPayload(null, null, null, null);
+		}
+
+		Region region = getRegionFromDb(user.getPrimaryRegionId());
+
+		return DetailedRegionPayload.builder()
+				.id(region.getId())
+				.name(region.getName())
+				.latitude(region.getLatitude())
+				.longitude(region.getLongitude())
 				.build();
 	}
 
