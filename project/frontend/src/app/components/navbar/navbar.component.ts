@@ -53,6 +53,7 @@ export class NavbarComponent implements OnInit {
 
       if (this.loggedUser) {
         localStorage.setItem('username', this.loggedUser.username);
+        console.log(this.loggedUser);
       }
       else {
         this.logout();
@@ -126,6 +127,10 @@ export class NavbarComponent implements OnInit {
 
   settings() {
     window.location.href = '/settings';
+  }
+
+  about() {
+    alert(`nothing here for now..`);
   }
 
   mainPage() {

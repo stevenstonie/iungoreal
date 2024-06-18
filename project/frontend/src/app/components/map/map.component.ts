@@ -3,6 +3,7 @@ import * as L from 'leaflet';
 import { Marker } from 'src/app/models/marker';
 import { Role, User } from 'src/app/models/user';
 import { MapService } from 'src/app/services/map.service';
+import { UserService } from 'src/app/services/user.service';
 
 
 @Component({
@@ -13,7 +14,7 @@ import { MapService } from 'src/app/services/map.service';
 export class MapComponent implements AfterViewInit, OnDestroy {
   declare map: L.Map;
   @ViewChild('map') mapElement!: ElementRef;
-  @Input() loggedUser: User | null = null;
+  @Input() loggedUser!: User;
   showMarkerInputs: boolean = false;
   latitude!: number;
   longitude!: number;
@@ -29,13 +30,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  constructor(private mapService: MapService) {
-
+  constructor(private mapService: MapService, private userService: UserService) {
+    console.log(this.loggedUser);
   }
 
   ngAfterViewInit() {
-    console.log('MapComponent ngAfterViewInit() called');
-
     this.initializeMap();
 
     this.mapService.getMarkers().subscribe({
@@ -60,7 +59,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   initializeMap() {
-    this.map = L.map(this.mapElement.nativeElement).setView([45.65, 25.603], 13);
+    
+
+    this.map = L.map(this.mapElement.nativeElement).setView([45.65, 25.603], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
