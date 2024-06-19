@@ -71,7 +71,7 @@
 						them again)</p>
 				</div>
 				<div class="buttons">
-					<button (click)="showCountryOptions = !showCountryOptions">show options</button>
+					<button (click)="toggleShowOptions(countryAndRegionsMenuNames.at(0)!)">show options</button>
 					<button (click)="removeCountryOfUser()">remove current</button>
 				</div>
 			</div>
@@ -87,7 +87,7 @@
 					</p>
 				</div>
 				<div class="buttons">
-					<button (click)="showPrimaryRegionOptions = !showPrimaryRegionOptions">show options</button>
+					<button (click)="toggleShowOptions(countryAndRegionsMenuNames.at(1)!)">show options</button>
 					<button (click)="removePrimaryRegionOfUser()">remove current</button>
 				</div>
 			</div>
@@ -107,15 +107,15 @@
 					</p>
 				</div>
 				<div class="buttons">
-					<button (click)="showSecondaryRegionOptions = !showSecondaryRegionOptions">show options</button>
-					<button (click)="showSecondaryRegionOptionsToRemove = !showSecondaryRegionOptionsToRemove">remove
+					<button (click)="toggleShowOptions(countryAndRegionsMenuNames.at(2)!)">show options</button>
+					<button (click)="toggleShowOptions(countryAndRegionsMenuNames.at(3)!)">remove
 						one</button>
 				</div>
 			</div>
 		</div>
 
 		<div class="right">
-			<div *ngIf="showCountryOptions">
+			<div *ngIf="countryAndRegionsMenuOptions.showCountryOptions">
 				<div class="container">
 					<ul>
 						<p class="subsection-title">set a country</p>
@@ -125,7 +125,7 @@
 				</div>
 			</div>
 
-			<div *ngIf="showPrimaryRegionOptions">
+			<div *ngIf="countryAndRegionsMenuOptions.showPrimaryRegionOptions">
 				<div class="container">
 					<ng-container *ngIf="!countryOfUser?.id">
 						<p>you need to set a country first</p>
@@ -140,7 +140,7 @@
 				</div>
 			</div>
 
-			<div *ngIf="showSecondaryRegionOptions">
+			<div *ngIf="countryAndRegionsMenuOptions.showSecondaryRegionOptions">
 				<div class="container">
 					<ng-container *ngIf="!countryOfUser?.id">
 						<p>you need to set a country first</p>
@@ -155,7 +155,7 @@
 				</div>
 			</div>
 
-			<div *ngIf="showSecondaryRegionOptionsToRemove">
+			<div *ngIf="countryAndRegionsMenuOptions.showSecondaryRegionOptionsToRemove">
 				<div class="container">
 					<ul>
 						<ng-container *ngIf="countryOfUser?.id">
