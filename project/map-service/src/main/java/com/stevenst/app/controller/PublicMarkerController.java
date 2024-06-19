@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,21 +25,17 @@ public class PublicMarkerController {
 	private final MarkerService markerService;
 
 	@GetMapping("/getAll")
-	public List<Marker> getAll() {
-		return markerService.getAllMarkers();
+	public ResponseEntity<List<Marker>> getAll() {
+		return ResponseEntity.ok(markerService.getAllMarkers());
 	}
 
 	@PostMapping("/add")
-	public Marker addMarker(@RequestBody Marker marker) {
-		try {
-			return markerService.addMarker(marker);
-		} catch (DataIntegrityViolationException ex) {
-			throw new IgorMarkerException(ex.getMessage());
-		}
+	public ResponseEntity<Marker> addMarker(@RequestBody Marker marker) {
+		return ResponseEntity.ok(markerService.addMarker(marker));
 	}
 
 	@GetMapping("/get")
-	public Marker getMarker(@RequestParam Long id) {
-		return markerService.getMarker(id);
+	public ResponseEntity<Marker> getMarker(@RequestParam Long id) {
+		return ResponseEntity.ok(markerService.getMarker(id));
 	}
 }

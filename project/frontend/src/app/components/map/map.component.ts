@@ -97,9 +97,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     };
 
     this.mapService.addMarker(marker).subscribe({
-      next: (response) => {
+      next: (response: Marker) => {
         console.log('Marker added successfully', response);
-        // Additional logic on successful submission (e.g., close input form, refresh map markers)
+
+        this.markers.push(response);
+        this.placeMarkerOnTheMap(response);
       },
       error: (error) => {
         console.error('Error adding marker', error);
@@ -109,7 +111,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   placeMarkersOnMap() {
     for (const marker of this.markers) {
-      L.marker([marker.latitude, marker.longitude]).addTo(this.map);
+      this.placeMarkerOnTheMap(marker);
     }
   }
 
@@ -117,6 +119,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     return {
       'click-cursor': this.showMarkerInputs
     }
+  }
+
+  placeMarkerOnTheMap(marker: Marker) {
+    L.marker([marker.latitude, marker.longitude]).addTo(this.map).bindPopup(
+      `<h3>${marker.title}</h3>
+      <p>${marker.description}</p>
+      <p>start: ${marker.startDate}</p>
+      <p>end: ${marker.endDate}</p>`);
   }
 
   get isLoggedUserAdmin(): boolean {

@@ -2,8 +2,10 @@ package com.stevenst.app.service.impl;
 
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.stevenst.app.exception.IgorMarkerException;
 import com.stevenst.app.model.Marker;
 import com.stevenst.app.repository.MarkerRepository;
 import com.stevenst.app.service.MarkerService;
@@ -22,7 +24,11 @@ public class MarkerServiceImpl implements MarkerService {
 
     @Override
     public Marker addMarker(Marker marker) {
-        return markerRepository.save(marker);
+        try {
+            return markerRepository.save(marker);
+        } catch (DataIntegrityViolationException ex) {
+            throw new IgorMarkerException(ex.getMessage());
+        }
     }
 
     @Override
