@@ -6,6 +6,7 @@ application-dev.yml
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+sql_warning.txt
 
 ### STS ###
 .apt_generated
