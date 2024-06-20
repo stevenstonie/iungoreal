@@ -102,7 +102,7 @@ class PostControllerIntegrationTest {
 				.andExpect(status().isOk()).andReturn();
 
 		ResponsePayload response = getResponsePayloadFromMvcResult(result);
-		assertEquals(200, response.getStatus());
+		assertEquals(201, response.getStatus());
 		assertEquals("Post created successfully for " + testUser.getUsername() + ".", response.getMessage());
 	}
 

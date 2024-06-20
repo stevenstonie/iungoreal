@@ -1,0 +1,1 @@
+Syntax error found near Numbered Bind Parameter (FROM Clause): select u1_0.id,u1_0.country_id,u1_0.created_at,u1_0.email,u1_0.password,u1_0.primary_region_id,u1_0.profile_picture_name,u1_0.role,u1_0.username from ? u1_0 where u1_0.username=?
