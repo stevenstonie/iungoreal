@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.stevenst.app.exception.IgorMarkerException;
 import com.stevenst.app.model.Marker;
+import com.stevenst.app.payload.ResponsePayload;
 import com.stevenst.app.repository.MarkerRepository;
 import com.stevenst.app.service.MarkerService;
 
@@ -34,5 +35,15 @@ public class MarkerServiceImpl implements MarkerService {
     @Override
     public Marker getMarker(Long id) {
         return markerRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public ResponsePayload removeMarker(Long id) {
+        markerRepository.deleteById(id);
+
+        return ResponsePayload.builder()
+                .status(200)
+                .message("Marker with id: " + id + " successfully removed.")
+                .build();
     }
 }

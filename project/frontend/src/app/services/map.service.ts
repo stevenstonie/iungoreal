@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Marker } from '../models/marker';
 import { Observable, catchError, throwError } from 'rxjs';
+import { ResponsePayload } from '../models/Payloads';
 
 @Injectable({
   providedIn: 'root'
@@ -26,9 +27,14 @@ export class MapService {
   //   return this.httpClient.put(`${this.apiUrl}/update`, marker);
   // }
 
-  // deleteMarker(id: number) {
-  //   return this.httpClient.delete(`${this.apiUrl}/delete/${id}`);
-  // }
+  removeMarker(id: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('id', id.toString());
+
+    return this.httpClient.delete<ResponsePayload>(`${this.apiUrl}/remove`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 
   // -------------------------------------------------------
 
