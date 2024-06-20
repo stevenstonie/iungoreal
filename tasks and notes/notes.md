@@ -7,6 +7,7 @@
 	- (recurring) show window dialogs on errors / restrictions for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
+	- [ ] (fr) make it so that pins appear only on the selected country
 	- [ ] (fr) add a "loading" cue to the screen when a request is in the making
 	- [ ] (fr) add verification through email when registering
 	- [ ] (fr, bk) implement search functionality for posts
