@@ -47,16 +47,16 @@
 		<div *ngIf="isChatroomOpened">
 			<div id="right-section-header">
 				<!-- if the chatroom is a group and the logged user is not the admin just display the chatoom name -->
-				<ng-container
+				<div class="chatroom-name"
 					*ngIf="(currentChatroom?.type !== 'DM') && (currentChatroom?.adminUsername !== loggedUserUsername)">
 					{{ currentChatroom?.name }}
-				</ng-container>
+				</div>
 				<!-- if the chatroom is either a dm or the logged user is the admin make the name editable (dm participants can both update the chatroom name) -->
 				<div *ngIf="(currentChatroom?.type === 'DM') || (currentChatroom?.adminUsername === loggedUserUsername)"
 					(dblclick)="isEditingChatroomName = true">
-					<ng-container *ngIf="!isEditingChatroomName; else editMode">
+					<div class="chatroom-name" *ngIf="!isEditingChatroomName; else editMode">
 						{{ currentChatroom?.name }}
-					</ng-container>
+					</div>
 					<ng-template #editMode>
 						<input type="text" [(ngModel)]="currentChatroom!.name"
 							(blur)="updateChatroomName(currentChatroom!.name)"
@@ -75,14 +75,16 @@
 			</div>
 			<div id="right-section-body" #chatContainer (scroll)="onScroll()">
 				<div class="messages" *ngIf="isWebsocketConnected()">
-					<div *ngFor="let message of receivedMessages; let i = index">
+					<div *ngFor="let message of receivedMessages; let i = index" style="margin-bottom: 8px;">
 						<div
 							*ngIf="i === 0 || (message.createdAt | date: 'dd/MM/yyyy')  !== (receivedMessages[i - 1].createdAt | date: 'dd/MM/yyyy')">
-							<p style="text-align: center; margin: 10px; padding: 0; color: gray; font-style: italic;" class="message-date">{{ message.createdAt | date: 'dd/MM/yyyy' }}</p>
+							<p style="text-align: center; margin: 10; padding: 0; color: gray; font-style: italic;"
+								class="message-date">{{ message.createdAt | date: 'dd/MM/yyyy' }}</p>
 						</div>
 						<div
 							[ngClass]="{'text-right': message.senderUsername === loggedUserUsername, 'text-left': message.senderUsername !== loggedUserUsername}">
-							<p class="sender-username">{{message.senderUsername}}</p>
+							<p class="sender-username" (click)="navigateToProfile(message.senderUsername)">
+								{{message.senderUsername}}</p>
 							<p class="message" [innerHTML]="messageWithParsedLinks(message.message)">{{message.message}}
 							</p>
 							<div class="message-time">{{ message.createdAt | date: 'HH:mm' }}</div>

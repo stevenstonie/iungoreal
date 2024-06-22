@@ -2,6 +2,7 @@ package com.stevenst.app.service;
 
 import java.util.List;
 
+import com.stevenst.app.payload.DetailedRegionPayload;
 import com.stevenst.lib.payload.CountryOrRegionPayload;
 import com.stevenst.lib.payload.ResponsePayload;
 
@@ -11,6 +12,8 @@ public interface CountryAndRegionService {
 	CountryOrRegionPayload getCountryOfUser(String username);
 
 	CountryOrRegionPayload getPrimaryRegionOfUser(String username);
+
+	DetailedRegionPayload getPrimaryRegionDetailsOfUser(String username);
 
 	List<CountryOrRegionPayload> getSecondaryRegionsOfUser(String username);
 

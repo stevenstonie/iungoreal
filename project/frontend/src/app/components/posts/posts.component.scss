@@ -110,8 +110,14 @@ input {
 	border-radius: 5px;
 }
 
-.bold {
+.author-username {
+	cursor: pointer;
 	font-weight: bold;
+	font-style: italic;
+
+	&:hover {
+		text-decoration: underline;
+	}
 }
 
 .upvoted {

@@ -7,7 +7,7 @@
 <div *ngIf="isLoggedUserAdmin">
 	<button class="map-ui" id="add-marker-button" (click)="toggleAddMarker()">Add Marker</button>
 
-	<div *ngIf="showMarkerInputs">
+	<div *ngIf="showAddMarkerInputs">
 		<input class="map-ui" id="marker-title" type="text" placeholder="marker title">
 		<input class="map-ui" id="marker-description" type="text" placeholder="marker description">
 		<input class="map-ui" id="marker-latitude" type="text" placeholder="latitude" [(ngModel)]="latitude">
@@ -19,3 +19,5 @@
 		<button class="map-ui" id="marker-submit" (click)="submitMarker()">submit</button>
 	</div>
 </div>
+<p *ngIf="latMapInit == 0 && longMapInit == 0" class="map-info map-ui">Select a primary region to have the map center
+	around it.</p>

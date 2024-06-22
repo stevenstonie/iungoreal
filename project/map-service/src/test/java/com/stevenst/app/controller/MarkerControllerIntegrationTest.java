@@ -73,7 +73,7 @@ class MarkerControllerIntegrationTest {
 	void testGetAllMarkers() throws Exception {
 		testUtil.insertMarkerIntoDB(marker);
 
-		MvcResult result = mockMvc.perform(get("/api/markers/"))
+		MvcResult result = mockMvc.perform(get("/api/marker/getAll"))
 				.andExpect(status().isOk())
 				.andReturn();
 
@@ -89,7 +89,7 @@ class MarkerControllerIntegrationTest {
 		Marker marker = new Marker(0L, "test_title", "test_description", 11.111, 22.222,
 				LocalDateTime.now(), LocalDateTime.now().plusDays(1));
 
-		var response = mockMvc.perform(post("/api/markers/addMarker")
+		var response = mockMvc.perform(post("/api/marker/add")
 				.contentType("application/json")
 				.content(testUtil.convertObjectToJsonBytes(marker)))
 				.andExpect(status().isOk());
@@ -97,21 +97,21 @@ class MarkerControllerIntegrationTest {
 		int idOfMarker = objectMapper.readTree(response.andReturn().getResponse().getContentAsString())
 				.get("id").asInt();
 
-		mockMvc.perform(get("/api/markers/getMarker")
+		mockMvc.perform(get("/api/marker/get")
 				.param("id", String.valueOf(idOfMarker)))
 				.andExpect(status().isOk());
 	}
 
 	@Test
 	void testGetMarker() throws Exception {
-		mockMvc.perform(get("/api/markers/getMarker")
+		mockMvc.perform(get("/api/marker/get")
 				.param("id", String.valueOf(marker.getId())))
 				.andExpect(status().isOk());
 	}
 
 	@Test
 	void testGetMarker_latAndLngValuesAsExpected() throws Exception {
-		var response = mockMvc.perform(get("/api/markers/getMarker")
+		var response = mockMvc.perform(get("/api/marker/get")
 				.param("id", String.valueOf(marker.getId())))
 				.andExpect(status().isOk());
 
@@ -132,7 +132,7 @@ class MarkerControllerIntegrationTest {
 		Marker marker = new Marker(0L, null, "test_description", 11.111, 22.222,
 				LocalDateTime.now(), null);
 
-		mockMvc.perform(post("/api/markers/addMarker")
+		mockMvc.perform(post("/api/marker/add")
 				.contentType("application/json")
 				.content(testUtil.convertObjectToJsonBytes(marker)))
 				.andExpect(status().isBadRequest())
@@ -147,7 +147,7 @@ class MarkerControllerIntegrationTest {
 	void testAddMarker_requiredCredentialsMissing() throws Exception {
 		String badMarker = "{\"id\":37,\"description\":\"description\",\"startDate\":[2023,12,22,16,49,44,617777300],\"endDate\":[2023,12,24,16,49,44,619777400]}";
 
-		mockMvc.perform(post("/api/markers/addMarker")
+		mockMvc.perform(post("/api/marker/add")
 				.contentType("application/json")
 				.content(badMarker))
 				.andExpect(status().isBadRequest())
@@ -160,7 +160,7 @@ class MarkerControllerIntegrationTest {
 
 	@Test
 	void addMarker_null() throws JsonProcessingException, Exception {
-		mockMvc.perform(post("/api/markers/addMarker")
+		mockMvc.perform(post("/api/marker/add")
 				.contentType("application/json")
 				.content(testUtil.convertObjectToJsonBytes(null)))
 				.andExpect(status().isBadRequest())

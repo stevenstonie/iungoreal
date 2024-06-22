@@ -16,16 +16,19 @@
 	- [ ] (fr) user settings
 	- [ ] (bk) archive notifications (when the user clicks 'x' on frontend or when the notification is older than 30 days)
 	- [ ] (fr, bk) add more functionalities to the map
+	- [ ] (fr) if an user leaves a dm chatroom, make sure to notify the other user of the leave with a static message
 	- [ ] (fr, bk) calendar
 	- [ ] (fr) news section
 	- [ ] (fr, bk) reset email / password
 	- [ ] (bk) implement docker
 	- [ ] (bk) remove map pins from bk when expiration date is reached
+	- [ ] (fr) update the ui and also make it support phone screen resolutions as well
 	- [ ] (fr) do not store the token in the local storage. store it in an httpOnly cookie instead. (--> https://blog.logrocket.com/jwt-authentication-best-practices/)
 	- [ ] (bk) change the return type of each controller to ResponseEntity<> to "handle" edge cases that cannot be handled through exceptions 
 
 	_________________________________
 	---------------------------------
+	- [x] (fr, bk) make opening a popup for / removing markers possible
 	- [x] (fr, bk) add the posts functionality (feed and profile)
 	- [x] (fr, bk) implement search functionality for users
 	- [x] (fr, bk) add the chat functionality -> (3 types: dms, regional and custom)

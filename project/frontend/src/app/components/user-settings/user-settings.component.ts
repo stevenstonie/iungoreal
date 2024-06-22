@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CountryOrRegionPayload } from 'src/app/models/Payloads';
+import { CountryAndRegionsMenuOptions } from 'src/app/models/app';
 import { CountryAndRegionService } from 'src/app/services/country-and-region.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -12,11 +13,14 @@ import { UserService } from 'src/app/services/user.service';
 export class UserSettingsComponent {
   selectedSection: string = 'account';
   loggedUserUsername = localStorage.getItem('username') ?? '';
-  
-  showCountryOptions: boolean = false;
-  showPrimaryRegionOptions: boolean = false;
-  showSecondaryRegionOptions: boolean = false;
-  showSecondaryRegionOptionsToRemove: boolean = false;
+
+  countryAndRegionsMenuNames: string[] = ['Country', 'Primary Region', 'Secondary Regions', 'Remove Secondary Region'];
+  countryAndRegionsMenuOptions: CountryAndRegionsMenuOptions = {
+    showCountryOptions: false,
+    showPrimaryRegionOptions: false,
+    showSecondaryRegionOptions: false,
+    showSecondaryRegionOptionsToRemove: false
+  };
 
   countryOfUser: CountryOrRegionPayload | null = null;
   primaryRegionOfUser: CountryOrRegionPayload | null = null;
@@ -111,7 +115,7 @@ export class UserSettingsComponent {
       }
     });
 
-    this.showCountryOptions = false;
+    this.setAllCountryAndRegionMenuOptionsToFalse();
   }
 
   setPrimaryRegionForUser(region: CountryOrRegionPayload) {
@@ -126,7 +130,7 @@ export class UserSettingsComponent {
       }
     });
 
-    this.showPrimaryRegionOptions = false;
+    this.setAllCountryAndRegionMenuOptionsToFalse();
   }
 
   addSecondaryRegionForUser(region: CountryOrRegionPayload) {
@@ -141,7 +145,7 @@ export class UserSettingsComponent {
       }
     });
 
-    this.showSecondaryRegionOptions = false;
+    this.setAllCountryAndRegionMenuOptionsToFalse();
   }
 
   removeCountryOfUser() {
@@ -182,7 +186,27 @@ export class UserSettingsComponent {
       }
     });
 
-    this.showSecondaryRegionOptionsToRemove = false;
+    this.setAllCountryAndRegionMenuOptionsToFalse();
+  }
+
+  toggleShowOptions(optionMenu: string) {
+    this.setAllCountryAndRegionMenuOptionsToFalse();
+    if (optionMenu === this.countryAndRegionsMenuNames.at(0)!) {
+      this.countryAndRegionsMenuOptions.showCountryOptions = true;
+    } else if (optionMenu === this.countryAndRegionsMenuNames.at(1)!) {
+      this.countryAndRegionsMenuOptions.showPrimaryRegionOptions = true;
+    } else if (optionMenu === this.countryAndRegionsMenuNames.at(2)!) {
+      this.countryAndRegionsMenuOptions.showSecondaryRegionOptions = true;
+    } else if (optionMenu === this.countryAndRegionsMenuNames.at(3)!) {
+      this.countryAndRegionsMenuOptions.showSecondaryRegionOptionsToRemove = true;
+    }
+  }
+
+  setAllCountryAndRegionMenuOptionsToFalse() {
+    this.countryAndRegionsMenuOptions.showCountryOptions = false;
+    this.countryAndRegionsMenuOptions.showPrimaryRegionOptions = false;
+    this.countryAndRegionsMenuOptions.showSecondaryRegionOptions = false;
+    this.countryAndRegionsMenuOptions.showSecondaryRegionOptionsToRemove = false;
   }
 
   //  -----------------------------------------------------------------------------------------------

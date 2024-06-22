@@ -11,6 +11,7 @@
 	z-index: 9;
 	display: flex;
 	height: var(--height);
+	border-bottom: 1px solid #ccc;
 
 	.left-section,
 	.middle-section,
@@ -54,20 +55,20 @@
 				display: flex;
 				align-items: center;
 				border-bottom: 1px solid #ccc;
-			
+
 				img#profile-picture {
-				  width: 30px;
-				  height: 30px;
-				  border-radius: 50%;
-				  margin: 5px 10px; // Center the image vertically within the list item
+					width: 30px;
+					height: 30px;
+					border-radius: 50%;
+					margin: 5px 10px; // Center the image vertically within the list item
 				}
-			
+
 				span {
-				  white-space: nowrap;
-				  overflow: hidden;
-				  text-overflow: ellipsis;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
-			  }
+			}
 
 
 			li:hover {
@@ -114,5 +115,24 @@
 		border: none;
 		outline: none;
 		background-color: transparent;
+	}
+
+	button {
+		border-radius: 0;
+		background-color: transparent;
+		border-left: 1px transparent solid;
+		border-right: 1px transparent solid;
+		box-shadow: none;
+		height: 80%;
+		transition-duration: 0.15s;
+
+		&:hover {
+			color: rgb(0, 0, 0);
+			background-color: rgba(255, 255, 255, 0.644);
+			border-left: 1px black solid;
+			border-right: 1px black solid;
+			box-shadow: none;
+			transition-duration: 0.15s;
+		}
 	}
 }

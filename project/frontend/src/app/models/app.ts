@@ -9,3 +9,10 @@ export interface ChatMessage {
 	message: string;
 	createdAt: Date;
 }
+
+export interface CountryAndRegionsMenuOptions {
+	showCountryOptions: boolean;
+	showPrimaryRegionOptions: boolean;
+	showSecondaryRegionOptions: boolean;
+	showSecondaryRegionOptionsToRemove: boolean;
+}

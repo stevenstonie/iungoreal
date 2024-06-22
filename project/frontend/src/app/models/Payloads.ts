@@ -50,6 +50,13 @@ export interface CountryOrRegionPayload {
 	name: string
 }
 
+export interface RegionDetailsPayload {
+	id: number,
+	name: string,
+	latitude: number,
+	longitude: number
+}
+
 export interface ChatroomPayload {
 	id: number,
 	name: string,

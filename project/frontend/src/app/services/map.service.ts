@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Marker } from '../models/marker';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
+import { ResponsePayload } from '../models/Payloads';
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +16,30 @@ export class MapService {
     return this.httpClient.get<Marker[]>(`${this.apiUrl}/getAll`);
   }
 
-  addMarker(marker: Marker) {
-    return this.httpClient.post(`${this.apiUrl}/add`, marker);
+  addMarker(marker: Marker): Observable<Marker> {
+    return this.httpClient.post<Marker>(`${this.apiUrl}/add`, marker)
+      .pipe(
+        catchError(this.handleError)
+      );
   }
 
-  updateMarker(marker: Marker) {
-    return this.httpClient.put(`${this.apiUrl}/update`, marker);
+  // updateMarker(marker: Marker) {
+  //   return this.httpClient.put(`${this.apiUrl}/update`, marker);
+  // }
+
+  removeMarker(id: number): Observable<ResponsePayload> {
+    const params = new HttpParams().set('id', id.toString());
+
+    return this.httpClient.delete<ResponsePayload>(`${this.apiUrl}/remove`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
   }
 
-  deleteMarker(id: number) {
-    return this.httpClient.delete(`${this.apiUrl}/delete/${id}`);
+  // -------------------------------------------------------
+
+  private handleError(error: HttpErrorResponse) {
+    console.error(error);
+    return throwError(() => new Error('An error occurred in map service.'));
   }
 }
