@@ -5,8 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FriendService } from 'src/app/services/friend.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
-import { CommentDetachedPayload } from 'src/app/models/Payloads';
+import { CommentDetachedPayload, ResponsePayload } from 'src/app/models/Payloads';
 import { PostService } from 'src/app/services/post.service';
+import { StringInJson } from 'src/app/models/app';
 
 @Component({
   selector: 'app-profile',
@@ -48,6 +49,8 @@ export class ProfileComponent {
       this.getUserObjectFromService();
 
       this.getPfpFromService();
+
+      this.getCoverImgFromService();
     }
   }
 
@@ -55,6 +58,17 @@ export class ProfileComponent {
     // this.userService.getProfilePictureLink(this.usernameOfUserOnScreen).subscribe({
     //   next: (pfp: StringInJson) => {
     //     this.profilePictureUrl = pfp.string;
+    //   },
+    //   error: (error) => {
+    //     console.error(error);
+    //   }
+    // });
+  }
+
+  getCoverImgFromService(): void {
+    // this.userService.getProfileCoverImgLink(this.usernameOfUserOnScreen).subscribe({
+    //   next: (coverImg: StringInJson) => {
+    //     this.profileCoverUrl = coverImg.string;
     //   },
     //   error: (error) => {
     //     console.error(error);
@@ -76,13 +90,36 @@ export class ProfileComponent {
     // }
   }
 
-  onFileSelected(event: Event): void {
+  saveCoverImgInService() {
+    // if (this.file) {
+    //   this.userService.saveCoverImg(this.file).subscribe({
+    //     next: (response: ResponsePayload) => {
+    //       this.getCoverImgFromService();
+    //       console.log(response);
+    //     },
+    //     error: (error) => {
+    //       console.error(error);
+    //     }
+    //   });
+    // }
+  }
+
+  onPfpSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
       this.file = input.files[0];
     }
 
     this.savePfpInService();
+  }
+
+  onCoverSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      this.file = input.files[0];
+    }
+
+    this.saveCoverImgInService();
   }
 
   getUserObjectFromService() {

@@ -44,6 +44,15 @@ export class UserService {
       );
   }
 
+  getProfileCoverImgLink(username: string): Observable<StringInJson> {
+    const params = new HttpParams().set('username', username);
+
+    return this.http.get<StringInJson>(`${this.apiUrl}/getCoverImageLink`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   saveProfilePicture(file: File): Observable<ResponsePayload> {
     const formData = new FormData();
 
@@ -51,6 +60,18 @@ export class UserService {
     formData.append('file', file);
 
     return this.http.put<ResponsePayload>(`${this.apiUrl}/saveProfilePicture`, formData)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  saveCoverImg(file: File): Observable<ResponsePayload> {
+    const formData = new FormData();
+
+    formData.append('username', localStorage.getItem('username') ?? '');
+    formData.append('file', file);
+
+    return this.http.put<ResponsePayload>(`${this.apiUrl}/saveCoverImage`, formData)
       .pipe(
         catchError(this.handleError)
       );
