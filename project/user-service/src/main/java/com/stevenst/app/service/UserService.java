@@ -18,4 +18,10 @@ public interface UserService {
 	ResponsePayload savePfp(String username, MultipartFile file);
 
 	ResponsePayload removePfpFromDbAndCloud(String username);
+
+	String getCoverImgPresignedLinkFromS3(String username);
+
+	ResponsePayload saveCoverImg(String username, MultipartFile file);
+
+	ResponsePayload removeCoverImgFromDbAndCloud(String username);
 }

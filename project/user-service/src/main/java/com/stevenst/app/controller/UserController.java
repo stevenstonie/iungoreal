@@ -63,6 +63,22 @@ public class UserController implements UserApi {
 		return ResponseEntity.ok(userService.removePfpFromDbAndCloud(username));
 	}
 
+	@PutMapping("/saveCoverImage")
+	public ResponseEntity<ResponsePayload> saveCoverImage(@RequestParam String username,
+			@RequestParam MultipartFile file) {
+		return ResponseEntity.ok(userService.saveCoverImg(username, file));
+	}
+
+	@GetMapping("/getCoverImageLink")
+	public ResponseEntity<String> getCoverImageLink(@RequestParam String username) {
+		return ResponseEntity.ok(userService.getCoverImgPresignedLinkFromS3(username));
+	}
+
+	@DeleteMapping("/removeCoverImage")
+	public ResponseEntity<ResponsePayload> removeCoverImgFromDbAndCloud(@RequestParam String username) {
+		return ResponseEntity.ok(userService.removeCoverImgFromDbAndCloud(username));
+	}
+
 	// ---------------------- countries and regions
 
 	@GetMapping("/getAvailableRegions")

@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
 	private static final String USERS_PATH = "users/";
 	private static final String DEFAULTS_PATH = "defaults/";
 	private static final String DEFAULT_PFP_NAME = "default-profile-picture.jpg";
+	private static final String DEFAULT_COVER_IMG_NAME = "default-cover-photo.jpg";
 	private final UserRepository userRepository;
 	private final S3Client s3Client;
 	@Value("${aws.bucketName}")
@@ -97,7 +98,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		try {
-			checkIfPfpExistsInS3(key);
+			checkIfObjectExistsInS3(key);
 		} catch (IgorImageNotFoundException e) {
 			throw new IgorImageNotFoundException(MSG_FOR_EXCEPTION + username + ".");
 		}
@@ -142,6 +143,65 @@ public class UserServiceImpl implements UserService {
 		return removePfpFromCloud(key, username);
 	}
 
+	@Override
+	public String getCoverImgPresignedLinkFromS3(String username) {
+		User user = getUserFromDbByUsername(username);
+
+		String coverNameFromDb = user.getCoverImageName();
+		String key = USERS_PATH + username + "/cover/" + coverNameFromDb;
+		String MSG_FOR_EXCEPTION = "No cover image was found stored in cloud for user: ";
+
+		if (coverNameFromDb == null || coverNameFromDb.equals("")) {
+			key = DEFAULTS_PATH + DEFAULT_COVER_IMG_NAME;
+			MSG_FOR_EXCEPTION = MSG_FOR_EXCEPTION.replace("No cover", "No default cover");
+		}
+
+		try {
+			checkIfObjectExistsInS3(key);
+		} catch (IgorImageNotFoundException e) {
+			throw new IgorImageNotFoundException(MSG_FOR_EXCEPTION + username + ".");
+		}
+
+		return JsonUtil.convertStringToJson(generatePresignedUrl(key));
+	}
+
+	@Override
+	public ResponsePayload removeCoverImgFromDbAndCloud(String username) {
+		User user = getUserFromDbByUsername(username);
+
+		String coverImgFromDb = user.getCoverImageName();
+		String key = USERS_PATH + username + "/cover/" + coverImgFromDb;
+
+		if (coverImgFromDb == null || coverImgFromDb.equals("")) {
+			System.out.println("No cover image found for user: " + username);
+			return ResponsePayload.builder()
+					.status(404)
+					.message("No cover image found for user: " + username)
+					.build();
+		}
+
+		setCoverImgInDb(user, null);
+		return removeCoverImgFromCloud(key, username);
+	}
+
+	@Override
+	public ResponsePayload saveCoverImg(String username, MultipartFile file) {
+		User user = getUserFromDbByUsername(username);
+		String fileName = file.getOriginalFilename();
+
+		removeCoverImgFromDbAndCloud(username);
+
+		setCoverImgInDb(user, fileName);
+
+		Map<String, String> metadata = new HashMap<>();
+		metadata.put("Content-Type", file.getContentType());
+		metadata.put("Content-Length", String.valueOf(file.getSize()));
+		metadata.put("username", username);
+		metadata.put("cover_img_name", file.getOriginalFilename());
+		String key = USERS_PATH + username + "/cover/" + fileName;
+		return uploadCoverImgToS3(key, metadata, file);
+	}
+
 	// ----------------------------------------------------------------------------------------------------------
 
 	private User getUserFromDbByUsername(String username) {
@@ -175,6 +235,17 @@ public class UserServiceImpl implements UserService {
 				.build();
 	}
 
+	private ResponsePayload removeCoverImgFromCloud(String key, String username) {
+		DeleteObjectRequest deleteObjectRequest = createDeleteObjectRequest(key);
+		s3Client.deleteObject(deleteObjectRequest);
+
+		System.out.println("Removed cover image for user: " + username);
+		return ResponsePayload.builder()
+				.status(200)
+				.message("Removed cover image for user: " + username)
+				.build();
+	}
+
 	private ResponsePayload uploadPfpToS3(String key, Map<String, String> metadata, MultipartFile file) {
 		PutObjectRequest putObjectRequest = createPutObjectRequest(key, metadata);
 		try (InputStream inputStream = file.getInputStream()) {
@@ -183,6 +254,21 @@ public class UserServiceImpl implements UserService {
 			return ResponsePayload.builder()
 					.status(200)
 					.message("Profile picture uploaded successfully.")
+					.build();
+		} catch (IOException e) {
+			System.err.println("Unable to convert MultipartFile to InputStream: " + e.getMessage());
+			throw new IgorIoException(e.getMessage());
+		}
+	}
+
+	private ResponsePayload uploadCoverImgToS3(String key, Map<String, String> metadata, MultipartFile file) {
+		PutObjectRequest putObjectRequest = createPutObjectRequest(key, metadata);
+		try (InputStream inputStream = file.getInputStream()) {
+			s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
+
+			return ResponsePayload.builder()
+					.status(200)
+					.message("Cover image uploaded successfully.")
 					.build();
 		} catch (IOException e) {
 			System.err.println("Unable to convert MultipartFile to InputStream: " + e.getMessage());
@@ -215,7 +301,12 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(user);
 	}
 
-	private void checkIfPfpExistsInS3(String key) {
+	private void setCoverImgInDb(User user, String fileName) {
+		user.setCoverImageName(fileName);
+		userRepository.save(user);
+	}
+
+	private void checkIfObjectExistsInS3(String key) {
 		HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
 				.bucket(bucketName)
 				.key(key)
