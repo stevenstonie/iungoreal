@@ -19,7 +19,7 @@ button {
 	background-color: #fff;
 	border: none;
 	outline: none;
-	margin: 0 auto;
+	margin: 3px auto;
 	cursor: pointer;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	border-radius: 2rem;
@@ -38,5 +38,24 @@ button {
 
 	&:active {
 		opacity: .5;
+	}
+}
+
+.button-slick {
+	border-radius: 10px;
+	background-color: transparent;
+	border-left: 1px transparent solid;
+	border-right: 1px transparent solid;
+	box-shadow: none;
+	height: 80%;
+	transition-duration: 0.15s;
+
+	&:hover {
+		color: rgb(0, 0, 0);
+		background-color: rgba(255, 255, 255, 0.644);
+		border-left: 1px black solid;
+		border-right: 1px black solid;
+		box-shadow: none;
+		transition-duration: 0.15s;
 	}
 }

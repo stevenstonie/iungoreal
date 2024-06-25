@@ -47,3 +47,4 @@ public class MarkerServiceImpl implements MarkerService {
                 .build();
     }
 }
+// TODO: make sure to also check the role of the user that wants to modify the marker as it should only be admins doing that

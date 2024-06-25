@@ -48,7 +48,7 @@
 
 	&-start-date {
 		&-label {
-			top: calc((100% - var(--map-height)) / 2 + 140px);
+			top: calc((100% - var(--map-height)) / 2 + 155px);
 			right: calc((100% - var(--map-width)) / 2 + 10px);
 			background-color: #fff;
 			padding: 1px;
@@ -60,7 +60,7 @@
 
 	&-end-date {
 		&-label {
-			top: calc((100% - var(--map-height)) / 2 + 190px);
+			top: calc((100% - var(--map-height)) / 2 + 205px);
 			right: calc((100% - var(--map-width)) / 2 + 10px);
 			background-color: #fff;
 			padding: 1px;

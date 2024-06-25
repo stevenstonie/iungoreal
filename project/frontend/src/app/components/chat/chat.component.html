@@ -20,21 +20,21 @@
 		</div>
 
 		<div id="left-section-body" class="vertical-list">
-			<button (click)="toggleDmChatrooms()">dms</button>
+			<button class="button-slick" (click)="toggleDmChatrooms()">dms</button>
 			<ng-container *ngIf="areDmChatroomsOpen">
 				<ng-container *ngFor="let dmChatroom of dmChatrooms">
 					<button (click)="openChatroom(dmChatroom)">{{ dmChatroom.participantsUsernames[0] }}</button>
 				</ng-container>
 			</ng-container>
 
-			<button (click)="toggleGroupChatrooms()">groups</button>
+			<button class="button-slick" (click)="toggleGroupChatrooms()">groups</button>
 			<ng-container *ngIf="areGroupChatroomsOpen">
 				<ng-container *ngFor="let groupChatroom of groupChatrooms">
 					<button (click)="openChatroom(groupChatroom)">{{ groupChatroom.name }}</button>
 				</ng-container>
 			</ng-container>
 
-			<button (click)="toggleRegionalChatrooms()">regionals</button>
+			<button class="button-slick" (click)="toggleRegionalChatrooms()">regionals</button>
 			<ng-container *ngIf="areRegionalChatroomsOpen">
 				<ng-container *ngFor="let regionalChatroom of regionalChatrooms">
 					<button (click)="openChatroom(regionalChatroom)">{{ regionalChatroom.name }}</button>
@@ -64,14 +64,14 @@
 					</ng-template>
 				</div>
 				<ng-container *ngIf="(currentChatroom?.type === 'GROUP' || currentChatroom?.type === 'REGIONAL')">
-					<button (click)="toggleDisplayAllMembers()">members</button>
+					<button class="button-slick" (click)="toggleDisplayAllMembers()">members</button>
 					<ng-container *ngIf="currentChatroom?.adminUsername === loggedUserUsername">
-						<button (click)="toggleAddUserToGroupChatroom(currentChatroom?.id)">add</button>
-						<button (click)="toggleRemoveUserFromGroupChatroom(currentChatroom?.id)">remove</button>
+						<button class="button-slick" (click)="toggleAddUserToGroupChatroom(currentChatroom?.id)">add</button>
+						<button class="button-slick" (click)="toggleRemoveUserFromGroupChatroom(currentChatroom?.id)">remove</button>
 					</ng-container>
 				</ng-container>
-				<button (click)="leaveChatroom(currentChatroom?.id)">leave chatroom</button>
-				<button (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
+				<button class="button-slick" (click)="leaveChatroom(currentChatroom?.id)">leave chatroom</button>
+				<button class="button-slick" (click)="closeChatroom()"><i class="close-button material-icons">close</i></button>
 			</div>
 			<div id="right-section-body" #chatContainer (scroll)="onScroll()">
 				<div class="messages" *ngIf="isWebsocketConnected()">

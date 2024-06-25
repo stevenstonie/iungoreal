@@ -131,7 +131,7 @@ export class NavbarComponent implements OnInit {
 
   about() {
     alert(`the project is still in development! \n
-      send an email at iungoreal@gmail.com if you think something should be added or changed. \n
+      send an email at iungoreal@gmail.com or stevennstonie@gmail.com if you think something should be added or changed. \n
       for example if you want a country added or if the map is not centered on some region.🤠`);
   }
 

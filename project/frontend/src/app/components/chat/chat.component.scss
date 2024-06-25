@@ -61,6 +61,10 @@
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
+
+				&:hover {
+					text-decoration: underline;
+				}
 			}
 		}
 
@@ -164,4 +168,8 @@
 
 .right-sided {
 	float: right;
+}
+
+button {
+	height: auto;
 }

@@ -116,23 +116,4 @@
 		outline: none;
 		background-color: transparent;
 	}
-
-	button {
-		border-radius: 0;
-		background-color: transparent;
-		border-left: 1px transparent solid;
-		border-right: 1px transparent solid;
-		box-shadow: none;
-		height: 80%;
-		transition-duration: 0.15s;
-
-		&:hover {
-			color: rgb(0, 0, 0);
-			background-color: rgba(255, 255, 255, 0.644);
-			border-left: 1px black solid;
-			border-right: 1px black solid;
-			box-shadow: none;
-			transition-duration: 0.15s;
-		}
-	}
 }

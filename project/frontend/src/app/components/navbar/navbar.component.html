@@ -12,7 +12,7 @@
 
 	<div id="navbar">
 		<div class="left-section">
-			<button (click)="mainPage()">Main Page</button>
+			<button class="button-slick" (click)="mainPage()">Main Page</button>
 		</div>
 
 		<div class="middle-section">
@@ -27,24 +27,24 @@
 		</div>
 
 		<div class="right-section">
-			<button (click)="createPost()">Create Post</button>
+			<button class="button-slick" (click)="createPost()">Create Post</button>
 
-			<button (click)="toggleMap()">Map</button>
+			<button class="button-slick" (click)="toggleMap()">Map</button>
 
-			<button (click)="toggleChat()">Chat</button>
+			<button class="button-slick" (click)="toggleChat()">Chat</button>
 
-			<button (click)="toggleFriendRequests()">Friend Requests ({{ nbOfNotificationsF > 50 ? '50+' :
+			<button class="button-slick" (click)="toggleFriendRequests()">Friend Requests ({{ nbOfNotificationsF > 50 ? '50+' :
 				nbOfNotificationsF }})</button>
 
-			<!-- <button (click)="toggleNotifications()">Notifications</button> -->
+			<!-- <button class="button-slick" (click)="toggleNotifications()">Notifications</button> -->
 
-			<button (click)="toggleUserMenu()">{{loggedUser.username}} ({{loggedUser.role}})</button>
+			<button class="button-slick" (click)="toggleUserMenu()">{{loggedUser.username}} ({{loggedUser.role}})</button>
 			<div *ngIf="showUserMenu">
 				<div class="profile-drop-down-menu">
-					<button (click)="profile()">Profile</button>
-					<button (click)="settings()">User Settings</button>
-					<button (click)="about()">About</button>
-					<button (click)="logout()">Logout</button>
+					<button class="button-slick" (click)="profile()">Profile</button>
+					<button class="button-slick" (click)="settings()">User Settings</button>
+					<button class="button-slick" (click)="about()">About</button>
+					<button class="button-slick" (click)="logout()">Logout</button>
 				</div>
 			</div>
 		</div>

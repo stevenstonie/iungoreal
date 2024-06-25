@@ -128,15 +128,27 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   placeMarkerOnTheMap(marker: Marker) {
-    const leafletMarker = L.marker([marker.latitude, marker.longitude])
-      .addTo(this.map)
-      .bindPopup(
-        `<h3>${marker.title}</h3>
+    let leafletMarker: L.Marker;
+    if (this.loggedUser?.role === Role.ADMIN) {
+      leafletMarker = L.marker([marker.latitude, marker.longitude])
+        .addTo(this.map)
+        .bindPopup(
+          `<h3>${marker.title}</h3>
         <p>${marker.description}</p>
         <p>start: ${marker.startDate}</p>
         <p>end: ${marker.endDate}</p>
         <button id="remove-marker-button-${marker.id}">remove this marker</button>`
-      );
+        );
+    } else {
+      leafletMarker = L.marker([marker.latitude, marker.longitude])
+        .addTo(this.map)
+        .bindPopup(
+          `<h3>${marker.title}</h3>
+        <p>${marker.description}</p>
+        <p>start: ${marker.startDate}</p>
+        <p>end: ${marker.endDate}</p>`
+        );
+    }
 
     leafletMarker.on('popupopen', () => {
       const button = document.getElementById(`remove-marker-button-${marker.id}`);
