@@ -30,7 +30,7 @@ export class AuthComponent {
     const credentials = this.loginForm.value;
 
     if (!credentials.email || !credentials.password) {
-      window.alert('Cannot have empty credentials');
+      alert('Cannot have empty credentials');
       return;
     }
 
@@ -43,11 +43,11 @@ export class AuthComponent {
     const credentials = this.registerForm.value;
 
     if (!credentials.email || !credentials.password || !credentials.repeatPassword || !credentials.username) {
-      window.alert('Cannot have empty credentials');
+      alert('Cannot have empty credentials');
       return;
     }
     if (credentials.password !== credentials.repeatPassword) {
-      window.alert('Passwords do not match');
+      alert('Passwords do not match');
       return;
     }
 

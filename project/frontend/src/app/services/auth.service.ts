@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient} from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -23,6 +23,11 @@ export class AuthService {
           this.token = response.token;
           localStorage.setItem('token', this.token);
           localStorage.setItem('email', credentials.email);
+        }),
+        catchError(error => {
+          alert(error.error.message);
+
+          return throwError(() => error);
         })
       );
   }
@@ -35,6 +40,11 @@ export class AuthService {
           localStorage.setItem('token', this.token);
           localStorage.setItem('email', credentials.email);
           localStorage.setItem('username', credentials.username);
+        }),
+        catchError(error => {
+          alert(error.error.message);
+
+          return throwError(() => error);
         })
       )
   }
@@ -60,11 +70,11 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     if (!this.token || this.token === '') {
-      console.log('logged out (no token)');
+      alert('logged out');
       return false;
     }
     else if (!this.isTokenNotExpired()) {
-      console.log('logged out due to expired token');
+      alert('logged out due to expired token');
       this.removeCredentialsFromStorage();
       return false;
     }
