@@ -26,7 +26,7 @@ export class TimeAgoPipe implements PipeTransform {
 		const years = Math.floor(months / 12);
 
 		if (years > 0) {
-			return `${years}y ${months % 12}m ago`;
+			return `${years}y ${months % 12}mo ago`;
 		} else if (months > 0) {
 			return `${months}m ${days % 30}d ago`;
 		} else if (weeks > 0) {

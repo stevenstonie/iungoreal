@@ -37,6 +37,11 @@ export class CreatePostComponent implements OnDestroy {
   createPost(): void {
     // const formData = new FormData();
 
+    // if (!this.title) {
+    //   alert('Please enter a title');
+    //   return;
+    // }
+
     // formData.append('title', this.title);
     // formData.append('authorUsername', this.authorUsername);
     // if (this.description) {
@@ -58,8 +63,8 @@ export class CreatePostComponent implements OnDestroy {
     //     console.error('Error creating post', error);
     //   }
     // });
-    // // commented for development
   }
+  // s3 comm
 
   isImage(file: File): boolean {
     return file?.type.startsWith('image/') ?? false;

@@ -30,7 +30,7 @@
 #posts-section {
 	display: flex;
 	flex-direction: column;
-	width: 60%;
+	width: 50%;
 	max-width: 700px;
 	margin-bottom: 30px;
 }
@@ -96,10 +96,6 @@
 #comments-container {
 	overflow-y: auto;
 	height: 60vh;
-}
-
-.comment {
-	margin-top: 10px;
 }
 
 input {

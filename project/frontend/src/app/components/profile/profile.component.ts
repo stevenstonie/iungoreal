@@ -103,6 +103,8 @@ export class ProfileComponent {
     //   });
     // }
   }
+  
+  // s3 comm
 
   onPfpSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

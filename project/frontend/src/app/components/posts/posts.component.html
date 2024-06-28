@@ -65,15 +65,19 @@
 	<section id="comments-section" *ngIf="showComments">
 		<h3>Comments on "{{ posts[lastCommentSectionId!].title }}"</h3>
 		<div id="comments-container">
-			<div class="comment" *ngFor="let comment of comments; let i = index">
-				<div class="same-line">
-					<p class="author-username" (click)="navigateToProfile(comment.authorUsername)">{{
-						comment.authorUsername }}</p>
-					<i style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{comment.createdAt|timeAgo}}</i>
-					<button style="margin-left: 5px; padding: 0 5px"
-						*ngIf="comment.authorUsername === usernameOfLoggedUser" (click)="removeComment(i)">🗑</button>
+			<div class="same-line" style="margin-top: 20px;" *ngFor="let comment of comments; let i = index">
+				<div>
+					<div class="same-line">
+						<p *ngIf="comment.authorUsername === posts[lastCommentSectionId!].authorUsername">(op) </p>
+						<p class="author-username" (click)="navigateToProfile(comment.authorUsername)">{{
+							comment.authorUsername }} </p>
+						<i
+							style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{comment.createdAt|timeAgo}}</i>
+					</div>	
+					<p>{{ comment.content }}</p>
 				</div>
-				<p>{{ comment.content }}</p>
+				<button style="margin-left: 5px; padding: 0 5px; height: 20px;" *ngIf="comment.authorUsername === usernameOfLoggedUser"
+					(click)="removeComment(i)">🗑</button>
 			</div>
 			<p *ngIf="comments.length === 0"
 				style="text-align: center; margin-top: 40px; font-style: italic; color: gray; font-size: 20px;">no
