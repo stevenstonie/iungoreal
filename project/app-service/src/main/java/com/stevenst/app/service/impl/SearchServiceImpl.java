@@ -32,9 +32,9 @@ public class SearchServiceImpl implements SearchService {
 
 		List<User> matchingUsers = userRepository.findUsersByUsernameContaining(input);
 
-		// dev comm
+		// s3 comm
 		// matchingUsers = setThePfpLinkForEachUser(matchingUsers);
-		// // comment the one above and use the one below for development
+		// // comment the one above and call the one below to not use cloud resources
 		matchingUsers = setThePfpLinkForEachUserToNull(matchingUsers);
 
 		return matchingUsers.stream()

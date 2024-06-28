@@ -417,7 +417,7 @@ public class PostServiceImpl implements PostService {
 		// 		System.err.println("Unable to generate a presigned url:" + e.getMessage());
 		// 	}
 		// }
-		// // dev comm
+		// // s3 comm
 
 		return mediaLinks;
 	}
