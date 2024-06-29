@@ -1,7 +1,7 @@
 # #iungoreal - social platform for outdoor activities
 
-### a social platform based on a microservice architecture, developed using spring boot and angular. this is a hybrid approach at a website which leaves some negative aspects out, so that users dont have to deal with invasive ads or feed algorithms while using the app.
-### the purpose of this project is creating a dissimilar social media(might change it to a forum in the future) that encourages its users to get off their phones and be more active both physically and socially.
+### a social platform based on a microservice architecture, developed using spring boot and angular. this is a hybrid approach at a somewhat 'lightweight' website whose users dont have to deal with invasive ads or feed algorithms while using the app.
+### the purpose of this project is creating a dissimilar social media(might change it to a forum in the future) that encourages its users to get more active both physically and socially.
 
 ## Prerequisites
 
@@ -31,13 +31,9 @@ now you can access the application through the web browser at `http://localhost:
 
 below are some screen captures of some features of the app and how the ui looks as of last updates:
 
-![image](https://github.com/petreastefann/iungoreal/assets/56685226/74276d2f-e174-408e-ace4-0ffe86a9afcd) 
+![ecfw vcsx](https://github.com/petreastefann/iungoreal/assets/56685226/6fd4c70f-156a-4b91-b798-c47309025e8a)
 
-![image](https://github.com/petreastefann/iungoreal/assets/56685226/974facc5-99a4-438b-a806-bacea8eba4e6) 
-
-![image](https://github.com/petreastefann/iungoreal/assets/56685226/01fc8d7f-5774-45b3-ad84-da2cd3dd952f)
-
-![image](https://github.com/petreastefann/iungoreal/assets/56685226/91a78ab7-63b3-491e-9c6e-0bc2e8477848) 
+![Screenshot 2024-06-28 172254](https://github.com/petreastefann/iungoreal/assets/56685226/c8880cd6-a7fb-4621-98db-8c0cfd635204)
 
 ![image](https://github.com/petreastefann/iungoreal/assets/56685226/ba47fe9b-2cfe-4152-87fe-d4289bbfa192)
 
