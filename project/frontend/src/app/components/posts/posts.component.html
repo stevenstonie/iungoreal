@@ -71,13 +71,13 @@
 						<p *ngIf="comment.authorUsername === posts[lastCommentSectionId!].authorUsername">(op) </p>
 						<p class="author-username" (click)="navigateToProfile(comment.authorUsername)">{{
 							comment.authorUsername }} </p>
-						<i
+						<i 
 							style="font-size: .8rem; margin-left: 10px; margin-top: 3.5px;">{{comment.createdAt|timeAgo}}</i>
-					</div>	
+					</div>
 					<p>{{ comment.content }}</p>
 				</div>
-				<button style="margin-left: 5px; padding: 0 5px; height: 20px;" *ngIf="comment.authorUsername === usernameOfLoggedUser"
-					(click)="removeComment(i)">🗑</button>
+				<button style="margin-left: 5px; padding: 0 5px; height: 20px;"
+					*ngIf="comment.authorUsername === usernameOfLoggedUser" (click)="removeComment(i)">🗑</button>
 			</div>
 			<p *ngIf="comments.length === 0"
 				style="text-align: center; margin-top: 40px; font-style: italic; color: gray; font-size: 20px;">no
@@ -88,7 +88,7 @@
 		<div class="input">
 			<input type="text" [(ngModel)]="commentToAdd" placeholder="Add a comment"
 				(keyup.enter)="addComment(lastCommentSectionId!)" />
-			<button (click)="addComment(lastCommentSectionId!)">Add</button>
+			<button id="add-comment-button" (click)="addComment(lastCommentSectionId!)">Add</button>
 		</div>
 	</section>
 </div>

@@ -25,7 +25,7 @@ export class PostsComponent implements OnChanges {
   commentToAdd: string = "";
 
   constructor(private postService: PostService) {
-    
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -177,6 +177,10 @@ export class PostsComponent implements OnChanges {
   }
 
   addComment(postIndex: number) {
+    if (!this.commentToAdd) {
+      return;
+    }
+    
     if (this.usernameOfLoggedUser) {
       this.postService.addComment(this.usernameOfLoggedUser, this.commentToAdd, this.posts[postIndex].id).subscribe({
         next: (response) => {

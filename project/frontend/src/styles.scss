@@ -42,12 +42,12 @@ button {
 }
 
 .button-slick {
-	border-radius: 10px;
+	border-radius: 1px;
 	background-color: transparent;
 	border-left: 1px transparent solid;
 	border-right: 1px transparent solid;
 	box-shadow: none;
-	height: 80%;
+	height: 100%;
 	transition-duration: 0.15s;
 
 	&:hover {
@@ -55,6 +55,7 @@ button {
 		background-color: rgba(255, 255, 255, 0.644);
 		border-left: 1px black solid;
 		border-right: 1px black solid;
+		border-radius: 0;
 		box-shadow: none;
 		transition-duration: 0.15s;
 	}
