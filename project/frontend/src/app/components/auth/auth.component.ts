@@ -51,6 +51,16 @@ export class AuthComponent {
       return;
     }
 
+    if (!credentials.email.match(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/)) {
+      alert('Email doesn\'t have the right format. It should contain @, ., and only letters, digits, underscores or dashes are allowed.');
+      return;
+    }
+    
+    if (!credentials.username.match(/^[a-zA-Z0-9_-]+$/)) {
+      alert('Username contains unsupported characters. Only letters, digits, and underscores are allowed.');
+      return;
+    }
+
     this.authService.register(credentials).subscribe(response => {
       this.insertEmailInStorageAndNavigateToMainPage(credentials.email);
     });

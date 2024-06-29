@@ -35,6 +35,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new IgorAuthenticationException(CREDENTIALS_EMPTY_MESSAGE);
 		}
 
+		if (!request.getEmail().matches("^[a-zA-Z0-9_-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}$")) {
+			throw new IgorAuthenticationException("Email doesnt have the right format. it should contain @, ., and only letters, digits, underscores or dashes are allowed.");
+		}
+
+		if (!request.getUsername().matches("[a-zA-Z0-9_-]+")) {
+			throw new IgorAuthenticationException("Username contains unsupported characters. only letters, digits, and underscores are allowed.");
+		}
+
 		Optional<User> existingUser = authRepository.findByEmail(request.getEmail());
 		if (existingUser.isPresent()) {
 			throw new IgorAuthenticationException("Email already taken");
