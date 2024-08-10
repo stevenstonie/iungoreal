@@ -1,12 +1,15 @@
 # #iungoreal - social platform for outdoor activities
 
-### a social platform based on a microservice architecture, developed using spring boot and angular. this is a hybrid approach at a somewhat 'lightweight' website whose users dont have to deal with invasive ads or feed algorithms while using the app.
-### the purpose of this project is creating a dissimilar social media(might change it to a forum in the future) that encourages its users to get more active both physically and socially.
+### a social platform based on a microservice architecture, developed using spring boot and angular. this is a hybrid approach at a somewhat 'lightweight' website.
+----------
+#### (footnote??)
+### the purpose of this project was to implement as many components as i could (but still tweaked some of them from their base functionalities) in order to learn about different parts of fullstack development as a whole. the main idea was creating a social media with many components, like a calendar for future events, a map having the same events pinned on it and a news section of those events, (haha "lightweight" ik). still had to put the project down though.
+----------
 
 ## Prerequisites
 
 before getting started, ensure you do the following:
-- have a code editor of your choice (i use vscode for both java and typescript for example)
+- have a code editor of your choice (i use vscode for both java and typescript but i also recommend intellij)
 - configure a MySQL db for database management
 - create an AWS account with a bucket for cloud services
 
