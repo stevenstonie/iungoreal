@@ -180,7 +180,7 @@ export class PostsComponent implements OnChanges {
     if (!this.commentToAdd) {
       return;
     }
-    
+
     if (this.usernameOfLoggedUser) {
       this.postService.addComment(this.usernameOfLoggedUser, this.commentToAdd, this.posts[postIndex].id).subscribe({
         next: (response) => {
@@ -256,22 +256,23 @@ export class PostsComponent implements OnChanges {
     if (posts.length <= 0 && this.posts.length > 0) {
       alert("no more posts");
     }
-    console.log(posts);
 
     this.posts = this.posts.concat(posts);
     for (const element of posts) {
       this.currentPostIndex.push(0);
     }
+
+    console.log(this.posts);
   }
 
-  nextImage(postIndex: number) {
+  nextMedia(postIndex: number) {
     const currentPost = this.posts[postIndex];
     if (currentPost.mediaLinks.length > 0 && this.currentPostIndex[postIndex] < currentPost.mediaLinks.length - 1) {
       this.currentPostIndex[postIndex]++;
     }
   }
 
-  previousImage(postIndex: number) {
+  previousMedia(postIndex: number) {
     const currentPost = this.posts[postIndex];
     if (currentPost.mediaLinks.length > 0 && this.currentPostIndex[postIndex] > 0) {
       this.currentPostIndex[postIndex]--;
@@ -287,8 +288,4 @@ export class PostsComponent implements OnChanges {
   }
 
   // implement making posts seen when scrolling past them
-
-  onScroll(): void {
-    console.log("scrolled");
-  }
 }

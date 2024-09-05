@@ -7,8 +7,11 @@
 	- (recurring) show window dialogs on errors / restrictions for users, catch exceptions, etc.
 	- (recurring) do tests for everything
 	------------------
+	- [ ] (fr) make sure to delete the cache when changing accounts as data from the other account is still available. for example: i had the feed of the other user and i could remove their messages. yet its slim chance to have two people use separate accounts on the same device.
 	- [ ] (fr) make it so that pins appear only on the selected country
+	- [ ] (bk) make sure to integrate a greater range for the character encoding in the database. until then i have added a restriction for registering.
 	- [ ] (fr) add a "loading" cue to the screen when a request is in the making
+	- [ ] (fr) add lazy loading
 	- [ ] (fr) add verification through email when registering
 	- [ ] (fr, bk) implement search functionality for posts
 	- [ ] (fr) add upload size cap for the file size on frontend (and update the existing ones from backend)

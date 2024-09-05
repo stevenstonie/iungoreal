@@ -25,7 +25,7 @@
 
 			<ng-container *ngIf="post.mediaLinks.length > 0">
 				<div class="post-image">
-					<button (click)="previousImage(i)" [disabled]="currentPostIndex[i] === 0">&larr;</button>
+					<button (click)="previousMedia(i)" [disabled]="currentPostIndex[i] === 0">&larr;</button>
 
 					<ng-container *ngIf="isImage(post.mediaLinks[currentPostIndex[i]]); else videoTemplate">
 						<img [src]="post.mediaLinks[currentPostIndex[i]]" alt="post img">
@@ -37,7 +37,7 @@
 						</video>
 					</ng-template>
 
-					<button (click)="nextImage(i)"
+					<button (click)="nextMedia(i)"
 						[disabled]="currentPostIndex[i] === post.mediaLinks.length - 1">&rarr;</button>
 				</div>
 

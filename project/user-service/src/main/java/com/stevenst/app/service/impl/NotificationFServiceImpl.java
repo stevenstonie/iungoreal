@@ -13,6 +13,8 @@ import com.stevenst.app.payload.NotificationFPayload;
 import com.stevenst.app.repository.NotificationRepository;
 import com.stevenst.app.repository.UserRepository;
 import com.stevenst.app.service.NotificationFService;
+import com.stevenst.app.service.UserService;
+import com.stevenst.app.util.JsonUtil;
 import com.stevenst.lib.exception.IgorEntityNotFoundException;
 import com.stevenst.lib.exception.IgorNullValueException;
 import com.stevenst.lib.exception.IgorUserNotFoundException;
@@ -28,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class NotificationFServiceImpl implements NotificationFService {
 	private final NotificationRepository notificationRepository;
 	private final UserRepository userRepository;
-	// private final UserService userService;		// (s3 comm)
+	// private final UserService userService;		// s3 comm
 
 	public List<NotificationFPayload> getLast50NotificationsF(String username) {
 		User user = userRepository.findByUsername(username).orElseThrow(
@@ -45,7 +47,7 @@ public class NotificationFServiceImpl implements NotificationFService {
 							.id(notification.getId())
 							.receiverUsername(notification.getReceiver().getUsername())
 							.emitterUsername(notification.getEmitter().getUsername())
-							// .emitterPfpLink(			// (s3 comm)
+							// .emitterPfpLink(			// s3 comm
 							// 		JsonUtil.getStringFromJson(userService
 							// 				.getPfpPreSignedLinkFromS3(notification.getEmitter().getUsername())))
 							.type(notification.getType())
@@ -83,4 +85,3 @@ public class NotificationFServiceImpl implements NotificationFService {
 		return countOfNotificationsF;
 	}
 }
-// (s3 comm) -> only uncomment when you want to access the cloud storage

@@ -6,7 +6,6 @@ import { Role, User } from 'src/app/models/user';
 import { MapService } from 'src/app/services/map.service';
 import { UserService } from 'src/app/services/user.service';
 
-
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
