@@ -10,6 +10,8 @@
 
 before getting started, ensure you do the following:
 - have a code editor of your choice (i use vscode for both java and typescript but i also recommend intellij)
+- make sure angular is installed (or node.js if it comes with it. idk)
+- have java 17+ and maven installed and added to path
 - configure a MySQL db for database management
 - create an AWS account with a bucket for cloud services
 
@@ -30,7 +32,7 @@ to run the application, follow these steps:
 
 now you can access the application through the web browser at `http://localhost:4200` (or the port configured for your Angular application).
 
-(note: as of june 2024, some code is commented so that no bandwidth is used for the aws cloud service. will make some templates for uncommenting these code lines to enable images on the app for production)
+(note: as of june 2024, some code is commented so that no bandwidth is used for the aws cloud service)
 
 below are some screen captures of some features of the app and how the ui looks as of last updates:
 
